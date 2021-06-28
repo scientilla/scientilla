@@ -7,12 +7,18 @@ const axios = require('axios');
 const https = require('https');
 const util = require('util');
 const fs = require('fs');
+const path = require('path');
+const appendFile = util.promisify(fs.appendFile);
+const exists = util.promisify(fs.exists);
+const mkdir = util.promisify(fs.mkdir);
 const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
 
 module.exports = {
     stringToSlug,
     waitForSuccessfulRequest,
-    getActiveDirectoryUsers
+    getActiveDirectoryUsers,
+    log
 };
 
 function stringToSlug (str) {
@@ -33,8 +39,7 @@ function stringToSlug (str) {
     return str;
 }
 
-
-async function waitForSuccessfulRequest(options) {
+async function waitForSuccessfulRequest(options, logMethod = false, print = true) {
     const maxAttempts = 10;
 
     options.timeout = options.timeout || 600000;
@@ -48,7 +53,7 @@ async function waitForSuccessfulRequest(options) {
             }));
     }
 
-    let response = await tryRequest(options, maxAttempts);
+    let response = await tryRequest(options, maxAttempts, logMethod, print);
 
     if (response && _.has(response, 'status') && response.status === 200) {
         return response.data;
@@ -57,7 +62,7 @@ async function waitForSuccessfulRequest(options) {
     throw response;
 }
 
-async function tryRequest(options, maxAttempts, attempts = 0) {
+async function tryRequest(options, maxAttempts, logMethod = false, print = true, attempts = 0) {
     const waitFor = 60000; // 60000 ms = 1 minute
 
     try {
@@ -65,20 +70,20 @@ async function tryRequest(options, maxAttempts, attempts = 0) {
             await new Promise(resolve => setTimeout(resolve, waitFor));
         }
 
-        sails.log.info(`${moment()} Try to reach ${axios.getUri(options)} for the ${attempts + 1}th time ...`);
+        await log(`${moment()} Try to reach ${axios.getUri(options)} for the ${attempts + 1}th time ...`, logMethod, print);
 
         return await axios(options);
     } catch (e) {
-        sails.log.info(`${moment()} Failed to reach ${axios.getUri(options)} for the ${attempts + 1}th time ...`);
+        await log(`${moment()} Failed to reach ${axios.getUri(options)} for the ${attempts + 1}th time ...`, logMethod, print);
 
         if (attempts < maxAttempts) {
-            return await tryRequest(options, maxAttempts, attempts + 1);
+            return await tryRequest(options, maxAttempts, logMethod, print, attempts + 1);
         }
 
         if (e && e.response && e.response.status && e.response.statusText) {
-            sails.log.info(`${e.response.status}: ${e.response.statusText}`);
+            await log(`${e.response.status}: ${e.response.statusText}`, logMethod, print);
         } else {
-            sails.log.info(e);
+            await log(e);
         }
 
         throw `Tried ${attempts} time(s), but failed to reach the API!`;
@@ -134,4 +139,24 @@ async function getActiveDirectoryUsers() {
             }
         );
     });
+}
+
+async function log(text = '', logMethod = false, print = true) {
+    if (print) {
+        sails.log.info(text);
+    }
+
+    if (logMethod !== false) {
+        const logFile = path.join('logs', logMethod, moment().format('YYYYMMDD') + '.log');
+
+        if (!await exists(path.join('logs', logMethod))) {
+            await mkdir(path.join('logs', logMethod));
+        }
+
+        if (await exists(logFile)) {
+            await appendFile(logFile, '\n' + text);
+        } else {
+            await writeFile(logFile, text);
+        }
+    }
 }
