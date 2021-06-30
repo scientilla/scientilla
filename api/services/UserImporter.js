@@ -20,6 +20,7 @@ const convert = require('xml-js');
 const path = require('path');
 const util = require('util');
 const fs = require('fs');
+
 const writeFile = util.promisify(fs.writeFile);
 const readdir = util.promisify(fs.readdir);
 const unlink = util.promisify(fs.unlink);
@@ -28,8 +29,8 @@ const logDirectory = path.join('logs', 'userImport');
 
 async function importUsers(email = getDefaultEmail()) {
 
+    const logMethod = 'importUsers';
     const startedTime = moment();
-
     const disabledMemberships = [];
     const enabledMemberships = [];
     const deactivatedUsers = [];
@@ -41,15 +42,15 @@ async function importUsers(email = getDefaultEmail()) {
     const newResearchEntityDataItems = [];
     const upToDateResearchEntityDataItems = [];
 
-    sails.log.info('The import started at ' + startedTime.format());
-    sails.log.info('....................................');
+    await Utils.log('The import started at ' + startedTime.format(), logMethod);
+    await Utils.log('....................................', logMethod);
 
     try {
         // Endpoint options to get all users
         const options = getUserImportRequestOptions('employees', {email});
 
         // Get all the employees from Pentaho.
-        let originalEmployees = await getEmployees(options);
+        let originalEmployees = await getEmployees(options, logMethod, false);
         let employees = _.cloneDeep(originalEmployees);
 
         if (email !== getDefaultEmail()) {
@@ -57,14 +58,14 @@ async function importUsers(email = getDefaultEmail()) {
         }
 
         // Override the CID of specified employees
-        employees = await overrideCIDAssociations(employees, email);
+        employees = await overrideCIDAssociations(employees, email, logMethod);
 
         // Filter out employees with a invalid email, a secondary contract or ignored role
         employees = filterEmployees(employees);
 
         // Filter out invalid email addresses, use the cid as temporary email address
         let showLine = false;
-        employees = employees.filter(employee => {
+        employees = employees.filter(async employee => {
             if (
                 _.has(employee, 'email') &&
                 !_.isNull(employee.email) &&
@@ -77,7 +78,7 @@ async function importUsers(email = getDefaultEmail()) {
                     _.has(employee, 'stato_dip') &&
                     employee.stato_dip !== 'cessato'
                 ) {
-                    sails.log.info(`Missing email for employee ${employee.nome} ${employee.cognome}`);
+                    await Utils.log(`Missing email for employee ${employee.nome} ${employee.cognome}`, logMethod);
                     showLine = true;
                 } else {
                     if (
@@ -92,29 +93,29 @@ async function importUsers(email = getDefaultEmail()) {
         });
 
         if (showLine) {
-            sails.log.info('....................................');
+            await Utils.log('....................................', logMethod);
         }
 
         // Check if there are multiple active employees with the same email address (excluding empty email addresses) in the employees array
-        getMissingCIDAssociations(employees);
+        await getMissingCIDAssociations(employees, logMethod);
 
         // We cache the groups, membership groups and default profile.
         const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
         const ldapUsers = await Utils.getActiveDirectoryUsers();
         const groups = await Group.find();
         if (groups.length <= 0) {
-            sails.log.info('No groups found...');
+            await Utils.log('No groups found...', logMethod);
         }
 
         const activeGroups = groups.filter(g => g.active === true);
 
         // Get all CID codes in one Array
         const cidCodes = employees.map(employee => employee.cid);
-        sails.log.info('Found ' + cidCodes.length + ' CID codes!');
-        sails.log.info('....................................');
+        await Utils.log('Found ' + cidCodes.length + ' CID codes!', logMethod);
+        await Utils.log('....................................', logMethod);
 
         // Get the contractual history of the CID codes
-        const historyContracts = await getContractualHistoryOfCidCodes(cidCodes);
+        const historyContracts = await getContractualHistoryOfCidCodes(cidCodes, logMethod, false);
 
         if (historyContracts.length === 0) {
             return;
@@ -132,7 +133,7 @@ async function importUsers(email = getDefaultEmail()) {
                     }
                 }
             } else {
-                sails.log.debug(`Contract doesn't have any steps: ${employee.email} ${employee.cid}`);
+                await Utils.log(`Contract doesn't have any steps: ${employee.email} ${employee.cid}`, logMethod);
             }
         }
 
@@ -142,7 +143,7 @@ async function importUsers(email = getDefaultEmail()) {
         // Merge the duplicate employees
         employees = mergeDuplicateEmployees(employees);
 
-        sails.log.info(`Looping over ${employees.length} employees...`);
+        await Utils.log(`Looping over ${employees.length} employees...`, logMethod);
 
         for (const employee of employees) {
 
@@ -184,7 +185,7 @@ async function importUsers(email = getDefaultEmail()) {
                 }
             }
 
-            const userObject = createUserObject(ldapUsers, user, employee);
+            const userObject = await createUserObject(ldapUsers, user, employee, logMethod);
 
             if (!user) {
                 await User.createUserWithoutAuth(userObject);
@@ -216,17 +217,17 @@ async function importUsers(email = getDefaultEmail()) {
                     user.displaySurname !== employee.cognome_AD
                 ) {
                     await User.createAliases(user);
-                    sails.log.info(`Create aliases for ${user.username}`);
+                    await Utils.log(`Create aliases for ${user.username}`, logMethod);
                 }
             }
 
             if (!user) {
-                sails.log.error('No user!');
+                await Utils.log('No user!', logMethod);
                 continue;
             }
 
             if (!user.id) {
-                sails.log.info(user);
+                await Utils.log(user, logMethod, false);
             }
 
             const groupCodesOfContract = collectGroupCodes(employee);
@@ -494,7 +495,7 @@ async function importUsers(email = getDefaultEmail()) {
             }
         }
 
-        sails.log.info('....................................');
+        await Utils.log('....................................', logMethod);
 
         // Check if a user is active but we expected not active
         const notExpectedActiveUsersCondition = {
@@ -509,13 +510,13 @@ async function importUsers(email = getDefaultEmail()) {
 
         const notExpectedActiveUsers = await User.find(notExpectedActiveUsersCondition);
         if (notExpectedActiveUsers.length > 0) {
-            sails.log.info(`Found ${notExpectedActiveUsers.length} users that are active but expected not to be active, please check manually:`);
+            await Utils.log(`Found ${notExpectedActiveUsers.length} users that are active but expected not to be active, please check manually:`, logMethod);
         }
         for (const user of notExpectedActiveUsers) {
-            sails.log.info(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`);
+            await Utils.log(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`, logMethod);
         }
         if (notExpectedActiveUsers.length > 0) {
-            sails.log.info('....................................');
+            await Utils.log('....................................', logMethod);
         }
 
         // Check if a user has a contract end date greater than now + 1 year.
@@ -524,58 +525,58 @@ async function importUsers(email = getDefaultEmail()) {
             contractEndDate: { '>': moment().format() },
         });
         if (notActiveUsersWrongContractEndDate.length > 0) {
-            sails.log.info(`Found ${notActiveUsersWrongContractEndDate.length} users that has to be checked manually`);
+            await Utils.log(`Found ${notActiveUsersWrongContractEndDate.length} users that has to be checked manually`, logMethod);
         }
         for (const user of notActiveUsersWrongContractEndDate) {
-            sails.log.info(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`);
+            await Utils.log(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`, logMethod);
         }
         if (notActiveUsersWrongContractEndDate.length > 0) {
-            sails.log.info('....................................');
+            await Utils.log('....................................', logMethod);
         }
 
         // Reporting
-        sails.log.info(disabledMemberships.length + ' memberships disabled!');
-        sails.log.info(util.inspect(disabledMemberships, false, null, true));
-        sails.log.info('....................................');
+        await Utils.log(disabledMemberships.length + ' memberships disabled!', logMethod);
+        await Utils.log(util.inspect(disabledMemberships, false, null, true), logMethod, false);
+        await Utils.log('....................................', logMethod);
 
-        sails.log.info(enabledMemberships.length + ' memberships enabled!');
-        sails.log.info(util.inspect(enabledMemberships, false, null, true));
-        sails.log.info('....................................');
+        await Utils.log(enabledMemberships.length + ' memberships enabled!', logMethod);
+        await Utils.log(util.inspect(enabledMemberships, false, null, true), logMethod, false);
+        await Utils.log('....................................', logMethod);
 
-        sails.log.info(deactivatedUsers.length + ' users deactivated!');
-        sails.log.info(util.inspect(deactivatedUsers, false, null, true));
-        sails.log.info('....................................');
+        await Utils.log(deactivatedUsers.length + ' users deactivated!', logMethod);
+        await Utils.log(util.inspect(deactivatedUsers, false, null, true), logMethod, false);
+        await Utils.log('....................................', logMethod);
 
-        sails.log.info(activatedUsers.length + ' users activated!');
-        sails.log.info(util.inspect(activatedUsers, false, null, true));
-        sails.log.info('....................................');
+        await Utils.log(activatedUsers.length + ' users activated!', logMethod);
+        await Utils.log(util.inspect(activatedUsers, false, null, true), logMethod, false);
+        await Utils.log('....................................', logMethod);
 
-        sails.log.info(createdUsers.length + ' users created!');
-        sails.log.info(util.inspect(createdUsers, false, null, true));
-        sails.log.info('....................................');
+        await Utils.log(createdUsers.length + ' users created!', logMethod);
+        await Utils.log(util.inspect(createdUsers, false, null, true), logMethod, false);
+        await Utils.log('....................................', logMethod);
 
-        sails.log.info(updatedUsers.length + ' users updated!');
-        sails.log.info(util.inspect(updatedUsers, false, null, true));
-        sails.log.info('....................................');
+        await Utils.log(updatedUsers.length + ' users updated!', logMethod);
+        await Utils.log(util.inspect(updatedUsers, false, null, true), logMethod, false);
+        await Utils.log('....................................', logMethod);
 
-        sails.log.info(upToDateUsers.length + ' users up-to-date!');
-        sails.log.info('....................................');
+        await Utils.log(upToDateUsers.length + ' users up-to-date!', logMethod);
+        await Utils.log('....................................', logMethod);
 
-        sails.log.info(updatedResearchEntityDataItems.length + ' ResearchEntityData records updated!');
-        sails.log.info(util.inspect(updatedResearchEntityDataItems, false, null, true));
-        sails.log.info('....................................');
+        await Utils.log(updatedResearchEntityDataItems.length + ' ResearchEntityData records updated!', logMethod);
+        await Utils.log(util.inspect(updatedResearchEntityDataItems, false, null, true), logMethod, false);
+        await Utils.log('....................................', logMethod);
 
-        sails.log.info(newResearchEntityDataItems.length + ' ResearchEntityData records created!');
-        sails.log.info(util.inspect(newResearchEntityDataItems, false, null, true));
-        sails.log.info('....................................');
+        await Utils.log(newResearchEntityDataItems.length + ' ResearchEntityData records created!', logMethod);
+        await Utils.log(util.inspect(newResearchEntityDataItems, false, null, true), logMethod, false);
+        await Utils.log('....................................', logMethod);
 
-        sails.log.info(upToDateResearchEntityDataItems.length + ' ResearchEntityData records are already up-to-date!');
-        sails.log.info('....................................');
+        await Utils.log(upToDateResearchEntityDataItems.length + ' ResearchEntityData records are already up-to-date!', logMethod);
+        await Utils.log('....................................', logMethod);
 
-        sails.log.info('Stopped at ' + moment().format());
+        await Utils.log('Stopped at ' + moment().format(), logMethod);
     } catch (e) {
-        sails.log.info('importUserContracts');
-        sails.log.info(e);
+        await Utils.log('importUserContracts', logMethod);
+        await Utils.log(e, logMethod);
     }
 }
 
@@ -844,9 +845,9 @@ function isFormerGuestStudent(employee) {
  *
  * @returns {Object[]}
  */
- async function getEmployees(options) {
+ async function getEmployees(options, logMethod = false, print = false) {
     try {
-        let xml = await Utils.waitForSuccessfulRequest(options);
+        let xml = await Utils.waitForSuccessfulRequest(options, logMethod, print);
 
         let response = convert.xml2js(xml, {compact: true, spaces: 4, textFn: RemoveJsonTextAttribute});
 
@@ -956,7 +957,7 @@ function replaceEmptyObjectByEmptyString(object) {
  * @returns {Object[]}
  */
 // This function will return an array of valid contracts
-async function getContractualHistoryOfCidCodes(codes) {
+async function getContractualHistoryOfCidCodes(codes, logMethod = false, print = false) {
 
     let contracts = [];
     const chunkLength = 250;
@@ -992,7 +993,7 @@ async function getContractualHistoryOfCidCodes(codes) {
         let count = 1;
         for (const group of groups) {
             const options = getUserImportRequestOptions('history', {cid: group.join(',')});
-            const xml = await Utils.waitForSuccessfulRequest(options);
+            const xml = await Utils.waitForSuccessfulRequest(options, logMethod, print);
             const response = convert.xml2js(xml, {compact: true, spaces: 4, textFn: RemoveJsonTextAttribute});
             handleResponse(response);
 
@@ -1341,7 +1342,7 @@ async function getContractualHistoryOfCidCodes(codes) {
  *
  * @returns {Object}
  */
- function createUserObject(ldapUsers = [], user = {}, employee = {}) {
+ async function createUserObject(ldapUsers = [], user = {}, employee = {}, logMethod = false) {
 
     const userObject = {
         cid: employee.cid,
@@ -1394,7 +1395,7 @@ async function getContractualHistoryOfCidCodes(codes) {
                 );
                 if (!_.isEmpty(foundEmployeeEmail)) {
                     keepCurrentUsername = true;
-                    sails.log.info(`The email address: ${employee.email} we received from Pentaho is not available in the Active Directory, but the old one does: ${user.username}`);
+                    await Utils.log(`The email address: ${employee.email} we received from Pentaho is not available in the Active Directory, but the old one does: ${user.username}`, logMethod);
                 }
             }
 
@@ -1660,7 +1661,7 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
  *
  * @returns {Object[]}
  */
-async function overrideCIDAssociations(employees = [], email = getDefaultEmail()) {
+async function overrideCIDAssociations(employees = [], email = getDefaultEmail(), logMethod = false) {
     let foundAssociations = false;
     let cidAssociations = await GeneralSettings.findOne({ name: 'cid-associations' });
 
@@ -1683,11 +1684,11 @@ async function overrideCIDAssociations(employees = [], email = getDefaultEmail()
         const employee = employees.find(e => e.email === cidAssociation.email);
         employee.cid = cidAssociation.cid;
         foundAssociations = true;
-        sails.log.info(`Found CID association for user ${employee.email}: ${employee.cid}`);
+        await Utils.log(`Found CID association for user ${employee.email}: ${employee.cid}`, logMethod);
     }
 
     if (foundAssociations) {
-        sails.log.info('....................................');
+        await Utils.log('....................................', logMethod);
     }
 
     return employees;
@@ -1699,7 +1700,7 @@ async function overrideCIDAssociations(employees = [], email = getDefaultEmail()
  *
  * @param {Object[]}        employees               Employee contract object.
  */
-function getMissingCIDAssociations(employees = []) {
+async function getMissingCIDAssociations(employees = [], logMethod = false) {
     const uniqueEmployeesWithEmail = [];
     let foundDuplicates = false;
     const employeesWithoutFormer = employees.filter(e => !_.isEmpty(e.email) &&
@@ -1713,12 +1714,12 @@ function getMissingCIDAssociations(employees = []) {
             uniqueEmployeesWithEmail.push(employee.email);
         } else {
             foundDuplicates = true;
-            sails.log.info(`Already found an employee with this email ${employee.email}, you should add an CID association in the admin section!`);
+            await Utils.log(`Already found an employee with this email ${employee.email}, you should add an CID association in the admin section!`, logMethod);
         }
     }
 
     if (foundDuplicates) {
-        sails.log.info('....................................');
+        await Utils.log('....................................', logMethod);
     }
 }
 
