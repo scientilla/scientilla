@@ -78,8 +78,8 @@ module.exports = {
             }
         }
     },
-    async getFirstAlias(userIds = []) {
-        const aliases = await Alias.find({user: userIds});
+    async getUsersMainAlias(userIds = []) {
+        const aliases = await Alias.find({user: userIds, main: true});
         return userIds.map(uid => aliases.find(a => a.user === uid));
     }
 };
