@@ -25,6 +25,7 @@ FROM (
              )
            --TODO: subsitute 1 with the default group id
            AND af.institute = 1
+           AND m.active = true
            AND NULLIF(d.year, '') :: INT > 2006
 
          UNION
