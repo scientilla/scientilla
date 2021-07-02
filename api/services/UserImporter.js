@@ -101,7 +101,9 @@ async function importUsers(email = getDefaultEmail()) {
 
         // We cache the groups, membership groups and default profile.
         const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
-        const ldapUsers = await Utils.getActiveDirectoryUsers();
+        let ldapUsers = await Utils.getActiveDirectoryUsers();
+        await Utils.log(`Found ${ldapUsers.length} records in the Active Directory`, logMethod);
+
         const groups = await Group.find();
         if (groups.length <= 0) {
             await Utils.log('No groups found...', logMethod);
@@ -186,6 +188,10 @@ async function importUsers(email = getDefaultEmail()) {
             }
 
             const userObject = await createUserObject(ldapUsers, user, employee, logMethod);
+            if (!userObject) {
+                Utils.log(`Skipped employee ${employee.email} because of an empty user object`, logMethod, false);
+                continue;
+            }
 
             if (!user) {
                 await User.createUserWithoutAuth(userObject);
@@ -510,7 +516,11 @@ async function importUsers(email = getDefaultEmail()) {
 
         const notExpectedActiveUsers = await User.find(notExpectedActiveUsersCondition);
         if (notExpectedActiveUsers.length > 0) {
-            await Utils.log(`Found ${notExpectedActiveUsers.length} users that are active but expected not to be active, please check manually:`, logMethod);
+            if (notExpectedActiveUsers.length === 1) {
+                await Utils.log(`Found ${notExpectedActiveUsers.length} user that is active but expected not to be active, please check manually:`, logMethod);
+            } else {
+                await Utils.log(`Found ${notExpectedActiveUsers.length} users that are active but expected not to be active, please check manually:`, logMethod);
+            }
         }
         for (const user of notExpectedActiveUsers) {
             await Utils.log(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`, logMethod);
@@ -1385,7 +1395,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
     } else {
         const foundEmployeeEmail = ldapUsers.find(u => _.toLower(u.userPrincipalName) === _.toLower(employee.email));
 
-        if (_.isEmpty(foundEmployeeEmail)) {
+        if (!foundEmployeeEmail) {
 
             let keepCurrentUsername = false;
 
@@ -1393,14 +1403,15 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
                 const foundEmployeeEmail = ldapUsers.find(
                     ldapUser => _.toLower(ldapUser.userPrincipalName) === _.toLower(user.username)
                 );
-                if (!_.isEmpty(foundEmployeeEmail)) {
+
+                if (foundEmployeeEmail) {
                     keepCurrentUsername = true;
                     await Utils.log(`The email address: ${employee.email} we received from Pentaho is not available in the Active Directory, but the old one does: ${user.username}`, logMethod);
                 }
             }
 
             if (!keepCurrentUsername) {
-                userObject.username = null;
+                return;
             }
         } else {
             userObject.username = _.toLower(employee.email)
