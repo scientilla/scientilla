@@ -785,19 +785,16 @@ async function importPatents() {
 
     function getAuthorsData(inventors) {
         const authorsData = [];
-
-        for (const [position, inventor] of inventors.entries()) {
+        inventors.forEach((inventor, position) => {
             const affiliations = [];
             if (inventor.email.includes('@iit'))
                 affiliations.push(1);
 
-            const authorStrs = User.generateAliasesStr(inventor.name, inventor.surname);
             authorsData.push({
                 position,
-                affiliations,
-                authorStr: authorStrs.length > 0 ? authorStrs[0] : ''
+                affiliations
             });
-        }
+        });
 
         return authorsData;
     }
@@ -877,12 +874,13 @@ async function importPatents() {
         throw (e);
     }
 
-    const importErrors = [];
+    let importErrors = 0;
     let totalItems = 0, created = 0, updated = 0;
 
     for (const item of res.result) {
         if (!item.patent_family.docket) {
-            importErrors.push({
+            importErrors++;
+            sails.log.debug({
                 success: false,
                 researchItem: item,
                 message: 'Missing required field "docket"'
@@ -898,13 +896,14 @@ async function importPatents() {
 
             try {
                 const authorsData = getAuthorsData(patent.inventors);
-                const authorsStr = authorsData.map(ad => ad.authorStr).join(', ');
+                const authorsStr = await ResearchItem.generateAuthorsStr(patent.inventors);
 
                 const patentFamilyData = mapObject(item.patent_family, patentFamilySchema);
                 const patentData = mapObject(patent, patentSchema);
 
                 if (!patentData.application) {
-                    importErrors.push({
+                    importErrors++;
+                    sails.log.debug({
                         success: false,
                         researchItem: patent,
                         message: 'Missing required field "application"'
@@ -935,7 +934,8 @@ async function importPatents() {
                 }
 
             } catch (e) {
-                importErrors.push(e);
+                importErrors++;
+                sails.log.debug(e);
             }
 
         }
@@ -945,8 +945,7 @@ async function importPatents() {
     sails.log.info(`${totalItems} found`);
     sails.log.info(`external created: ${created}`);
     sails.log.info(`external updated: ${updated}`);
-    sails.log.info(`errors: ${importErrors.length}`);
-    importErrors.forEach(error => sails.log.debug(JSON.stringify(error) + '\n --------------------- \n'));
+    sails.log.info(`errors: ${importErrors}`);
 
 
     let verifyErrors = [];

@@ -1,7 +1,7 @@
 /* global Synchronizer, Cleaner, SourceMetric */
 "use strict";
 const Sails = require('sails');
-const _ = require('lodash');
+const getMethod = require('../taskHelper').getMethod;
 
 module.exports = function (grunt) {
     grunt.registerTask('backup', function (...args) {
@@ -25,32 +25,3 @@ module.exports = function (grunt) {
         });
     });
 };
-
-function getMethod(args, methods) {
-    let tree = methods;
-    let method = null;
-    let params = [];
-
-    for (let a of args) {
-        if (_.isFunction(method)) {
-            params.push(a);
-            continue;
-        }
-
-        if (_.isFunction(tree[a])) {
-            method = tree[a];
-            continue;
-        }
-
-        if (_.isObject(tree[a]))
-            tree = tree[a];
-    }
-
-    if (_.isFunction(method))
-        return {
-            method,
-            params
-        };
-
-    throw 'wrong parameters ' + args.join(':');
-}

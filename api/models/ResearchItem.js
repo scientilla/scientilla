@@ -230,11 +230,11 @@ module.exports = _.merge({}, BaseModel, {
     },
     async generateAuthorsStr(usersData = []) {
         const users = await User.find({username: usersData.map(ud => ud.email.toLocaleLowerCase())});
-        const userAliases = await Alias.getFirstAlias(users.map(u => u.id));
+        const usersMainAlias = await Alias.getUsersMainAlias(users.map(u => u.id));
 
         return usersData.map(ud => {
             const user = users.find(u => u.username === ud.email.toLocaleLowerCase());
-            return user ? userAliases.find(a => a.user === user.id).str : User.generateAliasesStr(ud.name, ud.surname)[0];
+            return user ? usersMainAlias.find(a => a.user === user.id).str : User.generateAliasesStr(ud.name, ud.surname)[0];
         }).join(', ');
     }
 });

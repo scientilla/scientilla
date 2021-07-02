@@ -1,8 +1,7 @@
 const Sails = require('sails');
-const _ = require('lodash');
 
 module.exports = function (grunt) {
-    grunt.registerTask('monitor', function(arg) {
+    grunt.registerTask('monitor', function() {
         const done = this.async();
         Sails.load({hooks: { grunt: false}}, async () => {
             try {
