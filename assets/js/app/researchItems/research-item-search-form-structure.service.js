@@ -161,7 +161,7 @@
                 values: [],
                 matchColumn: 'type',
                 type: 'option',
-                defaultValue: allProjectTypes.value,
+                defaultValue: 'project_competitive', //allProjectTypes.value,
                 defaultValues: []
             }
         };
@@ -417,7 +417,10 @@
                 [{value: allProjectTypes.value, label: allProjectTypes.label}],
                 await getResearchItemTypes('project', true)
             );
-            formStructures[constant].projectType.values = projectTypes;
+            // Show only competitive projects
+            // Todo: filter out project_agreements
+            //formStructures[constant].projectType.values = projectTypes;
+            formStructures[constant].projectType.values = projectTypes.filter(type => type.value === 'project_competitive');
             formStructures[constant].status.values = await getProjectStatuses();
             formStructures[constant].payment.values = getProjectPayments();
             formStructures[constant].category.values = getProjectCategories();
@@ -425,7 +428,9 @@
             formStructures[constant].action.values = getProjectActions();
             const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'project');
             formStructures[constant].year.defaultValues = defaultValues;
-            let yearValue = formStructures[constant].year.defaultValues.find(v => v.item_key === allProjectTypes.value);
+            //let yearValue = formStructures[constant].year.defaultValues.find(v => v.item_key === allProjectTypes.value);
+            let yearValue = formStructures[constant].year.defaultValues.find(v => v.item_key === 'project_competitive');
+            console.log(yearValue);
             if (_.isNil(yearValue)) {
                 yearValue = {
                     min: 2000,
