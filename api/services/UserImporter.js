@@ -168,7 +168,7 @@ async function importUsers(email = getDefaultEmail()) {
                 replaceEmptyObjectByEmptyString(contract.step.linea);
             }
 
-            let handledSteps = mergeStepsOfContract(contract);
+            let handledSteps = mergeStepsOfContract(contract, groups);
             const handledStepsOfLastFiveYears = getValidSteps(handledSteps);
 
             if (handledStepsOfLastFiveYears.length === 0) {
@@ -362,7 +362,7 @@ async function importUsers(email = getDefaultEmail()) {
                             active: step.active
                         });
                     } else {
-                        sails.log.debug('Add missing membership');
+                        await Utils.log('Add missing membership', logMethod);
                         await Membership.create({
                             user: user.id,
                             group: group.id,
@@ -758,7 +758,6 @@ async function updateUserProfileGroups() {
 
     do {
         researchEntityDataRecords = await ResearchEntityData.find().sort('id ASC').limit(chunk).skip(i * chunk);
-
         for (const researchEntityDataRecord of researchEntityDataRecords) {
 
             let defaultPrivacy = valuePublicPrivacy;
@@ -776,7 +775,7 @@ async function updateUserProfileGroups() {
                         const group = groups.find(group => group.code === line.code);
 
                         if (group) {
-                            if (line.name !== group.name) {
+                            if (!_.isEqual(line.name, group.name)) {
                                 line.name = group.name;
                             }
                         }
@@ -1069,7 +1068,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
  *
  * @returns {Object[]}
  */
- function mergeStepsOfContract(contract) {
+ function mergeStepsOfContract(contract, groups = []) {
 
     const handledSteps = [];
 
@@ -1083,7 +1082,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
         for (const step of steps) {
 
             // Handle the step
-            const handledStep = handleStep(step);
+            const handledStep = handleStep(step, groups);
 
             // Ignore the step if it doesn't have a from, jobTitle or line property
             if (
@@ -1176,7 +1175,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
 
     } else {
         // If only one step, handle it
-        const handledStep = handleStep(contract.step);
+        const handledStep = handleStep(contract.step, groups);
 
         if (handledStep) {
             handledSteps.push(handledStep);
@@ -1197,7 +1196,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
  *
  * @returns {Object|false}
  */
- function handleStep(step) {
+ function handleStep(step, groups = []) {
     if (
         _.has(step, 'linea') &&
         _.has(step, 'stato') &&
@@ -1231,53 +1230,48 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
         }
 
         const lines = step.linea;
-        if (_.isArray(lines)) {
-            let tmpLines = lines.map(line => {
-                const tmpLine = {};
-                if (_.has(line, 'codice')) {
-                    tmpLine.code = line.codice;
-                }
 
+        function getLine(line, groups) {
+            const tmpLine = {};
+            let group = false;
+            if (_.has(line, 'codice')) {
+                tmpLine.code = line.codice;
+            }
+
+            if (_.has(line, 'ufficio')) {
+                if (_.lowerCase(line.ufficio) === 'iit') {
+                    tmpLine.code = 'IIT1.01DS';
+                    tmpLine.institute = line.ufficio;
+                } else {
+                    tmpLine.office = line.ufficio;
+                }
+            }
+
+            if (_.has(tmpLine, 'code')) {
+                group = groups.find(g => g.code === tmpLine.code);
+            }
+
+            if (group) {
+                tmpLine.name = group.name;
+            } else {
                 if (_.has(line, 'nome')) {
                     tmpLine.name = line.nome;
                 }
+            }
 
-                if (_.has(line, 'ufficio')) {
-                    if (_.lowerCase(line.ufficio) === 'iit') {
-                        tmpLine.code = 'IIT1.01DS';
-                        tmpLine.institute = line.ufficio;
-                    } else {
-                        tmpLine.office = line.ufficio;
-                    }
-                }
+            if (!_.isEmpty(tmpLine)) {
+                return tmpLine;
+            }
+        }
 
-                if (!_.isEmpty(tmpLine)) {
-                    return tmpLine;
-                }
-            }).filter(line => line !== undefined);
+        if (_.isArray(lines)) {
+            let tmpLines = lines.map(line => getLine(line, groups)).filter(line => line !== undefined);
             tmpLines = _.orderBy(tmpLines, 'percentage', 'desc');
             tmpLines.forEach(line => delete line.percentage);
 
             handledStep.lines = tmpLines;
         } else {
-            const line = lines;
-            const newLine = {};
-            if (_.has(line, 'codice')) {
-                newLine.code = line.codice;
-            }
-
-            if (_.has(line, 'nome')) {
-                newLine.name = line.nome;
-            }
-
-            if (_.has(line, 'ufficio')) {
-                if (_.lowerCase(line.ufficio) === 'iit') {
-                    newLine.code = 'IIT1.01DS';
-                    newLine.institute = line.ufficio;
-                } else {
-                    newLine.office = line.ufficio;
-                }
-            }
+            const newLine = getLine(lines, groups);
 
             if (!_.isEmpty(newLine)) {
                 handledStep.lines.push(newLine);
