@@ -889,7 +889,7 @@ async function importPatents() {
         }
 
         for (const patent of item.patent_family.patents) {
-            if (_.isEmpty(patent.statuses))
+            if (_.isEmpty(patent.statuses) || patent.statuses.find(s => s.code.toLocaleUpperCase() === '[NULL]'))
                 continue;
 
             totalItems++;
