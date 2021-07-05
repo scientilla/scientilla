@@ -61,10 +61,13 @@
                 slug: 'projects'
             }, {
                 index: 5,
+                slug: 'patents'
+            }, {
+                index: 6,
                 slug: 'documents-overview',
                 tabName: 'overview-tab'
             }, {
-                index: 6,
+                index: 7,
                 slug: 'bibliometric-charts',
                 tabName: 'metrics-tab'
             }

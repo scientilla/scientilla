@@ -45,6 +45,11 @@
                     group-id="${params.id}"
                     active-tab="projects"></scientilla-group-details>`
             })
+            .when("/groups/:id/patents", {
+                template: params => `<scientilla-group-details
+                    group-id="${params.id}"
+                    active-tab="patents"></scientilla-group-details>`
+            })
             .when("/groups/:id/documents-overview", {
                 template: params => `<scientilla-group-details
                     group-id="${params.id}"

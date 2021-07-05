@@ -1,9 +1,9 @@
 <scientilla-filter
-    category="project"
+    category="patent"
     on-filter="vm.onFilter"
-    elements="vm.projects"
-    empty-list-message="No projects found"
-    filter-on-init="vm.loadProjects"
+    elements="vm.patents"
+    empty-list-message="No patents found"
+    filter-on-init="vm.loadPatents"
 >
 
     <scientilla-multicheck>
@@ -16,11 +16,11 @@
             </scientilla-multicheck-button>
         </buttons>
         <item-list>
-            <scientilla-checkable ng-repeat="p in vm.projects" item="a" class="scientilla-checkable">
-                <scientilla-project
-                    project="p"
+            <scientilla-checkable ng-repeat="p in vm.patents" item="a" class="scientilla-checkable">
+                <scientilla-patent
+                    patent="p"
                     section="vm.section"
-                    class="project-container"></scientilla-project>
+                    class="patent-container"></scientilla-patent>
             </scientilla-checkable>
         </item-list>
     </scientilla-multicheck>
