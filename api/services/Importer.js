@@ -91,8 +91,7 @@ async function importSources() {
         newConferences = readWorksheet(newConferencesWorksheet, newConferencesMappingsTable, mapConference);
 
         const oldConferencesWorksheet = workbook.Sheets[sheetNameList[2]];
-        const oldConferencesMappingsTable = newConferencesMappingsTable;
-        oldConferences = readWorksheet(oldConferencesWorksheet, oldConferencesMappingsTable, mapConference);
+        oldConferences = readWorksheet(oldConferencesWorksheet, newConferencesMappingsTable, mapConference);
     }
 
 
@@ -341,8 +340,6 @@ async function importSourceMetrics(filename) {
     const cols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
     const filePath = 'metrics_import/' + filename;
 
-    const errors = [];
-
     let workbook;
     let year;
 
@@ -368,10 +365,6 @@ async function importSourceMetrics(filename) {
         year = workSheet[yearCellCoord].v;
         if (!yearRegex.test(year)) {
             sails.log.info('The year on cell ' + yearCellCoord + ' is not valid!');
-        }
-
-        if (errors.length > 0) {
-            sails.log.info('Source metrics import stopped: ' + errors.join(', '));
         }
 
         const columnsMapping = {};
