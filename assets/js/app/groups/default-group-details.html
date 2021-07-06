@@ -69,7 +69,7 @@
             </uib-tab>
             <uib-tab
                 index="5"
-                ng-if="vm.isAdmin() && vm.isScientific()"
+                ng-if="vm.isScientific()"
                 heading="Projects"
             >
                 <scientilla-projects-list
@@ -81,7 +81,7 @@
             </uib-tab>
             <uib-tab
                 index="6"
-                ng-if="vm.isAdmin() && vm.isScientific()"
+                ng-if="vm.isScientific()"
                 heading="Patents"
             >
                 <scientilla-patents-list
