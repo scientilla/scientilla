@@ -99,5 +99,5 @@
 <br ng-if="vm.patent.patentData.abandonedExpiredAssignedDate || vm.patent.patentData.priorityPctExpirationDate">
 
 <ng-container ng-if="vm.patent.patentData.espacenetUrl">
-    <strong>Espacenet URL:</strong> {{ vm.patent.patentData.espacenetUrl }}<br>
+    <strong>Espacenet URL:</strong> <a href="{{ vm.patent.patentData.espacenetUrl }}" target="_blank">{{ vm.patent.patentData.espacenetUrl }}</a><br>
 </ng-container>
