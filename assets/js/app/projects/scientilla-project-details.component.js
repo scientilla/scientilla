@@ -19,9 +19,13 @@
         vm.getAlias = UserService.getAlias;
         vm.groups = [];
         vm.projectTypeCompetitive = projectTypeCompetitive;
+        vm.showBudgetDetails = false;
+        vm.user = AuthService.user;
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
+            vm.subResearchEntity = await context.getSubResearchEntity();
+
             vm.project.category = industrialProjectCategories[vm.project.category];
             vm.project.payment = industrialProjectPayments[vm.project.payment];
 
@@ -35,12 +39,19 @@
                     return m;
                 }
             });
+
+            // Set visibility of the budget details
+            if (
+                vm.subResearchEntity.getType() === 'user' && vm.subResearchEntity.isSuperUser() || // = if user is SUPERUSER or ADMINISTRATOR
+                vm.subResearchEntity.getType() === 'user' && vm.project.verifiedUsers.filter(u => u.id === vm.subResearchEntity.id).length > 0 || // if user has verified this project
+                vm.subResearchEntity.getType() === 'user' && vm.project.verifiedGroups.some(g => vm.subResearchEntity.administratedGroups.includes(g)) || // if user is admin of group that has verified this project
+                vm.subResearchEntity.getType() === 'group' && vm.project.verifiedGroups.find(g => g.id === vm.subResearchEntity.id) //if group has verified this project
+            ) {
+                vm.showBudgetDetails = true;
+            }
         };
 
         async function isVerifiedUserOrGroup() {
-            vm.subResearchEntity = await context.getSubResearchEntity();
-            vm.user = AuthService.user;
-
             if (vm.user.isAdmin()) {
                 return true;
             }
@@ -50,7 +61,6 @@
             } else {
                 return vm.project.verifiedUsers.find(u => u.id === vm.subResearchEntity.id);
             }
-            return false;
         }
         /* jshint ignore:end */
 

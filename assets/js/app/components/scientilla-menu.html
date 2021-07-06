@@ -114,7 +114,7 @@
                 >Drafts</a>
             </div>
         </li>
-        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && vm.isAdmin() && !vm.isProject()">
+        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && !vm.isProject()">
             <label>Projects</label>
             <div class="list-group">
                 <a
@@ -145,19 +145,22 @@
                 >Drafts</a>
             </div>
         </li>
-        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && vm.isAdmin()">
+        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific()">
             <label>Patents</label>
             <div class="list-group">
                 <a
                     ng-href="{{ vm.getUrl('patents/verified') }}"
                     ng-class="{active: vm.isActive('/patents/verified', true)}"
                     class="list-group-item list-group-item-action"
-                >Verified</a>
-                <a
+                >
+                    Verified
+                </a>
+                <!-- <a
                     ng-href="{{ vm.getUrl('patent-families/verified') }}"
                     ng-class="{active: vm.isActive('/patent-families/verified', true)}"
-                    class="list-group-item list-group-item-action"
-                >Families</a>
+                    class="list-group-item list-group-item-action">
+                    Families
+                </a> -->
             </div>
         </li>
         <li>
