@@ -52,10 +52,13 @@
                 slug: 'projects'
             }, {
                 index: 6,
+                slug: 'patents'
+            }, {
+                index: 7,
                 slug: 'documents-overview',
                 tabName: 'overview-tab'
             }, {
-                index: 7,
+                index: 8,
                 slug: 'bibliometric-charts',
                 tabName: 'metrics-tab'
             }
@@ -103,6 +106,7 @@
 
                 if (!tab) {
                     redirect = true;
+
                 }
             } else {
                 const tab = vm.defaultTabIdentifiers.find(t => t.slug === vm.activeTab);

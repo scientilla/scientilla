@@ -81,13 +81,25 @@
             </uib-tab>
             <uib-tab
                 index="6"
+                ng-if="vm.isAdmin() && vm.isScientific()"
+                heading="Patents"
+            >
+                <scientilla-patents-list
+                    ng-if="vm.researchEntity"
+                    research-entity="vm.researchEntity"
+                    section="vm.patentListSections.GROUP"
+                    active="vm.activeTabIndex === 6"
+                ></scientilla-patents-list>
+            </uib-tab>
+            <uib-tab
+                index="7"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.isScientific()"
                 heading="Documents Overview"
             >
                 <overview-tab research-entity="vm.group"></overview-tab>
             </uib-tab>
             <uib-tab
-                index="7"
+                index="8"
                 heading="Bibliometric Charts"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.isScientific()"
             >

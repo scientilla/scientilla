@@ -486,7 +486,6 @@
             formStructures[constant].year.defaultValues = defaultValues;
             //let yearValue = formStructures[constant].year.defaultValues.find(v => v.item_key === allProjectTypes.value);
             let yearValue = formStructures[constant].year.defaultValues.find(v => v.item_key === 'project_competitive');
-            console.log(yearValue);
             if (_.isNil(yearValue)) {
                 yearValue = {
                     min: 2000,
@@ -597,7 +596,6 @@
                     break;
                 case constant === 'verified-patent':
                     await setupPatentStructure(constant, researchEntity);
-                case constant === 'verified-patent':
                     structure = Object.assign(
                         {},
                         formStructures[constant],
@@ -614,6 +612,7 @@
                     );
                     break;
                 case constant === 'patent':
+                    await setupPatentStructure(constant, researchEntity);
                     structure = formStructures[constant];
                     break;
                 case constant === 'verified-patent-family':
