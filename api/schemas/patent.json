@@ -58,6 +58,9 @@
     "italian": {
       "type": "boolean"
     },
+    "translation": {
+      "type": "boolean"
+    },
     "statuses": {
       "type": "array",
       "items": {

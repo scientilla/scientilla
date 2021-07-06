@@ -807,6 +807,7 @@ async function importPatents() {
         attorney: 'attorney',
         priority: 'priority',
         italian: 'italian',
+        translation: obj => !!obj.statuses.find(s => s.code === '[T]'),
         statuses: obj => mapObectsArray(obj.statuses, {
             code: 'code',
             description: 'description',
@@ -918,9 +919,8 @@ async function importPatents() {
                 if (!pat) {
                     await ResearchItem.createExternal(config.origin, code, data, authorsData);
                     created++;
-                } else if (
-                    JSON.stringify(pat.patentFamilyData) !== JSON.stringify(data.patentFamilyData)
-                    || JSON.stringify(pat.patentData) !== JSON.stringify(data.patentData)
+                } else if (!_.isEqual(pat.patentFamilyData, data.patentFamilyData)
+                    || !_.isEqual(pat.patentData, data.patentData)
                 ) {
                     await ResearchItem.updateExternal(pat.id, data, authorsData);
                     updated++;
