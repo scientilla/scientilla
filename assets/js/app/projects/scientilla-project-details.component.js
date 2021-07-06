@@ -42,10 +42,10 @@
 
             // Set visibility of the budget details
             if (
-                vm.subResearchEntity.isSuperViewer() || // = SUPERUSER, ADMINISTRATOR, EVALUATOR
-                vm.project.verifiedUsers.filter(u => u.id === vm.subResearchEntity.id).length > 0 || // if user has verified this project
-                vm.project.verifiedGroups.some(g => vm.subResearchEntity.administratedGroups.includes(g)) || // if user is admin of group that has verified this project
-                vm.project.verifiedGroups.find(g => g.id === vm.subResearchEntity.id) //if group has verified this project
+                vm.subResearchEntity.getType() === 'user' && vm.subResearchEntity.isSuperUser() || // = if user is SUPERUSER or ADMINISTRATOR
+                vm.subResearchEntity.getType() === 'user' && vm.project.verifiedUsers.filter(u => u.id === vm.subResearchEntity.id).length > 0 || // if user has verified this project
+                vm.subResearchEntity.getType() === 'user' && vm.project.verifiedGroups.some(g => vm.subResearchEntity.administratedGroups.includes(g)) || // if user is admin of group that has verified this project
+                vm.subResearchEntity.getType() === 'group' && vm.project.verifiedGroups.find(g => g.id === vm.subResearchEntity.id) //if group has verified this project
             ) {
                 vm.showBudgetDetails = true;
             }
