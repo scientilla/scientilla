@@ -13,7 +13,8 @@
                 category: '@',
                 filterLabel: '@?',
                 elements: '<?',
-                filterOnInit: '<?'
+                filterOnInit: '<?',
+                researchEntity: '<?',
             }
         });
 
@@ -76,7 +77,9 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
-            vm.researchEntity = await context.getResearchEntity();
+            if (!vm.researchEntity) {
+                vm.researchEntity = await context.getResearchEntity();
+            }
             vm.itemsPerPage = pageSize;
             vm.status = vm.STATUS_INITIAL_LOADING;
 
