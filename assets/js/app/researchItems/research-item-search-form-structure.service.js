@@ -221,6 +221,14 @@
                 matchColumn: 'translation',
                 type: 'action',
                 valueType: 'boolean'
+            },
+            priority: {
+                inputType: 'checkbox',
+                label: 'Show only priority patents',
+                defaultValue: false,
+                matchColumn: 'priority',
+                type: 'action',
+                valueType: 'boolean'
             }
         };
 

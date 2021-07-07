@@ -67,6 +67,10 @@ module.exports = _.merge({}, BaseModel, {
             type: 'BOOLEAN',
             columnName: 'translation'
         },
+        priority: {
+            type: 'BOOLEAN',
+            columnName: 'priority'
+        },
         verified: {
             collection: 'patentverify',
             via: 'patent'

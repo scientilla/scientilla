@@ -53,6 +53,10 @@
                 delete query.where.translation;
             }
 
+            if (_.has(query, 'where.priority') && !query.where.priority) {
+                delete query.where.priority;
+            }
+
             vm.patents = await PatentService.get(vm.researchEntity, query, favorites);
         }
         /* jshint ignore:end */

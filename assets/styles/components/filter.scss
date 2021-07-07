@@ -117,6 +117,10 @@
                     }
                 }
             }
+
+            &.actions-6{
+                grid-template-columns: auto auto auto 1fr auto auto;
+            }
         }
 
         .filter-connector-listing{
@@ -187,6 +191,39 @@
 
                     &:nth-child(5) {
                         @include set-grid(3, 4, 1, 1);
+                    }
+                }
+            }
+
+            &.actions-6 {
+                grid-template-columns: auto 1fr auto auto;
+
+                & > li {
+                    &:nth-child(1) {
+                        @include set-grid(1, 1, 1, 4);
+                        justify-self: start;
+                    }
+
+                    &:nth-child(2) {
+                        @include set-grid(2, 1, 1, 4);
+                        justify-self: start;
+                    }
+
+                    &:nth-child(3) {
+                        @include set-grid(3, 1, 1, 4);
+                        justify-self: start;
+                    }
+
+                    &:nth-child(4) {
+                        @include set-grid(4, 1, 1, 2);
+                    }
+
+                    &:nth-child(5) {
+                        @include set-grid(4, 3, 1, 1);
+                    }
+
+                    &:nth-child(6) {
+                        @include set-grid(4, 4, 1, 1);
                     }
                 }
             }
