@@ -71,17 +71,20 @@
 
         };
 
-        function onFilter(q) {
+        /* jshint ignore:start */
+        async function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
             query = q;
 
-            return PatentService.get(vm.researchEntity, query, favorites)
-                .then(patents => {
-                    vm.patents = patents;
-                });
+            if (_.has(query, 'where.translation') && query.where.translation) {
+                delete query.where.translation;
+            }
+
+            vm.patents = await PatentService.get(vm.researchEntity, query, favorites);
         }
+        /* jshint ignore:end */
     }
 
 })();

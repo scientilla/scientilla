@@ -200,7 +200,7 @@
             year: {
                 inputType: 'range',
                 values: {},
-                label: 'Start year',
+                label: 'Year',
                 subLabel: '(range between)',
                 matchColumn: 'filingYear',
                 rules: [
@@ -213,6 +213,14 @@
                     }
                 ],
                 type: 'field',
+            },
+            translation: {
+                inputType: 'checkbox',
+                label: 'Show also translated patents',
+                defaultValue: false,
+                matchColumn: 'translation',
+                type: 'action',
+                valueType: 'boolean'
             }
         };
 

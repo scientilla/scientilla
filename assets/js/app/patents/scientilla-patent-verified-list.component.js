@@ -49,6 +49,10 @@
 
             query = q;
 
+            if (_.has(query, 'where.translation') && query.where.translation) {
+                delete query.where.translation;
+            }
+
             vm.patents = await PatentService.get(vm.researchEntity, query, favorites);
         }
         /* jshint ignore:end */
