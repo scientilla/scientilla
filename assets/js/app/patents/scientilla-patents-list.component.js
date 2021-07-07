@@ -71,7 +71,8 @@
 
         };
 
-        function onFilter(q) {
+        /* jshint ignore:start */
+        async function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
@@ -85,9 +86,9 @@
                 delete query.where.priority;
             }
 
-            return PatentService.get(vm.researchEntity, query, favorites)
-                .then(patents => vm.patents = patents);
+            vm.patents = await PatentService.get(vm.researchEntity, query, favorites);
         }
+        /* jshint ignore:end */
     }
 
 })();

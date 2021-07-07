@@ -89,7 +89,7 @@
             if (_.isUndefined(vm.elements))
                 vm.elements = [];
 
-            onDataCountChangeDeregisterer = $scope.$watch('vm.elements', onDataCountChange, true);
+            onDataCountChangeDeregisterer = $scope.$watch('vm.elements', onDataCountChange);
 
             if (
                 (_.has(vm, 'filterOnInit') && vm.filterOnInit) ||

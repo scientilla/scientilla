@@ -42,15 +42,17 @@
 
         };
 
-        function onFilter(q) {
+        /* jshint ignore:start */
+        async function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
             query = q;
 
-            return ProjectService.get(vm.researchEntity, query, favorites)
-                .then(projects => vm.projects = projects);
+            vm.projects = await ProjectService.get(vm.researchEntity, query, favorites);
         }
+        /* jshint ignore:end */
+
     }
 
 })();
