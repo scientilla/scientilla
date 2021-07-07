@@ -42,8 +42,7 @@
 
         };
 
-        /* jshint ignore:start */
-        async function onFilter(q) {
+        function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
@@ -57,11 +56,9 @@
                 delete query.where.priority;
             }
 
-            vm.patents = await PatentService.get(vm.researchEntity, query, favorites);
-
-            return vm.patents;
+            return PatentService.get(vm.researchEntity, query, favorites)
+                .then(patents => vm.patents = patents);
         }
-        /* jshint ignore:end */
     }
 
 })();
