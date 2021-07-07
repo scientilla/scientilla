@@ -58,6 +58,8 @@
             }
 
             vm.patents = await PatentService.get(vm.researchEntity, query, favorites);
+
+            return vm.patents;
         }
         /* jshint ignore:end */
     }
