@@ -154,7 +154,7 @@ function filterProfile(profile, onlyPublic = false) {
 function setupProfile(researchEntityData) {
     // We store the defaults of the research entity data schema.
     const defaultProfile = JsonValidator.getDefaultProfile();
-    const privacyDefaultPublic = 'public';
+    const privacyDefault = _.has(researchEntityData, 'profile.hidden') && researchEntityData.profile.hidden ? 'hidden' : 'public';
 
     if (!_.has(researchEntityData, 'importedData') || _.isNil(researchEntityData.importedData)) {
         return;
@@ -233,11 +233,11 @@ function setupProfile(researchEntityData) {
 
         if (_.has(researchEntityData, 'profile.gender.value')) {
             researchEntityData.profile.gender.value = researchEntityData.importedData.genere;
-            researchEntityData.profile.gender.privacy = privacyDefaultPublic;
+            researchEntityData.profile.gender.privacy = privacyDefault;
         } else {
             researchEntityData.profile.gender = {
                 value: researchEntityData.importedData.genere,
-                privacy: privacyDefaultPublic
+                privacy: privacyDefault
             }
         }
 
