@@ -12,6 +12,17 @@ const patentFamilyListSections = {
     USER: 'user-verified-patent-families'
 };
 
+const allPatentTypes = {
+    value: 'all',
+    label: 'All'
+};
+
+const patentTypePriorities = 'priorities';
+const patentTypeProsecutions = 'prosecutions';
+
 angular.module('app')
     .constant('patentListSections', patentListSections)
-    .constant('patentFamilyListSections', patentFamilyListSections);
+    .constant('patentFamilyListSections', patentFamilyListSections)
+    .constant('allPatentTypes', allPatentTypes)
+    .constant('patentTypePriorities', patentTypePriorities)
+    .constant('patentTypeProsecutions', patentTypeProsecutions);

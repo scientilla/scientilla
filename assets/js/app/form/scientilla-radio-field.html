@@ -1,4 +1,4 @@
-<ng-container ng-if="vm.structure.values > 1">
+<ng-container ng-if="vm.structure.values.length > 1">
     <strong>{{ vm.structure.label }}</strong>
     <label class="form-radio" ng-repeat="value in vm.structure.values">
         <input

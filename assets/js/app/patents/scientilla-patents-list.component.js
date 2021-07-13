@@ -78,13 +78,49 @@
 
             query = q;
 
-            if (_.has(query, 'where.translation') && query.where.translation) {
-                delete query.where.translation;
+            if (!_.has(query, 'where.type')) {
+                return;
             }
 
-            if (_.has(query, 'where.priority') && !query.where.priority) {
-                delete query.where.priority;
+            switch (true) {
+                case query.where.type === 'prosecutions':
+                    query.where.translation = false;
+                    query.where.priority = false;
+                    break;
+                case query.where.type === 'priorities':
+                    query.where.translation = false;
+                    query.where.priority = true;
+                    break;
+                case query.where.type === 'all' && _.has(query, 'where.translation') && query.where.translation:
+                    delete query.where.translation;
+                    delete query.where.priority;
+                    query.where.or = [
+                        {
+                            issueYear: query.where.issueYear,
+                            translation: true
+                        }, {
+                            filingYear: query.where.issueYear,
+                            translation: false
+                        }
+                    ];
+                    delete query.where.issueYear;
+                    break;
+                case query.where.type === 'all' && (
+                    !_.has(query, 'where.translation') ||
+                    (
+                        _.has(query, 'where.translation') &&
+                        !query.where.translation
+                    )
+                ):
+                    delete query.where.or;
+                    query.where.translation = false;
+                    delete query.where.priority;
+                    break;
+                default:
+                    break;
             }
+
+            delete query.where.type;
 
             vm.patents = await PatentService.get(vm.researchEntity, query, favorites);
         }
