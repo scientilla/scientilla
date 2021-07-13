@@ -138,7 +138,8 @@
                         struct &&
                         (
                             (struct.inputType === 'select' && vm.values[key] === '?') ||
-                            (struct.inputType === 'radio' && vm.values[key] === 'all')
+                            (struct.inputType === 'radio' && vm.values[key] === 'all') ||
+                            struct.inputType === 'range'
                         )
                     ){
                         return;

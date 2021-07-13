@@ -114,6 +114,7 @@
 
             const oldSearchValues = _.cloneDeep(vm.values);
             vm.values = {};
+            vm.ignoreValueChange = [];
 
             _.forEach(vm.structure, function (struct, key) {
                 // Check if old search values has this key
@@ -127,13 +128,39 @@
             _.forEach(vm.structure, function (struct, key) {
 
                 onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, (newOption, oldOption) => {
+
+                    const index = vm.ignoreValueChange.indexOf(key);
+                    if (index >= 0) {
+                        vm.ignoreValueChange.splice(index, 1);
+                        return;
+                    }
+
                     const changedStruct = vm.structure[key];
 
-                    if (changedStruct && changedStruct.type === 'option' && newOption !== vm.option) {
+                    if (
+                        changedStruct && (
+                            (changedStruct.type === 'option' && newOption !== vm.option) ||
+                            (_.has(changedStruct, 'listenForChange') && changedStruct.listenForChange)
+                        )
+                    ) {
                         let refresh = false;
 
-                        vm.option = newOption;
+                        if (changedStruct.valueType === 'boolean') {
+                            if (_.has(changedStruct, 'mapField') && _.has(changedStruct, 'mapData')) {
+                                if (newOption) {
+                                    vm.option = changedStruct.mapData.true;
+                                } else {
+                                    vm.option = changedStruct.mapData.false;
+                                }
+                            } else {
+                                return;
+                            }
+                        } else {
+                            vm.option = newOption;
+                        }
+
                         vm.fields = filterStructure('field');
+                        vm.actions = filterStructure('action');
                         setFilterValue(newOption, key);
 
                         // Remove the values that are not a field of this option and no action
@@ -212,6 +239,15 @@
                         }
                     } else {
                         structs[name] = struct;
+                    }
+
+                    struct.disabled = false;
+                    if (_.has(struct, 'disabledFor')) {
+                        if (struct.disabledFor.indexOf(vm.option) >= 0) {
+                            struct.disabled = true;
+                            vm.values[name] = false;
+                            vm.ignoreValueChange.push(name);
+                        }
                     }
                 }
             });

@@ -197,6 +197,16 @@
                 matchRule: 'contains',
                 type: 'field'
             },
+            type: {
+                inputType: 'select',
+                label: 'Application Type',
+                values: [],
+                matchColumn: 'type',
+                type: 'field',
+                listenForChange: true,
+                defaultValue: 'all',
+                defaultValues: []
+            },
             year: {
                 inputType: 'range',
                 values: {},
@@ -213,22 +223,76 @@
                     }
                 ],
                 type: 'field',
+                visibleFor: [allPatentTypes.value]
+            },
+            yearPriorities: {
+                inputType: 'range',
+                values: {},
+                label: 'Year',
+                subLabel: '(range between)',
+                matchColumn: 'filingYear',
+                rules: [
+                    {
+                        value: 'min',
+                        rule: '>='
+                    }, {
+                        value: 'max',
+                        rule: '<='
+                    }
+                ],
+                type: 'field',
+                visibleFor: [patentTypePriorities]
+            },
+            yearProsecutions: {
+                inputType: 'range',
+                values: {},
+                label: 'Year',
+                subLabel: '(range between)',
+                matchColumn: 'filingYear',
+                rules: [
+                    {
+                        value: 'min',
+                        rule: '>='
+                    }, {
+                        value: 'max',
+                        rule: '<='
+                    }
+                ],
+                type: 'field',
+                visibleFor: [patentTypeProsecutions]
+            },
+            yearTranslations: {
+                inputType: 'range',
+                values: {},
+                label: 'Year',
+                subLabel: '(range between)',
+                matchColumn: 'issueYear',
+                rules: [
+                    {
+                        value: 'min',
+                        rule: '>='
+                    }, {
+                        value: 'max',
+                        rule: '<='
+                    }
+                ],
+                type: 'field',
+                visibleFor: ['all_translations']
             },
             translation: {
                 inputType: 'checkbox',
-                label: 'Show also translated patents',
+                label: 'Show also Translation applications',
                 defaultValue: false,
                 matchColumn: 'translation',
                 type: 'action',
-                valueType: 'boolean'
-            },
-            priority: {
-                inputType: 'checkbox',
-                label: 'Show only priority patents',
-                defaultValue: false,
-                matchColumn: 'priority',
-                type: 'action',
-                valueType: 'boolean'
+                valueType: 'boolean',
+                listenForChange: true,
+                mapField: 'type',
+                mapData:{
+                    true: 'all_translations',
+                    false: 'all'
+                },
+                disabledFor: [patentTypePriorities, patentTypeProsecutions]
             }
         };
 
@@ -532,20 +596,69 @@
         }
 
         async function setupPatentStructure(constant, researchEntity) {
-            const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'patent');
+            const minMaxYears = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'patent');
 
-            formStructures[constant].year.defaultValues = defaultValues;
-            let yearValue = _.first(formStructures[constant].year.defaultValues);
-            if (_.isNil(yearValue)) {
-                yearValue = {
+            // Default values of range all patents
+            formStructures[constant].year.defaultValues = minMaxYears.find(m => m.item_key === 'all');
+
+            if (_.isNil(formStructures[constant].year.defaultValues)) {
+                formStructures[constant].year.defaultValues = {
                     min: 2000,
                     max: new Date().getFullYear()
                 };
             }
             formStructures[constant].year.values = {
-                min: parseInt(yearValue.min),
-                max: parseInt(yearValue.max)
+                min: parseInt(formStructures[constant].year.defaultValues.min),
+                max: parseInt(formStructures[constant].year.defaultValues.max)
             };
+
+            // Default values of range translations patents
+            formStructures[constant].yearTranslations.defaultValues = minMaxYears.find(m => m.item_key === 'all_translations');
+
+            if (_.isNil(formStructures[constant].yearTranslations.defaultValues)) {
+                formStructures[constant].yearTranslations.defaultValues = {
+                    min: 2000,
+                    max: new Date().getFullYear()
+                };
+            }
+            formStructures[constant].yearTranslations.values = {
+                min: parseInt(formStructures[constant].yearTranslations.defaultValues.min),
+                max: parseInt(formStructures[constant].yearTranslations.defaultValues.max)
+            };
+
+            // Default values of range priorities patents
+            formStructures[constant].yearPriorities.defaultValues = minMaxYears.find(m => m.item_key === 'priorities');
+
+            if (_.isNil(formStructures[constant].yearPriorities.defaultValues)) {
+                formStructures[constant].yearPriorities.defaultValues = {
+                    min: 2000,
+                    max: new Date().getFullYear()
+                };
+            }
+            formStructures[constant].yearPriorities.values = {
+                min: parseInt(formStructures[constant].yearPriorities.defaultValues.min),
+                max: parseInt(formStructures[constant].yearPriorities.defaultValues.max)
+            };
+
+            // Default values of range prosecutions patents
+            formStructures[constant].yearProsecutions.defaultValues = minMaxYears.find(m => m.item_key === 'prosecutions');
+
+            if (_.isNil(formStructures[constant].yearProsecutions.defaultValues)) {
+                formStructures[constant].yearProsecutions.defaultValues = {
+                    min: 2000,
+                    max: new Date().getFullYear()
+                };
+            }
+            formStructures[constant].yearProsecutions.values = {
+                min: parseInt(formStructures[constant].yearProsecutions.defaultValues.min),
+                max: parseInt(formStructures[constant].yearProsecutions.defaultValues.max)
+            };
+
+            formStructures[constant].type.values = [
+                {value: 'all', label: 'All'},
+                {value: 'priorities', label: 'Priorities'},
+                {value: 'prosecutions', label: 'Prosecutions'}
+            ];
         }
 
         async function getStructure(constant, researchEntity = false) {
@@ -618,7 +731,7 @@
                         {
                             favorites: {
                                 inputType: 'checkbox',
-                                label: 'Show only favorite patents',
+                                label: 'Show only favorite applications',
                                 defaultValue: false,
                                 matchColumn: 'favorites',
                                 type: 'action',
