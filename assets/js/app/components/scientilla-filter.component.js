@@ -15,6 +15,7 @@
                 elements: '<?',
                 filterOnInit: '<?',
                 researchEntity: '<?',
+                onChange: '&?',
             }
         });
 

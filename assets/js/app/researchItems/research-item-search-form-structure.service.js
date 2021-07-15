@@ -222,62 +222,7 @@
                         rule: '<='
                     }
                 ],
-                type: 'field',
-                visibleFor: [allPatentTypes.value]
-            },
-            yearPriorities: {
-                inputType: 'range',
-                values: {},
-                label: 'Year',
-                subLabel: '(range between)',
-                matchColumn: 'filingYear',
-                rules: [
-                    {
-                        value: 'min',
-                        rule: '>='
-                    }, {
-                        value: 'max',
-                        rule: '<='
-                    }
-                ],
-                type: 'field',
-                visibleFor: [patentTypePriorities]
-            },
-            yearProsecutions: {
-                inputType: 'range',
-                values: {},
-                label: 'Year',
-                subLabel: '(range between)',
-                matchColumn: 'filingYear',
-                rules: [
-                    {
-                        value: 'min',
-                        rule: '>='
-                    }, {
-                        value: 'max',
-                        rule: '<='
-                    }
-                ],
-                type: 'field',
-                visibleFor: [patentTypeProsecutions]
-            },
-            yearTranslations: {
-                inputType: 'range',
-                values: {},
-                label: 'Year',
-                subLabel: '(range between)',
-                matchColumn: 'issueYear',
-                rules: [
-                    {
-                        value: 'min',
-                        rule: '>='
-                    }, {
-                        value: 'max',
-                        rule: '<='
-                    }
-                ],
-                type: 'field',
-                visibleFor: ['all_translations']
+                type: 'field'
             },
             translation: {
                 inputType: 'checkbox',
@@ -286,13 +231,6 @@
                 matchColumn: 'translation',
                 type: 'action',
                 valueType: 'boolean',
-                listenForChange: true,
-                mapField: 'type',
-                mapData:{
-                    true: 'all_translations',
-                    false: 'all'
-                },
-                disabledFor: [patentTypePriorities, patentTypeProsecutions]
             }
         };
 
@@ -599,59 +537,26 @@
             const minMaxYears = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'patent');
 
             // Default values of range all patents
-            formStructures[constant].year.defaultValues = minMaxYears.find(m => m.item_key === 'all');
+            formStructures[constant].year.minMaxYears = [];
+            formStructures[constant].year.minMaxYears.push({ key: allPatentTypes.value, values: minMaxYears.find(m => m.item_key === 'all')});
+            formStructures[constant].year.minMaxYears.push({ key: 'all_translations', values: minMaxYears.find(m => m.item_key === 'all_translations')});
+            formStructures[constant].year.minMaxYears.push({ key: patentTypePriorities, values: minMaxYears.find(m => m.item_key === 'priorities')});
+            formStructures[constant].year.minMaxYears.push({ key: patentTypeProsecutions, values: minMaxYears.find(m => m.item_key === 'prosecutions')});
 
-            if (_.isNil(formStructures[constant].year.defaultValues)) {
+            const defaultValues = formStructures[constant].year.minMaxYears.find(v => v.key === allPatentTypes.value);
+
+            if (_.isNil(defaultValues) || _.isNil(defaultValues.values)) {
                 formStructures[constant].year.defaultValues = {
                     min: 2000,
                     max: new Date().getFullYear()
                 };
+            } else {
+                formStructures[constant].year.defaultValues = defaultValues.values;
             }
+
             formStructures[constant].year.values = {
                 min: parseInt(formStructures[constant].year.defaultValues.min),
                 max: parseInt(formStructures[constant].year.defaultValues.max)
-            };
-
-            // Default values of range translations patents
-            formStructures[constant].yearTranslations.defaultValues = minMaxYears.find(m => m.item_key === 'all_translations');
-
-            if (_.isNil(formStructures[constant].yearTranslations.defaultValues)) {
-                formStructures[constant].yearTranslations.defaultValues = {
-                    min: 2000,
-                    max: new Date().getFullYear()
-                };
-            }
-            formStructures[constant].yearTranslations.values = {
-                min: parseInt(formStructures[constant].yearTranslations.defaultValues.min),
-                max: parseInt(formStructures[constant].yearTranslations.defaultValues.max)
-            };
-
-            // Default values of range priorities patents
-            formStructures[constant].yearPriorities.defaultValues = minMaxYears.find(m => m.item_key === 'priorities');
-
-            if (_.isNil(formStructures[constant].yearPriorities.defaultValues)) {
-                formStructures[constant].yearPriorities.defaultValues = {
-                    min: 2000,
-                    max: new Date().getFullYear()
-                };
-            }
-            formStructures[constant].yearPriorities.values = {
-                min: parseInt(formStructures[constant].yearPriorities.defaultValues.min),
-                max: parseInt(formStructures[constant].yearPriorities.defaultValues.max)
-            };
-
-            // Default values of range prosecutions patents
-            formStructures[constant].yearProsecutions.defaultValues = minMaxYears.find(m => m.item_key === 'prosecutions');
-
-            if (_.isNil(formStructures[constant].yearProsecutions.defaultValues)) {
-                formStructures[constant].yearProsecutions.defaultValues = {
-                    min: 2000,
-                    max: new Date().getFullYear()
-                };
-            }
-            formStructures[constant].yearProsecutions.values = {
-                min: parseInt(formStructures[constant].yearProsecutions.defaultValues.min),
-                max: parseInt(formStructures[constant].yearProsecutions.defaultValues.max)
             };
 
             formStructures[constant].type.values = [
