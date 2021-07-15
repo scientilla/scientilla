@@ -18,10 +18,11 @@
         });
 
     scientillaRangeField.$inject = [
-        '$scope'
+        '$scope',
+        '$timeout'
     ];
 
-    function scientillaRangeField($scope) {
+    function scientillaRangeField($scope, $timeout) {
         const vm = this;
         vm.cssClass = 'form-control';
 
@@ -45,6 +46,10 @@
             };
 
             onFieldChange();
+
+            $timeout(function() {
+                $scope.$broadcast('rzSliderForceRender');
+            });
         };
 
         vm.$onDestroy = function () {

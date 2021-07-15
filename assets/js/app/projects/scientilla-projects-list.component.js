@@ -33,6 +33,7 @@
         vm.projects = [];
         vm.onFilter = onFilter;
         vm.exportDownload = projects => ProjectService.exportDownload(projects, 'csv');
+        vm.onChange = onChange;
 
         let query = {};
         let activeWatcher;
@@ -81,6 +82,10 @@
             vm.projects = await ProjectService.get(vm.researchEntity, query, favorites);
         }
         /* jshint ignore:end */
+
+        function onChange(structure, values, key) {
+            ProjectService.onChange(structure, values, key);
+        }
     }
 
 })();

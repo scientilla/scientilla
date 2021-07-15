@@ -34,8 +34,17 @@
         }
 
         function setStructureYear(structure, minMaxYear) {
-            structure.year.floor = parseInt(minMaxYear.min);
-            structure.year.ceil = parseInt(minMaxYear.max);
+            if (minMaxYear && minMaxYear.min) {
+                structure.year.floor = parseInt(minMaxYear.min);
+            } else {
+                structure.year.floor = parseInt(new Date().getFullYear());
+            }
+
+            if (minMaxYear && minMaxYear.max) {
+                structure.year.ceil = parseInt(minMaxYear.max);
+            } else {
+                structure.year.ceil = parseInt(new Date().getFullYear());
+            }
         }
 
         function setMinMaxYears(structure, values) {

@@ -27,6 +27,7 @@
         vm.projects = [];
         vm.onFilter = onFilter;
         vm.exportDownload = projects => ProjectService.exportDownload(projects, 'csv');
+        vm.onChange = onChange;
 
         let query = {
             where: {}
@@ -53,6 +54,9 @@
         }
         /* jshint ignore:end */
 
+        function onChange(structure, values, key) {
+            ProjectService.onChange(structure, values, key);
+        }
     }
 
 })();

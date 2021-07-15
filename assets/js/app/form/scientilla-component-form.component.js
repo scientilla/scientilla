@@ -142,7 +142,6 @@
 
                         vm.fields = filterStructure('field');
                         vm.actions = filterStructure('action');
-                        setFilterValue(newOption, key);
 
                         // Remove the values that are not a field of this option and no action
                         _.forEach(vm.values, function(value, valueKey) {
@@ -210,43 +209,15 @@
             Object.keys(vm.structure).forEach(function(name) {
                 let struct = vm.structure[name];
 
-                if (struct && struct.type === type) {
-                    if (_.has(struct, 'visibleFor')) {
-                        if (struct.visibleFor.indexOf(vm.option) >= 0) {
-                            structs[name] = struct;
-                        }
-                    } else {
-                        structs[name] = struct;
-                    }
+                if (struct && struct.type === type && (
+                    !_.has(struct, 'visible') ||
+                    _.has(struct, 'visible') && struct.visible
+                )) {
+                    structs[name] = struct;
                 }
             });
 
             return structs;
-        }
-
-        function setFilterValue(value, name) {
-            const structs = [];
-            Object.keys(vm.structure).forEach(function(structName) {
-                let struct = vm.structure[structName];
-
-                if (struct.dependingOn === name) {
-                    structs.push(struct);
-                }
-            });
-
-            _.forEach(structs, function (struct) {
-                let yearValue = struct.defaultValues.find(v => v.item_key === value);
-                if (_.isNil(yearValue)) {
-                    yearValue = {
-                        min: 2000,
-                        max: new Date().getFullYear()
-                    };
-                }
-                struct.values = {
-                    min: parseInt(yearValue.min),
-                    max: parseInt(yearValue.max)
-                };
-            });
         }
 
         function getObjectSize(object) {
