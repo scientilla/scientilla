@@ -14,7 +14,7 @@
                 onReset: '&',
                 errors: '<',
                 onValidate: '&',
-                onChange: '&',
+                onChange: '&?',
                 values: '='
             },
             transclude: true,
@@ -129,39 +129,19 @@
 
                 onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, (newOption, oldOption) => {
 
-                    const index = vm.ignoreValueChange.indexOf(key);
-                    if (index >= 0) {
-                        vm.ignoreValueChange.splice(index, 1);
-                        return;
+                    if (_.isFunction(vm.onChange())) {
+                        vm.onChange()()(vm.structure, vm.values, key);
                     }
 
                     const changedStruct = vm.structure[key];
 
-                    if (
-                        changedStruct && (
-                            (changedStruct.type === 'option' && newOption !== vm.option) ||
-                            (_.has(changedStruct, 'listenForChange') && changedStruct.listenForChange)
-                        )
-                    ) {
+                    if (changedStruct && changedStruct.type === 'option' && newOption !== vm.option) {
                         let refresh = false;
 
-                        if (changedStruct.valueType === 'boolean') {
-                            if (_.has(changedStruct, 'mapField') && _.has(changedStruct, 'mapData')) {
-                                if (newOption) {
-                                    vm.option = changedStruct.mapData.true;
-                                } else {
-                                    vm.option = changedStruct.mapData.false;
-                                }
-                            } else {
-                                return;
-                            }
-                        } else {
-                            vm.option = newOption;
-                        }
+                        vm.option = newOption;
 
                         vm.fields = filterStructure('field');
                         vm.actions = filterStructure('action');
-                        setFilterValue(newOption, key);
 
                         // Remove the values that are not a field of this option and no action
                         _.forEach(vm.values, function(value, valueKey) {
@@ -204,8 +184,6 @@
                         vm.structure.onChange(vm.values);
                     }));
                 }
-
-
             });
         }
 
@@ -231,53 +209,15 @@
             Object.keys(vm.structure).forEach(function(name) {
                 let struct = vm.structure[name];
 
-                if (struct && struct.type === type) {
-
-                    if (_.has(struct, 'visibleFor')) {
-                        if (struct.visibleFor.indexOf(vm.option) >= 0) {
-                            structs[name] = struct;
-                        }
-                    } else {
-                        structs[name] = struct;
-                    }
-
-                    struct.disabled = false;
-                    if (_.has(struct, 'disabledFor')) {
-                        if (struct.disabledFor.indexOf(vm.option) >= 0) {
-                            struct.disabled = true;
-                            vm.values[name] = false;
-                            vm.ignoreValueChange.push(name);
-                        }
-                    }
+                if (struct && struct.type === type && (
+                    !_.has(struct, 'visible') ||
+                    _.has(struct, 'visible') && struct.visible
+                )) {
+                    structs[name] = struct;
                 }
             });
 
             return structs;
-        }
-
-        function setFilterValue(value, name) {
-            const structs = [];
-            Object.keys(vm.structure).forEach(function(structName) {
-                let struct = vm.structure[structName];
-
-                if (struct.dependingOn === name) {
-                    structs.push(struct);
-                }
-            });
-
-            _.forEach(structs, function (struct) {
-                let yearValue = struct.defaultValues.find(v => v.item_key === value);
-                if (_.isNil(yearValue)) {
-                    yearValue = {
-                        min: 2000,
-                        max: new Date().getFullYear()
-                    };
-                }
-                struct.values = {
-                    min: parseInt(yearValue.min),
-                    max: parseInt(yearValue.max)
-                };
-            });
         }
 
         function getObjectSize(object) {
