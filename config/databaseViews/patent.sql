@@ -14,6 +14,10 @@ SELECT ri.id,
        (rip.patent_data ->> 'priority')::boolean                   AS priority,
        DATE_PART('year', (rip.patent_data ->> 'filingDate')::date) AS filing_year,
        DATE_PART('year', (rip.patent_data ->> 'issueDate')::date)  AS issue_year,
+       CASE WHEN (rip.patent_data ->> 'translation')::boolean
+            THEN DATE_PART('year', (rip.patent_data ->> 'issueDate')::date)
+            ELSE DATE_PART('year', (rip.patent_data ->> 'filingDate')::date)
+       END AS year,
        rip.patent_family_data,
        rip.patent_data,
        rip."createdAt",

@@ -202,7 +202,7 @@
                 values: {},
                 label: 'Year',
                 subLabel: '(range between)',
-                matchColumn: 'filingYear',
+                matchColumn: 'year',
                 rules: [
                     {
                         value: 'min',
