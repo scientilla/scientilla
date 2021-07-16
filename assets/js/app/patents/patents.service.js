@@ -105,29 +105,16 @@
 
             switch (true) {
                 case query.where.type === 'prosecutions':
-                    delete query.where.or;
                     query.where.translation = false;
                     query.where.priority = false;
                     break;
                 case query.where.type === 'priorities':
-                    delete query.where.or;
                     query.where.translation = false;
                     query.where.priority = true;
                     break;
                 case query.where.type === 'all' && _.has(query, 'where.translation') && query.where.translation:
-                    query.where.or = [
-                        {
-                            issueYear: _.cloneDeep(query.where.filingYear),
-                            translation: true
-                        }, {
-                            filingYear: _.cloneDeep(query.where.filingYear),
-                            translation: false
-                        }
-                    ];
                     delete query.where.translation;
                     delete query.where.priority;
-                    delete query.where.issueYear;
-                    delete query.where.filingYear;
                     break;
                 case query.where.type === 'all' && (
                     !_.has(query, 'where.translation') ||
@@ -137,7 +124,6 @@
                     )
                 ):
                     query.where.translation = false;
-                    delete query.where.or;
                     delete query.where.priority;
                     break;
                 default:

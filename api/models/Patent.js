@@ -63,6 +63,10 @@ module.exports = _.merge({}, BaseModel, {
             type: 'STRING',
             columnName: 'issue_year'
         },
+        year: {
+            type: 'STRING',
+            columnName: 'year'
+        },
         translation: {
             type: 'BOOLEAN',
             columnName: 'translation'
