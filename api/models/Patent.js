@@ -7,7 +7,7 @@ const BaseModel = require("../lib/BaseModel.js");
 
 module.exports = _.merge({}, BaseModel, {
     DEFAULT_SORTING: {
-        filing_year: 'desc',
+        year: 'desc',
         title: 'asc',
         id: 'desc'
     },
