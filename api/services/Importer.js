@@ -689,7 +689,7 @@ async function importProjects() {
     }
 
     async function projectAutoVerify() {
-        let errors = {other: 0};
+        const errors = {other: 0};
         let verifiedCount = 0, unverifiedCount = 0;
         const externalProjects = await Project.find({kind: ResearchItemKinds.EXTERNAL});
 
@@ -730,24 +730,7 @@ async function importProjects() {
             const toVerify = _.difference(researchEntitiesId, verified);
             const toUnverify = _.difference(verified, researchEntitiesId);
 
-            for (const researchEntityId of _.uniq(toUnverify)) {
-                try {
-                    await Verify.unverify(researchEntityId, verifiedProject.id);
-                } catch (e) {
-                    setError(errors, e.message);
-                }
-            }
-
-            for (const researchEntityId of _.uniq(toVerify)) {
-                try {
-                    await Verify.verify(eProject.id, researchEntityId);
-                } catch (e) {
-                    setError(errors, e.message);
-                }
-            }
-
             const res = await autoVerify(eProject, verifiedProject, toVerify, toUnverify);
-
             res.errors.forEach(e => setError(errors, e.message));
             unverifiedCount += res.unverifiedCount;
             verifiedCount += res.verifiedCount;
@@ -939,7 +922,7 @@ async function importPatents() {
     sails.log.info(`errors: ${importErrors}`);
 
 
-    let verifyErrors = [];
+    const verificationErrors = {other: 0};
     let verifiedCount = 0, unverifiedCount = 0;
     const externalPatents = await Patent.find({kind: ResearchItemKinds.EXTERNAL});
 
@@ -980,8 +963,7 @@ async function importPatents() {
         const toUnverify = _.difference(verified, researchEntitiesId);
 
         const autoverifyRes = await autoVerify(ePatent, verifiedPatent, toVerify, toUnverify);
-
-        verifyErrors = verifyErrors.concat(autoverifyRes.errors);
+        autoverifyRes.errors.forEach(e => setError(verificationErrors, e.message));
         unverifiedCount += autoverifyRes.unverifiedCount;
         verifiedCount += autoverifyRes.verifiedCount;
     }
@@ -989,17 +971,15 @@ async function importPatents() {
     sails.log.info('Autoverify completed');
     sails.log.info(`added ${verifiedCount} new verifications`);
     sails.log.info(`removed ${unverifiedCount} old verifications`);
-    if (verifyErrors.length) {
-        sails.log.debug(`but there were ${verifyErrors.length} errors:`);
-        sails.log.debug(JSON.stringify(verifyErrors[0]));
-    }
+    sails.log.debug(`errors:`);
+    sails.log.debug(verificationErrors);
 
 }
 
-async function autoVerify(external, verified, toVerify, toUnverify) {
+async function autoVerify(external, verified, ResearchEntityToVerify, researchEntityToUnverify) {
     const errors = [];
     let verifiedCount = 0, unverifiedCount = 0;
-    for (const researchEntityId of _.uniq(toVerify))
+    for (const researchEntityId of _.uniq(ResearchEntityToVerify))
         try {
             await Verify.verify(external.id, researchEntityId);
             verifiedCount++;
@@ -1007,7 +987,7 @@ async function autoVerify(external, verified, toVerify, toUnverify) {
             errors.push(e);
         }
 
-    for (const researchEntityId of _.uniq(toUnverify))
+    for (const researchEntityId of _.uniq(researchEntityToUnverify))
         try {
             await Verify.unverify(researchEntityId, verified.id);
             unverifiedCount++;
