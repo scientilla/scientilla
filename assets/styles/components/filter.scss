@@ -117,6 +117,10 @@
                     }
                 }
             }
+
+            &.actions-6{
+                grid-template-columns: auto auto auto 1fr auto auto;
+            }
         }
 
         .filter-connector-listing{
@@ -190,6 +194,39 @@
                     }
                 }
             }
+
+            &.actions-6 {
+                grid-template-columns: auto 1fr auto auto;
+
+                & > li {
+                    &:nth-child(1) {
+                        @include set-grid(1, 1, 1, 4);
+                        justify-self: start;
+                    }
+
+                    &:nth-child(2) {
+                        @include set-grid(2, 1, 1, 4);
+                        justify-self: start;
+                    }
+
+                    &:nth-child(3) {
+                        @include set-grid(3, 1, 1, 4);
+                        justify-self: start;
+                    }
+
+                    &:nth-child(4) {
+                        @include set-grid(4, 1, 1, 2);
+                    }
+
+                    &:nth-child(5) {
+                        @include set-grid(4, 3, 1, 1);
+                    }
+
+                    &:nth-child(6) {
+                        @include set-grid(4, 4, 1, 1);
+                    }
+                }
+            }
         }
     }
 }
@@ -243,16 +280,16 @@
 
             &.project,
             &.verified-project{
-                &.fields-4{
-                    grid-template-columns: 3fr 3fr 3fr 160px;
-                }
-
-                &.fields-6{
-                    grid-template-columns: 3fr 3fr 3fr 160px 2fr 2fr;
+                &.fields-5{
+                    grid-template-columns: 200px 5fr 3fr 2fr 160px;
                 }
 
                 &.fields-7{
-                    grid-template-columns: 3fr 3fr 3fr 160px 2fr 2fr 2fr;
+                    grid-template-columns: 200px 5fr 3fr 2fr 160px 200px 200px;
+                }
+
+                &.fields-8{
+                    grid-template-columns: 200px 5fr 3fr 2fr 160px 200px 200px 300px;
                 }
             }
 
@@ -263,9 +300,10 @@
                 }
             }
 
-            &.verified-patent{
-                &.fields-5{
-                    grid-template-columns: 2fr 2fr 1fr 1fr 160px;
+            &.verified-patent,
+            &.patent{
+                &.fields-6{
+                    grid-template-columns: 3fr 1fr 1fr 1fr 1fr 160px;
                 }
             }
 

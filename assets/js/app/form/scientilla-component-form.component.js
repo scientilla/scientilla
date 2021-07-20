@@ -14,7 +14,7 @@
                 onReset: '&',
                 errors: '<',
                 onValidate: '&',
-                onChange: '&',
+                onChange: '&?',
                 values: '='
             },
             transclude: true,
@@ -114,6 +114,7 @@
 
             const oldSearchValues = _.cloneDeep(vm.values);
             vm.values = {};
+            vm.ignoreValueChange = [];
 
             _.forEach(vm.structure, function (struct, key) {
                 // Check if old search values has this key
@@ -127,14 +128,20 @@
             _.forEach(vm.structure, function (struct, key) {
 
                 onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, (newOption, oldOption) => {
+
+                    if (_.isFunction(vm.onChange())) {
+                        vm.onChange()()(vm.structure, vm.values, key);
+                    }
+
                     const changedStruct = vm.structure[key];
 
                     if (changedStruct && changedStruct.type === 'option' && newOption !== vm.option) {
                         let refresh = false;
 
                         vm.option = newOption;
+
                         vm.fields = filterStructure('field');
-                        setFilterValue(newOption, key);
+                        vm.actions = filterStructure('action');
 
                         // Remove the values that are not a field of this option and no action
                         _.forEach(vm.values, function(value, valueKey) {
@@ -177,8 +184,6 @@
                         vm.structure.onChange(vm.values);
                     }));
                 }
-
-
             });
         }
 
@@ -204,44 +209,15 @@
             Object.keys(vm.structure).forEach(function(name) {
                 let struct = vm.structure[name];
 
-                if (struct && struct.type === type) {
-
-                    if (_.has(struct, 'visibleFor')) {
-                        if (struct.visibleFor.indexOf(vm.option) >= 0) {
-                            structs[name] = struct;
-                        }
-                    } else {
-                        structs[name] = struct;
-                    }
+                if (struct && struct.type === type && (
+                    !_.has(struct, 'visible') ||
+                    _.has(struct, 'visible') && struct.visible
+                )) {
+                    structs[name] = struct;
                 }
             });
 
             return structs;
-        }
-
-        function setFilterValue(value, name) {
-            const structs = [];
-            Object.keys(vm.structure).forEach(function(structName) {
-                let struct = vm.structure[structName];
-
-                if (struct.dependingOn === name) {
-                    structs.push(struct);
-                }
-            });
-
-            _.forEach(structs, function (struct) {
-                let yearValue = struct.defaultValues.find(v => v.item_key === value);
-                if (_.isNil(yearValue)) {
-                    yearValue = {
-                        min: 2000,
-                        max: new Date().getFullYear()
-                    };
-                }
-                struct.values = {
-                    min: parseInt(yearValue.min),
-                    max: parseInt(yearValue.max)
-                };
-            });
         }
 
         function getObjectSize(object) {

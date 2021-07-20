@@ -4,7 +4,9 @@
         category="verified-project"
         on-filter="vm.onFilter"
         elements="vm.projects"
-        empty-list-message="No projects found">
+        empty-list-message="No projects found"
+        on-change="vm.onChange"
+    >
         <scientilla-multicheck>
             <buttons>
                 <scientilla-multicheck-button

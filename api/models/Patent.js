@@ -7,7 +7,7 @@ const BaseModel = require("../lib/BaseModel.js");
 
 module.exports = _.merge({}, BaseModel, {
     DEFAULT_SORTING: {
-        filing_year: 'desc',
+        year: 'desc',
         title: 'asc',
         id: 'desc'
     },
@@ -63,9 +63,17 @@ module.exports = _.merge({}, BaseModel, {
             type: 'STRING',
             columnName: 'issue_year'
         },
+        year: {
+            type: 'STRING',
+            columnName: 'year'
+        },
         translation: {
             type: 'BOOLEAN',
             columnName: 'translation'
+        },
+        priority: {
+            type: 'BOOLEAN',
+            columnName: 'priority'
         },
         verified: {
             collection: 'patentverify',

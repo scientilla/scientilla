@@ -33,6 +33,7 @@
         vm.patents = [];
         vm.onFilter = onFilter;
         vm.exportDownload = patents => PatentService.exportDownload(patents, 'csv');
+        vm.onChange = onChange;
 
         let query = {};
         let activeWatcher;
@@ -71,16 +72,21 @@
 
         };
 
-        function onFilter(q) {
+        /* jshint ignore:start */
+        async function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
             query = q;
 
-            return PatentService.get(vm.researchEntity, query, favorites)
-                .then(patents => {
-                    vm.patents = patents;
-                });
+            query = PatentService.handleQuery(query);
+
+            vm.patents = await PatentService.get(vm.researchEntity, query, favorites);
+        }
+        /* jshint ignore:end */
+
+        function onChange(structure, values, key) {
+            PatentService.onChange(structure, values, key);
         }
     }
 

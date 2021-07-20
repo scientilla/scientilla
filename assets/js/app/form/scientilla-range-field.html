@@ -1,19 +1,19 @@
 <label>
-    <span ng-bind-html="vm.structure.label"></span>
-    <span ng-if="vm.structure.required">*</span>
+    <span ng-bind-html="vm.field.label"></span>
+    <span ng-if="vm.field.required">*</span>
 </label>
 <span
     class="sub-label"
-    ng-if="vm.structure.subLabel"
-    ng-bind-html="vm.structure.subLabel"></span>
+    ng-if="vm.field.subLabel"
+    ng-bind-html="vm.field.subLabel"></span>
 <rzslider
     rz-slider-model="vm.min"
     rz-slider-high="vm.max"
     rz-slider-options="vm.options"
-    placeholder="{{vm.structure.placeholder}}"
+    placeholder="{{vm.field.placeholder}}"
     ng-class="{'is-invalid' : vm.errors}"
-    ng-disabled="vm.structure.disabled || vm.options.disabled"
-    ng-blur="vm.structure.required && vm.validate(vm.name)"></rzslider>
+    ng-disabled="vm.field.disabled || vm.options.disabled"
+    ng-blur="vm.field.required && vm.validate(vm.name)"></rzslider>
 <scientilla-error-messages
     class="error-messages"
     errors="vm.errors"></scientilla-error-messages>

@@ -56,7 +56,8 @@
             exportDownload,
             isValid,
             editAgreement: (researchEntity, draft) => ModalService.openAgreementForm(researchEntity, _.cloneDeep(draft)),
-            getGroups
+            getGroups,
+            onChange
         };
 
         /* jshint ignore:start */
@@ -125,5 +126,85 @@
             return Prototyper.toAgreementModel(agreements[0]);
         }
         /* jshint ignore:end */
+
+        function setStructureYear(structure, minMaxYear) {
+            if (minMaxYear && minMaxYear.min) {
+                structure.year.floor = parseInt(minMaxYear.min);
+            } else {
+                structure.year.floor = parseInt(new Date().getFullYear());
+            }
+
+            if (minMaxYear && minMaxYear.max) {
+                structure.year.ceil = parseInt(minMaxYear.max);
+            } else {
+                structure.year.ceil = parseInt(new Date().getFullYear());
+            }
+        }
+
+        function setMinMaxYears(structure, values) {
+
+            switch (values.projectType) {
+                case 'all':
+                    setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === 'all').values);
+                    break;
+                case 'project_industrial':
+                    setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === 'project_industrial').values);
+                    break;
+                case 'project_competitive':
+                    setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === 'project_competitive').values);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        function onChange(structure, values, key) {
+            switch (key) {
+                case 'projectType':
+                    structure.title.visible = false;
+                    structure.acronym.visible = false;
+                    structure.pi.visible = false;
+                    structure.year.visible = false;
+                    structure.status.visible = false;
+                    structure.funding.visible = false;
+                    structure.action.visible = false;
+                    structure.category.visible = false;
+                    structure.payment.visible = false;
+
+                    switch (values[key]) {
+                        case 'all':
+                            structure.title.visible = true;
+                            structure.acronym.visible = true;
+                            structure.pi.visible = true;
+                            structure.year.visible = true;
+                            setMinMaxYears(structure, values);
+                            break;
+                        case 'project_industrial':
+                            structure.title.visible = true;
+                            structure.acronym.visible = true;
+                            structure.pi.visible = true;
+                            structure.year.visible = true;
+                            structure.category.visible = true;
+                            structure.payment.visible = true;
+                            setMinMaxYears(structure, values);
+                            break;
+                        case 'project_competitive':
+                            structure.title.visible = true;
+                            structure.acronym.visible = true;
+                            structure.pi.visible = true;
+                            structure.year.visible = true;
+                            structure.status.visible = true;
+                            structure.funding.visible = true;
+                            structure.action.visible = true;
+                            setMinMaxYears(structure, values);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 })();
