@@ -1029,7 +1029,7 @@ function mapObectsArray(arr, schema) {
 
 function setError(errors, message) {
     if (message)
-        errors[message] = errors[message] + 1 || 0;
+        errors[message] = errors[message] + 1 || 1;
     else
         errors.other++;
 }
