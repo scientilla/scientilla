@@ -690,7 +690,7 @@ async function importProjects() {
 
     async function projectAutoVerify() {
         let errors = {other: 0};
-        let newVerify = 0, unverified = 0;
+        let verifiedCount = 0, unverifiedCount = 0;
         const externalProjects = await Project.find({kind: ResearchItemKinds.EXTERNAL});
 
         const institute = await Group.findOne({type: 'Institute'});
@@ -733,7 +733,6 @@ async function importProjects() {
             for (const researchEntityId of _.uniq(toUnverify)) {
                 try {
                     await Verify.unverify(researchEntityId, verifiedProject.id);
-                    unverified++;
                 } catch (e) {
                     setError(errors, e.message);
                 }
@@ -742,7 +741,6 @@ async function importProjects() {
             for (const researchEntityId of _.uniq(toVerify)) {
                 try {
                     await Verify.verify(eProject.id, researchEntityId);
-                    newVerify++;
                 } catch (e) {
                     setError(errors, e.message);
                 }
@@ -751,14 +749,14 @@ async function importProjects() {
             const res = await autoVerify(eProject, verifiedProject, toVerify, toUnverify);
 
             res.errors.forEach(e => setError(errors, e.message));
-            unverified += res.unverified;
-            newVerify += newVerify;
+            unverifiedCount += res.unverifiedCount;
+            verifiedCount += res.verifiedCount;
 
         }
 
         sails.log.info('Autoverify completed');
-        sails.log.info(`added ${newVerify} new verifications`);
-        sails.log.info(`removed ${unverified} old verifications`);
+        sails.log.info(`added ${verifiedCount} new verifications`);
+        sails.log.info(`removed ${unverifiedCount} old verifications`);
         sails.log.debug(`errors:`);
         sails.log.debug(errors);
     }
@@ -942,7 +940,7 @@ async function importPatents() {
 
 
     let verifyErrors = [];
-    let newVerify = 0, unverified = 0;
+    let verifiedCount = 0, unverifiedCount = 0;
     const externalPatents = await Patent.find({kind: ResearchItemKinds.EXTERNAL});
 
     const institute = await Group.findOne({type: 'Institute'});
@@ -984,13 +982,13 @@ async function importPatents() {
         const autoverifyRes = await autoVerify(ePatent, verifiedPatent, toVerify, toUnverify);
 
         verifyErrors = verifyErrors.concat(autoverifyRes.errors);
-        unverified += autoverifyRes.unverified;
-        newVerify += autoverifyRes.newVerify;
+        unverifiedCount += autoverifyRes.unverifiedCount;
+        verifiedCount += autoverifyRes.verifiedCount;
     }
 
     sails.log.info('Autoverify completed');
-    sails.log.info(`added ${newVerify} new verifications`);
-    sails.log.info(`removed ${unverified} old verifications`);
+    sails.log.info(`added ${verifiedCount} new verifications`);
+    sails.log.info(`removed ${unverifiedCount} old verifications`);
     if (verifyErrors.length) {
         sails.log.debug(`but there were ${verifyErrors.length} errors:`);
         sails.log.debug(JSON.stringify(verifyErrors[0]));
@@ -1000,11 +998,11 @@ async function importPatents() {
 
 async function autoVerify(external, verified, toVerify, toUnverify) {
     const errors = [];
-    let newVerify = 0, unverified = 0;
+    let verifiedCount = 0, unverifiedCount = 0;
     for (const researchEntityId of _.uniq(toVerify))
         try {
             await Verify.verify(external.id, researchEntityId);
-            newVerify++;
+            verifiedCount++;
         } catch (e) {
             errors.push(e);
         }
@@ -1012,15 +1010,15 @@ async function autoVerify(external, verified, toVerify, toUnverify) {
     for (const researchEntityId of _.uniq(toUnverify))
         try {
             await Verify.unverify(researchEntityId, verified.id);
-            unverified++;
+            unverifiedCount++;
         } catch (e) {
             errors.push(e);
         }
 
     return {
         errors,
-        newVerify,
-        unverified
+        verifiedCount,
+        unverifiedCount
     }
 }
 
