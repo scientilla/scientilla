@@ -45,18 +45,9 @@
                 <ul class="alias-edit-list-item">
                     <li>
                         <div class="form-control disabled">
+                            <i class="fas fa-bookmark fa-left" ng-if="alias.main"></i>
                             {{ alias.str }}
                         </div>
-                    </li>
-                    <li>
-                        <a
-                            href="#"
-                            ng-click="vm.toggleMainAlias(alias, $event)"
-                            class="btn btn-outline-secondary"
-                            title="Mark as Main Alias"
-                        >
-                            <i class="fa-bookmark" ng-class="alias.main ? 'fas' : 'far'"></i>
-                        </a>
                     </li>
                     <li>
                         <button
@@ -66,7 +57,7 @@
                             class="btn btn-outline-secondary"
                             ng-title="alias.main ? 'You cannot remove your main alias!' : 'Remove alias'"
                         >
-                            <i class="fas fa-times"></i>
+                            <i class="fas fa-trash"></i>
                         </button>
                     </li>
                 </ul>
@@ -76,14 +67,10 @@
 
     <ul class="alias-legend">
         <li>
-            <p>You must always have one alias set as Main Alias. The current Main Alias cannot be deleted.<br />
-            Therefore, before deleting the current Main Alias, you should select another alias as Main Alias.</p>
+            <p>The Main Alias is been generated automatically and cannot be deleted.</p>
         </li>
         <li>
-            <i class="fas fa-bookmark"></i>: Mark as Main Alias.
-        </li>
-        <li>
-            <i class="fas fa-times"></i>: Remove alias.
+            <i class="fas fa-bookmark"></i>: Main Alias.
         </li>
     </ul>
 </div>

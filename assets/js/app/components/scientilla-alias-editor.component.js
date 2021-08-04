@@ -30,6 +30,8 @@
             if (!_.isArray(vm.aliases))
                 vm.aliases = [];
 
+            vm.aliases = _.orderBy(vm.aliases, ['main'], ['desc']);
+
             $scope.$watch('vm.newAlias', function(newValue, oldValue) {
                 vm.newAliasIsCorrect = true;
                 vm.newAliasIsDuplicate = false;
