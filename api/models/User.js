@@ -324,56 +324,63 @@ module.exports = _.merge({}, SubResearchEntity, {
         if (_.isEmpty(name) || _.isEmpty(surname))
             return [];
 
-        function capitalizeAll(str, wordSeparators) {
-            function capitalize(str) {
-                return str.charAt(0).toLocaleUpperCase() + str.slice(1);
+        const nameInitials = name.replace('-', ' -').split(' ').map(n => {
+            let initial = '';
+            for (let i = 0; i < n.length; i++) {
+                if (n[i].match(/[a-z]/i)) {
+                    initial += n[i];
+                    return initial;
+                } else {
+                    initial += n[i];
+                }
             }
-
-            let retStr = str.toLocaleLowerCase();
-            for (const c of wordSeparators)
-                retStr = retStr.split(c).map(capitalize).join(c);
-            return retStr
-        }
-
-        const separators = [' ', '-', '.'];
-        const nameInitials = name.split(' ').map(n => n[0]).join('.') + '.';
+        }).join('.') + '.';
 
         const ret = [
-            capitalizeAll(surname + ' ' + nameInitials, separators),
-            capitalizeAll(surname.replace(' ', '-') + ' ' + nameInitials, separators),
+            surname + ' ' + nameInitials,
+            surname.replace(new RegExp(' ', 'g'), '-') + ' ' + nameInitials,
+            surname.replace(new RegExp(' ', 'g'), '.') + ' ' + nameInitials,
         ]
 
         return _.uniq(ret);
     },
     createAliases: async function (user) {
-        let generatedAliasesStr = User.generateAliasesStr(user.name, user.surname)
+        let generatedAliasesStr = [];
 
         if (_.has(user, 'displayName') && _.has(user, 'displaySurname')) {
             generatedAliasesStr = generatedAliasesStr.concat(User.generateAliasesStr(user.displayName, user.displaySurname));
         }
 
+        generatedAliasesStr = generatedAliasesStr.concat(User.generateAliasesStr(user.name, user.surname));
+
         const aliases = _.uniq(generatedAliasesStr).map(str => ({
             user: user.id,
-            str: str
+            str: str,
+            main: false
         }));
 
-        const newAliases = [];
-        let firstAlias = true;
-        for (const alias of aliases) {
-            const foundAlias = await Alias.findOne(alias);
-            if (!foundAlias) {
-                if (firstAlias) {
-                    alias.main = true;
-                } else {
-                    alias.main = false;
-                }
-                newAliases.push(alias);
-                firstAlias = false;
+        if (aliases.length > 0) {
+            aliases[0].main = true;
+        }
+
+        const userAliases = await Alias.find({user: user.id});
+        const customUserAliases = userAliases.filter(userAlias => !aliases.map(a => a.str).includes(userAlias.str));
+        for (const alias of customUserAliases) {
+            if (alias.main) {
+                await Alias.update({id: alias.id}, {main: false});
             }
         }
 
-        if (!_.isEmpty(newAliases)) {
-            await Alias.create(newAliases);
+        for (const alias of aliases) {
+            let foundAlias = userAliases.find(a =>  a.str === alias.str);
+
+            if (!foundAlias) {
+                await Alias.create(alias);
+            } else {
+                if (foundAlias.main !== alias.main) {
+                    await Alias.update({id: foundAlias.id}, alias);
+                }
+            }
         }
     },
     getAuthorshipsData: async function (document, researchEntityId, verificationData = {}) {
