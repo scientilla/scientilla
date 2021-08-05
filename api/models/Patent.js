@@ -175,7 +175,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     async getVerifiedExternal(external) {
         return await Patent.findOne({
-            application: external.application,
+            code: external.code,
             kind: ResearchItemKinds.VERIFIED
         });
     },
