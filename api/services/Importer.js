@@ -631,6 +631,19 @@ async function importProjects() {
             try {
                 const projectData = mapObject(project, schemas[type]);
 
+                const users = await User.find({username: projectData.members.map(m => m.email)});
+                users.forEach(u => {
+                    const member = projectData.members.find(m => m.email === u.username);
+                    member.name = u.displayName;
+                    member.surname = u.displaySurname;
+                });
+                const sortedMembers = projectData.members.sort((a, b) => a.surname.localeCompare(b.surname))
+                projectData.members = [
+                    sortedMembers.find(m => m.role === 'pi'),
+                    ...sortedMembers.filter(m => m.role === 'co_pi'),
+                    ...sortedMembers.filter(m => m.role === 'member')
+                ];
+
                 let startYear = null;
                 let endYear = null;
 
