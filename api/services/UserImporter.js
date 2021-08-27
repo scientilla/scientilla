@@ -1614,6 +1614,7 @@ function getProfileGroups(allMembershipGroups, activeGroups, contract, defaultPr
             group.type = 'Institute';
             group.name = 'Istituto Italiano di Tecnologia';
             group.code = 'IIT';
+            group.privacy = defaultPrivacy;
         }
 
         groups.push(group);
