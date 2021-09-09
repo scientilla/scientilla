@@ -177,6 +177,7 @@
                     class="list-group-item list-group-item-action"
                 >Groups</a>
                 <a
+                    ng-if="vm.isAdmin()"
                     ng-href="#/agreement-groups"
                     ng-class="{active: vm.isActive('/agreement-groups')}"
                     class="list-group-item list-group-item-action"
