@@ -23,7 +23,11 @@ const publicFields = [
 
 
 module.exports = _.merge({}, BaseModel, {
-    DEFAULT_SORTING: {},
+    DEFAULT_SORTING: {
+        start_year: 'desc',
+        acronym: 'asc',
+        id: 'desc'
+    },
     migrate: 'safe',
     tableName: 'project_industrial',
     autoUpdatedAt: false,
