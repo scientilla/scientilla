@@ -145,7 +145,7 @@
                 >Drafts</a>
             </div>
         </li>
-        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific()">
+        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && vm.subResearchEntity.isAdmin()">
             <label>Patents</label>
             <div class="list-group">
                 <a
