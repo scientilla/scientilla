@@ -5,5 +5,6 @@ module.exports = {
     INSTITUTE: 'Institute',
     CENTER: 'Center',
     RESEARCH_LINE: 'Research Line',
-    FACILITY: 'Facility'
+    FACILITY: 'Facility',
+    PROJECT: 'Project'
 };

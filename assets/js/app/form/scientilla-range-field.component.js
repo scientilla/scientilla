@@ -8,7 +8,7 @@
             controllerAs: 'vm',
             bindings: {
                 model: '=',
-                structure: '<',
+                field: '<',
                 id: '<',
                 name: '<',
                 errors: '<',
@@ -18,37 +18,43 @@
         });
 
     scientillaRangeField.$inject = [
-        '$scope'
+        '$scope',
+        '$timeout'
     ];
 
-    function scientillaRangeField($scope) {
+    function scientillaRangeField($scope, $timeout) {
         const vm = this;
         vm.cssClass = 'form-control';
-
-        vm.$onInit = function () {};
 
         vm.validate = validate;
         vm.valueChanged = valueChanged;
 
-        vm.options = {
-            floor: vm.structure.values.min,
-            ceil: vm.structure.values.max,
-            onChange: () => {
-                vm.model = {min: vm.min, max: vm.max};
-            }
-        };
-
-        vm.min = vm.structure.values.min;
-        vm.max = vm.structure.values.max;
-
-        let onValueChangeDeregisterer;
+        let onFieldChangeWatcher;
+        let onModelChangeWatcher;
 
         vm.$onInit = function () {
-            onValueChangeDeregisterer = $scope.$watch('vm.structure.values', onModelChange);
+            onFieldChangeWatcher = $scope.$watch('vm.field', onFieldChange, true);
+            onModelChangeWatcher = $scope.$watch('vm.model', onModelChange, true);
+
+            vm.options = {
+                floor: vm.field.floor,
+                ceil: vm.field.ceil,
+                onChange: () => {
+                    vm.field.hasChanged = true;
+                    vm.model = {min: vm.min, max: vm.max};
+                }
+            };
+
+            onFieldChange();
+
+            $timeout(function() {
+                $scope.$broadcast('rzSliderForceRender');
+            });
         };
 
         vm.$onDestroy = function () {
-            onValueChangeDeregisterer();
+            onFieldChangeWatcher();
+            onModelChangeWatcher();
         };
 
         function validate(name = false) {
@@ -63,12 +69,39 @@
             }
         }
 
-        function onModelChange() {
-            vm.min = vm.structure.values.min;
-            vm.max = vm.structure.values.max;
+        function onFieldChange() {
+            if (!_.has(vm.field, 'hasChanged') || !vm.field.hasChanged) {
+                vm.min = vm.field.floor;
+                vm.max = vm.field.ceil;
+            }
 
-            vm.options.floor = vm.min;
-            vm.options.ceil = vm.max;
+            if (vm.field.floor === vm.field.ceil) {
+                vm.min = vm.max = vm.field.floor;
+                vm.options.floor = vm.field.floor - 1;
+                vm.options.ceil = vm.field.ceil + 1;
+                vm.options.disabled = true;
+            } else {
+                vm.options.floor = vm.field.floor;
+                vm.options.ceil = vm.field.ceil;
+                vm.options.disabled = false;
+            }
+
+            if (vm.field.values.min < vm.options.floor) {
+                vm.min = vm.field.values.min = vm.options.floor;
+            }
+
+            if (vm.field.values.max > vm.options.ceil) {
+                vm.max = vm.field.values.max = vm.options.ceil;
+            }
+        }
+
+        function onModelChange() {
+            if (_.isNil(vm.model)) {
+                vm.min = vm.field.floor;
+                vm.max = vm.field.ceil;
+                vm.model = {min: vm.min, max: vm.max};
+                delete vm.field.hasChanged;
+            }
         }
     }
 

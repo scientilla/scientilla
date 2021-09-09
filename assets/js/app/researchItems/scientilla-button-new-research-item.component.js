@@ -24,10 +24,14 @@
 
         let researchEntity;
 
-
         /* jshint ignore:start */
         vm.$onInit = async function () {
             vm.types = await ResearchItemTypesService.getTypes(vm.category);
+
+            if (_.isEmpty(vm.types)) {
+                vm.types.push(vm.category);
+            }
+
             researchEntity = await context.getResearchEntity();
         };
 
@@ -36,8 +40,12 @@
             const researchEntity = await context.getResearchEntity(),
                 draft = ResearchEntitiesService.getNewItemDraft(researchEntity, type);
 
-            // Open the form and pass an empty research item and the current research entity
-            ModalService.openScientillaResearchItemForm(researchEntity, draft, vm.category);
+            if (vm.category === 'agreement') {
+                ModalService.openAgreementForm(researchEntity, draft);
+            } else {
+                // Open the form and pass an empty research item and the current research entity
+                ModalService.openScientillaResearchItemForm(researchEntity, draft, vm.category);
+            }
         }
 
         /* jshint ignore:end */

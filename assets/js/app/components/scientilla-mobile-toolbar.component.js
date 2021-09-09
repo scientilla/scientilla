@@ -19,14 +19,16 @@
         'path'
     ];
 
-    function scientillaToolbar(EventsService,
-                               AuthService,
-                               Settings,
-                               context,
-                               GroupsService,
-                               UsersService,
-                               ModalService,
-                               path) {
+    function scientillaToolbar(
+        EventsService,
+        AuthService,
+        Settings,
+        context,
+        GroupsService,
+        UsersService,
+        ModalService,
+        path
+    ) {
         const vm = this;
         vm.wizardOpened = false;
         vm.isRegisterEnabled = false;
@@ -57,6 +59,12 @@
                 EventsService.CONTEXT_CHANGE
             ], refresh);
 
+            EventsService.subscribeAll(vm, [
+                EventsService.PROJECT_GROUP_CREATED,
+                EventsService.PROJECT_GROUP_DELETED,
+                EventsService.GROUP_UPDATED
+            ], reloadUser);
+
             vm.profile = await UsersService.getProfile(AuthService.user.researchEntity);
 
             refresh();
@@ -66,6 +74,14 @@
         vm.$onDestroy = function () {
             EventsService.unsubscribeAll(vm);
         };
+
+        /* jshint ignore:start */
+        async function reloadUser() {
+            await AuthService.refreshUserAccount();
+            vm.isLogged = AuthService.isLogged;
+            vm.user = AuthService.user;
+        }
+        /* jshint ignore:end */
 
         function refresh() {
             vm.isLogged = AuthService.isLogged;
@@ -81,7 +97,7 @@
             return GroupsService.getGroup(group.id)
                 .then(group => context.setSubResearchEntity(group))
                 .then(() => {
-                    path.goTo('/groups/' + group.id + '/info');
+                    path.goTo(group.slug + '/info');
                 });
         }
 
@@ -99,8 +115,7 @@
             if (vm.subResearchEntity.getType() === 'user') {
                 openForm = ModalService.openScientillaUserForm(vm.user, true);
                 researchEntityService = UsersService;
-            }
-            else {
+            } else {
                 openForm = ModalService.openScientillaGroupForm;
                 researchEntityService = GroupsService;
             }

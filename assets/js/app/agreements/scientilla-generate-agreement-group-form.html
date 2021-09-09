@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h3>Generate agreement group</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <p>Please select the administrators of the group.</p>
+
+    <scientilla-multicomplete
+        items="vm.administrators"
+        query="vm.getUsersQuery"
+        filter="vm.administrators"
+        title="Administrators">
+    </scientilla-multicomplete>
+
+    <button class="btn btn-primary" ng-click="vm.generateGroup()">Generate</button>
+</div>

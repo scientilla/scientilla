@@ -9,17 +9,21 @@
         'ResearchItemService',
         'researchItemKinds',
         'researchItemLabels',
-        'ResearchItemTypesService'
+        'ResearchItemTypesService',
+        'allProjectTypes'
     ];
 
-    function controller(Restangular,
-                        EventsService,
-                        ModalService,
-                        Notification,
-                        ResearchItemService,
-                        researchItemKinds,
-                        researchItemLabels,
-                        ResearchItemTypesService) {
+    function controller(
+        Restangular,
+        EventsService,
+        ModalService,
+        Notification,
+        ResearchItemService,
+        researchItemKinds,
+        researchItemLabels,
+        ResearchItemTypesService,
+        allProjectTypes
+    ) {
         const service = Restangular.service('researchentities');
 
         service.getResearchEntity = getResearchEntity;
@@ -45,13 +49,15 @@
         service.getAccomplishments = getAccomplishments;
         service.setVerifyPrivacy = setVerifyPrivacy;
         service.setVerifyFavorite = setVerifyFavorite;
+        service.getProject = getProject;
         service.getProjects = getProjects;
+        service.getProjectDrafts = getProjectDrafts;
         service.getMinMaxYears = getMinMaxYears;
         service.getPatents = getPatents;
         service.getPatentFamilies = getPatentFamilies;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
-        const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
+        const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
         const patentPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
 
         /* jshint ignore:start */
@@ -255,16 +261,21 @@
             }
         }
 
-        async function getAccomplishmentDrafts(researchEntity, query, populates = accomplishmentPopulates) {
+        async function getResearchItemDrafts(researchEntity, collectionName, query, populates) {
             const populate = {populate: populates};
             const q = _.defaultsDeep({}, query, populate);
-            const draftList = await researchEntity.getList('accomplishmentDrafts', q);
+            const draftList = await researchEntity.getList(collectionName, q);
 
             draftList.forEach(d => {
                 if (d.kind === 'd' && (new Date(d.createdAt)).toDateString() === (new Date()).toDateString())
                     ResearchItemService.addLabel(d, researchItemLabels.NEW);
             });
             return draftList;
+
+        }
+
+        async function getAccomplishmentDrafts(researchEntity, query, populates = accomplishmentPopulates) {
+            return getResearchItemDrafts(researchEntity, 'accomplishmentDrafts', query, populates);
         }
 
         async function getSuggestedAccomplishments(researchEntity, query) {
@@ -377,21 +388,34 @@
         async function getProjects(researchEntity, query, favorites = false, populates = projectPopulates) {
             const populate = {populate: populates};
             const q = _.merge({}, query, populate);
-            const types = await ResearchItemTypesService.getTypes();
 
-            if (q.where && q.where.type) {
-                if (q.where.type === allProjectTypes.value) {
-                    delete q.where.type;
-                } else {
-                    const type = types.find(type => type.key === q.where.type);
-                    q.where.type = type.id;
-                }
-            }
+            await setProjectType(q);
 
             if (favorites) {
                 return await researchEntity.getList('favoriteProjects', q);
             } else {
                 return await researchEntity.getList('projects', q);
+            }
+        }
+
+        async function getProject(id, populates = projectPopulates) {
+            return await Restangular.one('projects', id).get({populate: populates});
+        }
+
+        async function getProjectDrafts(researchEntity, query, populates = projectPopulates) {
+            await setProjectType(query);
+            return getResearchItemDrafts(researchEntity, 'projectDrafts', query, populates);
+        }
+
+        async function setProjectType(query) {
+            const types = await ResearchItemTypesService.getTypes();
+            if (query.where && query.where.type) {
+                if (query.where.type === allProjectTypes.value) {
+                    delete query.where.type;
+                } else {
+                    const type = types.find(type => type.key === query.where.type);
+                    query.where.type = type.id;
+                }
             }
         }
 
@@ -407,7 +431,7 @@
         }
 
         async function getPatentFamilies(researchEntity, query) {
-                return await researchEntity.getList('patentFamilies', query);
+            return await researchEntity.getList('patentFamilies', query);
         }
 
         /* jshint ignore:end */

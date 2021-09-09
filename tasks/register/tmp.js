@@ -1,5 +1,4 @@
 const Sails = require('sails');
-const _ = require('lodash');
 
 module.exports = function (grunt) {
     grunt.registerTask('tmp', function (...args) {

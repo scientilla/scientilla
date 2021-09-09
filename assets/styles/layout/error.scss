@@ -1,0 +1,41 @@
+.error-layout{
+    .main-container{
+        min-height: 100vh;
+    }
+
+    .main-view{
+        align-self: center;
+    }
+
+    .error-label{
+        display: block;
+        color: $gray;
+    }
+
+    .error-code{
+        font-size: 10rem;
+        line-height: 8rem;
+    }
+
+    .error-text{
+        display: block;
+        font-size: 3rem;
+        line-height: 3rem;
+        color: $gray;
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .error-layout{
+        .error-code{
+            font-size: 20rem;
+            line-height: 15rem;
+        }
+
+        .error-text{
+            display: inline-block;
+            font-size: 5rem;
+            line-height: 5rem;
+        }
+    }
+}

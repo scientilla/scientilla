@@ -1,0 +1,67 @@
+<scientilla-backend-layout>
+    <h1>Verified agreements</h1>
+    <scientilla-filter
+            category="verified-agreement"
+            on-filter="vm.onFilter"
+            elements="vm.agreements"
+            empty-list-message="No agreements found">
+        <scientilla-multicheck>
+            <buttons>
+                <scientilla-multicheck-button
+                        ng-disabled="true"
+                        subject="Export as CSV"
+                        on-click="vm.exportDownload">
+                    <i class="fas fa-download fa-left"></i>Export as CSV
+                </scientilla-multicheck-button>
+            </buttons>
+            <item-list>
+                <scientilla-checkable ng-repeat="agreement in vm.agreements" item="agreement"
+                                      class="scientilla-checkable">
+                    <scientilla-agreement
+                            agreement="agreement"
+                            section="vm.agreementListSections.VERIFIED"
+                            class="agreement-container"></scientilla-agreement>
+
+                    <div class="agreement-row-actions">
+                        <div
+                                ng-if="!agreement.group"
+                                class="btn-group"
+                                uib-dropdown>
+                            <button
+                                    type="button"
+                                    class="btn btn-primary dropdown-toggle"
+                                    uib-dropdown-toggle>
+                                Actions
+                            </button>
+
+                            <div
+                                    uib-dropdown-menu
+                                    class="dropdown-menu dropdown-menu-right">
+
+                                <button
+                                        ng-click="vm.unverify(agreement)"
+                                        class="dropdown-item">
+                                    <i class="fas fa-times fa-left"></i>Unverify
+                                </button>
+
+                                <button
+                                        ng-click="vm.generateGroup(agreement)"
+                                        class="dropdown-item">
+                                    <i class="fas fa-plus fa-left"></i>Generate new group
+                                </button>
+                            </div>
+                        </div>
+
+                        <a
+                                class="btn btn-outline-secondary"
+                                ng-if="agreement.group"
+                                href="/#/{{ agreement.group.slug }}/info">
+                            <i class="fas fa-eye fa-left"></i>View group
+                        </a>
+                    </div>
+                </scientilla-checkable>
+            </item-list>
+        </scientilla-multicheck>
+
+    </scientilla-filter>
+</scientilla-backend-layout>

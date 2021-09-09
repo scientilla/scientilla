@@ -13,7 +13,9 @@
                 category: '@',
                 filterLabel: '@?',
                 elements: '<?',
-                filterOnInit: '<?'
+                filterOnInit: '<?',
+                researchEntity: '<?',
+                onChange: '&?',
             }
         });
 
@@ -76,7 +78,9 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
-            vm.researchEntity = await context.getResearchEntity();
+            if (!vm.researchEntity) {
+                vm.researchEntity = await context.getResearchEntity();
+            }
             vm.itemsPerPage = pageSize;
             vm.status = vm.STATUS_INITIAL_LOADING;
 
@@ -86,7 +90,7 @@
             if (_.isUndefined(vm.elements))
                 vm.elements = [];
 
-            onDataCountChangeDeregisterer = $scope.$watch('vm.elements', onDataCountChange, true);
+            onDataCountChangeDeregisterer = $scope.$watch('vm.elements', onDataCountChange);
 
             if (
                 (_.has(vm, 'filterOnInit') && vm.filterOnInit) ||
@@ -135,7 +139,8 @@
                         struct &&
                         (
                             (struct.inputType === 'select' && vm.values[key] === '?') ||
-                            (struct.inputType === 'radio' && vm.values[key] === 'all')
+                            (struct.inputType === 'radio' && vm.values[key] === 'all') ||
+                            struct.inputType === 'range'
                         )
                     ){
                         return;

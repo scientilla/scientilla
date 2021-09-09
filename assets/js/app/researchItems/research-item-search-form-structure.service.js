@@ -13,7 +13,8 @@
         'Restangular',
         'ResearchEntitiesService',
         'PeopleService',
-        'ISO3166'
+        'ISO3166',
+        'agreementTypes'
     ];
 
     function ResearchItemSearchFormStructureService(
@@ -26,7 +27,8 @@
         Restangular,
         ResearchEntitiesService,
         PeopleService,
-        ISO3166
+        ISO3166,
+        agreementTypes
     ) {
 
         const service = {
@@ -72,29 +74,35 @@
         };
 
         const projectFormStructure = {
+            projectType: {
+                inputType: 'select',
+                label: 'Project Type',
+                values: [],
+                matchColumn: 'type',
+                type: 'field',
+                defaultValue: 'project_competitive', //allProjectTypes.value,
+                defaultValues: []
+            },
             title: {
                 inputType: 'text',
                 label: 'Title',
                 matchColumn: 'title',
                 matchRule: 'contains',
-                type: 'field',
-                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
+                type: 'field'
             },
             acronym: {
                 inputType: 'text',
                 label: 'Acronym',
                 matchColumn: 'acronym',
                 matchRule: 'contains',
-                type: 'field',
-                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
+                type: 'field'
             },
             pi: {
                 inputType: 'text',
                 label: 'PI',
-                matchColumn: 'piStr',
+                matchColumn: 'authorsStr',
                 matchRule: 'contains',
-                type: 'field',
-                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
+                type: 'field'
             },
             year: {
                 inputType: 'range',
@@ -111,58 +119,42 @@
                         rule: '<='
                     }
                 ],
-                type: 'field',
-                dependingOn: 'projectType',
-                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
+                type: 'field'
             },
             status: {
                 inputType: 'select',
                 label: 'Status',
                 matchColumn: 'status',
                 values: [],
-                type: 'field',
-                visibleFor: [projectTypeCompetitive]
+                type: 'field'
             },
             funding: {
                 inputType: 'select',
                 label: 'Funding type',
                 matchColumn: 'project_type',
                 values: [],
-                type: 'field',
-                visibleFor: [projectTypeCompetitive]
+                type: 'field'
             },
             action: {
                 inputType: 'select',
                 label: 'Action type',
                 matchColumn: 'project_type_2',
                 values: [],
-                type: 'field',
-                visibleFor: [projectTypeCompetitive]
+                type: 'field'
             },
             category: {
                 inputType: 'select',
                 label: 'Category',
                 matchColumn: 'category',
                 values: [],
-                type: 'field',
-                visibleFor: [projectTypeIndustrial]
+                type: 'field'
             },
             payment: {
                 inputType: 'select',
                 label: 'Payment',
                 matchColumn: 'payment',
                 values: [],
-                type: 'field',
-                visibleFor: [projectTypeIndustrial]
-            },
-            projectType: {
-                inputType: 'radio',
-                label: 'Project Type',
-                values: [],
-                matchColumn: 'type',
-                type: 'option',
-                defaultValue: allProjectTypes.value,
-                defaultValues: []
+                type: 'field'
             }
         };
 
@@ -195,12 +187,22 @@
                 matchRule: 'contains',
                 type: 'field'
             },
+            type: {
+                inputType: 'select',
+                label: 'Application Type',
+                values: [],
+                matchColumn: 'type',
+                type: 'field',
+                listenForChange: true,
+                defaultValue: 'all',
+                defaultValues: []
+            },
             year: {
                 inputType: 'range',
                 values: {},
-                label: 'Start year',
+                label: 'Year',
                 subLabel: '(range between)',
-                matchColumn: 'filingYear',
+                matchColumn: 'year',
                 rules: [
                     {
                         value: 'min',
@@ -210,7 +212,15 @@
                         rule: '<='
                     }
                 ],
-                type: 'field',
+                type: 'field'
+            },
+            translation: {
+                inputType: 'checkbox',
+                label: 'Show also Translation applications',
+                defaultValue: false,
+                matchColumn: 'translation',
+                type: 'action',
+                valueType: 'boolean',
             }
         };
 
@@ -224,6 +234,57 @@
             }
         };
 
+        const agreementFormStructure = {
+            title: {
+                inputType: 'text',
+                label: 'Title',
+                matchColumn: 'title',
+                matchRule: 'contains',
+                type: 'field',
+            },
+            agreementType: {
+                inputType: 'select',
+                label: 'Type',
+                matchColumn: 'projectType',
+                matchRule: 'contains',
+                type: 'field',
+            },
+            pi: {
+                inputType: 'text',
+                label: 'PI',
+                matchColumn: 'authorsStr',
+                matchRule: 'contains',
+                type: 'field',
+            },
+            year: {
+                inputType: 'range',
+                values: {},
+                label: 'Start year',
+                subLabel: '(range between)',
+                matchColumn: 'startYear',
+                rules: [
+                    {
+                        value: 'min',
+                        rule: '>='
+                    }, {
+                        value: 'max',
+                        rule: '<='
+                    }
+                ],
+                type: 'field',
+            }
+        };
+
+        const agreementGroupFormStructure = {
+            title: {
+                inputType: 'text',
+                label: 'Title',
+                matchColumn: 'title',
+                matchRule: 'contains',
+                type: 'field',
+            }
+        };
+
         const formStructures = {
             accomplishment: accomplishmentFormStructure,
             'accomplishment-suggested': accomplishmentFormStructure,
@@ -234,6 +295,9 @@
             'verified-patent': patentFormStructure,
             'patent-family': patentFamilyFormStructure,
             'verified-patent-family': patentFamilyFormStructure,
+            agreement: agreementFormStructure,
+            'verified-agreement': agreementFormStructure,
+            'agreement-group': agreementGroupFormStructure,
             group: {
                 name: {
                     inputType: 'text',
@@ -416,16 +480,47 @@
             const projectTypes = _.concat(
                 [{value: allProjectTypes.value, label: allProjectTypes.label}],
                 await getResearchItemTypes('project', true)
-            );
-            formStructures[constant].projectType.values = projectTypes;
+            ).filter(type => type.value !== 'project_agreement');
+
+            // Show only competitive projects
+            //formStructures[constant].projectType.values = projectTypes;
+            formStructures[constant].projectType.values = projectTypes.filter(type => type.value === 'project_competitive');
             formStructures[constant].status.values = await getProjectStatuses();
             formStructures[constant].payment.values = getProjectPayments();
             formStructures[constant].category.values = getProjectCategories();
             formStructures[constant].funding.values = getProjectFundings();
             formStructures[constant].action.values = getProjectActions();
-            const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'project');
+            const minMaxYears = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'project');
+
+            // Default values of range all patent types
+            formStructures[constant].year.minMaxYears = [];
+            formStructures[constant].year.minMaxYears.push({ key: 'all', values: minMaxYears.find(m => m.item_key === 'all')});
+            formStructures[constant].year.minMaxYears.push({ key: 'project_competitive', values: minMaxYears.find(m => m.item_key === 'project_competitive')});
+            formStructures[constant].year.minMaxYears.push({ key: 'project_industrial', values: minMaxYears.find(m => m.item_key === 'project_industrial')});
+
             formStructures[constant].year.defaultValues = defaultValues;
-            let yearValue = formStructures[constant].year.defaultValues.find(v => v.item_key === allProjectTypes.value);
+            const defaultValues = formStructures[constant].year.minMaxYears.find(v => v.key === 'project_competitive');
+
+            if (_.isNil(defaultValues) || _.isNil(defaultValues.values)) {
+                formStructures[constant].year.defaultValues = {
+                    min: 2000,
+                    max: new Date().getFullYear()
+                };
+            } else {
+                formStructures[constant].year.defaultValues = defaultValues.values;
+            }
+
+            formStructures[constant].year.values = {
+                min: parseInt(formStructures[constant].year.defaultValues.min),
+                max: parseInt(formStructures[constant].year.defaultValues.max)
+            };
+        }
+
+        async function setupAgreementStructure(constant, researchEntity, type = 'agreement_drafts') {
+            formStructures[constant].agreementType.values = getAgreementTypes();
+            const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, type);
+            formStructures[constant].year.defaultValues = defaultValues;
+            let yearValue = _.first(formStructures[constant].year.defaultValues);
             if (_.isNil(yearValue)) {
                 yearValue = {
                     min: 2000,
@@ -439,20 +534,36 @@
         }
 
         async function setupPatentStructure(constant, researchEntity) {
-            const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'patent');
+            const minMaxYears = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'patent');
 
-            formStructures[constant].year.defaultValues = defaultValues;
-            let yearValue = _.first(formStructures[constant].year.defaultValues);
-            if (_.isNil(yearValue)) {
-                yearValue = {
+            // Default values of range all patent types
+            formStructures[constant].year.minMaxYears = [];
+            formStructures[constant].year.minMaxYears.push({ key: allPatentTypes.value, values: minMaxYears.find(m => m.item_key === 'all')});
+            formStructures[constant].year.minMaxYears.push({ key: 'all_translations', values: minMaxYears.find(m => m.item_key === 'all_translations')});
+            formStructures[constant].year.minMaxYears.push({ key: patentTypePriorities, values: minMaxYears.find(m => m.item_key === 'priorities')});
+            formStructures[constant].year.minMaxYears.push({ key: patentTypeProsecutions, values: minMaxYears.find(m => m.item_key === 'prosecutions')});
+
+            const defaultValues = formStructures[constant].year.minMaxYears.find(v => v.key === allPatentTypes.value);
+
+            if (_.isNil(defaultValues) || _.isNil(defaultValues.values)) {
+                formStructures[constant].year.defaultValues = {
                     min: 2000,
                     max: new Date().getFullYear()
                 };
+            } else {
+                formStructures[constant].year.defaultValues = defaultValues.values;
             }
+
             formStructures[constant].year.values = {
-                min: parseInt(yearValue.min),
-                max: parseInt(yearValue.max)
+                min: parseInt(formStructures[constant].year.defaultValues.min),
+                max: parseInt(formStructures[constant].year.defaultValues.max)
             };
+
+            formStructures[constant].type.values = [
+                {value: 'all', label: 'All'},
+                {value: 'priorities', label: 'Priorities'},
+                {value: 'prosecutions', label: 'Prosecutions'}
+            ];
         }
 
         async function getStructure(constant, researchEntity = false) {
@@ -519,14 +630,13 @@
                     break;
                 case constant === 'verified-patent':
                     await setupPatentStructure(constant, researchEntity);
-                case constant === 'verified-patent':
                     structure = Object.assign(
                         {},
                         formStructures[constant],
                         {
                             favorites: {
                                 inputType: 'checkbox',
-                                label: 'Show only favorite patents',
+                                label: 'Show only favorite applications',
                                 defaultValue: false,
                                 matchColumn: 'favorites',
                                 type: 'action',
@@ -536,12 +646,24 @@
                     );
                     break;
                 case constant === 'patent':
+                    await setupPatentStructure(constant, researchEntity);
                     structure = formStructures[constant];
                     break;
                 case constant === 'verified-patent-family':
                     structure = formStructures[constant];
                     break;
                 case constant === 'patent-family':
+                    structure = formStructures[constant];
+                    break;
+                case constant === 'verified-agreement':
+                    await setupAgreementStructure(constant, researchEntity, 'verified_agreements');
+                    structure =  formStructures[constant];
+                    break;
+                case constant === 'agreement':
+                    await setupAgreementStructure(constant, researchEntity);
+                    structure = formStructures[constant];
+                    break;
+                case constant === 'agreement-group':
                     structure = formStructures[constant];
                     break;
                 case constant === 'document':
@@ -763,6 +885,17 @@
             }
 
             return fundings;
+        }
+
+        function getAgreementTypes() {
+            const types = [];
+            types.push({value: '?', label: 'Select'});
+
+            for (const type of agreementTypes) {
+                types.push({value: type.key, label: type.label});
+            }
+
+            return types;
         }
     }
 })();

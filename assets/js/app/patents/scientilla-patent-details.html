@@ -23,8 +23,16 @@
     <strong>Filing date:</strong>  {{ vm.patent.patentData.filingDate }}<br>
 </ng-container>
 
-<ng-container ng-if="vm.patent.patentData.priority">
-    <em><strong>Priority</strong></em><br>
+<ng-container ng-if="vm.patent.translation">
+    <em><strong>Translation</strong></em>
+</ng-container>
+
+<ng-container ng-if="!vm.patent.translation && vm.patent.patentData.priority">
+    <em><strong>Priority</strong></em>
+</ng-container>
+
+<ng-container ng-if="!vm.patent.translation && !vm.patent.patentData.priority">
+    <em><strong>Prosecution</strong></em>
 </ng-container>
 
 <br ng-if="vm.patent.familyDocket || vm.patent.patentData.application || vm.patent.patentData.filingDate || vm.patent.patentData.priority">
@@ -99,5 +107,5 @@
 <br ng-if="vm.patent.patentData.abandonedExpiredAssignedDate || vm.patent.patentData.priorityPctExpirationDate">
 
 <ng-container ng-if="vm.patent.patentData.espacenetUrl">
-    <strong>Espacenet URL:</strong> {{ vm.patent.patentData.espacenetUrl }}<br>
+    <strong>Espacenet URL:</strong> <a href="{{ vm.patent.patentData.espacenetUrl }}" target="_blank">{{ vm.patent.patentData.espacenetUrl }}</a><br>
 </ng-container>

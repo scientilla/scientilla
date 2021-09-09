@@ -214,6 +214,53 @@
                 {size: 'lg'});
         };
 
+        service.openAgreementForm = function (researchEntity, researchItem) {
+            const scopeVars = {
+                researchItem: researchItem,
+                researchEntity: researchEntity,
+            };
+
+            return openModal(
+                `<scientilla-agreement-form
+                    agreement="vm.researchItem"
+                    research-entity="vm.researchEntity"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                    close-fn="vm.onClose"
+                ></scientilla-agreement-form>`,
+                scopeVars,
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                }
+            );
+        };
+
+        service.openAgreementDetails = function (agreement) {
+            const scopeVars = {
+                agreement
+            };
+
+            return openModal(`<div class="modal-header">
+                                <h3>Agreement details</h3>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    ng-click="vm.onClose()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <scientilla-agreement-details
+                                    agreement="vm.agreement"
+                                    class="agreement-details"></scientilla-agreement-details>
+                            </div>`,
+                scopeVars,
+                {size: 'lg'});
+        };
+
         service.openScientillaUserForm = function (user, settings = false) {
 
             const scopeVars = {
@@ -470,6 +517,26 @@
 
         service.alert = function (title, message) {
             return service.multipleChoiceConfirm(title, message, [], 'Close');
+        };
+
+        service.openGenerateAgreementGroup = function (agreement) {
+
+            const scopeVars = {
+                agreement
+            };
+
+            return openModal(`<scientilla-generate-agreement-group-form\
+                    agreement="vm.agreement"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                ></scientilla-generate-agreement-group-form>`,
+                scopeVars,
+                {
+                    size: 'md',
+                    backdrop: 'static',
+                    keyboard: false
+                });
         };
 
         service.openScientillaResearchItemForm = function (researchEntity, researchItem, category) {

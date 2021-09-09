@@ -91,8 +91,7 @@ async function importSources() {
         newConferences = readWorksheet(newConferencesWorksheet, newConferencesMappingsTable, mapConference);
 
         const oldConferencesWorksheet = workbook.Sheets[sheetNameList[2]];
-        const oldConferencesMappingsTable = newConferencesMappingsTable;
-        oldConferences = readWorksheet(oldConferencesWorksheet, oldConferencesMappingsTable, mapConference);
+        oldConferences = readWorksheet(oldConferencesWorksheet, newConferencesMappingsTable, mapConference);
     }
 
 
@@ -341,8 +340,6 @@ async function importSourceMetrics(filename) {
     const cols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
     const filePath = 'metrics_import/' + filename;
 
-    const errors = [];
-
     let workbook;
     let year;
 
@@ -368,10 +365,6 @@ async function importSourceMetrics(filename) {
         year = workSheet[yearCellCoord].v;
         if (!yearRegex.test(year)) {
             sails.log.info('The year on cell ' + yearCellCoord + ' is not valid!');
-        }
-
-        if (errors.length > 0) {
-            sails.log.info('Source metrics import stopped: ' + errors.join(', '));
         }
 
         const columnsMapping = {};
@@ -526,7 +519,7 @@ async function importProjects() {
     };
 
     const membersSchema = {
-        email: 'email',
+        email: obj => obj.email.toLocaleLowerCase(),
         name: 'firstname',
         surname: 'lastname',
         role: obj => obj.flag_pi ? 'pi' : obj.flag_copi ? 'co_pi' : 'member',
@@ -608,7 +601,7 @@ async function importProjects() {
     }
 
     await doImport(ResearchItemTypes.PROJECT_COMPETITIVE);
-    await doImport(ResearchItemTypes.PROJECT_INDUSTRIAL);
+    //await doImport(ResearchItemTypes.PROJECT_INDUSTRIAL);
 
     await projectAutoVerify();
 
@@ -621,15 +614,35 @@ async function importProjects() {
             projects = await Utils.waitForSuccessfulRequest(reqOptions);
         } catch (e) {
             sails.log.debug(e);
+            throw e;
         }
 
         const errors = [];
-        let totalItems = 0, created = 0, updated = 0;
+        let totalItems = 0, internalProjects = 0, created = 0, updated = 0;
 
         for (const project of projects) {
             totalItems++;
+
+            if (project.project_type_2 === 'INTERNAL') {
+                internalProjects++;
+                continue;
+            }
+
             try {
                 const projectData = mapObject(project, schemas[type]);
+
+                const users = await User.find({username: projectData.members.map(m => m.email)});
+                users.forEach(u => {
+                    const member = projectData.members.find(m => m.email === u.username);
+                    member.name = u.displayName;
+                    member.surname = u.displaySurname;
+                });
+                const sortedMembers = projectData.members.sort((a, b) => a.surname.localeCompare(b.surname))
+                projectData.members = [
+                    sortedMembers.find(m => m.role === 'pi'),
+                    ...sortedMembers.filter(m => m.role === 'co_pi'),
+                    ...sortedMembers.filter(m => m.role === 'member')
+                ];
 
                 let startYear = null;
                 let endYear = null;
@@ -642,32 +655,36 @@ async function importProjects() {
                     endYear = projectData.endDate.slice(0, projectData.endDate.indexOf('-'));
                 }
 
+                const pis = projectData.members.filter(member => ['pi', 'co_pi'].includes(member.role));
+
                 const data = {
                     type: type,
                     startYear: startYear,
                     endYear: endYear,
-                    piStr: projectData.members.filter(member => ['pi', 'co_pi'].includes(member.role))
-                        .map(pi => pi.email + ' ' + pi.name + ' ' + pi.surname)
-                        .join(', '),
+                    authorsStr: await ResearchItem.generateAuthorsStr(pis),
                     projectData: projectData
                 };
 
                 const code = data.projectData.code;
-                if (!code) {
+                if (!code || pis.length === 0) {
                     errors.push({
-                        success: false,
-                        researchItem: data,
-                        message: 'Missing required field "code"'
+                        project: data.projectData.acronym,
+                        message: 'Missing required field "code" or "PI"'
                     });
                     continue;
                 }
 
+                const authorsData = pis.map((pi, pos) => ({
+                    affiliations: pi.email.includes('@iit.it') ? [1] : [],
+                    position: pos
+                }));
+
                 const prj = await Project.findOne({code: code, kind: ResearchItemKinds.EXTERNAL});
                 if (!prj) {
-                    await ResearchItem.createExternal(config.origin, code, data);
+                    await ResearchItem.createExternal(config.origin, code, data, authorsData);
                     created++;
-                } else if (JSON.stringify(prj.projectData) !== JSON.stringify(data.projectData)) {
-                    await ResearchItem.updateExternal(prj.id, data);
+                } else if (!_.isEqual(prj.projectData, data.projectData)) {
+                    await ResearchItem.updateExternal(prj.id, data, authorsData);
                     updated++;
                 }
             } catch (e) {
@@ -677,6 +694,7 @@ async function importProjects() {
 
         sails.log.info(`import ${type} completed`);
         sails.log.info(`${totalItems} found`);
+        sails.log.info(`${internalProjects} internal projects`);
         sails.log.info(`external created: ${created}`);
         sails.log.info(`external updated: ${updated}`);
         sails.log.info(`errors: ${errors.length}`);
@@ -684,8 +702,8 @@ async function importProjects() {
     }
 
     async function projectAutoVerify() {
-        let errors = [];
-        let newVerify = 0, unverified = 0;
+        const errors = {other: 0};
+        let verifiedCount = 0, unverifiedCount = 0;
         const externalProjects = await Project.find({kind: ResearchItemKinds.EXTERNAL});
 
         const institute = await Group.findOne({type: 'Institute'});
@@ -693,8 +711,8 @@ async function importProjects() {
             const verifiedProject = await Project.findOne({
                 kind: ResearchItemKinds.VERIFIED,
                 code: eProject.code
-            })
-                .populate('verified');
+            }).populate('verified');
+
             let verified = [];
             if (verifiedProject)
                 verified = verifiedProject.verified.map(v => v.researchEntity);
@@ -725,37 +743,18 @@ async function importProjects() {
             const toVerify = _.difference(researchEntitiesId, verified);
             const toUnverify = _.difference(verified, researchEntitiesId);
 
-            for (const researchEntityId of _.uniq(toVerify))
-                try {
-                    await Verify.verify(eProject.id, researchEntityId);
-                    newVerify++;
-                } catch (e) {
-                    errors.push(e);
-                }
-
-            for (const researchEntityId of _.uniq(toUnverify))
-                try {
-                    await Verify.unverify(researchEntityId, verifiedProject.id);
-                    unverified++;
-                } catch (e) {
-                    errors.push(e);
-                }
-
             const res = await autoVerify(eProject, verifiedProject, toVerify, toUnverify);
-
-            errors = errors.concat(res.errors);
-            unverified += res.unverified;
-            newVerify += newVerify;
+            res.errors.forEach(e => setError(errors, e.message));
+            unverifiedCount += res.unverifiedCount;
+            verifiedCount += res.verifiedCount;
 
         }
 
         sails.log.info('Autoverify completed');
-        sails.log.info(`added ${newVerify} new verifications`);
-        sails.log.info(`removed ${unverified} old verifications`);
-        if (errors.length) {
-            sails.log.debug(`but there were ${errors.length} errors:`);
-            sails.log.debug(JSON.stringify(errors[0]));
-        }
+        sails.log.info(`added ${verifiedCount} new verifications`);
+        sails.log.info(`removed ${unverifiedCount} old verifications`);
+        sails.log.debug(`errors:`);
+        sails.log.debug(errors);
     }
 }
 
@@ -773,19 +772,16 @@ async function importPatents() {
 
     function getAuthorsData(inventors) {
         const authorsData = [];
-
-        for (const [position, inventor] of inventors.entries()) {
+        inventors.forEach((inventor, position) => {
             const affiliations = [];
             if (inventor.email.includes('@iit'))
                 affiliations.push(1);
 
-            const authorStrs = User.generateAliasesStr(inventor.name, inventor.surname);
             authorsData.push({
                 position,
-                affiliations,
-                authorStr: authorStrs.length > 0 ? authorStrs[0] : ''
+                affiliations
             });
-        }
+        });
 
         return authorsData;
     }
@@ -805,6 +801,7 @@ async function importPatents() {
         attorney: 'attorney',
         priority: 'priority',
         italian: 'italian',
+        translation: obj => !!obj.statuses.find(s => s.code === '[T]'),
         statuses: obj => mapObectsArray(obj.statuses, {
             code: 'code',
             description: 'description',
@@ -865,12 +862,13 @@ async function importPatents() {
         throw (e);
     }
 
-    const importErrors = [];
+    let importErrors = 0;
     let totalItems = 0, created = 0, updated = 0;
 
     for (const item of res.result) {
         if (!item.patent_family.docket) {
-            importErrors.push({
+            importErrors++;
+            sails.log.debug({
                 success: false,
                 researchItem: item,
                 message: 'Missing required field "docket"'
@@ -879,20 +877,21 @@ async function importPatents() {
         }
 
         for (const patent of item.patent_family.patents) {
-            if (_.isEmpty(patent.statuses))
+            if (_.isEmpty(patent.statuses) || patent.statuses.find(s => s.code.toLocaleUpperCase() === '[NULL]'))
                 continue;
 
             totalItems++;
 
             try {
                 const authorsData = getAuthorsData(patent.inventors);
-                const authorsStr = authorsData.map(ad => ad.authorStr).join(', ');
+                const authorsStr = await ResearchItem.generateAuthorsStr(patent.inventors);
 
                 const patentFamilyData = mapObject(item.patent_family, patentFamilySchema);
                 const patentData = mapObject(patent, patentSchema);
 
                 if (!patentData.application) {
-                    importErrors.push({
+                    importErrors++;
+                    sails.log.debug({
                         success: false,
                         researchItem: patent,
                         message: 'Missing required field "application"'
@@ -914,16 +913,16 @@ async function importPatents() {
                 if (!pat) {
                     await ResearchItem.createExternal(config.origin, code, data, authorsData);
                     created++;
-                } else if (
-                    JSON.stringify(pat.patentFamilyData) !== JSON.stringify(data.patentFamilyData)
-                    || JSON.stringify(pat.patentData) !== JSON.stringify(data.patentData)
+                } else if (!_.isEqual(pat.patentFamilyData, data.patentFamilyData)
+                    || !_.isEqual(pat.patentData, data.patentData)
                 ) {
                     await ResearchItem.updateExternal(pat.id, data, authorsData);
                     updated++;
                 }
 
             } catch (e) {
-                importErrors.push(e);
+                importErrors++;
+                sails.log.debug(e);
             }
 
         }
@@ -933,12 +932,11 @@ async function importPatents() {
     sails.log.info(`${totalItems} found`);
     sails.log.info(`external created: ${created}`);
     sails.log.info(`external updated: ${updated}`);
-    sails.log.info(`errors: ${importErrors.length}`);
-    importErrors.forEach(error => sails.log.debug(JSON.stringify(error) + '\n --------------------- \n'));
+    sails.log.info(`errors: ${importErrors}`);
 
 
-    let verifyErrors = [];
-    let newVerify = 0, unverified = 0;
+    const verificationErrors = {other: 0};
+    let verifiedCount = 0, unverifiedCount = 0;
     const externalPatents = await Patent.find({kind: ResearchItemKinds.EXTERNAL});
 
     const institute = await Group.findOne({type: 'Institute'});
@@ -978,45 +976,42 @@ async function importPatents() {
         const toUnverify = _.difference(verified, researchEntitiesId);
 
         const autoverifyRes = await autoVerify(ePatent, verifiedPatent, toVerify, toUnverify);
-
-        verifyErrors = verifyErrors.concat(autoverifyRes.errors);
-        unverified += autoverifyRes.unverified;
-        newVerify += autoverifyRes.newVerify;
+        autoverifyRes.errors.forEach(e => setError(verificationErrors, e.message));
+        unverifiedCount += autoverifyRes.unverifiedCount;
+        verifiedCount += autoverifyRes.verifiedCount;
     }
 
     sails.log.info('Autoverify completed');
-    sails.log.info(`added ${newVerify} new verifications`);
-    sails.log.info(`removed ${unverified} old verifications`);
-    if (verifyErrors.length) {
-        sails.log.debug(`but there were ${verifyErrors.length} errors:`);
-        sails.log.debug(JSON.stringify(verifyErrors[0]));
-    }
+    sails.log.info(`added ${verifiedCount} new verifications`);
+    sails.log.info(`removed ${unverifiedCount} old verifications`);
+    sails.log.debug(`errors:`);
+    sails.log.debug(verificationErrors);
 
 }
 
-async function autoVerify(external, verified, toVerify, toUnverify) {
+async function autoVerify(external, verified, ResearchEntityToVerify, researchEntityToUnverify) {
     const errors = [];
-    let newVerify = 0, unverified = 0;
-    for (const researchEntityId of _.uniq(toVerify))
+    let verifiedCount = 0, unverifiedCount = 0;
+    for (const researchEntityId of _.uniq(ResearchEntityToVerify))
         try {
             await Verify.verify(external.id, researchEntityId);
-            newVerify++;
+            verifiedCount++;
         } catch (e) {
             errors.push(e);
         }
 
-    for (const researchEntityId of _.uniq(toUnverify))
+    for (const researchEntityId of _.uniq(researchEntityToUnverify))
         try {
             await Verify.unverify(researchEntityId, verified.id);
-            unverified++;
+            unverifiedCount++;
         } catch (e) {
             errors.push(e);
         }
 
     return {
         errors,
-        newVerify,
-        unverified
+        verifiedCount,
+        unverifiedCount
     }
 }
 
@@ -1043,4 +1038,11 @@ function mapObectsArray(arr, schema) {
     if (!Array.isArray(arr))
         return [];
     return arr.map(e => mapObject(e, schema));
+}
+
+function setError(errors, message) {
+    if (message)
+        errors[message] = errors[message] + 1 || 1;
+    else
+        errors.other++;
 }

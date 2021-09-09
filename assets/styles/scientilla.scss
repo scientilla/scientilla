@@ -13,6 +13,7 @@
 @import 'general';
 
 @import 'layout/frontend';
+@import 'layout/error';
 
 @import 'ui/type';
 @import 'ui/forms';
@@ -70,6 +71,10 @@
 @import 'components/project-details';
 @import 'components/patent';
 @import 'components/patent-family';
+@import 'components/agreement';
+@import 'components/agreement-details';
+@import 'components/agreement-partner-editor';
+@import 'components/agreement-referrer-editor';
 @import 'components/former-employee';
 @import 'components/collaborator-modal';
 
@@ -81,6 +86,8 @@
 @import 'views/installer';
 @import 'views/summary';
 @import 'views/documentation';
+@import 'views/agreement-groups';
 @import 'views/cookies';
+
 
 @import 'responsive';

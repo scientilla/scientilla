@@ -4,7 +4,9 @@
         category="verified-patent"
         on-filter="vm.onFilter"
         elements="vm.patents"
-        empty-list-message="No patents found">
+        empty-list-message="No patents found"
+        on-change="vm.onChange"
+    >
         <scientilla-multicheck>
             <buttons>
                 <scientilla-multicheck-button

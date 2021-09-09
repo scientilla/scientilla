@@ -1,4 +1,4 @@
-/* global require, Project,ResearchItemTypes, ResearchItemProjectCompetitive, ResearchItemProjectIndustrial, ResearchItemKinds  */
+/* global require, Project,ResearchItemTypes, ResearchItemProjectCompetitive, ResearchItemProjectIndustrial, ResearchItemProjectAgreement, ResearchItemKinds, Group, GroupTypes, Utils  */
 'use strict';
 
 const _ = require('lodash');
@@ -46,6 +46,9 @@ module.exports = _.merge({}, BaseModel, {
             model: 'researchentity',
             columnName: 'draft_creator'
         },
+        group: {
+            model: 'group'
+        },
         code: 'STRING',
         acronym: 'STRING',
         title: 'STRING',
@@ -86,9 +89,9 @@ module.exports = _.merge({}, BaseModel, {
         status: 'STRING',
         url: 'STRING',
         members: 'JSON',
-        piStr: {
+        authorsStr: {
             type: 'STRING',
-            columnName: 'pi_str'
+            columnName: 'authors_str'
         },
         researchLines: {
             type: 'JSON',
@@ -111,6 +114,19 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'group',
             through: 'projectverifiedgroup'
         },
+        authors: {
+            collection: 'projectauthor',
+            via: 'project'
+        },
+        affiliations: {
+            collection: 'projectaffiliation',
+            via: 'project',
+        },
+        institutes: {
+            collection: 'institute',
+            via: 'project',
+            through: 'projectaffiliation'
+        },
         favorites: {
             collection: 'researchentity',
             via: 'favoriteprojects',
@@ -123,25 +139,27 @@ module.exports = _.merge({}, BaseModel, {
         },
         toJSON() {
             const project = this.toObject();
-            project.pi = project.members
-                .filter(m => ['pi', 'co_pi'].includes(m.role))
-                .map(m => ({
-                    email: m.email,
-                    name: m.name,
-                    surname: m.surname
+            if (project.members)
+                project.pi = project.members
+                    .filter(m => ['pi', 'co_pi'].includes(m.role))
+                    .map(m => ({
+                        email: m.email,
+                        name: m.name,
+                        surname: m.surname
+                    }));
+            if (project.researchLines)
+                project.lines = project.researchLines.map(rl => ({
+                    code: rl.code,
+                    description: rl.description
                 }));
-            project.lines = project.researchLines.map(rl => ({
-                code: rl.code,
-                description: rl.description
-            }));
-            project.searchPi = project.pi.map(p => `${p.email}-${p.name} ${p.surname}`).join(',');
             return project
         }
     },
     getResearchItemModel(type) {
         const researchItemModels = {
             [ResearchItemTypes.PROJECT_COMPETITIVE]: ResearchItemProjectCompetitive,
-            [ResearchItemTypes.PROJECT_INDUSTRIAL]: ResearchItemProjectIndustrial
+            [ResearchItemTypes.PROJECT_INDUSTRIAL]: ResearchItemProjectIndustrial,
+            [ResearchItemTypes.PROJECT_AGREEMENT]: ResearchItemProjectAgreement
         };
         const researchItemType = ResearchItemTypes.getType(type);
         return researchItemModels[researchItemType.key];
@@ -154,7 +172,7 @@ module.exports = _.merge({}, BaseModel, {
                 researchItem: selectedData,
                 success: false,
                 message: 'Data not valid',
-                errors: ResearchItemModel.validationErrors()
+                errors: JSON.stringify(ResearchItemModel.validationErrors())
             };
         selectedData.projectData = JSON.stringify(selectedData.projectData);
         return ResearchItemModel.create(selectedData);
@@ -228,6 +246,29 @@ module.exports = _.merge({}, BaseModel, {
             message: 'Format not supported'
         };
     },
+    async generateGroup(projectId, administratorIds) {
+        const prj = await Project.findOne({id: projectId});
+        if (!prj)
+            throw 'Not Found';
+
+        const group = await Group.create({
+            name: prj.title,
+            slug: Utils.stringToSlug(prj.title + prj.id),
+            type: GroupTypes.PROJECT,
+            active: true
+        });
+
+        for (const adm of administratorIds)
+            await Group.addAdministrator(group, adm);
+
+        prj.group = group.id;
+        const newPrj = await Project.updateResearchItem(prj.id, prj)
+
+        return {
+            success: true,
+            researchItem: newPrj
+        }
+    }
 });
 
 

@@ -18,12 +18,16 @@ const publicFields = [
     'projectType',
     'status',
     'url',
-    'piStr',
+    'authorsStr',
 ];
 
 
 module.exports = _.merge({}, BaseModel, {
-    DEFAULT_SORTING: {},
+    DEFAULT_SORTING: {
+        start_year: 'desc',
+        acronym: 'asc',
+        id: 'desc'
+    },
     migrate: 'safe',
     tableName: 'project_industrial',
     autoUpdatedAt: false,
@@ -73,9 +77,9 @@ module.exports = _.merge({}, BaseModel, {
             type: 'JSON',
             columnName: 'project_data'
         },
-        piStr: {
+        authorsStr: {
             type: 'STRING',
-            columnName: 'pi_str'
+            columnName: 'authors_str'
         },
         toJSON() {
             const project = this.toObject();

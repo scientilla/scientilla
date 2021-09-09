@@ -2,13 +2,13 @@
     "use strict";
 
     angular
-        .module('projects')
-        .component('scientillaProjectPis', {
-            templateUrl: 'partials/scientilla-project-pis.html',
+        .module('agreements')
+        .component('scientillaAgreementPis', {
+            templateUrl: 'partials/scientilla-agreement-pis.html',
             controller: controller,
             controllerAs: 'vm',
             bindings: {
-                project: '<',
+                agreement: '<',
                 collapsed: '=?',
                 highlighted: '=?'
             },
@@ -26,7 +26,9 @@
                 vm.collapsed = true;
             }
 
-            getPIs();
+            if (_.has(vm.agreement, 'projectData.pis')){
+                getPIs();
+            }
         };
 
         vm.toggleCollapse = toggleCollapse;
@@ -41,18 +43,11 @@
 
         function getPIs() {
             let count = 1;
-            vm.members = [];
 
-            for (const pi of vm.project.pi) {
-                const user = vm.project.verifiedUsers.find(u => u.username === pi.email.toLowerCase());
+            for (const pi of vm.agreement.projectData.pis) {
+                vm.pis.push(pi);
 
-                if (user) {
-                    vm.pis.push(user);
-                } else {
-                    vm.pis.push(pi);
-                }
-
-                if (vm.collapsed && count === vm.project.getPILimit()) {
+                if (vm.collapsed && count === vm.agreement.getPILimit()) {
                     break;
                 }
 

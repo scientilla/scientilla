@@ -5,18 +5,9 @@ const _ = require('lodash');
 
 const BaseModel = require("../lib/BaseModel.js");
 
-const fields = [
-    'kind',
-    'type',
-    'draftCreator',
-    'code',
-    'patentFamilyData',
-    'patentData'
-];
-
 module.exports = _.merge({}, BaseModel, {
     DEFAULT_SORTING: {
-        filing_year: 'desc',
+        year: 'desc',
         title: 'asc',
         id: 'desc'
     },
@@ -40,9 +31,21 @@ module.exports = _.merge({}, BaseModel, {
             type: 'STRING',
             columnName: 'authors_str'
         },
+        title: {
+            type: 'STRING',
+            columnName: 'title'
+        },
+        application: {
+            type: 'STRING',
+            columnName: 'application'
+        },
         familyDocket: {
             type: 'STRING',
             columnName: 'family_docket'
+        },
+        inventors: {
+            type: 'JSON',
+            columnName: 'inventors'
         },
         patentFamilyData: {
             type: 'JSON',
@@ -55,6 +58,22 @@ module.exports = _.merge({}, BaseModel, {
         filingYear: {
             type: 'STRING',
             columnName: 'filing_year'
+        },
+        issueYear: {
+            type: 'STRING',
+            columnName: 'issue_year'
+        },
+        year: {
+            type: 'STRING',
+            columnName: 'year'
+        },
+        translation: {
+            type: 'BOOLEAN',
+            columnName: 'translation'
+        },
+        priority: {
+            type: 'BOOLEAN',
+            columnName: 'priority'
         },
         verified: {
             collection: 'patentverify',
@@ -156,7 +175,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     async getVerifiedExternal(external) {
         return await Patent.findOne({
-            application: external.application,
+            code: external.code,
             kind: ResearchItemKinds.VERIFIED
         });
     },

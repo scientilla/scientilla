@@ -13,18 +13,22 @@
         'EventsService',
         'path',
         'context',
-        'ExternalConnectorService'
+        'ExternalConnectorService',
+        'groupTypes'
     ];
 
-    function scientillaMenu(AuthService, EventsService, path, context, ExternalConnectorService) {
+    function scientillaMenu(AuthService, EventsService, path, context, ExternalConnectorService, groupTypes) {
         const vm = this;
 
         vm.isActive = isActive;
+        vm.isSuperViewer = isSuperViewer;
+        vm.isSuperUser = isSuperUser;
         vm.isAdmin = isAdmin;
         vm.getUrl = getUrl;
         vm.isUser = isUser;
         vm.isGroup = isGroup;
         vm.hasActiveExternalConnectors = false;
+        vm.isProject = isProject;
 
         const prefix = '#/';
         vm.subResearchEntity = context.getSubResearchEntity();
@@ -83,6 +87,15 @@
             }
         }
 
+
+        function isSuperViewer() {
+            return vm.user && vm.user.isSuperViewer();
+        }
+
+        function isSuperUser() {
+            return vm.user && vm.user.isSuperUser();
+        }
+
         function isAdmin() {
             return vm.user && vm.user.isAdmin();
         }
@@ -112,6 +125,14 @@
                     vm.hasActiveExternalConnectors = true;
                 }
             });
+        }
+
+        function isProject() {
+            if (isGroup() && vm.subResearchEntity.type === groupTypes.PROJECT) {
+                return true;
+            }
+
+            return false;
         }
     }
 

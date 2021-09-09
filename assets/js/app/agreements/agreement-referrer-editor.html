@@ -1,0 +1,62 @@
+<div class="agreement-referrer-editor">
+    <ul class="referrer-listing">
+        <li>
+            <div class="form-group">
+                <label>Referrers *</label>
+                <input
+                    id="referrer"
+                    name="referrer"
+                    type="text"
+                    class="form-control"
+                    placeholder="Add referrer"
+                    ng-model="vm.newReferrer"
+                    ng-class="{'is-invalid' : vm.errors.pis}"
+                    nng-change="vm.fieldValueHasChanged({field: 'pis'})"
+                    uib-typeahead="user as user.getDisplayName() for user in vm.getUsers($viewValue)"
+                    ng-keydown="$event.keyCode === 13 && vm.addReferrer($event)"
+                    typeahead-loading="searching"
+                    typeahead-no-results="noResults"
+                    typeahead-editable="true"
+                    typeahead-select-on-blur="false">
+                <div
+                    ng-if="vm.isDuplicate"
+                    class="invalid-feedback"
+                >
+                    This referrer is already been added.
+                </div>
+                <scientilla-error-messages
+                    class="error-messages"
+                    errors="vm.errors.pis"
+                ></scientilla-error-messages>
+            </div>
+        </li>
+        <li>
+            <div class="form-group">
+                <button
+                    type="button"
+                    class="btn btn-primary btn-form-no-label"
+                    ng-click="vm.addReferrer()"
+                    ng-blur="vm.checkValidation({field: 'pis'})"
+                    ng-disabled="!vm.canAddReferrer">
+                    <i class="fas fa-plus fa-left"></i>Add
+                </button>
+            </div>
+        </li>
+    </ul>
+
+    <div
+        ng-if="vm.referrers.length > 0"
+        class="form-group">
+        <ul class="multiselect-list">
+            <li class="list-group-item" ng-repeat="referrer in vm.referrers">
+                {{ referrer.surname + ' ' + referrer.name }}
+                <a
+                    href=""
+                    ng-click="vm.removeReferrer(referrer)"
+                    class="badge badge-primary">
+                    <i class="fas fa-times"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

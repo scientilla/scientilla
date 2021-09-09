@@ -1,0 +1,39 @@
+<ul class="agreement">
+    <li class="agreement-info">
+        <span class="agreement-year">{{ vm.getAgreementYears() }}</span>
+    </li>
+    <li class="agreement-metadata">
+        <div>
+            <scientilla-research-item-authors research-item="vm.agreement"
+                                              collapsed="vm.collapsed"
+                                              type="preview"></scientilla-research-item-authors>
+        </div>
+
+        <h2 class="agreement-title has-action"
+            ng-click="vm.openDetails()"
+            ng-bind-html='vm.agreement | title'></h2>
+
+        <ng-container ng-if="vm.agreement.projectData.agreementType">
+            {{ vm.agreement.projectData.agreementType }}
+        </ng-container>
+
+        <ul
+            class="agreement-partners"
+            ng-if="vm.agreement.projectData.partners"
+        >
+            <li ng-repeat="partner in vm.agreement.projectData.partners">
+                {{ partner }}
+            </li>
+        </ul>
+
+        <ul class="agreement-actions">
+            <li
+                ng-if="vm.agreement.verified.length"
+                class="agreement-verified"
+                uib-tooltip-html="vm.getVerifiedNamesHTML()"
+                tooltip-class="text-left">
+                <i class="fas fa-check"></i> {{ vm.agreement.verified.length }}
+            </li>
+        </ul>
+    </li>
+</ul>

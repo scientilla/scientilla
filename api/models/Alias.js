@@ -77,6 +77,10 @@ module.exports = {
                 await Alias.update({user: record.user, str: record.str}, record);
             }
         }
+    },
+    async getUsersMainAlias(userIds = []) {
+        const aliases = await Alias.find({user: userIds, main: true});
+        return userIds.map(uid => aliases.find(a => a.user === uid));
     }
 };
 

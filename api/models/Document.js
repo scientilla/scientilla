@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer, DocumentTypes, SourceTypes, Exporter, DocumentNotDuplicate, DocumentNotDuplicateGroup, SqlService */
+/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer, DocumentTypes, SourceTypes, Exporter, DocumentNotDuplicate, DocumentNotDuplicateGroup, SqlService, Exporter */
 'use strict';
 
 /**
@@ -395,8 +395,16 @@ module.exports = _.merge({}, BaseModel, {
             document.scopusCitations = this.getCitations(DocumentOrigins.SCOPUS);
             document.openAccessLinks = this.getOpenaireOpenAccessLinks();
 
+            document.bibtex = Document.getBibtex(document);
+
             return document;
         }
+    },
+    getBibtex(doc) {
+        if (!_.isObject(doc.documenttype) || !_.isObject(doc.source))
+            return;
+
+        return Exporter.getBibtex(doc);
     },
     getFields: function () {
         return fields.map(f => f.name);

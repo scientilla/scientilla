@@ -196,7 +196,7 @@ module.exports = _.merge({}, BaseModel, {
         if (researchEntity.isGroup()) {
             const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(researchItem.type);
             const childResearchItem = await ResearchItemChildModel.findOne({id: researchItem.id}).populate('institutes');
-            if (!childResearchItem.institutes.find(i => i.id === 1)) // TODO remove magic number
+            if (researchItem.needsAffiliations() && !childResearchItem.institutes.find(i => i.id === 1)) // TODO remove magic number
                 throw  {
                     researchItem: childResearchItem,
                     success: false,

@@ -35,6 +35,12 @@
       "shortLabel": "PA",
       "label": "Patent",
       "type": "patent"
+    },
+    {
+      "key": "project_agreement",
+      "shortLabel": "AG",
+      "label": "Agreement",
+      "type": "project"
     }
   ]
 }

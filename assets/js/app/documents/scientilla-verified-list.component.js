@@ -7,7 +7,6 @@
             controller: scientillaVerifiedList,
             controllerAs: 'vm',
             bindings: {
-                researchEntity: '<'
             }
         });
 
@@ -24,6 +23,7 @@
         const vm = this;
 
         const DocumentsService = context.getDocumentService();
+        const subResearchEntity = context.getSubResearchEntity();
 
         vm.documents = [];
 
@@ -67,7 +67,7 @@
 
             query = q;
 
-            return researchEntityService.getDocuments(vm.researchEntity, query, favorites)
+            return researchEntityService.getDocuments(subResearchEntity, query, favorites)
                 .then(function (documents) {
                     vm.documents = documents;
                 });

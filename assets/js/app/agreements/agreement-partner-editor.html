@@ -1,0 +1,56 @@
+<div class="agreement-partner-editor">
+    <ul class="partner-listing">
+        <li>
+            <div class="form-group">
+                <label>Partners *</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Add partner and press Enter"
+                    ng-model="vm.newPartner"
+                    ng-keydown="$event.keyCode === 13 && vm.addPartner($event)"
+                    ng-class="{'is-invalid' : vm.errors.partners}"
+                    ng-change="vm.fieldValueHasChanged({field: 'partners'})"
+                />
+                <div
+                    ng-if="vm.isDuplicate"
+                    class="invalid-feedback"
+                >
+                    This partner is already been added.
+                </div>
+                <scientilla-error-messages
+                    class="error-messages"
+                    errors="vm.errors.partners"
+                ></scientilla-error-messages>
+            </div>
+        </li>
+        <li>
+            <div class="form-group">
+                <button
+                    type="button"
+                    class="btn btn-primary btn-form-no-label"
+                    ng-click="vm.addPartner()"
+                    ng-blur="vm.checkValidation({field: 'partners'})"
+                    ng-disabled="vm.newPartner.length === 0">
+                    <i class="fas fa-plus fa-left"></i>Add
+                </button>
+            </div>
+        </li>
+    </ul>
+
+    <div
+        ng-if="vm.partners.length > 0"
+        class="form-group">
+        <ul class="multiselect-list">
+            <li class="list-group-item" ng-repeat="partner in vm.partners">
+                {{ partner }}
+                <a
+                    href=""
+                    ng-click="vm.removePartner(partner)"
+                    class="badge badge-primary">
+                    <i class="fas fa-times"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

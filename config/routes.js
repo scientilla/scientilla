@@ -21,7 +21,7 @@
  */
 
 const apiPrfx = '/api/v1';
-const userUsernamePath =  apiPrfx + '/users/username/:username';
+const userUsernamePath = apiPrfx + '/users/username/:username';
 const groupCodePath = apiPrfx + '/groups/slug/:slug';
 const groupSlugPath = apiPrfx + '/groups/code/:code';
 
@@ -114,6 +114,7 @@ module.exports.routes = {
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/discarded']: 'ResearchEntity.multipleDiscard',
     ['post ' + apiPrfx + '/accomplishments/export']: 'Accomplishment.export',
     ['post ' + apiPrfx + '/projects/export']: 'Project.export',
+    ['put ' + apiPrfx + '/projects/:projectId/group']: 'Project.generateGroup',
     ['post ' + apiPrfx + '/patents/export']: 'Patent.export',
     ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-profile']: 'ResearchEntity.getProfile',
     ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-edit-profile']: 'ResearchEntity.getEditProfile',
@@ -133,7 +134,7 @@ module.exports.routes = {
     ['get ' + userUsernamePath + '/competitive-projects']: 'User.getCompetitiveProjects',
     ['get ' + userUsernamePath + '/industrial-projects']: 'User.getIndustrialProjects',
     ['get ' + userUsernamePath + '/patent-families']: 'User.getPatentFamilies',
-    ['get ' + userUsernamePath + '/patents']: 'Group.getPatents',
+    ['get ' + userUsernamePath + '/patents']: 'User.getPatents',
     ['get ' + userUsernamePath + '/profile']: 'User.getPublicProfile',
     ['get ' + userUsernamePath + '/profile-image']: 'userData.getProfileImage',
 

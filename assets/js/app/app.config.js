@@ -59,7 +59,7 @@
 
         $rootScope.$on("$routeChangeStart", (event, next, current) => {
             const noRedirectUrls = ['/unavailable', '/login'];
-            const goingToNoRedirectUrl = next.$$route && noRedirectUrls.includes(next.$$route.originalPath);
+            const goingToNoRedirectUrl = next && next.$$route && noRedirectUrls.includes(next.$$route.originalPath);
             if (!goingToNoRedirectUrl && !AuthService.isAvailable && !AuthService.isAdmin) {
                 Notification.warning('Sorry but scientilla is temporarily unavailable. Try again later.');
                 ModalService.dismiss(null);
@@ -127,7 +127,9 @@
         Restangular.extendModel('externals', Prototyper.toDocumentModel);
         Restangular.extendModel('accomplishments', Prototyper.toAccomplishmentModel);
         Restangular.extendModel('projects', Prototyper.toProjectModel);
+        Restangular.extendModel('projectDrafts', Prototyper.toProjectModel);
         Restangular.extendModel('patents', Prototyper.toPatentModel);
+        //Restangular.extendModel('agreements', Prototyper.toAgreementModel);
         Restangular.extendCollection('documents', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('externalDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('suggestedDocuments', Prototyper.toDocumentsCollection);
@@ -137,6 +139,8 @@
         Restangular.extendCollection('favoriteProjects', Prototyper.toProjectsCollection);
         Restangular.extendCollection('accomplishments', Prototyper.toAccomplishmentsCollection);
         Restangular.extendCollection('favoriteAccomplishments', Prototyper.toAccomplishmentsCollection);
+        //Restangular.extendCollection('agreements', Prototyper.toAgreementsCollection);
+        //Restangular.extendCollection('favoriteAgreements', Prototyper.toAgreementsCollection);
         Restangular.extendCollection('patents', Prototyper.toPatentsCollection);
         Restangular.extendCollection('favoritePatents', Prototyper.toPatentsCollection);
         Restangular.extendCollection('drafts', Prototyper.toDocumentsCollection);

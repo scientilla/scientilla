@@ -12,8 +12,8 @@ const allProjectTypes = {
 };
 
 const projectTypeCompetitive = 'project_competitive';
-
 const projectTypeIndustrial = 'project_industrial';
+const projectTypeAgreement = 'project_agreement';
 
 const industrialProjectCategories = {
     'Ricerca': 'Research',
@@ -123,13 +123,20 @@ const competitiveProjectActions = {
     'FAS Toscana': 'FAS Toscana',
 };
 
+const projectDownloadFileName = 'Projects_Export.csv';
+
+const projectExportUrl = '/api/v1/projects/export';
+
 angular.module('app')
     .constant('projectListSections', projectListSections)
     .constant('allProjectTypes', allProjectTypes)
     .constant('projectTypeCompetitive', projectTypeCompetitive)
     .constant('projectTypeIndustrial', projectTypeIndustrial)
+    .constant('projectTypeAgreement', projectTypeAgreement)
     .constant('industrialProjectCategories', industrialProjectCategories)
     .constant('industrialProjectPayments', industrialProjectPayments)
     .constant('projectStatuses', projectStatuses)
     .constant('competitiveProjectFundings', competitiveProjectFundings)
-    .constant('competitiveProjectActions', competitiveProjectActions);
+    .constant('competitiveProjectActions', competitiveProjectActions)
+    .constant('projectDownloadFileName', projectDownloadFileName)
+    .constant('projectExportUrl', projectExportUrl);

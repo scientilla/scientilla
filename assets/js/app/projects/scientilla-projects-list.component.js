@@ -33,6 +33,7 @@
         vm.projects = [];
         vm.onFilter = onFilter;
         vm.exportDownload = projects => ProjectService.exportDownload(projects, 'csv');
+        vm.onChange = onChange;
 
         let query = {};
         let activeWatcher;
@@ -71,16 +72,19 @@
 
         };
 
-        function onFilter(q) {
+        /* jshint ignore:start */
+        async function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
             query = q;
 
-            return ProjectService.get(vm.researchEntity, query, favorites)
-                .then(projects => {
-                    vm.projects = projects;
-                });
+            vm.projects = await ProjectService.get(vm.researchEntity, query, favorites);
+        }
+        /* jshint ignore:end */
+
+        function onChange(structure, values, key) {
+            ProjectService.onChange(structure, values, key);
         }
     }
 

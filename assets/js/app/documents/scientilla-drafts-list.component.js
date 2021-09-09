@@ -9,7 +9,6 @@
             controller: scientillaDrafsList,
             controllerAs: 'vm',
             bindings: {
-                researchEntity: '<'
             }
         });
 
@@ -29,6 +28,7 @@
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
+        const subResearchEntity = context.getSubResearchEntity();
 
         vm.onFilter = onFilter;
 
@@ -73,7 +73,7 @@
         function onFilter(q) {
             query = q;
 
-            return researchEntityService.getDrafts(vm.researchEntity, q)
+            return researchEntityService.getDrafts(subResearchEntity, q)
                 .then(function (documents) {
                     vm.drafts = documents;
                 });

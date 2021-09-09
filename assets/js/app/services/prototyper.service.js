@@ -10,7 +10,8 @@
         'DocumentKinds',
         'documentFieldsRules',
         'documentOrigins',
-        'ValidateService'
+        'ValidateService',
+        'groupTypes'
     ];
 
     function Prototyper(
@@ -19,7 +20,8 @@
         DocumentKinds,
         documentFieldsRules,
         documentOrigins,
-        ValidateService
+        ValidateService,
+        groupTypes
     ) {
         const service = {
             toUserModel: toUserModel,
@@ -44,6 +46,10 @@
             toProjectsCollection: applyToAll(toProjectModel),
             toPatentModel: toProjectModel,
             toPatentsCollection: applyToAll(toPatentModel),
+            toAgreementModel: toAgreementModel,
+            toAgreementsCollection: applyToAll(toAgreementModel),
+            toAgreementGroupModel: toAgreementGroupModel,
+            toAgreementGroupsCollection: applyToAll(toAgreementGroupModel)
         };
         const userPrototype = {
             getAliases: function () {
@@ -78,6 +84,26 @@
                 }
 
                 return _.trim(name + ' ' + surname);
+            },
+            getName: function () {
+                switch (true) {
+                    case _.has(this, 'displayName') && !_.isEmpty(this.displayName):
+                        return this.displayName;
+                    case _.has(this, 'name') && !_.isEmpty(this.name):
+                        return this.name;
+                    default:
+                        return '';
+                }
+            },
+            getSurname: function () {
+                switch (true) {
+                    case _.has(this, 'displaySurname') && !_.isEmpty(this.displaySurname):
+                        return this.displaySurname;
+                    case _.has(this, 'surname') && !_.isEmpty(this.surname):
+                        return this.surname;
+                    default:
+                        return '';
+                }
             },
             getType: function () {
                 return 'user';
@@ -124,6 +150,12 @@
             },
             isViewOnly: function () {
                 return [userConstants.role.GUEST, userConstants.role.EVALUATOR].includes(this.role);
+            },
+            isSuperUser: function () {
+                return [
+                    userConstants.role.SUPERUSER,
+                    userConstants.role.ADMINISTRATOR,
+                ].includes(this.role);
             },
             isSuperViewer: function () {
                 return [
@@ -473,6 +505,14 @@
             },
         };
 
+        const agreementPrototype = {
+            getPILimit: function () {
+                return 10;
+            },
+        };
+
+        const agreementGroupPrototype = {};
+
         function initializeAffiliations(document) {
             _.forEach(document.authorships, a => {
                 if (a.affiliations)
@@ -541,6 +581,19 @@
             service.toGroupsCollection(patent.verifiedGroups);
             service.toUsersCollection(patent.authors);
             return patent;
+        }
+
+        function toAgreementModel(agreement) {
+            _.defaultsDeep(agreement, agreementPrototype);
+            service.toUsersCollection(agreement.administrators);
+            service.toGroupsCollection(agreement.verifiedGroups);
+            return agreement;
+        }
+
+        function toAgreementGroupModel(group) {
+            _.defaultsDeep(group, agreementGroupPrototype);
+            service.toUsersCollection(group.administrators);
+            return group;
         }
 
         function checkDuplicates(document) {

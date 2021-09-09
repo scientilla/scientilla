@@ -7,124 +7,123 @@
             templateUrl: 'partials/scientilla-group-details.html',
             controllerAs: 'vm',
             bindings: {
-                groupId: '<',
+                groupParam: '<',
                 activeTab: '@?'
             }
         });
 
     GroupDetailsController.$inject = [
         'GroupsService',
-        'context',
-        'AuthService',
-        '$scope',
-        '$controller',
         'ResearchEntitiesService',
-        '$timeout',
-        'ModalService'
+        'groupTypes',
+        'path'
     ];
 
     function GroupDetailsController(
         GroupsService,
-        context,
-        AuthService,
-        $scope,
-        $controller,
         ResearchEntitiesService,
-        $timeout,
-        ModalService
+        groupTypes,
+        path
     ) {
         const vm = this;
-        angular.extend(vm, $controller('TabsController', {$scope: $scope}));
-        vm.subResearchEntity = context.getSubResearchEntity();
-        vm.loggedUser = AuthService.user;
-        vm.refreshGroup = refreshGroup;
-        vm.addCollaborator = addCollaborator;
 
-        let activeTabWatcher = null;
+        vm.groupTypes = groupTypes;
+
+        vm.defaultTabIdentifiers = [
+            {
+                index: 0,
+                slug: 'info',
+                tabName: 'group-info'
+            }, {
+                index: 1,
+                slug: 'members',
+                tabName: 'group-members'
+            }, {
+                index: 2,
+                slug: 'child-groups'
+            }, {
+                index: 3,
+                slug: 'documents'
+            }, {
+                index: 4,
+                slug: 'accomplishments'
+            }, {
+                index: 5,
+                slug: 'projects'
+            }, {
+                index: 6,
+                slug: 'patents'
+            }, {
+                index: 7,
+                slug: 'documents-overview',
+                tabName: 'overview-tab'
+            }, {
+                index: 8,
+                slug: 'bibliometric-charts',
+                tabName: 'metrics-tab'
+            }
+        ];
+
+        vm.projectTabIdentifiers = [
+            {
+                index: 0,
+                slug: 'info',
+                tabName: 'group-info'
+            }, {
+                index: 1,
+                slug: 'members'
+            }, {
+                index: 2,
+                slug: 'documents'
+            }, {
+                index: 3,
+                slug: 'accomplishments'
+            }, {
+                index: 4,
+                slug: 'patents'
+            }
+        ];
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
+            let query = {};
+            if (/^\d+$/.test(vm.groupParam)) {
+                query.where = { id: vm.groupParam };
+            } else {
+                query.where = { slug: vm.groupParam };
+            }
 
-            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
-                if (vm.activeTabIndex === 5) {
-                    $timeout(function () {
-                        $scope.$broadcast('rzSliderForceRender');
-                    });
+            vm.group = await GroupsService.get(query);
+            if (!vm.group) {
+                return path.goTo('/404');
+            }
+
+            vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
+
+            let redirect = false;
+            if (vm.group.type === groupTypes.PROJECT) {
+                const tab = vm.projectTabIdentifiers.find(t => t.slug === vm.activeTab);
+
+                if (!tab) {
+                    redirect = true;
+
                 }
-            });
+            } else {
+                const tab = vm.defaultTabIdentifiers.find(t => t.slug === vm.activeTab);
 
-            await refreshGroup();
-
-            const tabIdentifiers = [
-                {
-                    index: 0,
-                    slug: 'info',
-                    tabName: 'group-info'
-                }, {
-                    index: 1,
-                    slug: 'members',
-                    tabName: 'group-members'
-                }, {
-                    index: 2,
-                    slug: 'child-groups'
-                }, {
-                    index: 3,
-                    slug: 'documents'
-                }, {
-                    index: 4,
-                    slug: 'accomplishments'
-                }, {
-                    index: 5,
-                    slug: 'projects'
-                }, {
-                    index: 6,
-                    slug: 'documents-overview',
-                    tabName: 'overview-tab'
-                }, {
-                    index: 7,
-                    slug: 'bibliometric-charts',
-                    tabName: 'metrics-tab'
+                if (!tab) {
+                    redirect = true;
                 }
-            ];
+            }
 
-            vm.initializeTabs(tabIdentifiers);
+            if (redirect) {
+                return path.goTo(`/${ vm.group.slug }/info`);
+            }
         };
-
-        vm.$onDestroy = function () {
-            activeTabWatcher();
-        };
-
-        function refreshGroup() {
-            return GroupsService.getGroup(vm.groupId)
-                .then(async (group) => {
-                    vm.group = group;
-                    vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
-                });
-        }
-
         /* jshint ignore:end */
 
-        vm.isAdmin = function () {
-            return vm.loggedUser && vm.loggedUser.isAdmin();
-        };
+        vm.$onDestroy = function () {
 
-        vm.isGroupAdmin = function () {
-            return AuthService.isAdmin;
         };
-
-        vm.isScientific = function () {
-            if (!vm.group)
-                return true;
-            return ['Institute', 'Center', 'Research Line', 'Facility'].includes(vm.group.type);
-        };
-
-        function addCollaborator() {
-            ModalService.openCollaboratorForm(vm.group)
-                .then(() => {
-                    if (vm.activeTabIndex === 1) {
-                        $scope.$broadcast('refreshList');
-                    }
-                });
-        }
     }
 })();

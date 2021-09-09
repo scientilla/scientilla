@@ -8,9 +8,7 @@
 
     <item-list>
         <ul class="group-member-listing">
-            <li
-                ng-repeat="m in vm.members"
-                ng-class="m.cssClass">
+            <li ng-repeat="m in vm.members">
                 <img
                     ng-src="{{ m.image }}"
                     alt="{{ m | fullname }}"

@@ -1,10 +1,9 @@
 <ul class="patent">
     <li class="patent-info">
         <span
-            ng-if="vm.patent.patentData.filingDate"
             class="patent-year"
-            title="Filing date: {{ vm.patent.patentData.filingDate }}">
-            {{ vm.format(vm.patent.patentData.filingDate) | date: 'yyyy' }}
+            title="Year: {{ vm.patent.year }}">
+            {{ vm.patent.year }}
         </span>
         <img ng-src="{{ vm.customizations.logos.institute.src }}"
              ng-if="vm.customizations.logos.institute.src && vm.hasMainGroupAffiliation()"
@@ -30,8 +29,16 @@
             <strong>Application:</strong> {{ vm.patent.patentData.application }}<br>
         </ng-container>
 
-        <ng-container ng-if="vm.patent.patentData.priority">
+        <ng-container ng-if="vm.patent.translation">
+            <em><strong>Translation</strong></em>
+        </ng-container>
+
+        <ng-container ng-if="!vm.patent.translation && vm.patent.patentData.priority">
             <em><strong>Priority</strong></em>
+        </ng-container>
+
+        <ng-container ng-if="!vm.patent.translation && !vm.patent.patentData.priority">
+            <em><strong>Prosecution</strong></em>
         </ng-container>
 
         <ul class="patent-actions">

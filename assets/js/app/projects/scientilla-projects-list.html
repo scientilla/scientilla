@@ -4,6 +4,8 @@
     elements="vm.projects"
     empty-list-message="No projects found"
     filter-on-init="vm.loadProjects"
+    research-entity="vm.researchEntity"
+    on-change="vm.onChange"
 >
 
     <scientilla-multicheck>
@@ -16,11 +18,11 @@
             </scientilla-multicheck-button>
         </buttons>
         <item-list>
-            <scientilla-checkable ng-repeat="p in vm.projects" item="a" class="scientilla-checkable">
+            <scientilla-checkable ng-repeat="p in vm.projects" item="p" class="scientilla-checkable">
                 <scientilla-project
                     project="p"
                     section="vm.section"
-                    class="accomplishment-container"></scientilla-project>
+                    class="project-container"></scientilla-project>
             </scientilla-checkable>
         </item-list>
     </scientilla-multicheck>

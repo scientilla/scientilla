@@ -13,6 +13,9 @@ module.exports = _.merge({}, BaseModel, {
             columnName: 'research_item',
             unique: true
         },
+        group: {
+            model: 'group'
+        },
         startYear: {
             type: 'STRING',
             columnName: 'start_year'
@@ -21,9 +24,9 @@ module.exports = _.merge({}, BaseModel, {
             type: 'STRING',
             columnName: 'end_year'
         },
-        piStr: {
+        authorsStr: {
             type: 'STRING',
-            columnName: 'pi_str'
+            columnName: 'authors_str'
         },
         projectData: {
             type: 'JSON',
@@ -32,7 +35,7 @@ module.exports = _.merge({}, BaseModel, {
         isValid: () => true,
     },
     getFields() {
-        return ['researchItem', 'startYear', 'endYear', 'piStr', 'projectData'];
+        return ['researchItem', 'group', 'startYear', 'endYear', 'authorsStr', 'projectData'];
     },
     async selectData(itemData) {
         return _.pick(itemData, this.getFields());

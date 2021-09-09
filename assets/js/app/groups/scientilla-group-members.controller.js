@@ -287,37 +287,9 @@
             }
 
             if (members.length > 0) {
-                if (subgroups) {
-                    memberships = await researchEntityService.getAllMemberships(vm.group.id, {
-                        where: {
-                            group: vm.group.id,
-                            user: members.map(m => m.id)
-                        }
-                    });
-                } else {
-                    memberships = await researchEntityService.getMemberships(vm.group.id, {
-                        where: {
-                            user: members.map(m => m.id)
-                        }
-                    });
-                }
-            }
-
-            if (members.length > 0 && memberships.length > 0) {
                 members.forEach(member => {
 
-                    let isFormerOfCurrentGroup = false;
-                    if (subgroups) {
-                        isFormerOfCurrentGroup = !member.activeMembershipsIncludingSubgroups.includes(`-${ vm.group.id }-`);
-                    } else {
-                        isFormerOfCurrentGroup = !member.activeMemberships.includes(`-${ vm.group.id }-`);
-                    }
-
-                    if (!isFormerOfCurrentGroup) {
-                        return;
-                    }
-
-                    member.membership = memberships.find(m => m.user === member.id && m.group === vm.group.id);
+                    member.membership = member.memberships.find(m => m.person === member.id && m.group === vm.group.id);
                     if (!member.membership) {
                         return;
                     }
@@ -326,15 +298,12 @@
                     switch (true) {
                         case !member.membership.synchronized && member.membership.active :
                             member.membership.type = vm.membershipTypes.COLLABORATOR;
-                            member.cssClass = 'collaborator';
                             break;
                         case member.membership.synchronized && !member.membership.active :
                             member.membership.type = vm.membershipTypes.FORMER_MEMBER;
-                            member.cssClass = 'former';
                             break;
                         case !member.membership.synchronized && !member.membership.active :
                             member.membership.type = vm.membershipTypes.FORMER_COLLABORATOR;
-                            member.cssClass = 'former';
                             break;
                         default:
                             member.membership.type = vm.membershipTypes.MEMBER;
@@ -366,7 +335,6 @@
 
         function showCollaboratorButton(m) {
             return isGroupAdmin() && m.membership &&
-                m.membership.level === 0 &&
                 [
                     vm.membershipTypes.COLLABORATOR.id,
                     vm.membershipTypes.FORMER_COLLABORATOR.id

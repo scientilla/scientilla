@@ -17,6 +17,7 @@ const ajv = new Ajv({
         require('../schemas/projectDefs.json'),
         require('../schemas/projectIndustrial.json'),
         require('../schemas/projectCompetitive.json'),
+        require('../schemas/projectAgreement.json'),
         require('../schemas/patent.json'),
         require('../schemas/patentFamily.json'),
         profileDefs,
@@ -38,6 +39,9 @@ module.exports = {
     },
     getProjectIndustrialValidator: () => {
         return ajv.getSchema('projectCompetitive');
+    },
+    getProjectAgreementValidator: () => {
+        return ajv.getSchema('projectAgreement');
     },
     getPatentValidator: () => {
         return ajv.getSchema('patent');
