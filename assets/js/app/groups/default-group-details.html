@@ -34,7 +34,7 @@
             </uib-tab>
             <uib-tab
                 index="2"
-                ng-show="vm.group.childGroups.length || vm.subResearchEntity.isAdmin()"
+                ng-show="vm.group.childGroups.length || vm.loggedUser.isAdmin()"
                 heading="Groups"
             >
                 <scientilla-group-groups
@@ -81,7 +81,7 @@
             </uib-tab>
             <uib-tab
                 index="6"
-                ng-if="vm.isScientific() && vm.subResearchEntity.isAdmin()"
+                ng-if="vm.isScientific() && vm.loggedUser.isAdmin()"
                 heading="Patents"
             >
                 <scientilla-patents-list

@@ -124,7 +124,7 @@
                 >Verified</a>
             </div>
         </li>
-        <li ng-if="vm.isGroup() && vm.subResearchEntity.type === 'Institute'">
+        <li ng-if="vm.isGroup() && vm.subResearchEntity.type === 'Institute' && vm.isAdmin()">
             <label class="label-add-research-item">
                 Agreements
                 <scientilla-button-new-research-item
@@ -145,7 +145,7 @@
                 >Drafts</a>
             </div>
         </li>
-        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && vm.subResearchEntity.isAdmin()">
+        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && vm.isAdmin()">
             <label>Patents</label>
             <div class="list-group">
                 <a
