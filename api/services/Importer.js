@@ -631,11 +631,20 @@ async function importProjects() {
             try {
                 const projectData = mapObject(project, schemas[type]);
 
+                const code = projectData.code;
+                if (!code) {
+                    errors.push({
+                        project: data.projectData.acronym,
+                        message: 'Missing required field "code"'
+                    });
+                    continue;
+                }
+
                 const users = await User.find({username: projectData.members.map(m => m.email)});
                 users.forEach(u => {
                     const member = projectData.members.find(m => m.email === u.username);
-                    member.name = u.displayName;
-                    member.surname = u.displaySurname;
+                    member.name = u.displayName ? u.displayName : u.name;
+                    member.surname = u.displaySurname ? u.displaySurname : u.surname;
                 });
                 const sortedMembers = projectData.members.sort((a, b) => a.surname.localeCompare(b.surname))
                 projectData.members = [
@@ -643,6 +652,17 @@ async function importProjects() {
                     ...sortedMembers.filter(m => m.role === 'co_pi'),
                     ...sortedMembers.filter(m => m.role === 'member')
                 ];
+
+                if (!projectData.members[0]) {
+                    errors.push({
+                        project: {
+                            acronym: projectData.acronym,
+                            members: JSON.stringify(projectData.members)
+                        },
+                        message: 'Missing required field "pi"'
+                    });
+                    continue;
+                }
 
                 let startYear = null;
                 let endYear = null;
@@ -665,15 +685,6 @@ async function importProjects() {
                     projectData: projectData
                 };
 
-                const code = data.projectData.code;
-                if (!code || pis.length === 0) {
-                    errors.push({
-                        project: data.projectData.acronym,
-                        message: 'Missing required field "code" or "PI"'
-                    });
-                    continue;
-                }
-
                 const authorsData = pis.map((pi, pos) => ({
                     affiliations: pi.email.includes('@iit.it') ? [1] : [],
                     position: pos
@@ -688,6 +699,7 @@ async function importProjects() {
                     updated++;
                 }
             } catch (e) {
+                sails.log.debug(project)
                 errors.push(e);
             }
         }
@@ -698,7 +710,12 @@ async function importProjects() {
         sails.log.info(`external created: ${created}`);
         sails.log.info(`external updated: ${updated}`);
         sails.log.info(`errors: ${errors.length}`);
-        errors.forEach(error => sails.log.debug(JSON.stringify(error) + '\n --------------------- \n'));
+        errors.forEach(error => {
+            if (error.researchItem)
+                delete error.researchItem.logos;
+            sails.log.debug(error);
+            sails.log.debug('\n --------------------- \n');
+        });
     }
 
     async function projectAutoVerify() {
