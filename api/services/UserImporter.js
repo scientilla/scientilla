@@ -1355,7 +1355,8 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
         jobTitle: null,
         lastsynch: moment().format(),
         synchronized: true,
-        contractEndDate: null
+        contractEndDate: null,
+        legacyEmail: null
     };
 
     if (_.has(employee, 'nome')) {
@@ -1432,6 +1433,10 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
         userObject.config.scientific = false;
     } else {
         userObject.config.scientific = user.config.scientific;
+    }
+
+    if (_.has(employee, 'email')) {
+        userObject.legacyEmail = employee.email;
     }
 
     return userObject;
@@ -1652,6 +1657,7 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
         user.username === userObject.username &&
         user.displayName === userObject.displayName &&
         user.displaySurname === userObject.displaySurname &&
+        user.legacyEmail === userObject.legacyEmail &&
         JSON.stringify(user.config) === JSON.stringify(userObject.config)
     ) {
         return true;

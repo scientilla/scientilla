@@ -223,6 +223,11 @@ module.exports = _.merge({}, SubResearchEntity, {
         cid: {
             type: 'STRING'
         },
+        legacyEmail: {
+            columnName: 'legacy_email',
+            type: 'EMAIL',
+            defaultsTo: ""
+        },
         getAliases: async function () {
             const aliases = await Alias.find({user: this.id});
             if (!aliases)
