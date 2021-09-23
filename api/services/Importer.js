@@ -744,7 +744,7 @@ async function importProjects() {
                 if (!_.isEmpty(foundGroup))
                     groups.push(foundGroup);
             }
-            const users = await User.find({username: members.map(m => m.email)});
+            const users = await User.find({legacy_email: members.map(m => m.email)});
 
             // only getting 1 level of parentGroups
             const parentGroups = await MembershipGroup.find({child_group: groups.map(g => g.id)})
@@ -980,7 +980,7 @@ async function importPatents() {
         const parentGroups = await MembershipGroup.find({child_group: groups.map(g => g.id)})
             .populate('parent_group');
 
-        const users = await User.find({username: ePatent.patentData.inventors.map(m => m.email)});
+        const users = await User.find({legacy_email: ePatent.patentData.inventors.map(m => m.email)});
 
         const researchEntitiesId = [
             institute.id,
