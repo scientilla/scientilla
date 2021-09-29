@@ -229,11 +229,11 @@ module.exports = _.merge({}, BaseModel, {
         return _.pick(draftData, documentFields);
     },
     async generateAuthorsStr(usersData = []) {
-        const users = await User.find({username: usersData.map(ud => ud.email.toLocaleLowerCase())});
+        const users = await User.find({legacyEmail: usersData.map(ud => ud.email.toLocaleLowerCase())});
         const usersMainAlias = await Alias.getUsersMainAlias(users.map(u => u.id));
 
         return usersData.map(ud => {
-            const user = users.find(u => u.username === ud.email.toLocaleLowerCase());
+            const user = users.find(u => u.legacyEmail === ud.email.toLocaleLowerCase());
             return user ? usersMainAlias.find(a => a.user === user.id).str : User.generateAliasesStr(ud.name, ud.surname)[0];
         }).join(', ');
     }
