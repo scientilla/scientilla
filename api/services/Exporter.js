@@ -167,7 +167,7 @@ function projectsToCsv(researchItems) {
         'End date',
         'Funding type',
         'Action type',
-        'Role',
+        'IIT role',
         'Status',
         'Institute budget',
         'Institute funding',
