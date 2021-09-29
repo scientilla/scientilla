@@ -87,7 +87,7 @@
         function exportDownload(items, format = 'csv', filename = projectDownloadFileName, url = projectExportUrl) {
             $http.post(url, {
                 format: format,
-                ids: items.map(d => d.id)
+                projectIds: items.map(d => d.id)
             }).then((res) => {
                 const element = document.createElement('a');
                 element.setAttribute('href', encodeURI(res.data));
