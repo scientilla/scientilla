@@ -1,4 +1,4 @@
-/* global SqlService, ChartData, PerformanceCalculator, DocumentTypes, SourceTypes, DocumentMetric, SourceMetric*/
+/* global SqlService, ChartData, PerformanceCalculator, DocumentTypes, SourceTypes, DocumentMetric, SourceMetric, ResearchEntityTypes */
 const Promise = require("bluebird");
 const _ = require("lodash");
 
@@ -28,190 +28,228 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         key: 'journalsByYear',
         queryName: 'documentsByYear',
         fn: query,
-        params: [id, SourceTypes.JOURNAL]
+        params: [id, SourceTypes.JOURNAL],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'conferencesByYear',
         queryName: 'documentsByYear',
         fn: query,
-        params: [id, SourceTypes.CONFERENCE]
+        params: [id, SourceTypes.CONFERENCE],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'booksByYear',
         queryName: 'documentsByYear',
         fn: query,
-        params: [id, SourceTypes.BOOK]
+        params: [id, SourceTypes.BOOK],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'bookSeriesByYear',
         queryName: 'documentsByYear',
         fn: query,
-        params: [id, SourceTypes.BOOKSERIES]
+        params: [id, SourceTypes.BOOKSERIES],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'disseminationTalksByYear',
         queryName: 'invitedTalksByYear',
         fn: query,
-        params: [id, 'Dissemination']
+        params: [id, 'Dissemination'],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'scientificTalksByYear',
         queryName: 'invitedTalksByYear',
         fn: query,
-        params: [id, 'Scientific Event']
+        params: [id, 'Scientific Event'],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'documentsByType',
         queryName: 'documentsByType',
         fn: query,
-        params: [id]
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'filteredAffiliatedJournalsByYear',
         queryName: 'filteredAffiliatedDocumentsByYear',
         fn: query,
-        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.JOURNAL]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.JOURNAL],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'filteredAffiliatedConferencesByYear',
         queryName: 'filteredAffiliatedDocumentsByYear',
         fn: query,
-        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.CONFERENCE]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.CONFERENCE],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'filteredAffiliatedBooksByYear',
         queryName: 'filteredAffiliatedDocumentsByYear',
         fn: query,
-        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOK]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOK],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'filteredAffiliatedBookSeriesByYear',
         queryName: 'filteredAffiliatedDocumentsByYear',
         fn: query,
-        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'filteredNotAffiliatedJournalsByYear',
         queryName: 'filteredNotAffiliatedDocumentsByYear',
         fn: query,
-        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.JOURNAL]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.JOURNAL],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'filteredNotAffiliatedConferencesByYear',
         queryName: 'filteredNotAffiliatedDocumentsByYear',
         fn: query,
-        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.CONFERENCE]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.CONFERENCE],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'filteredNotAffiliatedBooksByYear',
         queryName: 'filteredNotAffiliatedDocumentsByYear',
         fn: query,
-        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOK]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOK],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'filteredNotAffiliatedBookSeriesByYear',
         queryName: 'filteredNotAffiliatedDocumentsByYear',
         fn: query,
-        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'hindexPerYear',
         fn: hindexPerYear,
-        requires: ['documents', 'citations']
+        requires: ['documents', 'citations'],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'citationsPerYear',
         fn: citationsPerYear,
-        requires: ['citations']
+        requires: ['citations'],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'citationsPerDocumentYear',
         fn: citationsPerDocumentYear,
-        requires: ['documents', 'citations']
+        requires: ['documents', 'citations'],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'totalIfPerYear',
         fn: getTotalMetricPerYear,
         metricName: 'IF',
-        requires: ['documents', 'docsMetrics', 'metrics']
+        requires: ['documents', 'docsMetrics', 'metrics'],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'totalSjrPerYear',
         fn: getTotalMetricPerYear,
         metricName: 'SJR',
-        requires: ['documents', 'docsMetrics', 'metrics']
+        requires: ['documents', 'docsMetrics', 'metrics'],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'totalSnipPerYear',
         fn: getTotalMetricPerYear,
         metricName: 'SNIP',
-        requires: ['documents', 'docsMetrics', 'metrics']
+        requires: ['documents', 'docsMetrics', 'metrics'],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'chartDataDate',
         queryName: 'chartDataDate',
         fn: query,
         params: [id, researchEntityType],
-        nocache: true
+        nocache: true,
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'groupMembersTotal',
         queryName: 'groupMembersTotal',
         fn: query,
-        params: [id]
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupAndSubgroupMembersTotal',
         queryName: 'groupAndSubgroupMembersTotal',
         fn: query,
-        params: [id]
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     }, {
         key: 'groupMembersByRole',
         queryName: 'groupMembersByRole',
         fn: query,
-        params: [id]
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupAndSubgroupMembersByRole',
         queryName: 'groupAndSubgroupMembersByRole',
         fn: query,
-        params: [id]
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupMembersByGender',
         queryName: 'groupMembersByGender',
         fn: query,
-        params: [id]
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupMembersByGenderOfRoles',
         queryName: 'groupMembersByGenderOfRoles',
         fn: query,
-        params: [id, roles]
+        params: [id, roles],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupAndSubgroupMembersByGender',
         queryName: 'groupAndSubgroupMembersByGender',
         fn: query,
-        params: [id]
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupAndSubgroupMembersByGenderOfRoles',
         queryName: 'groupAndSubgroupMembersByGenderOfRoles',
         fn: query,
-        params: [id, roles]
+        params: [id, roles],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupMembersByAgeRange',
         queryName: 'groupMembersByAgeRange',
         fn: query,
-        params: [id]
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupMembersByAgeRangeOfRoles',
         queryName: 'groupMembersByAgeRangeOfRoles',
         fn: query,
-        params: [id, roles]
+        params: [id, roles],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupAndSubgroupMembersByAgeRange',
         queryName: 'groupAndSubgroupMembersByAgeRange',
         fn: query,
-        params: [id]
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupAndSubgroupMembersByAgeRangeOfRoles',
         queryName: 'groupAndSubgroupMembersByAgeRangeOfRoles',
         fn: query,
-        params: [id, roles]
+        params: [id, roles],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupMembersByNationality',
         queryName: 'groupMembersByNationality',
         fn: query,
-        params: [id]
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupMembersByNationalityOfRoles',
         queryName: 'groupMembersByNationalityOfRoles',
         fn: query,
-        params: [id, roles]
+        params: [id, roles],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupAndSubgroupMembersByNationality',
         queryName: 'groupAndSubgroupMembersByNationality',
         fn: query,
-        params: [id]
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     },  {
         key: 'groupAndSubgroupMembersByNationalityOfRoles',
         queryName: 'groupAndSubgroupMembersByNationalityOfRoles',
         fn: query,
-        params: [id, roles]
+        params: [id, roles],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     }];
 
     let selectedCharts = [];
@@ -236,9 +274,9 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
     async function setData() {
 
         if (chartsKeys.length > 0)
-            selectedCharts = charts.filter(c => chartsKeys.includes(c.key));
+            selectedCharts = charts.filter(c => chartsKeys.includes(c.key) && c.researchEntityTypes.includes(researchEntityType));
         else
-            selectedCharts = charts;
+            selectedCharts = charts.filter(c => c.researchEntityTypes.includes(researchEntityType));
 
         if (refresh || !await areChartsCached()) {
             if (selectedCharts.find(sc =>
@@ -262,54 +300,52 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         }
     }
 
-
     async function query(chart) {
         const sql = getSql(chart.queryName);
         return await SqlService.query(sql, chart.params);
     }
 
     function getSql(queryName) {
-        const queries = {
-            'user': {
-                'chartDataDate': 'chartDataDate',
-                'documentsByType': 'documentsByType',
-                'documentsByYear': 'documentsByYear',
-                'filteredAffiliatedDocumentsByYear': 'filteredAffiliatedDocumentsByYear',
-                'filteredNotAffiliatedDocumentsByYear': 'filteredNotAffiliatedDocumentsByYear',
-                'invitedTalksByYear': 'invitedTalksByYear'
-            },
-            'group': {
-                'chartDataDate': 'chartDataDate',
-                'documentsByType': 'documentsByType',
-                'documentsByYear': 'documentsByYear',
-                'filteredAffiliatedDocumentsByYear': 'filteredAffiliatedDocumentsByYearGroup',
-                'filteredNotAffiliatedDocumentsByYear': 'filteredNotAffiliatedDocumentsByYearGroup',
-                'invitedTalksByYear': 'invitedTalksByYear',
-                'groupMembersTotal': 'groupMembersTotal',
-                'groupAndSubgroupMembersTotal': 'groupAndSubgroupMembersTotal',
-                'groupMembersByRole': 'groupMembersByRole',
-                'groupAndSubgroupMembersByRole': 'groupAndSubgroupMembersByRole',
-                'groupMembersByGender': 'groupMembersByGender',
-                'groupMembersByGenderOfRoles': 'groupMembersByGenderOfRoles',
-                'groupAndSubgroupMembersByGender': 'groupAndSubgroupMembersByGender',
-                'groupAndSubgroupMembersByGenderOfRoles': 'groupAndSubgroupMembersByGenderOfRoles',
-                'groupMembersByAgeRange': 'groupMembersByAgeRange',
-                'groupMembersByAgeRangeOfRoles': 'groupMembersByAgeRangeOfRoles',
-                'groupAndSubgroupMembersByAgeRange': 'groupAndSubgroupMembersByAgeRange',
-                'groupAndSubgroupMembersByAgeRangeOfRoles': 'groupAndSubgroupMembersByAgeRangeOfRoles',
-                'groupMembersByNationality': 'groupMembersByNationality',
-                'groupMembersByNationalityOfRoles': 'groupMembersByNationalityOfRoles',
-                'groupAndSubgroupMembersByNationality': 'groupAndSubgroupMembersByNationality',
-                'groupAndSubgroupMembersByNationalityOfRoles': 'groupAndSubgroupMembersByNationalityOfRoles'
-            }
+        const queries = {};
+        queries[ResearchEntityTypes.USER] = {
+            'chartDataDate': 'chartDataDate',
+            'documentsByType': 'documentsByType',
+            'documentsByYear': 'documentsByYear',
+            'filteredAffiliatedDocumentsByYear': 'filteredAffiliatedDocumentsByYear',
+            'filteredNotAffiliatedDocumentsByYear': 'filteredNotAffiliatedDocumentsByYear',
+            'invitedTalksByYear': 'invitedTalksByYear'
         };
-        const transforms = {
-            'user': {},
-            'group': {
-                'documentsByType': (q) => q.replace(/authorship/g, 'authorshipgroup'),
-                'documentsByYear': (q) => q.replace(/authorship/g, 'authorshipgroup'),
-                'invitedTalksByYear': (q) => q.replace(/authorship/g, 'authorshipgroup')
-            }
+
+        queries[ResearchEntityTypes.GROUP] = {
+            'chartDataDate': 'chartDataDate',
+            'documentsByType': 'documentsByType',
+            'documentsByYear': 'documentsByYear',
+            'filteredAffiliatedDocumentsByYear': 'filteredAffiliatedDocumentsByYearGroup',
+            'filteredNotAffiliatedDocumentsByYear': 'filteredNotAffiliatedDocumentsByYearGroup',
+            'invitedTalksByYear': 'invitedTalksByYear',
+            'groupMembersTotal': 'groupMembersTotal',
+            'groupAndSubgroupMembersTotal': 'groupAndSubgroupMembersTotal',
+            'groupMembersByRole': 'groupMembersByRole',
+            'groupAndSubgroupMembersByRole': 'groupAndSubgroupMembersByRole',
+            'groupMembersByGender': 'groupMembersByGender',
+            'groupMembersByGenderOfRoles': 'groupMembersByGenderOfRoles',
+            'groupAndSubgroupMembersByGender': 'groupAndSubgroupMembersByGender',
+            'groupAndSubgroupMembersByGenderOfRoles': 'groupAndSubgroupMembersByGenderOfRoles',
+            'groupMembersByAgeRange': 'groupMembersByAgeRange',
+            'groupMembersByAgeRangeOfRoles': 'groupMembersByAgeRangeOfRoles',
+            'groupAndSubgroupMembersByAgeRange': 'groupAndSubgroupMembersByAgeRange',
+            'groupAndSubgroupMembersByAgeRangeOfRoles': 'groupAndSubgroupMembersByAgeRangeOfRoles',
+            'groupMembersByNationality': 'groupMembersByNationality',
+            'groupMembersByNationalityOfRoles': 'groupMembersByNationalityOfRoles',
+            'groupAndSubgroupMembersByNationality': 'groupAndSubgroupMembersByNationality',
+            'groupAndSubgroupMembersByNationalityOfRoles': 'groupAndSubgroupMembersByNationalityOfRoles'
+        };
+        const transforms = {};
+        transforms[ResearchEntityTypes.USER] = {};
+        transforms[ResearchEntityTypes.GROUP] = {
+            'documentsByType': (q) => q.replace(/authorship/g, 'authorshipgroup'),
+            'documentsByYear': (q) => q.replace(/authorship/g, 'authorshipgroup'),
+            'invitedTalksByYear': (q) => q.replace(/authorship/g, 'authorshipgroup')
         };
         const chartQueryPath = `api/queries/${queries[researchEntityType][queryName]}.sql`;
         const chartQuerySql = SqlService.readQueryFromFs(chartQueryPath);
