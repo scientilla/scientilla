@@ -15,14 +15,16 @@
         'researchEntityService',
         'GroupsService',
         '$scope',
-        'Prototyper'
+        'Prototyper',
+        'context'
     ];
 
     function controller(
         researchEntityService,
         GroupsService,
         $scope,
-        Prototyper
+        Prototyper,
+        context
     ) {
         const vm = this;
 
@@ -58,8 +60,12 @@
 
         async function loadGroupTree() {
             vm.loading = true;
+            vm.subResearchEntity = context.getSubResearchEntity();
 
             allMembershipGroups = await researchEntityService.getAllMembershipGroups(vm.user.id, {});
+            if (!vm.subResearchEntity.isSuperViewer()) {
+                allMembershipGroups = allMembershipGroups.filter(m => m.active)
+            }
             const groupedAllMembershipGroups = _.groupBy(allMembershipGroups, 'child_group.name');
 
             const uniqueMemberships = [];
