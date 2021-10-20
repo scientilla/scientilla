@@ -5,7 +5,8 @@
 module.exports = {
     cleanDocumentCopies,
     cleanInstituteCopies,
-    cleanSourceCopies
+    cleanSourceCopies,
+    cleanAccessLogs
 };
 
 async function cleanInstituteCopies() {
@@ -308,4 +309,17 @@ async function moveNotDuplicates(document, copy) {
 
 
     return errors;
+}
+
+async function cleanAccessLogs (keep = 6) {
+    const date = new Date();
+    date.setMonth(date.getMonth() - keep);
+
+    const deletedAccessLogs = await AccessLog.destroy({
+        createdAt: {
+            '<=': date
+        }
+    });
+
+    sails.log.info(`Deleting ${deletedAccessLogs.length} access log records created before: ${date}`);
 }
