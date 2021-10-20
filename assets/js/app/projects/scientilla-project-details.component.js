@@ -11,9 +11,9 @@
             }
         });
 
-    scientillaProjectDetails.$inject = ['context', 'AuthService', 'UserService', 'GroupsService', 'ModalService'];
+    scientillaProjectDetails.$inject = ['context', 'AuthService', 'UserService', 'GroupsService', 'ModalService', '$filter'];
 
-    function scientillaProjectDetails(context, AuthService, UserService, GroupsService, ModalService) {
+    function scientillaProjectDetails(context, AuthService, UserService, GroupsService, ModalService, $filter) {
         const vm = this;
 
         vm.getAlias = UserService.getAlias;
@@ -49,6 +49,9 @@
             vm.project.payment = industrialProjectPayments[vm.project.payment];
 
             vm.groups = await GroupsService.getGroups();
+
+            vm.annualContributionYears = [].concat.apply([], vm.project.researchLines.map(r => r.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+            vm.annualFundingPIYears = [].concat.apply([], vm.PIMembers.map(m => m.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
         };
 
         async function isVerifiedUserOrGroup() {
@@ -100,6 +103,16 @@
             }
             return false;
         };
+
+        vm.getAnnualContribution = function (researchLine, year) {
+            const annualContribution = researchLine.annualContribution.find(a => a.year === year);
+
+            if (annualContribution) {
+                return $filter('valuta')(annualContribution.contribution);
+            }
+
+            return '';
+        }
     }
 
 })();

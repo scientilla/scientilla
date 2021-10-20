@@ -82,14 +82,14 @@
         <table class="table">
             <tr ng-repeat="member in vm.PIMembers|limitTo:1">
                 <th class="name-column">Name</th>
-                <th ng-repeat="annualContribution in member.annualContribution">
-                    {{ annualContribution.year }}
+                <th ng-repeat="year in vm.annualFundingPIYears">
+                    {{ year }}
                 </th>
             </tr>
             <tr ng-repeat="member in vm.PIMembers">
                 <td class="name-column">{{ vm.getAlias(member) }}</td>
-                <td ng-repeat="annualContribution in member.annualContribution">
-                    {{ annualContribution.contribution | valuta }}
+                <td ng-repeat="year in vm.annualFundingPIYears">
+                    {{ vm.getAnnualContribution(member, year) }}
                 </td>
             </tr>
         </table>
@@ -99,10 +99,10 @@
         <br>
         <strong>Annual funding research lines:</strong>
         <table class="table">
-            <tr ng-repeat="researchLine in vm.project.researchLines|limitTo:1">
+            <tr>
                 <th class="name-column">Name</th>
-                <th ng-repeat="annualContribution in researchLine.annualContribution">
-                    {{ annualContribution.year }}
+                <th ng-repeat="year in vm.annualContributionYears">
+                    {{ year }}
                 </th>
             </tr>
             <tr ng-repeat="researchLine in vm.project.researchLines">
@@ -116,8 +116,8 @@
                         {{ vm.getGroupName(researchLine) }}
                     </ng-container>
                 </td>
-                <td ng-repeat="annualContribution in researchLine.annualContribution">
-                    {{ annualContribution.contribution | valuta }}
+                <td ng-repeat="year in vm.annualContributionYears">
+                    {{ vm.getAnnualContribution(researchLine, year) }}
                 </td>
             </tr>
         </table>
