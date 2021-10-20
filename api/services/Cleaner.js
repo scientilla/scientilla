@@ -2,11 +2,19 @@
 
 "use strict";
 
+const fs = require('fs');
+const path = require('path');
+const { promisify } = require('util');
+const readdir = promisify(fs.readdir);
+const stat = promisify(fs.stat);
+const unlink = promisify(fs.unlink);
+
 module.exports = {
     cleanDocumentCopies,
     cleanInstituteCopies,
     cleanSourceCopies,
-    cleanAccessLogs
+    cleanAccessLogs,
+    cleanLogFiles
 };
 
 async function cleanInstituteCopies() {
@@ -311,9 +319,18 @@ async function moveNotDuplicates(document, copy) {
     return errors;
 }
 
-async function cleanAccessLogs (keep = 6) {
+/*
+ * This function removes the access log records older than x days, the default is set by the config or 30
+ */
+async function cleanAccessLogs (keepForNumberOfDays) {
+    if (_.has(sails, 'config.scientilla.logs.accessLogRetentionDays')) {
+        keepForNumberOfDays = sails.config.scientilla.logs.accessLogRetentionDays;
+    } else {
+        keepForNumberOfDays = 30;
+    }
+
     const date = new Date();
-    date.setMonth(date.getMonth() - keep);
+    date.setDate(date.getDate() - keepForNumberOfDays);
 
     const deletedAccessLogs = await AccessLog.destroy({
         createdAt: {
@@ -322,4 +339,35 @@ async function cleanAccessLogs (keep = 6) {
     });
 
     sails.log.info(`Deleting ${deletedAccessLogs.length} access log records created before: ${date}`);
+}
+
+/*
+ * This function removes the log files older than x days, the default is set by the config or 180
+ */
+async function cleanLogFiles (keepForNumberOfDays) {
+    if (_.has(sails, 'config.scientilla.logs.logFilesRetentionDays')) {
+        keepForNumberOfDays = sails.config.scientilla.logs.logFilesRetentionDays;
+    } else {
+        keepForNumberOfDays = 180;
+    }
+    const baseFolder = path.join('logs');
+    const date = new Date();
+    date.setDate(date.getDate() - keepForNumberOfDays);
+
+    const fileNames = await readdir(baseFolder).then(fileNames => fileNames.filter(name => name !== '.gitkeep'));
+    const toBeDeletedFileNames = [];
+    for (const fileName of fileNames) {
+        const info = await stat(path.join(baseFolder, fileName));
+        const fileCreationDate = new Date(info.mtime)
+
+        if (fileCreationDate <= date) {
+            toBeDeletedFileNames.push(fileName);
+        }
+    }
+
+    for (const fileName of toBeDeletedFileNames) {
+        await unlink(path.join(baseFolder, fileName));
+    }
+
+    sails.log.info(`Deleting ${toBeDeletedFileNames.length} log files last modified before: ${date}`);
 }

@@ -8,6 +8,7 @@ module.exports = function (grunt) {
         Sails.load({hooks: {grunt: false}}, async () => {
             const methods = {
                 'accessLogs': Cleaner.cleanAccessLogs,
+                'logFiles': Cleaner.cleanLogFiles
             };
 
             try {

@@ -156,5 +156,9 @@ module.exports.scientilla = {
     ],
     "registerEnabled": true,
     "maxUserFavorite": "5",
-    "maxGroupFavorite": "5"
+    "maxGroupFavorite": "5",
+    "logs": {
+        "accessLogRetentionDays": 30,
+        "logFilesRetentionDays": 180
+    }
 };
