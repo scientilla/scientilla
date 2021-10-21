@@ -32,7 +32,6 @@ const ajv = new Ajv({
 require('ajv-errors')(ajv);
 require('ajv-formats')(ajv);
 
-
 module.exports = {
     getProjectCompetitiveValidator: () => {
         return ajv.getSchema('projectCompetitive');
@@ -50,7 +49,6 @@ module.exports = {
         return ajv.getSchema('patentFamily');
     },
     getProfileValidator: () => {
-
         const schema = ajv.getSchema('profile');
         return schema;
     },

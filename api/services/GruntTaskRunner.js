@@ -26,7 +26,7 @@ async function run(command) {
     await appendToFile(taskName, startedAt, startLine + newLine);
     await appendToFile(taskName, startedAt, startString + newLine);
 
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         const gruntTask = spawn('grunt', [command]);
 
         gruntTask.stdout.on('data', function (data) {
@@ -42,6 +42,9 @@ async function run(command) {
             const endedAt = moment();
             const duration = moment.duration(endedAt.diff(startedAt)).humanize(true);
             const endString = `grunt ${command} finished with code ${code} at ${endedAt.format('DD/MM/YYYY HH:mm:ss')} ${duration}`;
+            if (code !== 0) {
+                reject();
+            }
             sails.log.info(endString);
             appendToFile(taskName, startedAt, endString + newLine);
             appendToFile(taskName, startedAt, endLine);

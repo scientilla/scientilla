@@ -174,14 +174,19 @@ async function setCustomizations(req, footer, styles) {
         'module.exports.customizations = ' + JSON.stringify(sails.config.customizations, null, 4)
     );
 
-    const response = await runGruntTasks(
-        'Customizations successfully saved!',
-        'Something went wrong while saving the customizations!'
-    );
+    const errors = await runGruntTasks();
+
+    if (errors.length > 0) {
+        return {
+            type: 'error',
+            message: 'Something went wrong while saving the customizations!',
+            customizations: sails.config.customizations
+        }
+    }
 
     return {
-        type: response.type,
-        message: response.message,
+        type: 'success',
+        message: 'Customizations successfully saved!',
         customizations: sails.config.customizations,
     };
 }
@@ -195,39 +200,48 @@ async function resetCustomizations() {
         'module.exports.customizations = ' + JSON.stringify(sails.config.customizationDefaults, null, 4)
     );
 
-    const response = await runGruntTasks(
-        'Default settings are set!',
-        'Something went wrong while resetting the customizations!'
-    );
+    const errors = await runGruntTasks();
+    sails.log.debug(errors);
+
+    if (errors.length > 0) {
+        return {
+            type: 'error',
+            message: 'Something went wrong while resetting the customizations!',
+            customizations: sails.config.customizations
+        }
+    }
 
     return {
-        type: response.type,
-        message: response.message,
-        customizations: sails.config.customizations,
+        type: 'success',
+        message: 'Default settings are set!',
+        customizations: sails.config.customizations
     };
 }
 
-async function runGruntTasks(successMessage, errorMessage) {
-    const tasks = [];
+async function runGruntTasks() {
+    const errors = [];
+
     switch (sails.config.environment) {
         case 'development':
-            tasks.push(await GruntTaskRunner.run('copy:uploadsDev'));
-            tasks.push(await GruntTaskRunner.run('recompileAssets'));
+            await Promise.all([
+                GruntTaskRunner.run('copy:uploadsDev'),
+                GruntTaskRunner.run('recompileAssets')
+            ]).catch(() => {
+                errors.push('Upload & recompile failed!');
+            });
             break;
         case 'production':
-            tasks.push(await GruntTaskRunner.run('copy:uploadsBuild'));
-            tasks.push(await GruntTaskRunner.run('rebuildProd'));
+            await Promise.all([
+                GruntTaskRunner.run('copy:uploadsBuild'),
+                GruntTaskRunner.run('rebuildProd')
+            ]).catch(() => {
+                errors.push('Upload & rebuild failed!');
+            });
+            break;
+        default:
+            errors.push('Wrong environment');
             break;
     }
 
-    if (tasks.filter(task => task.type !== 'success').length > 0) {
-        return {
-            type: 'error',
-            message: errorMessage
-        }
-    }
-    return {
-        type: 'success',
-        message: successMessage
-    };
+    return errors;
 }
