@@ -3,7 +3,7 @@ const Sails = require('sails');
 const getMethod = require('../taskHelper').getMethod;
 
 module.exports = function (grunt) {
-    grunt.registerTask('clean', function (...args) {
+    grunt.registerTask('cleaner', function (...args) {
         const done = this.async();
         Sails.load({hooks: {grunt: false}}, async () => {
             const methods = {

@@ -95,6 +95,18 @@ module.exports.scientilla = {
                     ]
                 },
                 {
+                    "fn": "GruntTaskRunner.run'",
+                    "params": [
+                        "cleaner:accessLogs"
+                    ]
+                },
+                {
+                    "fn": "GruntTaskRunner.run",
+                    "params": [
+                        "cleaner:logFiles"
+                    ]
+                },
+                {
                     "fn": "Status.disable",
                     "params": []
                 },
