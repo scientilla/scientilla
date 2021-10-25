@@ -158,6 +158,9 @@
                     icons: ['icons-if icon-if', 'icons-if far fa-newspaper'],
                     format: 2
                 });
+
+                vm.charts.patentsByYear = ChartService.getPatentsByYear(vm.chartsData);
+                vm.charts.projectsByYear = ChartService.getProjectsByYear(vm.chartsData);
             });
         };
 

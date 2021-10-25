@@ -40,7 +40,10 @@
         'totalIfPerYear',
         'totalSjrPerYear',
         'totalSnipPerYear',
-        'chartDataDate'
+        'chartDataDate',
+        'annualContributionCompetitiveProjectsByYear',
+        'annualContributionIndustrialProjectsByYear',
+        'priorityAndProsecutionPatentsByYear'
     ];
 
     function ChartService(DocumentTypesService, EventsService, $timeout) {
@@ -743,6 +746,158 @@
             };
         };
 
+        service.getProjectsByYear = chartsData => {
+            const competitiveProjectsKey = 'Competitive Projects';
+            const industrialProjectsKey = 'Industrial Projects';
+            const data = [{
+                key: competitiveProjectsKey,
+                values: chartsData.annualContributionCompetitiveProjectsByYear.map(d => {
+                    return { year: parseInt(d.year), value: parseFloat(d.contribution) / 1000 };
+                })
+            }, {
+                key: industrialProjectsKey,
+                values: chartsData.annualContributionIndustrialProjectsByYear.map(d => {
+                    return { year: parseInt(d.year), value: parseFloat(d.contribution) / 1000 };
+                })
+            }];
+
+            const yearRange = {
+                min: _.min(
+                    chartsData.annualContributionCompetitiveProjectsByYear.map(d => parseInt(d.year)).concat(
+                        chartsData.annualContributionIndustrialProjectsByYear.map(d => parseInt(d.year))
+                    )
+                ),
+                max: _.max(
+                    chartsData.annualContributionCompetitiveProjectsByYear.map(d => parseInt(d.year)).concat(
+                        chartsData.annualContributionIndustrialProjectsByYear.map(d => parseInt(d.year))
+                    )
+                )
+            };
+
+            const rangeX = getRangeX(
+                yearRange.min,
+                yearRange.max
+            );
+
+            const competitiveProjectsData = data.find(d => d.key === competitiveProjectsKey);
+            const industrialProjectsData = data.find(d => d.key === industrialProjectsKey);
+            const yearOperator = year => v => v.year === year;
+
+            for (let i = yearRange.min; i <= yearRange.max; i++) {
+                if (!competitiveProjectsData.values.find(yearOperator(i))) {
+                    competitiveProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (!industrialProjectsData.values.find(yearOperator(i))) {
+                    industrialProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+            }
+
+            competitiveProjectsData.values = _.orderBy(competitiveProjectsData.values, 'year');
+            industrialProjectsData.values = _.orderBy(industrialProjectsData.values, 'year');
+
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
+            const rangeY = getRangeY(maxY);
+
+            return {
+                title: 'Projects',
+                data: data,
+                options: getMultiBarChartConfig({
+                    color: colors,
+                    reduceXTicks: false,
+                    stacked: true,
+                    xAxis: {
+                        axisLabel: '',
+                        rotateLabels: 50,
+                        showMaxMin: false,
+                        tickValues: rangeX,
+                        tickFormat: d => d3.format('')(d)
+                    },
+                    yAxis: {
+                        tickValues: rangeY,
+                        tickFormat: d => d3.format('.2f')(d)
+                    }
+                }),
+            };
+        };
+
+        service.getPatentsByYear = chartsData => {
+            const priorityKey = 'Priority';
+            const prosecutionKey = 'Prosecutions';
+            const yearRange = {
+                min: _.min(chartsData.priorityAndProsecutionPatentsByYear.map(d => parseInt(d.year))),
+                max: _.max(chartsData.priorityAndProsecutionPatentsByYear.map(d => parseInt(d.year)))
+            };
+            const data = [{
+                key: priorityKey,
+                values: chartsData.priorityAndProsecutionPatentsByYear.filter(d => d.priority).map(d => {
+                    return { year: parseInt(d.year), value: parseInt(d.count) };
+                })
+            }, {
+                key: prosecutionKey,
+                values: chartsData.priorityAndProsecutionPatentsByYear.filter(d => !d.priority).map(d => {
+                    return { year: parseInt(d.year), value: parseInt(d.count) };
+                })
+            }];
+
+            const rangeX = getRangeX(
+                yearRange.min,
+                yearRange.max
+            );
+
+            const priorityData = data.find(d => d.key === priorityKey);
+            const prosecutionData = data.find(d => d.key === prosecutionKey);
+            const yearOperator = year => v => v.year === year;
+
+            for (let i = yearRange.min; i <= yearRange.max; i++) {
+                if (!priorityData.values.find(yearOperator(i))) {
+                    priorityData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (!prosecutionData.values.find(yearOperator(i))) {
+                    prosecutionData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+            }
+
+            priorityData.values = _.orderBy(priorityData.values, 'year');
+            prosecutionData.values = _.orderBy(prosecutionData.values, 'year');
+
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
+            const rangeY = getRangeY(maxY);
+
+            return {
+                title: 'Patents',
+                data: data,
+                options: getMultiBarChartConfig({
+                    color: colors,
+                    reduceXTicks: false,
+                    xAxis: {
+                        axisLabel: '',
+                        rotateLabels: 50,
+                        showMaxMin: false,
+                        tickValues: rangeX,
+                        tickFormat: d => d3.format('')(d)
+                    },
+                    yAxis: {
+                        tickValues: rangeY,
+                        tickFormat: d => d3.format('')(d)
+                    }
+                }),
+            };
+        };
+
         return service;
 
         // private
@@ -858,9 +1013,14 @@
                 new Date(minX, 0),
                 new Date(maxX, 0),
                 step
-            );
+            ).map(r => r.getFullYear());
 
-            return range.map(r => r.getFullYear());
+            const maxXYear = new Date(maxX, 0).getFullYear();
+            if (range[range.length - 1] + step <= maxXYear) {
+                range.push(maxXYear);
+            }
+
+            return range;
         }
 
         function getRangeY(maxY, addMax = false) {

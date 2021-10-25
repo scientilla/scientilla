@@ -250,6 +250,24 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         fn: query,
         params: [id, roles],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
+    },  {
+        key: 'annualContributionCompetitiveProjectsByYear',
+        queryName: 'annualContributionCompetitiveProjectsByYear',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
+    },  {
+        key: 'annualContributionIndustrialProjectsByYear',
+        queryName: 'annualContributionIndustrialProjectsByYear',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
+    },  {
+        key: 'priorityAndProsecutionPatentsByYear',
+        queryName: 'priorityAndProsecutionPatentsByYear',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }];
 
     let selectedCharts = [];
@@ -313,7 +331,8 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
             'documentsByYear': 'documentsByYear',
             'filteredAffiliatedDocumentsByYear': 'filteredAffiliatedDocumentsByYear',
             'filteredNotAffiliatedDocumentsByYear': 'filteredNotAffiliatedDocumentsByYear',
-            'invitedTalksByYear': 'invitedTalksByYear'
+            'invitedTalksByYear': 'invitedTalksByYear',
+            'priorityAndProsecutionPatentsByYear': 'priorityAndProsecutionPatentsByYear'
         };
 
         queries[ResearchEntityTypes.GROUP] = {
@@ -338,7 +357,11 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
             'groupMembersByNationality': 'groupMembersByNationality',
             'groupMembersByNationalityOfRoles': 'groupMembersByNationalityOfRoles',
             'groupAndSubgroupMembersByNationality': 'groupAndSubgroupMembersByNationality',
-            'groupAndSubgroupMembersByNationalityOfRoles': 'groupAndSubgroupMembersByNationalityOfRoles'
+            'groupAndSubgroupMembersByNationalityOfRoles': 'groupAndSubgroupMembersByNationalityOfRoles',
+            'priorityAndProsecutionPatentsByYear': 'priorityAndProsecutionPatentsByYear',
+            'annualContributionCompetitiveProjectsByYear': 'annualContributionCompetitiveProjectsByYear',
+            'annualContributionIndustrialProjectsByYear': 'annualContributionIndustrialProjectsByYear',
+            'priorityAndProsecutionPatentsByYear': 'priorityAndProsecutionPatentsByYear'
         };
         const transforms = {};
         transforms[ResearchEntityTypes.USER] = {};

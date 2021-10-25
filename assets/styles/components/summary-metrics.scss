@@ -91,7 +91,9 @@
     }
 
     .document-totals-chart-container,
-    .h-index-chart-container{
+    .h-index-chart-container,
+    .patents-container,
+    .projects-container{
         min-height: calc(100% - 3rem);
         margin-bottom: 3rem;
         padding: 1rem 3rem;
