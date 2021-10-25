@@ -105,7 +105,7 @@ function read(req) {
             const instream = fs.createReadStream(filePath);
             const outstream = new (stream)();
             const rl = readline.createInterface(instream, outstream);
-            const output = [];
+            let output = [];
 
             rl.on('line', line => {
                 ansi_up.use_classes = true;
@@ -114,6 +114,12 @@ function read(req) {
             });
 
             rl.on('close', () => {
+                const limit = 1000;
+                if (output.length > limit) {
+                    output = output.slice(Math.max(output.length - limit, 0));
+                    output.unshift(`<strong>Only showing last ${limit} lines, please login into the server to see the complete log file</strong>`);
+                }
+
                 resolve(output.join('<br>'));
             });
         }).catch(err => {
