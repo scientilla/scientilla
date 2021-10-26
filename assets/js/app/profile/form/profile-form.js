@@ -272,7 +272,11 @@
 
         function cancel() {
             if (_.isFunction(vm.checkAndClose())) {
-                vm.checkAndClose()(() => angular.toJson(vm.profile) === originalProfileJson);
+                if (vm.areSaveButtonsEnabled) {
+                    vm.checkAndClose()(() => angular.toJson(vm.profile) === originalProfileJson);
+                } else {
+                    vm.checkAndClose()(() => true);
+                }
             }
         }
 
