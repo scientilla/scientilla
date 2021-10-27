@@ -52,9 +52,16 @@
         };
 
         function taskHasChanged() {
-            vm.date = !_.isEmpty(vm.task) ? vm.task.dates[0] : '';
+            if (!vm.task) {
+                return;
+            }
+            const dateOfFirstTask = !_.isEmpty(vm.task) ? vm.task.dates[0] : '';
 
-            getLogs();
+            if (dateOfFirstTask === vm.date) {
+                getLogs();
+            } else {
+                vm.date = dateOfFirstTask;
+            }
         }
 
         /* jshint ignore:start */
@@ -96,10 +103,8 @@
 
         vm.reload = async () => {
             await getTasks();
-            await getLogs();
         };
 
         /* jshint ignore:end */
     }
-
 })();

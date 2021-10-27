@@ -95,6 +95,18 @@ module.exports.scientilla = {
                     ]
                 },
                 {
+                    "fn": "GruntTaskRunner.run'",
+                    "params": [
+                        "cleaner:accessLogs"
+                    ]
+                },
+                {
+                    "fn": "GruntTaskRunner.run",
+                    "params": [
+                        "cleaner:logFiles"
+                    ]
+                },
+                {
                     "fn": "Status.disable",
                     "params": []
                 },
@@ -156,5 +168,9 @@ module.exports.scientilla = {
     ],
     "registerEnabled": true,
     "maxUserFavorite": "5",
-    "maxGroupFavorite": "5"
+    "maxGroupFavorite": "5",
+    "logs": {
+        "accessLogRetentionDays": 30,
+        "logFilesRetentionDays": 180
+    }
 };
