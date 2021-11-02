@@ -1,0 +1,33 @@
+<scientilla-loading is-loading="vm.loading"></scientilla-loading>
+
+<div
+    class="summary-projects-technology-transfer-container"
+    ng-if="!vm.loading && vm.charts"
+>
+    <div class="row">
+        <div class="col-12 col-lg-6">
+            <div class="patents-container">
+                <h3>{{ vm.charts.patentsByYear.title }}</h3>
+                <div class="chart-container">
+                    <nvd3
+                        options="vm.charts.patentsByYear.options"
+                        data="vm.charts.patentsByYear.data"
+                        class="chart"
+                    ></nvd3>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="projects-container">
+                <h3>{{ vm.charts.projectsByYear.title }}</h3>
+                <div class="chart-container">
+                    <nvd3
+                        options="vm.charts.projectsByYear.options"
+                        data="vm.charts.projectsByYear.data"
+                        class="chart"
+                    ></nvd3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

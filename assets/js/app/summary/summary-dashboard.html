@@ -1,21 +1,24 @@
 <scientilla-backend-layout>
     <div class="summary summary-dashboard">
-        <summary-overview
-            charts-data="vm.documentOverviewChartData"
-            is-loading="vm.recalculating"
-            title="Overview"></summary-overview>
-
-        <summary-metrics
-            charts-data="vm.bibliometricChartData"
-            is-loading="vm.recalculating"
-            title="Metrics"></summary-metrics>
-
-        <div ng-if="vm.isMainGroup()">
-            <div class="calculate-text">Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}</div>
-            <scientilla-button click="vm.recalculate">Recalculate data</scientilla-button>
-            <scientilla-loading
-                is-loading="vm.recalculating"
-                text="Recalculating ..."></scientilla-loading>
-        </div>
+        <uib-tabset active="vm.activeTabIndex">
+            <uib-tab
+                index="0"
+                heading="Document Charts"
+            >
+                <summary-overview research-entity="vm.subResearchEntity"></summary-overview>
+            </uib-tab>
+            <uib-tab
+                index="1"
+                heading="Bibliometric Charts"
+            >
+                <summary-metrics research-entity="vm.subResearchEntity"></summary-metrics>
+            </uib-tab>
+            <uib-tab
+                index="2"
+                heading="Projects and Technology Transfer"
+            >
+                <summary-projects-technology-transfer research-entity="vm.subResearchEntity"></summary-projects-technology-transfer>
+            </uib-tab>
+        </uib-tabset>
     </div>
 </scientilla-backend-layout>

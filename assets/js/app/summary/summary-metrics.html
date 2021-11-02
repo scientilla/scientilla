@@ -1,6 +1,9 @@
-<scientilla-loading is-loading="!vm.charts"></scientilla-loading>
+<scientilla-loading is-loading="vm.loading"></scientilla-loading>
 
-<div class="summary-metrics-container" ng-if="vm.charts">
+<div
+    class="summary-metrics-container"
+    ng-if="!vm.loading && vm.charts"
+>
     <div class="info-button-container">
         <button ng-click="vm.showInfo()" class="btn btn-primary info-button">
             <i class="fas fa-info-circle fa-left"></i>Info
@@ -34,9 +37,11 @@
             <div class="document-totals-chart-container">
                 <h3>{{ vm.charts.documentTotals.title }}</h3>
                 <div class="chart-container">
-                    <nvd3 options="vm.charts.documentTotals.options"
-                          data="vm.charts.documentTotals.data"
-                          class="chart"></nvd3>
+                    <nvd3
+                        options="vm.charts.documentTotals.options"
+                        data="vm.charts.documentTotals.data"
+                        class="chart"
+                    ></nvd3>
                 </div>
             </div>
         </div>
@@ -45,9 +50,11 @@
             <div class="h-index-chart-container">
                 <h3>{{ vm.charts.hindexPerYear.title }}</h3>
                 <div class="chart-container">
-                    <nvd3 options="vm.charts.hindexPerYear.options"
-                          data="vm.charts.hindexPerYear.data"
-                          class="chart"></nvd3>
+                    <nvd3
+                        options="vm.charts.hindexPerYear.options"
+                        data="vm.charts.hindexPerYear.data"
+                        class="chart"
+                    ></nvd3>
                 </div>
             </div>
         </div>
@@ -55,48 +62,35 @@
 
     <div class="row">
         <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4">
-            <scientilla-chart-selector charts="vm.documentsCharts"
-                                       class="metric-chart-container">
+            <scientilla-chart-selector
+                charts="vm.documentsCharts"
+                class="metric-chart-container"
+            >
             </scientilla-chart-selector>
         </div>
 
         <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4">
-            <scientilla-chart-selector charts="vm.citationsCharts"
-                                       class="metric-chart-container">
+            <scientilla-chart-selector
+                charts="vm.citationsCharts"
+                class="metric-chart-container"
+            >
             </scientilla-chart-selector>
         </div>
 
         <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4">
-            <scientilla-chart-selector charts="vm.metricsCharts"
-                                       class="metric-chart-container">
+            <scientilla-chart-selector
+                charts="vm.metricsCharts"
+                class="metric-chart-container"
+            >
             </scientilla-chart-selector>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12 col-lg-6">
-            <div class="patents-container">
-                <h3>{{ vm.charts.patentsByYear.title }}</h3>
-                <div class="chart-container">
-                    <nvd3
-                        options="vm.charts.patentsByYear.options"
-                        data="vm.charts.patentsByYear.data"
-                        class="chart"
-                    ></nvd3>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-6">
-            <div class="projects-container">
-                <h3>{{ vm.charts.projectsByYear.title }}</h3>
-                <div class="chart-container">
-                    <nvd3
-                        options="vm.charts.projectsByYear.options"
-                        data="vm.charts.projectsByYear.data"
-                        class="chart"
-                    ></nvd3>
-                </div>
-            </div>
-        </div>
+    <div ng-if="vm.isMainGroup()">
+        <div class="calculate-text">Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}</div>
+        <scientilla-button click="vm.recalculate">Recalculate data</scientilla-button>
+        <scientilla-loading
+            is-loading="vm.recalculating"
+            text="Recalculating ..."></scientilla-loading>
     </div>
 </div>

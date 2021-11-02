@@ -94,16 +94,23 @@
             <uib-tab
                 index="7"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.isScientific()"
-                heading="Documents Overview"
+                heading="Documents Charts"
             >
-                <overview-tab research-entity="vm.group"></overview-tab>
+                <summary-overview research-entity="vm.group"></summary-overview>
             </uib-tab>
             <uib-tab
                 index="8"
                 heading="Bibliometric Charts"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.isScientific()"
             >
-                <metrics-tab research-entity="vm.group"></metrics-tab>
+                <summary-metrics research-entity="vm.group"></summary-metrics>
+            </uib-tab>
+            <uib-tab
+                index="9"
+                heading="Projects and Technology Transfer"
+                ng-if="vm.loggedUser.isSuperViewer() && vm.isScientific()"
+            >
+                <summary-projects-technology-transfer research-entity="vm.group"></summary-projects-technology-transfer>
             </uib-tab>
         </uib-tabset>
     </div>

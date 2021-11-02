@@ -55,12 +55,16 @@
                 slug: 'patents'
             }, {
                 index: 7,
-                slug: 'documents-overview',
-                tabName: 'overview-tab'
+                slug: 'document-charts',
+                tabName: 'overview'
             }, {
                 index: 8,
-                slug: 'bibliometric-charts',
-                tabName: 'metrics-tab'
+                slug: 'metric-charts',
+                tabName: 'metrics'
+            }, {
+                index: 9,
+                slug: 'projects-technology-transfer',
+                tabName: 'projectsTechnologyTransfer'
             }
         ];
 

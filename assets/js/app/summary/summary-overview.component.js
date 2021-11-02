@@ -8,41 +8,57 @@
                 controller,
                 controllerAs: 'vm',
                 bindings: {
-                    chartsData: '<',
-                    title: '@?'
+                    researchEntity: '<'
                 }
             });
 
         controller.$inject = [
             'ChartService',
             'ModalService',
-            'CustomizeService',
             '$window',
             '$timeout',
-            '$scope'
+            '$element'
         ];
 
-        function controller(ChartService, ModalService, CustomizeService, $window, $timeout, $scope) {
+        function controller(ChartService, ModalService, $window, $timeout, $element) {
             const vm = this;
+
+            vm.name = 'overview';
+            vm.shouldBeReloaded = true;
+
             vm.changeChart = changeChart;
             vm.isChartSelected = isChartSelected;
             vm.showInfo = showInfo;
             vm.getMainChartOptions = getMainChartOptions;
 
-            vm.charts = false;
-
-            let deregister;
+            vm.charts = [];
 
             vm.$onInit = () => {
-                deregister = $scope.$watch('vm.chartsData', vm.reload);
+                const registerTab = requireParentMethod($element, 'registerTab');
+                registerTab(vm);
+            };
 
-                CustomizeService.getCustomizations().then(customizations => {
+            vm.$onDestroy = function () {
+                const unregisterTab = requireParentMethod($element, 'unregisterTab');
+                unregisterTab(vm);
+            };
+
+            /* jshint ignore:start */
+            vm.getData = async () => {
+                return await ChartService.getDocumentsOverviewChartData(vm.researchEntity);
+            };
+            /* jshint ignore:end */
+
+            vm.reload = chartsData => {
+                $timeout(() => {
+                    vm.charts = [];
+                    vm.mainChart = undefined;
+                    vm.charts.push(ChartService.getDocumentsByYear(chartsData));
+                    vm.charts.push(ChartService.getInvitedTalksByYear(chartsData));
+                    vm.charts.push(ChartService.getDocumentsByType(chartsData));
+                    changeChart(vm.charts[0]);
+
                     let timer = null;
-
-                    vm.customizations = customizations;
-                    //ChartService.setStyles(vm.customizations);
-
-                    vm.reload(vm.chartsData);
 
                     if ($window.innerWidth <= 992 && $window.innerWidth > 400) {
                         for (let i = 0; i < vm.charts.length; i++) {
@@ -65,25 +81,6 @@
                         }, 500);
                     });
                 });
-            };
-
-            vm.$onDestroy = () => {
-                deregister();
-            };
-
-            vm.reload = () => {
-                if (_.isEmpty(vm.chartsData))
-                    return;
-
-                $timeout(() => {
-                    vm.charts = [];
-                    vm.mainChart = undefined;
-                    vm.charts.push(ChartService.getDocumentsByYear(vm.chartsData));
-                    vm.charts.push(ChartService.getInvitedTalksByYear(vm.chartsData));
-                    vm.charts.push(ChartService.getDocumentsByType(vm.chartsData));
-                    changeChart(vm.charts[0]);
-                });
-
             };
 
             function changeChart(chart) {

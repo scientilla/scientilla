@@ -12,38 +12,49 @@
     let styles = {};
     let colors = [];
     const data = [];
-    const documentsOverviewCharts = [
-        'journalsByYear',
-        'conferencesByYear',
-        'booksByYear',
-        'bookSeriesByYear',
-        'documentsByType',
-        'disseminationTalksByYear',
-        'scientificTalksByYear'
-    ];
-    const bibliometricCharts = [
-        'journalsByYear',
-        'conferencesByYear',
-        'booksByYear',
-        'bookSeriesByYear',
-        'filteredAffiliatedJournalsByYear',
-        'filteredAffiliatedConferencesByYear',
-        'filteredAffiliatedBooksByYear',
-        'filteredAffiliatedBookSeriesByYear',
-        'filteredNotAffiliatedJournalsByYear',
-        'filteredNotAffiliatedConferencesByYear',
-        'filteredNotAffiliatedBooksByYear',
-        'filteredNotAffiliatedBookSeriesByYear',
-        'hindexPerYear',
-        'citationsPerYear',
-        'citationsPerDocumentYear',
-        'totalIfPerYear',
-        'totalSjrPerYear',
-        'totalSnipPerYear',
-        'chartDataDate',
-        'annualContributionCompetitiveProjectsByYear',
-        'annualContributionIndustrialProjectsByYear',
-        'priorityAndProsecutionPatentsByYear'
+    const chartKeys = [
+        {
+            name: 'documentsOverviewCharts',
+            keys: [
+                'journalsByYear',
+                'conferencesByYear',
+                'booksByYear',
+                'bookSeriesByYear',
+                'documentsByType',
+                'disseminationTalksByYear',
+                'scientificTalksByYear'
+            ]
+        }, {
+            name: 'bibliometricCharts',
+            keys: [
+                'journalsByYear',
+                'conferencesByYear',
+                'booksByYear',
+                'bookSeriesByYear',
+                'filteredAffiliatedJournalsByYear',
+                'filteredAffiliatedConferencesByYear',
+                'filteredAffiliatedBooksByYear',
+                'filteredAffiliatedBookSeriesByYear',
+                'filteredNotAffiliatedJournalsByYear',
+                'filteredNotAffiliatedConferencesByYear',
+                'filteredNotAffiliatedBooksByYear',
+                'filteredNotAffiliatedBookSeriesByYear',
+                'hindexPerYear',
+                'citationsPerYear',
+                'citationsPerDocumentYear',
+                'totalIfPerYear',
+                'totalSjrPerYear',
+                'totalSnipPerYear',
+                'chartDataDate'
+            ]
+        }, {
+            name: 'projectAndPatentCharts',
+            keys: [
+                'annualContributionCompetitiveProjectsByYear',
+                'annualContributionIndustrialProjectsByYear',
+                'priorityAndProsecutionPatentsByYear'
+            ]
+        }
     ];
 
     function ChartService(DocumentTypesService, EventsService, $timeout) {
@@ -87,12 +98,20 @@
 
         /* jshint ignore:start */
         service.getDocumentsOverviewChartData = async (researchEntity, refresh = false) => {
-            return await getData(researchEntity, refresh, documentsOverviewCharts, 'documentsOverviewCharts');
+            return await getData(researchEntity, refresh, 'documentsOverviewCharts');
         };
 
         service.getBibliometricChartData = async (researchEntity, refresh = false) => {
-            return await getData(researchEntity, refresh, bibliometricCharts, 'bibliometricCharts');
+            return await getData(researchEntity, refresh, 'bibliometricCharts');
         };
+
+        service.getProjectsAndPatentsChartData = async (researchEntity, refresh = false) => {
+            return await getData(researchEntity, refresh, 'projectAndPatentCharts');
+        };
+
+        service.getAllChartData = async (researchEntity, refresh = false) => {
+            return await getData(researchEntity, refresh, 'all');
+        }
         /* jshint ignore:end */
 
         service.setStyles = (customizations) => {
@@ -749,6 +768,9 @@
         service.getProjectsByYear = chartsData => {
             const competitiveProjectsKey = 'Competitive Projects';
             const industrialProjectsKey = 'Industrial Projects';
+            if (!_.has(chartsData, 'annualContributionCompetitiveProjectsByYear') || !_.has(chartsData, 'annualContributionIndustrialProjectsByYear')) {
+                return;
+            }
             const data = [{
                 key: competitiveProjectsKey,
                 values: chartsData.annualContributionCompetitiveProjectsByYear.map(d => {
@@ -830,6 +852,11 @@
         service.getPatentsByYear = chartsData => {
             const priorityKey = 'Priority';
             const prosecutionKey = 'Prosecutions';
+
+            if (!_.has(chartsData, 'priorityAndProsecutionPatentsByYear')) {
+                return;
+            }
+
             const yearRange = {
                 min: _.min(chartsData.priorityAndProsecutionPatentsByYear.map(d => parseInt(d.year))),
                 max: _.max(chartsData.priorityAndProsecutionPatentsByYear.map(d => parseInt(d.year)))
@@ -1083,23 +1110,40 @@
         }
 
         /* jshint ignore:start */
-        async function getData (researchEntity, refresh = false, charts = [], name) {
-            if (!data[researchEntity.researchEntity] || !_.has(data[researchEntity.researchEntity], name) || refresh) {
-                const res = await researchEntity.all('charts').getList({refresh: !!refresh, charts});
+        async function getData (researchEntity, refresh = false, name) {
+            let chartNames = [];
+            if (name === 'all') {
+                chartNames = [...new Set([].concat.apply([], chartKeys.map(c => c.keys)))];
+            } else {
+                chartNames = chartKeys.find(k => k.name === name).keys;
+            }
 
-                if (data[researchEntity.researchEntity]) {
-                    data[researchEntity.researchEntity][name] = res[0];
-                } else {
-                    data[researchEntity.researchEntity] = {
-                        [name]: res[0]
-                    };
+            let missingCharts = [];
+            if (!data[researchEntity.researchEntity] || refresh) {
+                missingCharts = _.cloneDeep(chartNames);
+            } else {
+                missingCharts = chartNames.filter(n => !Object.keys(data[researchEntity.researchEntity]).includes(n));
+            }
+
+            if (missingCharts.length > 0) {
+                const res = await researchEntity.all('charts').getList({refresh: !!refresh, charts: missingCharts});
+
+                for (const name of chartNames) {
+                    if (data[researchEntity.researchEntity]) {
+                        if (_.has(res[0], name)) {
+                            data[researchEntity.researchEntity][name] = res[0][name];
+                        }
+                    } else {
+                        data[researchEntity.researchEntity] = {
+                            [name]: res[0][name]
+                        };
+                    }
+
+                    // Delete data from array after one hour
+                    $timeout(() => {
+                        deleteData(researchEntity, name);
+                    }, 60 * 60 * 1000);
                 }
-
-                // Delete data from array after one hour
-                const hour = 60 * 60 * 1000;
-                $timeout(() => {
-                    deleteData(researchEntity, name);
-                }, hour);
 
                 EventsService.subscribeAll(researchEntity, [
                     EventsService.DRAFT_VERIFIED,
@@ -1110,11 +1154,18 @@
                     EventsService.RESEARCH_ITEM_DRAFT_VERIFIED,
                     EventsService.AUTH_LOGOUT
                 ], () => {
-                    deleteData(researchEntity, name);
+                    for (const name of chartNames) {
+                        deleteData(researchEntity, name);
+                    }
                 });
             }
 
-            return data[researchEntity.researchEntity][name];
+            return Object.keys(data[researchEntity.researchEntity])
+                .filter(k => chartNames.includes(k))
+                .reduce((obj, key) => {
+                    obj[key] = data[researchEntity.researchEntity][key];
+                    return obj;
+                }, {});
         }
         /* jshint ignore:end */
 

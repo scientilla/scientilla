@@ -111,7 +111,6 @@
             if (vm.activeTabIdentifier && _.has(vm.activeTabIdentifier, 'tabName')) {
                 // Find the registeredTab with the same name
                 const activeRegisteredTab = vm.registeredTabs.find(tab => tab.name === vm.activeTabIdentifier.tabName);
-
                 // Check if the active tab is been registered,
                 // if it should be reloaded,
                 // if it's not reloading and
@@ -126,9 +125,9 @@
                     activeRegisteredTab.loading = true;
 
                     // Check if it has a getData property and it is a function
-                    if (_.has(vm.activeTabIdentifier, 'getData') && typeof vm.activeTabIdentifier.getData === 'function') {
+                    if (_.has(activeRegisteredTab, 'getData') && typeof activeRegisteredTab.getData === 'function') {
                         // Wait for the new data
-                        const data = await vm.activeTabIdentifier.getData();
+                        const data = await activeRegisteredTab.getData();
                         // Reload the tab with the new data
                         activeRegisteredTab.reload(data);
                         activeRegisteredTab.loading = false;

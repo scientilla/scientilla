@@ -1,0 +1,31 @@
+.summary-projects-technology-transfer-container{
+    @include clearfix;
+
+    .patents-container,
+    .projects-container{
+        min-height: calc(100% - 3rem);
+        margin-bottom: 3rem;
+        padding: 1rem 3rem;
+        border: 1px solid $gray-300;
+        border-radius: .25rem;
+        text-align: center;
+
+        h3{
+            margin: 0px;
+        }
+
+        .chart-container{
+            position: relative;
+            display: block;
+            padding-bottom: 60%;
+        }
+
+        svg{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    }
+}
