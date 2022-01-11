@@ -40,7 +40,10 @@ module.exports.scientilla = {
             },
             "project_industrial": {
                 "origin": "",
-                "request": {
+                "requestUsers": {
+                    "url": ""
+                },
+                "requestGroups": {
                     "url": ""
                 }
             },

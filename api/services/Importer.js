@@ -583,29 +583,16 @@ async function importProjects() {
                     description: 'description',
                     image: 'logo'
                 })
-        },
-        [ResearchItemTypes.PROJECT_INDUSTRIAL]: {
-            code: 'code',
-            acronym: 'acronym',
-            title: 'title',
-            type: 'project_type',
-            payment: 'project_payment',
-            category: 'project_category',
-            startDate: 'start_date',
-            endDate: 'end_date',
-            contribution: 'contribution',
-            url: 'project_url',
-            members: obj => mapObectsArray(obj.members, membersSchema),
-            researchLines: obj => mapObectsArray(obj.lines, researchLinesSchema)
         }
     }
 
-    await doImport(ResearchItemTypes.PROJECT_COMPETITIVE);
-    //await doImport(ResearchItemTypes.PROJECT_INDUSTRIAL);
+    await importCompetitiveProjects();
+    await importIndustrialProjects();
 
     await projectAutoVerify();
 
-    async function doImport(type) {
+    async function importCompetitiveProjects() {
+        const type = ResearchItemTypes.PROJECT_COMPETITIVE;
         let projects
         const config = sails.config.scientilla.researchItems.external[type];
         const reqOptions = config.request;
@@ -716,6 +703,201 @@ async function importProjects() {
             sails.log.debug(error);
             sails.log.debug('\n --------------------- \n');
         });
+    }
+
+    async function importIndustrialProjects() {
+        const type = ResearchItemTypes.PROJECT_INDUSTRIAL;
+        let projectsObj = {};
+        let res;
+        const errors = [];
+        let totalItems = 0, skipped = 0, created = 0, updated = 0;
+        const config = sails.config.scientilla.researchItems.external.project_industrial;
+        const reqOptionsGroups = config.requestGroups;
+        const reqOptionsUsers = config.requestUsers;
+
+        const typeTranslation = {
+            'Commerciale': 'Commercial',
+            'Istituzionale': 'Institutional'
+        };
+        const categoryTranslation = {
+            'Vendita': 'Sales',
+            'Ricerca': 'Research',
+            'Joint Lab': 'Joint Lab',
+            'Servizio': 'Service',
+            'Formazione': 'Educational',
+            'Locazioni': 'Lease',
+            'Inkind': 'Inkind'
+        };
+
+        try {
+            res = await Utils.waitForSuccessfulRequest(reqOptionsGroups);
+        } catch (e) {
+            sails.log.debug(e);
+            throw e;
+        }
+        const projectsByGroups = res.data;
+
+        try {
+            res = await Utils.waitForSuccessfulRequest(reqOptionsUsers);
+        } catch (e) {
+            sails.log.debug(e);
+            throw e;
+        }
+        const projectsByUsers = res.data;
+
+        const groups = await Group.find();
+        const users = await User.find();
+
+        //creating projects and adding groups
+        for (const p of projectsByGroups) {
+            if (p.project_category === 'Licenze/Opzioni') {
+                skipped++;
+                continue;
+            }
+
+            const group = groups.find(g => g.code === p.linea);
+
+            const researchLine = {
+                code: p.linea,
+                description: group ? group.name : '',
+                startDate: formatDate(p.startdate_normalizzata),
+                endDate: formatDate(p.enddate_linea),
+                [p.project_payment + 'Contribution']: p.contribution_obtained,
+                [p.project_payment + 'AnnualContribution']: getAnnualContribution(p, 'annual_contribution_')
+            };
+
+            if (!projectsObj[p.codice_progetto]) {
+                projectsObj[p.codice_progetto] = {
+                    code: p.codice_progetto,
+                    title: p.prj_title,
+                    type: typeTranslation[p.project_type] ? typeTranslation[p.project_type] : p.project_type,
+                    category: categoryTranslation[p.project_category] ? categoryTranslation[p.project_category] : p.project_category,
+                    payment: p.project_payment,
+                    startDate: formatDate(p.startdate_normalizzata),
+                    endDate: formatDate(p.enddate),
+                    researchLines: [
+                        researchLine
+                    ],
+                    members: []
+                };
+            } else {
+                const prj = projectsObj[p.codice_progetto];
+                if (prj.payment !== p.project_payment)
+                    prj.payment = 'inCash/inKind';
+                const line = prj.researchLines.find(rl => rl.code === researchLine.code);
+                if (!line) {
+                    prj.researchLines.push(researchLine);
+                } else {
+                    line[p.project_payment + 'Contribution'] = researchLine[p.project_payment + 'Contribution'];
+                    line[p.project_payment + 'AnnualContribution'] = researchLine[p.project_payment + 'AnnualContribution'];
+                }
+            }
+        }
+
+        //adding members
+        for (const p of projectsByUsers) {
+            if (p.project_category === 'Licenze/Opzioni') {
+                skipped++;
+                continue;
+            }
+
+            if (!projectsObj[p.codice_progetto]) {
+                errors.push({
+                    project: p.codice_progetto,
+                    message: 'project not found in groups API'
+                });
+            }
+
+            const email = p.proposer.toLocaleLowerCase();
+
+            let user = users.find(u => u.legacyEmail === email);
+            if (!user) {
+                const fullName = p.proposer.split('@')[0];
+                user = {
+                    displayName: fullName.split('.')[0],
+                    displaySurname: fullName.split('.')[1]
+                };
+            }
+
+            const member = {
+                email: email,
+                name: user.displayName,
+                surname: user.displaySurname,
+                [p.project_payment + 'Contribution']: p.contribution_obtained,
+                [p.project_payment + 'AnnualContribution']: getAnnualContribution(p, 'annual_contribution_proposer_')
+            };
+
+            const prj = projectsObj[p.codice_progetto];
+            const m = prj.members.find(m => m.email === member.email);
+            if (!m) {
+                prj.members.push(member);
+            } else {
+                m[p.project_payment + 'Contribution'] = member[p.project_payment + 'Contribution'];
+                m[p.project_payment + 'AnnualContribution'] = member[p.project_payment + 'AnnualContribution'];
+            }
+        }
+
+
+        //creating researchItems
+        const projects = Object.keys(projectsObj).map(k => projectsObj[k]);
+        for (const projectData of projects) {
+            totalItems++;
+            try {
+                const data = {
+                    type: type,
+                    startYear: projectData.startDate.slice(0, 4),
+                    endYear: projectData.endDate.slice(0, 4),
+                    authorsStr: await ResearchItem.generateAuthorsStr(projectData.members),
+                    projectData: projectData
+                };
+
+                const authorsData = projectData.members.map((pi, pos) => ({
+                    affiliations: pi.email.includes('@iit.it') ? [1] : [],
+                    position: pos
+                }));
+
+                const prj = await Project.findOne({code: projectData.code, kind: ResearchItemKinds.EXTERNAL});
+                if (!prj) {
+                    await ResearchItem.createExternal(config.origin, projectData.code, data, authorsData);
+                    created++;
+                } else if (!_.isEqual(prj.projectData, data.projectData)) {
+                    await ResearchItem.updateExternal(prj.id, data, authorsData);
+                    updated++;
+                }
+            } catch (e) {
+                errors.push(e);
+            }
+        }
+
+        sails.log.info(`import of industrial projects completed`);
+        sails.log.info(`${totalItems} found`);
+        sails.log.info(`external created: ${created}`);
+        sails.log.info(`external updated: ${updated}`);
+        sails.log.info(`errors: ${errors.length}`);
+        errors.forEach(error => {
+            if (error.researchItem)
+                delete error.researchItem.logos;
+            sails.log.debug(error);
+            sails.log.debug('\n --------------------- \n');
+        });
+
+        function formatDate(date) {
+            if (!_.isString(date)) return;
+            return date.replace(/\//g, '-').slice(0, 10);
+        }
+
+        function getAnnualContribution(p, key) {
+            const annualContribution = [];
+            for (let year = 2014; year < 2100; year++) {
+                const contribution = p[key + year]
+                if (contribution > 0)
+                    annualContribution.push({
+                        year,
+                        contribution
+                    });
+            }
+            return annualContribution;
+        }
     }
 
     async function projectAutoVerify() {
