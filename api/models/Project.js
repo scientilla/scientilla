@@ -102,6 +102,10 @@ module.exports = _.merge({}, BaseModel, {
             type: 'JSON',
             columnName: 'project_data'
         },
+        typeKey: {
+            type: 'STRING',
+            columnName: 'key'
+        },
         verified: {
             collection: 'projectverify',
             via: 'project'
@@ -139,7 +143,7 @@ module.exports = _.merge({}, BaseModel, {
         },
         toJSON() {
             const project = this.toObject();
-            if (project.members)
+            if (project.typeKey === ResearchItemTypes.PROJECT_COMPETITIVE && project.members)
                 project.pi = project.members
                     .filter(m => ['pi', 'co_pi'].includes(m.role))
                     .map(m => ({
