@@ -35,6 +35,7 @@ async function run(command) {
         });
 
         gruntTask.stderr.on('data', function (data) {
+            console.error(data.toString());
             appendToFile(taskName, startedAt, data.toString());
         });
 
