@@ -917,7 +917,7 @@ async function importProjects() {
                 verified = verifiedProject.verified.map(v => v.researchEntity);
 
             const lines = eProject.researchLines || [];
-            const members = (eProject.members || []).filter(m => ['pi', 'co_pi'].includes(m.role));
+            const members = (eProject.members || []).filter(m => !m.role || ['pi', 'co_pi'].includes(m.role));
 
             //for some reason find({code:array}) doesn't work so i have to do this
             const groups = [];
