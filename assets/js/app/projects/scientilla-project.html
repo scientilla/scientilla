@@ -3,7 +3,7 @@
         <span class="project-year">{{ vm.project.startYear + ' - ' + vm.project.endYear }}</span>
         <img
             ng-src="{{ vm.customizations.logos.institute.src }}"
-            ng-if="vm.hasIITAsPartner()"
+            ng-if="vm.showIITLogo()"
             class="icon-iit"/>
     </li>
     <li class="project-metadata">

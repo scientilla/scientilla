@@ -42,7 +42,7 @@
         vm.isFavoriteToShow = isFavoriteToShow;
         vm.changePrivacy = changePrivacy;
         vm.changeFavorite = changeFavorite;
-        vm.hasIITAsPartner = hasIITAsPartner;
+        vm.showIITLogo = showIITLogo;
         vm.projectTypeCompetitive = projectTypeCompetitive;
         vm.projectTypeIndustrial = projectTypeIndustrial;
 
@@ -153,13 +153,15 @@
             return vm.project.verified.find(v => v.researchEntity === researchEntity.id);
         }
 
-        function hasIITAsPartner() {
-            if (_.has(vm, 'project.projectData.partners')) {
-                const partners = vm.project.projectData.partners;
-                return !_.isEmpty(partners.filter(p => p.description === 'Fondazione Istituto Italiano di Tecnologia'));
+        function showIITLogo() {
+            switch (vm.project.typeKey) {
+                case projectTypeCompetitive:
+                    return vm.project.role === 'coordinator' || vm.project.role === 'partner'
+                case projectTypeIndustrial:
+                    return true;
+                default:
+                    return false
             }
-
-            return false;
         }
     }
 })();
