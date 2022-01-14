@@ -19,6 +19,7 @@
         vm.getAlias = UserService.getAlias;
         vm.groups = [];
         vm.projectTypeCompetitive = projectTypeCompetitive;
+        vm.projectTypeIndustrial = projectTypeIndustrial;
         vm.showBudgetDetails = false;
         vm.user = AuthService.user;
 
@@ -38,20 +39,28 @@
 
             vm.showAnnualContribution = isVerifiedUserOrGroup();
 
-            vm.PIMembers = vm.project.projectData.members.filter(m => {
-                const pi = vm.project.pi.find(pi => pi.email === m.email);
-                if (pi) {
-                    return m;
-                }
-            });
-
-            vm.project.category = industrialProjectCategories[vm.project.category];
-            vm.project.payment = industrialProjectPayments[vm.project.payment];
+            if (_.has(vm.project, 'pi')) {
+                vm.PIMembers = vm.project.projectData.members.filter(m => {
+                    const pi = vm.project.pi.find(pi => pi.email === m.email);
+                    if (pi) {
+                        return m;
+                    }
+                });
+            }
 
             vm.groups = await GroupsService.getGroups();
 
-            vm.annualContributionYears = [].concat.apply([], vm.project.researchLines.map(r => r.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
-            vm.annualFundingPIYears = [].concat.apply([], vm.PIMembers.map(m => m.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+            if (vm.project.type.key === projectTypeCompetitive) {
+                vm.annualContributionYears = [].concat.apply([], vm.project.researchLines.map(r => r.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+                vm.annualFundingPIYears = [].concat.apply([], vm.PIMembers.map(m => m.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+            }
+
+            if (vm.project.type.key === projectTypeIndustrial) {
+                vm.inCashAnnualContributionYears = [].concat.apply([], vm.project.researchLines.filter(r => _.has(r, 'InCashAnnualContribution')).map(r => r.InCashAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+                vm.inCashAnnualFundingMembersYears = [].concat.apply([], vm.project.members.filter(m => _.has(m, 'InCashAnnualContribution')).map(m => m.InCashAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+                vm.inKindAnnualContributionYears = [].concat.apply([], vm.project.researchLines.filter(r => _.has(r, 'InKindAnnualContribution')).map(r => r.InKindAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+                vm.inKindAnnualFundingMembersYears = [].concat.apply([], vm.project.members.filter(m => _.has(m, 'InKindAnnualContribution')).map(m => m.InKindAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+            }
         };
 
         async function isVerifiedUserOrGroup() {
@@ -104,11 +113,37 @@
             return false;
         };
 
-        vm.getAnnualContribution = function (researchLine, year) {
-            const annualContribution = researchLine.annualContribution.find(a => a.year === year);
+        vm.getAnnualContribution = function (item, year) {
+            if (_.has(item, 'annualContribution')) {
+                const annualContribution = item.annualContribution.find(a => a.year === year);
 
-            if (annualContribution) {
-                return $filter('valuta')(annualContribution.contribution);
+                if (annualContribution) {
+                    return $filter('valuta')(annualContribution.contribution);
+                }
+            }
+
+            return '';
+        };
+
+        vm.getInCashAnnualContribution = function (item, year) {
+            if (_.has(item, 'InCashAnnualContribution')) {
+                const inCashAnnualContribution = item.InCashAnnualContribution.find(a => a.year === year);
+
+                if (inCashAnnualContribution) {
+                    return $filter('valuta')(inCashAnnualContribution.contribution);
+                }
+            }
+
+            return '';
+        };
+
+        vm.getInKindAnnualContribution = function (item, year) {
+            if (_.has(item, 'InKindAnnualContribution')) {
+                const inKindAnnualContribution = item.InKindAnnualContribution.find(a => a.year === year);
+
+                if (inKindAnnualContribution) {
+                    return $filter('valuta')(inKindAnnualContribution.contribution);
+                }
             }
 
             return '';

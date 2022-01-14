@@ -3,34 +3,56 @@
         <span class="project-year">{{ vm.project.startYear + ' - ' + vm.project.endYear }}</span>
         <img
             ng-src="{{ vm.customizations.logos.institute.src }}"
-            ng-if="vm.hasIITAsPartner()"
+            ng-if="vm.showIITLogo()"
             class="icon-iit"/>
     </li>
     <li class="project-metadata">
         <div>
             <scientilla-project-type-badge type="vm.project.type"></scientilla-project-type-badge>
-            <scientilla-research-item-authors research-item="vm.project"
-                                              collapsed="vm.collapsed"
-                                              type="preview"></scientilla-research-item-authors>
+            <scientilla-research-item-authors
+                research-item="vm.project"
+                collapsed="vm.collapsed"
+                type="preview"
+            ></scientilla-research-item-authors>
         </div>
 
-        <h2 class="project-title has-action"
+        <h2
+            class="project-title has-action"
             ng-click="vm.openDetails()"
-            ng-bind-html='vm.project | title'></h2>
+            ng-bind-html='vm.project | title'
+        ></h2>
 
-        <ng-container ng-if="vm.project.acronym">
-            <strong>Acronym:</strong> {{ vm.project.acronym }}<br>
+        <!-- Only for industrial projects -->
+        <ng-container ng-if="vm.project.typeKey === vm.projectTypeIndustrial">
+            <ng-container ng-if="vm.project.payment">
+                <strong>Payment:</strong>
+                {{ vm.project.payment }}
+                <span class="project-payment" ng-class="vm.project.payment"></span><br>
+            </ng-container>
+
+            <ng-container ng-if="vm.status">
+                <strong>Status:</strong>
+                {{ vm.status }}
+                <span class="project-status" ng-class="vm.status"></span><br>
+            </ng-container>
         </ng-container>
 
-        <ng-container ng-if="vm.project.role">
-            <strong>IIT role:</strong>
-            {{ vm.project.role }}<br>
-        </ng-container>
+        <!-- Only for competitive projects -->
+        <ng-container ng-if="vm.project.typeKey === vm.projectTypeCompetitive">
+            <ng-container ng-if="vm.project.acronym">
+                <strong>Acronym:</strong> {{ vm.project.acronym }}<br>
+            </ng-container>
 
-        <ng-container ng-if="vm.project.status">
-            <strong>Status:</strong>
-            {{ vm.project.status }}
-            <span class="project-status" ng-class="vm.project.status"></span><br>
+            <ng-container ng-if="vm.project.role">
+                <strong>IIT role:</strong>
+                {{ vm.project.role }}<br>
+            </ng-container>
+
+            <ng-container ng-if="vm.project.status">
+                <strong>Status:</strong>
+                {{ vm.project.status }}
+                <span class="project-status" ng-class="vm.project.status"></span><br>
+            </ng-container>
         </ng-container>
 
         <ul class="project-actions">
