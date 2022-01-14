@@ -142,7 +142,6 @@
         }
 
         function setMinMaxYears(structure, values) {
-
             switch (values.projectType) {
                 case 'all':
                     setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === 'all').values);
@@ -164,6 +163,7 @@
                     structure.title.visible = false;
                     structure.acronym.visible = false;
                     structure.pi.visible = false;
+                    structure.proposer.visible = false;
                     structure.year.visible = false;
                     structure.status.visible = false;
                     structure.funding.visible = false;
@@ -174,15 +174,12 @@
                     switch (values[key]) {
                         case 'all':
                             structure.title.visible = true;
-                            structure.acronym.visible = true;
-                            structure.pi.visible = true;
                             structure.year.visible = true;
                             setMinMaxYears(structure, values);
                             break;
                         case 'project_industrial':
                             structure.title.visible = true;
-                            structure.acronym.visible = true;
-                            structure.pi.visible = true;
+                            structure.proposer.visible = true;
                             structure.year.visible = true;
                             structure.category.visible = true;
                             structure.payment.visible = true;
@@ -201,6 +198,7 @@
                         default:
                             break;
                     }
+
                     break;
                 default:
                     break;

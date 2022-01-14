@@ -16,16 +16,19 @@ const projectTypeIndustrial = 'project_industrial';
 const projectTypeAgreement = 'project_agreement';
 
 const industrialProjectCategories = {
-    'Ricerca': 'Research',
-    'Formazione': 'Training',
-    'Locazioni': 'Leases',
-    'Joint Lab': 'Joint lab',
-    'Vendita': 'Sale',
-    'Servizio': 'Service',
+    'Sales': 'Sales',
+    'Research': 'Research',
+    'Joint Lab': 'Joint Lab',
+    'Service': 'Service',
+    'Educational': 'Educational',
+    'Lease': 'Lease',
+    'Inkind': 'Inkind'
 };
 
 const industrialProjectPayments = {
-    'InCash': 'In cash'
+    'InCash': 'in cash',
+    'InKind': 'in kind',
+    'inCash/inKind': 'in cash / in kind',
 };
 
 const projectStatuses = {

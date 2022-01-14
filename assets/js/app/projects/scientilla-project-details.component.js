@@ -19,6 +19,7 @@
         vm.getAlias = UserService.getAlias;
         vm.groups = [];
         vm.projectTypeCompetitive = projectTypeCompetitive;
+        vm.projectTypeIndustrial = projectTypeIndustrial;
         vm.showBudgetDetails = false;
         vm.user = AuthService.user;
 
@@ -38,20 +39,21 @@
 
             vm.showAnnualContribution = isVerifiedUserOrGroup();
 
-            vm.PIMembers = vm.project.projectData.members.filter(m => {
-                const pi = vm.project.pi.find(pi => pi.email === m.email);
-                if (pi) {
-                    return m;
-                }
-            });
-
-            vm.project.category = industrialProjectCategories[vm.project.category];
-            vm.project.payment = industrialProjectPayments[vm.project.payment];
+            if (_.has(vm.project, 'pi')) {
+                vm.PIMembers = vm.project.projectData.members.filter(m => {
+                    const pi = vm.project.pi.find(pi => pi.email === m.email);
+                    if (pi) {
+                        return m;
+                    }
+                });
+            }
 
             vm.groups = await GroupsService.getGroups();
 
-            vm.annualContributionYears = [].concat.apply([], vm.project.researchLines.map(r => r.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
-            vm.annualFundingPIYears = [].concat.apply([], vm.PIMembers.map(m => m.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+            if (vm.project.type.key === projectTypeCompetitive) {
+                vm.annualContributionYears = [].concat.apply([], vm.project.researchLines.map(r => r.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+                vm.annualFundingPIYears = [].concat.apply([], vm.PIMembers.map(m => m.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+            }
         };
 
         async function isVerifiedUserOrGroup() {
