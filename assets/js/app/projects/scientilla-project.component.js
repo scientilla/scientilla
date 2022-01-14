@@ -156,11 +156,11 @@
         function showIITLogo() {
             switch (vm.project.typeKey) {
                 case projectTypeCompetitive:
-                    return vm.project.role === 'coordinator' || vm.project.role === 'partner'
+                    return vm.project.role === 'coordinator' || vm.project.role === 'partner';
                 case projectTypeIndustrial:
                     return true;
                 default:
-                    return false
+                    return false;
             }
         }
     }

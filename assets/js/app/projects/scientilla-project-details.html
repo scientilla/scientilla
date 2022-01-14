@@ -14,7 +14,7 @@
 ></scientilla-research-item-affiliations>
 
 <!-- Only for industrial projects -->
-<ng-container ng-if="vm.project.type.key === vm.projectTypeIndustrial">
+<ng-container ng-if="vm.project.typeKey === vm.projectTypeIndustrial">
     <ng-container ng-if="vm.project.payment">
         <strong>Category:</strong>
         {{ vm.project.category }}
@@ -26,10 +26,104 @@
         {{ vm.project.payment }}
         <span class="project-payment" ng-class="vm.project.payment"></span><br>
     </ng-container>
+
+    <ng-container ng-if="vm.project.members.length > 0">
+        <br>
+        <strong>In cash annual funding members:</strong>
+        <table class="table">
+            <tr ng-repeat="member in vm.project.members|limitTo:1">
+                <th class="name-column">Name</th>
+                <th ng-repeat="year in vm.inCashAnnualFundingMembersYears">
+                    {{ year }}
+                </th>
+            </tr>
+            <tr ng-repeat="member in vm.project.members">
+                <td class="name-column">{{ vm.getAlias(member) }}</td>
+                <td ng-repeat="year in vm.inCashAnnualFundingMembersYears">
+                    {{ vm.getInCashAnnualContribution(member, year) }}
+                </td>
+            </tr>
+        </table>
+    </ng-container>
+
+    <ng-container ng-if="vm.project.members.length > 0">
+        <br>
+        <strong>In kind annual funding members:</strong>
+        <table class="table">
+            <tr ng-repeat="member in vm.project.members|limitTo:1">
+                <th class="name-column">Name</th>
+                <th ng-repeat="year in vm.inKindAnnualFundingMembersYears">
+                    {{ year }}
+                </th>
+            </tr>
+            <tr ng-repeat="member in vm.project.members">
+                <td class="name-column">{{ vm.getAlias(member) }}</td>
+                <td ng-repeat="year in vm.inKindAnnualFundingMembersYears">
+                    {{ vm.getInKindAnnualContribution(member, year) }}
+                </td>
+            </tr>
+        </table>
+    </ng-container>
+
+    <ng-container ng-if="vm.project.researchLines.length > 0">
+        <br>
+        <strong>In cash annual funding research lines:</strong>
+        <table class="table">
+            <tr>
+                <th class="name-column">Name</th>
+                <th ng-repeat="year in vm.inCashAnnualContributionYears">
+                    {{ year }}
+                </th>
+            </tr>
+            <tr ng-repeat="researchLine in vm.project.researchLines">
+                <td class="name-column">
+                    <ng-container ng-if="vm.isGroup(researchLine)">
+                        <a href="{{ vm.getGroupUrl(researchLine) }}" ng-click="vm.closeModal()">
+                            {{ vm.getGroupName(researchLine) }}
+                        </a>
+                    </ng-container>
+                    <ng-container ng-if="!vm.isGroup(researchLine)">
+                        {{ vm.getGroupName(researchLine) }}
+                    </ng-container>
+                </td>
+                <td ng-repeat="year in vm.inCashAnnualContributionYears">
+                    {{ vm.getInCashAnnualContribution(researchLine, year) }}
+                </td>
+            </tr>
+        </table>
+    </ng-container>
+
+    <ng-container ng-if="vm.project.researchLines.length > 0">
+        <br>
+        <strong>In kind annual funding research lines:</strong>
+        <table class="table">
+            <tr>
+                <th class="name-column">Name</th>
+                <th ng-repeat="year in vm.inKindAnnualContributionYears">
+                    {{ year }}
+                </th>
+            </tr>
+            <tr ng-repeat="researchLine in vm.project.researchLines">
+                <td class="name-column">
+                    <ng-container ng-if="vm.isGroup(researchLine)">
+                        <a href="{{ vm.getGroupUrl(researchLine) }}" ng-click="vm.closeModal()">
+                            {{ vm.getGroupName(researchLine) }}
+                        </a>
+                    </ng-container>
+                    <ng-container ng-if="!vm.isGroup(researchLine)">
+                        {{ vm.getGroupName(researchLine) }}
+                    </ng-container>
+                </td>
+                <td ng-repeat="year in vm.inKindAnnualContributionYears">
+                    {{ vm.getInKindAnnualContribution(researchLine, year) }}
+                </td>
+            </tr>
+        </table>
+    </ng-container>
 </ng-container>
 
 <!-- Only for competitive projects -->
-<ng-container ng-if="vm.project.type.key === vm.projectCompetitive">
+<ng-container ng-if="vm.project.typeKey === vm.projectTypeCompetitive">
     <ng-container ng-if="vm.project.code">
         <strong>Code:</strong> {{ vm.project.code }}<br>
     </ng-container>
