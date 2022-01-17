@@ -27,7 +27,7 @@
         <span class="project-payment" ng-class="vm.project.payment"></span><br>
     </ng-container>
 
-    <ng-container ng-if="vm.project.members.length > 0">
+    <ng-container ng-if="vm.project.members.length > 0 && (vm.project.payment === vm.industrialProjectPayments['InCash'] || vm.project.payment === vm.industrialProjectPayments['inCash/inKind'])">
         <br>
         <strong>In cash annual funding members:</strong>
         <table class="table">
@@ -46,7 +46,7 @@
         </table>
     </ng-container>
 
-    <ng-container ng-if="vm.project.members.length > 0">
+    <ng-container ng-if="vm.project.members.length > 0 && (vm.project.payment === vm.industrialProjectPayments['InKind'] || vm.project.payment === vm.industrialProjectPayments['inCash/inKind'])">
         <br>
         <strong>In kind annual funding members:</strong>
         <table class="table">
@@ -65,7 +65,7 @@
         </table>
     </ng-container>
 
-    <ng-container ng-if="vm.project.researchLines.length > 0">
+    <ng-container ng-if="vm.project.researchLines.length > 0 && (vm.project.payment === vm.industrialProjectPayments['InCash'] || vm.project.payment === vm.industrialProjectPayments['inCash/inKind'])">
         <br>
         <strong>In cash annual funding research lines:</strong>
         <table class="table">
@@ -93,7 +93,7 @@
         </table>
     </ng-container>
 
-    <ng-container ng-if="vm.project.researchLines.length > 0">
+    <ng-container ng-if="vm.project.researchLines.length > 0 && (vm.project.payment === industrialProjectPayments['InKind'] || vm.project.payment === industrialProjectPayments['inCash/inKind'])">
         <br>
         <strong>In kind annual funding research lines:</strong>
         <table class="table">

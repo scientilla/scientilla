@@ -61,6 +61,8 @@
                 vm.inKindAnnualContributionYears = [].concat.apply([], vm.project.researchLines.filter(r => _.has(r, 'InKindAnnualContribution')).map(r => r.InKindAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
                 vm.inKindAnnualFundingMembersYears = [].concat.apply([], vm.project.members.filter(m => _.has(m, 'InKindAnnualContribution')).map(m => m.InKindAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
             }
+
+            vm.industrialProjectPayments = industrialProjectPayments;
         };
 
         async function isVerifiedUserOrGroup() {
@@ -134,7 +136,7 @@
                 }
             }
 
-            return '';
+            return $filter('valuta')(0);
         };
 
         vm.getInKindAnnualContribution = function (item, year) {
@@ -146,7 +148,7 @@
                 }
             }
 
-            return '';
+            return $filter('valuta')(0);
         };
     }
 
