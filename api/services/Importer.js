@@ -757,13 +757,15 @@ async function importProjects() {
 
             const group = groups.find(g => g.code === p.linea);
 
+            const paymentLabel = _.camelCase(p.project_payment);
+
             const researchLine = {
                 code: p.linea,
                 description: group ? group.name : '',
                 startDate: formatDate(p.startdate_normalizzata),
                 endDate: formatDate(p.enddate_linea),
-                [p.project_payment + 'Contribution']: p.contribution_obtained,
-                [p.project_payment + 'AnnualContribution']: getAnnualContribution(p, 'annual_contribution_')
+                [paymentLabel + 'Contribution']: p.contribution_obtained,
+                [paymentLabel + 'AnnualContribution']: getAnnualContribution(p, 'annual_contribution_')
             };
 
             if (!projectsObj[p.codice_progetto]) {
@@ -788,8 +790,8 @@ async function importProjects() {
                 if (!line) {
                     prj.researchLines.push(researchLine);
                 } else {
-                    line[p.project_payment + 'Contribution'] = researchLine[p.project_payment + 'Contribution'];
-                    line[p.project_payment + 'AnnualContribution'] = researchLine[p.project_payment + 'AnnualContribution'];
+                    line[paymentLabel + 'Contribution'] = researchLine[p.project_payment + 'Contribution'];
+                    line[paymentLabel + 'AnnualContribution'] = researchLine[p.project_payment + 'AnnualContribution'];
                 }
             }
         }
@@ -806,8 +808,10 @@ async function importProjects() {
                     project: p.codice_progetto,
                     message: 'project not found in groups API'
                 });
+                continue;
             }
 
+            const paymentLabel = _.camelCase(p.project_payment);
             const email = p.proposer.toLocaleLowerCase();
 
             let user = users.find(u => u.legacyEmail === email);
@@ -823,8 +827,8 @@ async function importProjects() {
                 email: email,
                 name: user.displayName,
                 surname: user.displaySurname,
-                [p.project_payment + 'Contribution']: p.contribution_obtained,
-                [p.project_payment + 'AnnualContribution']: getAnnualContribution(p, 'annual_contribution_proposer_')
+                [paymentLabel + 'Contribution']: p.contribution_obtained,
+                [paymentLabel + 'AnnualContribution']: getAnnualContribution(p, 'annual_contribution_proposer_')
             };
 
             const prj = projectsObj[p.codice_progetto];
@@ -832,8 +836,8 @@ async function importProjects() {
             if (!m) {
                 prj.members.push(member);
             } else {
-                m[p.project_payment + 'Contribution'] = member[p.project_payment + 'Contribution'];
-                m[p.project_payment + 'AnnualContribution'] = member[p.project_payment + 'AnnualContribution'];
+                m[paymentLabel + 'Contribution'] = member[p.project_payment + 'Contribution'];
+                m[paymentLabel + 'AnnualContribution'] = member[p.project_payment + 'AnnualContribution'];
             }
         }
 

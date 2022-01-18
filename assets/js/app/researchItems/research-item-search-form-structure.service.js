@@ -80,7 +80,7 @@
                 values: [],
                 matchColumn: 'type',
                 type: 'field',
-                defaultValue: 'project_competitive', //allProjectTypes.value,
+                defaultValue: allProjectTypes.value,
                 defaultValues: []
             },
             title: {
@@ -100,6 +100,13 @@
             pi: {
                 inputType: 'text',
                 label: 'PI',
+                matchColumn: 'authorsStr',
+                matchRule: 'contains',
+                type: 'field'
+            },
+            proposer: {
+                inputType: 'text',
+                label: 'Proposer',
                 matchColumn: 'authorsStr',
                 matchRule: 'contains',
                 type: 'field'
@@ -483,8 +490,7 @@
             ).filter(type => type.value !== 'project_agreement');
 
             // Show only competitive projects
-            //formStructures[constant].projectType.values = projectTypes;
-            formStructures[constant].projectType.values = projectTypes.filter(type => type.value === 'project_competitive');
+            formStructures[constant].projectType.values = projectTypes;
             formStructures[constant].status.values = await getProjectStatuses();
             formStructures[constant].payment.values = getProjectPayments();
             formStructures[constant].category.values = getProjectCategories();

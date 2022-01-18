@@ -151,6 +151,15 @@ module.exports = _.merge({}, BaseModel, {
                         name: m.name,
                         surname: m.surname
                     }));
+            if (project.typeKey === ResearchItemTypes.PROJECT_INDUSTRIAL && project.researchLines) {
+                project.inCashContribution = project.researchLines.reduce(
+                    (total, rl) => total + (rl.inCashContribution || 0),
+                    0);
+                project.inKindContribution = project.researchLines.reduce(
+                    (total, rl) => total + (rl.inKindContribution || 0),
+                    0);
+                project.totalContribution = project.inCashContribution + project.inKindContribution;
+            }
             if (project.researchLines)
                 project.lines = project.researchLines.map(rl => ({
                     code: rl.code,
