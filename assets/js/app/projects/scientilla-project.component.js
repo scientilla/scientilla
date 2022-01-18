@@ -16,7 +16,6 @@
     controller.$inject = [
         'GroupsService',
         'ModalService',
-        'ProjectService',
         'context',
         'EventsService',
         'CustomizeService',
@@ -27,7 +26,6 @@
     function controller(
         GroupsService,
         ModalService,
-        ProjectService,
         context,
         EventsService,
         CustomizeService,
@@ -44,7 +42,9 @@
         vm.isFavoriteToShow = isFavoriteToShow;
         vm.changePrivacy = changePrivacy;
         vm.changeFavorite = changeFavorite;
-        vm.hasIITAsPartner = hasIITAsPartner;
+        vm.showIITLogo = showIITLogo;
+        vm.projectTypeCompetitive = projectTypeCompetitive;
+        vm.projectTypeIndustrial = projectTypeIndustrial;
 
         let researchEntity;
 
@@ -59,6 +59,25 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             researchEntity = await context.getResearchEntity();
+
+            if (vm.project.type.key === projectTypeIndustrial) {
+                switch (true) {
+                    case moment(vm.project.startDate, 'YYYY-MM-DD') > moment():
+                        vm.status = 'not started';
+                        break;
+                    case moment(vm.project.startDate, 'YYYY-MM-DD') < moment() && moment(vm.project.endDate, 'YYYY-MM-DD') > moment():
+                        vm.status = 'working';
+                        break;
+                    case moment(vm.project.endDate, 'YYYY-MM-DD') < moment():
+                        vm.status = 'ended';
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            vm.project.category = industrialProjectCategories[vm.project.category];
+            vm.project.payment = industrialProjectPayments[vm.project.payment];
 
             EventsService.subscribe(vm, EventsService.CUSTOMIZATIONS_CHANGED, function (event, customizations) {
                 vm.customizations = customizations;
@@ -134,13 +153,15 @@
             return vm.project.verified.find(v => v.researchEntity === researchEntity.id);
         }
 
-        function hasIITAsPartner() {
-            if (_.has(vm, 'project.projectData.partners')) {
-                const partners = vm.project.projectData.partners;
-                return !_.isEmpty(partners.filter(p => p.description === 'Fondazione Istituto Italiano di Tecnologia'));
+        function showIITLogo() {
+            switch (vm.project.typeKey) {
+                case projectTypeCompetitive:
+                    return vm.project.role === 'coordinator' || vm.project.role === 'partner';
+                case projectTypeIndustrial:
+                    return true;
+                default:
+                    return false;
             }
-
-            return false;
         }
     }
 })();

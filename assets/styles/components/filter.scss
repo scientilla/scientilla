@@ -280,16 +280,28 @@
 
             &.project,
             &.verified-project{
+                &.fields-3{
+                    grid-template-columns: 180px 1fr 160px;
+                }
+
+                &.fields-4{
+                    grid-template-columns: 180px 1fr 1fr 160px;
+                }
+
                 &.fields-5{
-                    grid-template-columns: 200px 5fr 3fr 2fr 160px;
+                    grid-template-columns: 180px 5fr 3fr 2fr 160px;
+                }
+
+                &.fields-6{
+                    grid-template-columns: 180px 5fr 3fr 2fr 160px 200px;
                 }
 
                 &.fields-7{
-                    grid-template-columns: 200px 5fr 3fr 2fr 160px 200px 200px;
+                    grid-template-columns: 180px 5fr 3fr 2fr 160px 200px 200px;
                 }
 
                 &.fields-8{
-                    grid-template-columns: 200px 5fr 3fr 2fr 160px 200px 200px 300px;
+                    grid-template-columns: 180px 5fr 3fr 2fr 160px 130px 180px 220px;
                 }
             }
 
