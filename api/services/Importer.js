@@ -130,7 +130,8 @@ async function importGroups() {
     const url = sails.config.scientilla.mainInstituteImport.officialGroupsImportUrl;
     const reqOptions = {
         uri: url,
-        json: true
+        json: true,
+        rejectUnauthorized: false
     };
 
     let res;
