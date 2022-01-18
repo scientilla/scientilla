@@ -56,10 +56,10 @@
             }
 
             if (vm.project.type.key === projectTypeIndustrial) {
-                vm.inCashAnnualContributionYears = [].concat.apply([], vm.project.researchLines.filter(r => _.has(r, 'InCashAnnualContribution')).map(r => r.InCashAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
-                vm.inCashAnnualFundingMembersYears = [].concat.apply([], vm.project.members.filter(m => _.has(m, 'InCashAnnualContribution')).map(m => m.InCashAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
-                vm.inKindAnnualContributionYears = [].concat.apply([], vm.project.researchLines.filter(r => _.has(r, 'InKindAnnualContribution')).map(r => r.InKindAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
-                vm.inKindAnnualFundingMembersYears = [].concat.apply([], vm.project.members.filter(m => _.has(m, 'InKindAnnualContribution')).map(m => m.InKindAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+                vm.inCashAnnualContributionYears = [].concat.apply([], vm.project.researchLines.filter(r => _.has(r, 'inCashAnnualContribution')).map(r => r.inCashAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+                vm.inCashAnnualFundingMembersYears = [].concat.apply([], vm.project.members.filter(m => _.has(m, 'inCashAnnualContribution')).map(m => m.inCashAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+                vm.inKindAnnualContributionYears = [].concat.apply([], vm.project.researchLines.filter(r => _.has(r, 'inKindAnnualContribution')).map(r => r.inKindAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+                vm.inKindAnnualFundingMembersYears = [].concat.apply([], vm.project.members.filter(m => _.has(m, 'inKindAnnualContribution')).map(m => m.inKindAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
             }
 
             vm.industrialProjectPayments = industrialProjectPayments;
@@ -104,7 +104,7 @@
             ModalService.close('close');
         };
 
-        vm.isGroup = function(researchLine) {
+        vm.isGroup = function (researchLine) {
             if (!_.isEmpty(vm.groups)) {
                 const group = vm.groups.find(g => g.code === researchLine.code);
 
@@ -128,8 +128,8 @@
         };
 
         vm.getInCashAnnualContribution = function (item, year) {
-            if (_.has(item, 'InCashAnnualContribution')) {
-                const inCashAnnualContribution = item.InCashAnnualContribution.find(a => a.year === year);
+            if (_.has(item, 'inCashAnnualContribution')) {
+                const inCashAnnualContribution = item.inCashAnnualContribution.find(a => a.year === year);
 
                 if (inCashAnnualContribution) {
                     return $filter('valuta')(inCashAnnualContribution.contribution);
@@ -140,8 +140,8 @@
         };
 
         vm.getInKindAnnualContribution = function (item, year) {
-            if (_.has(item, 'InKindAnnualContribution')) {
-                const inKindAnnualContribution = item.InKindAnnualContribution.find(a => a.year === year);
+            if (_.has(item, 'inKindAnnualContribution')) {
+                const inKindAnnualContribution = item.inKindAnnualContribution.find(a => a.year === year);
 
                 if (inKindAnnualContribution) {
                     return $filter('valuta')(inKindAnnualContribution.contribution);
