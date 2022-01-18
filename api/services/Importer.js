@@ -791,8 +791,8 @@ async function importProjects() {
                 if (!line) {
                     prj.researchLines.push(researchLine);
                 } else {
-                    line[paymentLabel + 'Contribution'] = researchLine[p.project_payment + 'Contribution'];
-                    line[paymentLabel + 'AnnualContribution'] = researchLine[p.project_payment + 'AnnualContribution'];
+                    line[paymentLabel + 'Contribution'] = researchLine[paymentLabel + 'Contribution'];
+                    line[paymentLabel + 'AnnualContribution'] = researchLine[paymentLabel + 'AnnualContribution'];
                 }
             }
         }
@@ -837,8 +837,8 @@ async function importProjects() {
             if (!m) {
                 prj.members.push(member);
             } else {
-                m[paymentLabel + 'Contribution'] = member[p.project_payment + 'Contribution'];
-                m[paymentLabel + 'AnnualContribution'] = member[p.project_payment + 'AnnualContribution'];
+                m[paymentLabel + 'Contribution'] = member[paymentLabel + 'Contribution'];
+                m[paymentLabel + 'AnnualContribution'] = member[paymentLabel + 'AnnualContribution'];
             }
         }
 
