@@ -11,9 +11,9 @@
             }
         });
 
-    scientillaProjectDetails.$inject = ['context', 'AuthService', 'UserService', 'GroupsService', 'ModalService', '$filter'];
+    scientillaProjectDetails.$inject = ['context', 'AuthService', 'UserService', 'UsersService', 'GroupsService', 'ModalService', '$filter'];
 
-    function scientillaProjectDetails(context, AuthService, UserService, GroupsService, ModalService, $filter) {
+    function scientillaProjectDetails(context, AuthService, UserService, UsersService, GroupsService, ModalService, $filter) {
         const vm = this;
 
         vm.getAlias = UserService.getAlias;
@@ -48,8 +48,6 @@
                 });
             }
 
-            vm.groups = await GroupsService.getGroups();
-
             if (vm.project.type.key === projectTypeCompetitive) {
                 vm.annualContributionYears = [].concat.apply([], vm.project.researchLines.map(r => r.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
                 vm.annualFundingPIYears = [].concat.apply([], vm.PIMembers.map(m => m.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
@@ -63,6 +61,18 @@
             }
 
             vm.industrialProjectPayments = industrialProjectPayments;
+
+            const groupCodes = vm.project.researchLines.map(researchLine => researchLine.code);
+            vm.groups = await GroupsService.getGroups({ where: {
+                or: groupCodes.map(code => {
+                    return {
+                        code: code
+                    }
+                })
+            }});
+
+            const emailAddresses = vm.project.members.map(m => m.email);
+            vm.users = await UsersService.getUsers({ username: emailAddresses });
         };
 
         async function isVerifiedUserOrGroup() {
@@ -100,6 +110,17 @@
             return;
         };
 
+        vm.getUserUrl = function(member) {
+            if (!_.isEmpty(vm.users)) {
+                const user = vm.users.find(u => u.username === member.email);
+
+                if (user) {
+                    return '/#' + user.getProfileUrl();
+                }
+            }
+            return;
+        };
+
         vm.closeModal = function () {
             ModalService.close('close');
         };
@@ -115,6 +136,17 @@
             return false;
         };
 
+        vm.isUser = function (member) {
+            if (!_.isEmpty(vm.users)) {
+                const user = vm.users.find(u => u.username === member.email);
+
+                if (user) {
+                    return user;
+                }
+            }
+            return false;
+        };
+
         vm.getAnnualContribution = function (item, year) {
             if (_.has(item, 'annualContribution')) {
                 const annualContribution = item.annualContribution.find(a => a.year === year);
@@ -124,7 +156,7 @@
                 }
             }
 
-            return '';
+            return $filter('valuta')(0);
         };
 
         vm.getInCashAnnualContribution = function (item, year) {
