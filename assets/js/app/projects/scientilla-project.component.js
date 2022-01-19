@@ -63,13 +63,13 @@
             if (vm.project.type.key === projectTypeIndustrial) {
                 switch (true) {
                     case moment(vm.project.startDate, 'YYYY-MM-DD') > moment():
-                        vm.status = 'not started';
+                        vm.project.status = 'not started';
                         break;
                     case moment(vm.project.startDate, 'YYYY-MM-DD') < moment() && moment(vm.project.endDate, 'YYYY-MM-DD') > moment():
-                        vm.status = 'working';
+                        vm.project.status = 'working';
                         break;
                     case moment(vm.project.endDate, 'YYYY-MM-DD') < moment():
-                        vm.status = 'ended';
+                        vm.project.status = 'ended';
                         break;
                     default:
                         break;

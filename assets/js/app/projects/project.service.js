@@ -173,19 +173,35 @@
 
                     switch (values[key]) {
                         case 'all':
+                            delete values.acronym;
+                            delete values.pi;
+                            delete values.proposer;
+                            delete values.funding;
+                            delete values.action;
+                            delete values.category;
+                            delete values.payment;
                             structure.title.visible = true;
                             structure.year.visible = true;
+                            structure.status.visible = true;
                             setMinMaxYears(structure, values);
                             break;
                         case 'project_industrial':
+                            delete values.acronym;
+                            delete values.pi;
+                            delete values.funding;
+                            delete values.action;
                             structure.title.visible = true;
                             structure.proposer.visible = true;
                             structure.year.visible = true;
                             structure.category.visible = true;
                             structure.payment.visible = true;
+                            structure.status.visible = true;
                             setMinMaxYears(structure, values);
                             break;
                         case 'project_competitive':
+                            delete values.proposer;
+                            delete values.category;
+                            delete values.payment;
                             structure.title.visible = true;
                             structure.acronym.visible = true;
                             structure.pi.visible = true;
