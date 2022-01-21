@@ -32,13 +32,10 @@ module.exports = _.merge({}, BaseModel, {
             type: 'JSON',
             columnName: 'project_data'
         },
-        institutes: {
-            type: 'JSON',
-        },
         isValid: () => true,
     },
     getFields() {
-        return ['researchItem', 'group', 'startYear', 'endYear', 'authorsStr', 'projectData', 'institutes'];
+        return ['researchItem', 'group', 'startYear', 'endYear', 'authorsStr', 'projectData'];
     },
     async selectData(itemData) {
         return _.pick(itemData, this.getFields());

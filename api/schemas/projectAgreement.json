@@ -68,6 +68,12 @@
           "email"
         ]
       }
+    },
+    "institutes": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
     }
   }
 }
