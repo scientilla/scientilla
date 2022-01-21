@@ -161,50 +161,6 @@
             ></scientilla-error-messages>
         </div>
 
-        <div class="form-group">
-            <label for="subject">Total budget</label>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">€</span>
-                </div>
-                <input
-                    type="number"
-                    class="form-control"
-                    placeholder="Total budget"
-                    ng-model="vm.agreementData.budget"
-                    ng-class="{'is-invalid' : vm.errors.budget}"
-                    ng-blur="vm.checkValidation('budget')"
-                    ng-change="vm.fieldValueHasChanged('budget')"
-                >
-            </div>
-            <scientilla-error-messages
-                class="error-messages"
-                errors="vm.errors.budget"
-            ></scientilla-error-messages>
-        </div>
-
-        <div class="form-group">
-            <label for="subject">Institute budget</label>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">€</span>
-                </div>
-                <input
-                    type="number"
-                    class="form-control"
-                    placeholder="Institute budget"
-                    ng-model="vm.agreementData.contribution"
-                    ng-class="{'is-invalid' : vm.errors.contribution}"
-                    ng-blur="vm.checkValidation('contribution')"
-                    ng-change="vm.fieldValueHasChanged('contribution')"
-                >
-            </div>
-            <scientilla-error-messages
-                class="error-messages"
-                errors="vm.errors.contribution"
-            ></scientilla-error-messages>
-        </div>
-
         <ul class="modal-buttons">
             <li>
                 <scientilla-button
