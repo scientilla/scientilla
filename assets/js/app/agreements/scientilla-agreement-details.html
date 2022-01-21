@@ -8,15 +8,15 @@
 <h3 class="agreement-title" ng-bind-html='vm.agreement | title'></h3>
 
 <ng-container
-    ng-if="vm.agreement.projectData.subject"
-    class="agreement-subject"
+        ng-if="vm.agreement.projectData.subject"
+        class="agreement-subject"
 >
     {{ vm.agreement.projectData.subject }}
 </ng-container>
 
 <ng-container
-    ng-if="vm.agreement.projectData.agreementType"
-    class="agreement-type"
+        ng-if="vm.agreement.projectData.agreementType"
+        class="agreement-type"
 >
     {{ vm.agreement.projectData.agreementType }}
 </ng-container>
@@ -42,10 +42,19 @@
 </ng-container>
 
 <ul
-    ng-if="vm.agreement.projectData.partners && vm.agreement.projectData.partners.length > 0"
-    class="agreement-partners"
+        ng-if="vm.agreement.projectData.partners && vm.agreement.projectData.partners.length > 0"
+        class="agreement-partners"
 >
     <li ng-repeat="partner in vm.agreement.projectData.partners">
         {{ partner }}
+    </li>
+</ul>
+
+<ul
+        ng-if="vm.agreement.projectData.institutes && vm.agreement.projectData.institutes.length > 0"
+        class="agreement-partners"
+>
+    <li ng-repeat="institute in vm.agreement.projectData.institutes">
+        {{ institute }}
     </li>
 </ul>
