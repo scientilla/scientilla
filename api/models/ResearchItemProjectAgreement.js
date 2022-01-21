@@ -32,6 +32,9 @@ module.exports = _.merge({}, BaseModel, {
             type: 'JSON',
             columnName: 'project_data'
         },
+        institutes: {
+            type: 'JSON',
+        },
         isValid: () => true,
     },
     getFields() {

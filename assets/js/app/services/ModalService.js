@@ -243,7 +243,6 @@
             };
 
             return openModal(`<div class="modal-header">
-                                <h3>Agreement details</h3>
                                 <button
                                     type="button"
                                     class="close"

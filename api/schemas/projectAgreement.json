@@ -2,6 +2,9 @@
   "$id": "projectAgreement",
   "type": "object",
   "properties": {
+    "code": {
+      "type": "string"
+    },
     "title": {
       "type": "string"
     },
@@ -16,7 +19,8 @@
         {
           "type": "string",
           "format": "date-time"
-        }, {
+        },
+        {
           "type": "null"
         }
       ]
@@ -26,7 +30,8 @@
         {
           "type": "string",
           "format": "date-time"
-        }, {
+        },
+        {
           "type": "null"
         }
       ]
@@ -50,16 +55,7 @@
         "properties": {
           "email": {
             "type": "string",
-            "oneOf": [
-              {
-                "enum": [
-                  ""
-                ]
-              },
-              {
-                "format": "email"
-              }
-            ]
+            "format": "email"
           },
           "name": {
             "type": "string"
