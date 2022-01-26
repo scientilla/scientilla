@@ -22,7 +22,8 @@
         'GroupsService',
         'groupTypes',
         'projectTypeAgreement',
-        'Prototyper'
+        'Prototyper',
+        'ResearchItemTypesService'
     ];
 
     function controller(
@@ -35,7 +36,8 @@
         GroupsService,
         groupTypes,
         projectTypeAgreement,
-        Prototyper
+        Prototyper,
+        ResearchItemTypesService
     ) {
 
         return {
@@ -57,7 +59,8 @@
             isValid,
             editAgreement: (researchEntity, draft) => ModalService.openAgreementForm(researchEntity, _.cloneDeep(draft)),
             getGroups,
-            onChange
+            onChange,
+            updateFilterQuery
         };
 
         /* jshint ignore:start */
@@ -220,5 +223,89 @@
                     break;
             }
         }
+
+        /* jshint ignore:start */
+        async function updateFilterQuery (query) {
+            if (_.has(query, 'where.type')) {
+                switch (query.where.type) {
+                    case projectTypeIndustrial:
+                        if (_.has(query, 'where.status')) {
+                            if (query.where.status === 'working') {
+                                query.where.startDate = {
+                                    '<=': moment().format('YYYY-MM-DD')
+                                }
+
+                                query.where.endDate = {
+                                    '>=': moment().format('YYYY-MM-DD')
+                                }
+                            }
+
+                            if (query.where.status === 'ended') {
+                                query.where.endDate = {
+                                    '<': moment().format('YYYY-MM-DD')
+                                }
+                            }
+
+                            delete query.where.status;
+                        }
+                        break;
+                    case projectTypeCompetitive:
+                        break;
+                    default:
+                        const or = [];
+                        const types = await ResearchItemTypesService.getTypes();
+                        const projectTypeIndustrialId = types.find(type => type.key === projectTypeIndustrial).id;
+                        const projectTypeCompetitiveId = types.find(type => type.key === projectTypeCompetitive).id;
+
+                        switch (query.where.status) {
+                            case 'working':
+                                or.push({
+                                    type: projectTypeIndustrialId,
+                                    startDate: {
+                                        '<=': moment().format('YYYY-MM-DD')
+                                    },
+                                    endDate: {
+                                        '>=': moment().format('YYYY-MM-DD')
+                                    }
+                                });
+                                or.push({
+                                    type: projectTypeCompetitiveId,
+                                    status: _.cloneDeep(query.where.status)
+                                });
+                                break;
+                            case 'ended':
+                                or.push({
+                                    type: projectTypeIndustrialId,
+                                    endDate: {
+                                        '<': moment().format('YYYY-MM-DD')
+                                    }
+                                });
+                                or.push({
+                                    type: projectTypeCompetitiveId,
+                                    status: _.cloneDeep(query.where.status)
+                                });
+                                break;
+                            default:
+                                or.push({
+                                    type: projectTypeIndustrialId
+                                });
+                                or.push({
+                                    type: projectTypeCompetitiveId
+                                });
+                                break;
+                        }
+
+                        query.where.or = or;
+
+                        delete query.where.status;
+                        delete query.where.type;
+
+                        break;
+                }
+            }
+
+            return query;
+        }
+        /* jshint ignore:end */
     }
 })();
