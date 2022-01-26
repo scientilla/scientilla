@@ -791,8 +791,10 @@ async function importProjects() {
                 if (!line) {
                     prj.researchLines.push(researchLine);
                 } else {
-                    line[paymentLabel + 'Contribution'] = researchLine[paymentLabel + 'Contribution'];
-                    line[paymentLabel + 'AnnualContribution'] = researchLine[paymentLabel + 'AnnualContribution'];
+                    line[paymentLabel + 'Contribution'] = (line[paymentLabel + 'Contribution'] || 0) + researchLine[paymentLabel + 'Contribution'];
+                    line[paymentLabel + 'AnnualContribution'] = !Array.isArray(line[paymentLabel + 'AnnualContribution']) ?
+                        researchLine[paymentLabel + 'AnnualContribution'] :
+                        mergeAnnualContributions(line[paymentLabel + 'AnnualContribution'], researchLine[paymentLabel + 'AnnualContribution']);
                 }
             }
         }
@@ -837,8 +839,10 @@ async function importProjects() {
             if (!m) {
                 prj.members.push(member);
             } else {
-                m[paymentLabel + 'Contribution'] = member[paymentLabel + 'Contribution'];
-                m[paymentLabel + 'AnnualContribution'] = member[paymentLabel + 'AnnualContribution'];
+                m[paymentLabel + 'Contribution'] =  (m[paymentLabel + 'Contribution'] || 0) + member[paymentLabel + 'Contribution'];
+                m[paymentLabel + 'AnnualContribution'] = !Array.isArray(m[paymentLabel + 'AnnualContribution']) ?
+                    member[paymentLabel + 'AnnualContribution']
+                    : mergeAnnualContributions(m[paymentLabel + 'AnnualContribution'], member[paymentLabel + 'AnnualContribution']);
             }
         }
 
@@ -893,7 +897,7 @@ async function importProjects() {
 
         function getAnnualContribution(p, key) {
             const annualContribution = [];
-            for (let year = 2014; year < 2100; year++) {
+            for (let year = 2000; year < 2100; year++) {
                 const contribution = p[key + year]
                 if (contribution > 0)
                     annualContribution.push({
@@ -902,6 +906,27 @@ async function importProjects() {
                     });
             }
             return annualContribution;
+        }
+
+        /**
+         * @param {Object[]} contr1
+         * @param {Number} contr1[].year
+         * @param {Number} contr1[].contribution
+         * @param {Object[]} contr2
+         * @param {Number} contr2[].year
+         * @param {Number} contr2[].contribution
+         */
+        function mergeAnnualContributions(contr1, contr2) {
+            return [...contr1, ...contr2]
+                .sort((a, b) => a.year - b.year)
+                .reduce((mergedContr, currContr) => {
+                    const contr = mergedContr.find(cont => cont.year === currContr.year)
+                    if (contr)
+                        contr.contribution += currContr.contribution;
+                    else
+                        mergedContr.push(currContr);
+                    return mergedContr;
+                }, [])
         }
     }
 
