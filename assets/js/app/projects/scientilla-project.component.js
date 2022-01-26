@@ -65,7 +65,7 @@
                     case moment(vm.project.startDate, 'YYYY-MM-DD') > moment():
                         vm.project.status = 'not started';
                         break;
-                    case moment(vm.project.startDate, 'YYYY-MM-DD') < moment() && moment(vm.project.endDate, 'YYYY-MM-DD') > moment():
+                    case moment(vm.project.startDate, 'YYYY-MM-DD') <= moment() && moment(vm.project.endDate, 'YYYY-MM-DD') >= moment():
                         vm.project.status = 'working';
                         break;
                     case moment(vm.project.endDate, 'YYYY-MM-DD') < moment():
