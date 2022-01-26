@@ -264,8 +264,10 @@ module.exports = _.merge({}, BaseModel, {
         if (!prj)
             throw 'Not Found';
 
+        const name = prj.typeKey === ResearchItemTypes.PROJECT_AGREEMENT ? prj.acronym : prj.title;
+
         const group = await Group.create({
-            name: prj.title,
+            name,
             slug: Utils.stringToSlug(prj.title + prj.id),
             type: GroupTypes.PROJECT,
             active: true
