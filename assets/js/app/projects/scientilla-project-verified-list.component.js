@@ -13,13 +13,15 @@
     controller.$inject = [
         'ProjectService',
         'projectListSections',
-        'context'
+        'context',
+        'ResearchItemTypesService'
     ];
 
     function controller(
         ProjectService,
         projectListSections,
-        context
+        context,
+        ResearchItemTypesService
     ) {
         const vm = this;
 
@@ -47,6 +49,84 @@
         async function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
+
+            if (_.has(q, 'where.type')) {
+                switch (q.where.type) {
+                    case projectTypeIndustrial:
+                        if (_.has(q, 'where.status')) {
+                            if (q.where.status === 'working') {
+                                q.where.startDate = {
+                                    '<=': moment().format('YYYY-MM-DD')
+                                }
+
+                                q.where.endDate = {
+                                    '>=': moment().format('YYYY-MM-DD')
+                                }
+                            }
+
+                            if (q.where.status === 'ended') {
+                                q.where.endDate = {
+                                    '<': moment().format('YYYY-MM-DD')
+                                }
+                            }
+
+                            delete q.where.status;
+                        }
+                        break;
+                    case projectTypeCompetitive:
+                        break;
+                    default:
+                        const or = [];
+                        const types = await ResearchItemTypesService.getTypes();
+                        const projectTypeIndustrialId = types.find(type => type.key === projectTypeIndustrial).id;
+                        const projectTypeCompetitiveId = types.find(type => type.key === projectTypeCompetitive).id;
+
+                        switch (q.where.status) {
+                            case 'working':
+                                or.push({
+                                    type: projectTypeIndustrialId,
+                                    startDate: {
+                                        '<=': moment().format('YYYY-MM-DD')
+                                    },
+                                    endDate: {
+                                        '>=': moment().format('YYYY-MM-DD')
+                                    }
+                                });
+                                or.push({
+                                    type: projectTypeCompetitiveId,
+                                    status: _.cloneDeep(q.where.status)
+                                });
+                                break;
+                            case 'ended':
+                                or.push({
+                                    type: projectTypeIndustrialId,
+                                    endDate: {
+                                        '<': moment().format('YYYY-MM-DD')
+                                    }
+                                });
+                                or.push({
+                                    type: projectTypeCompetitiveId,
+                                    status: _.cloneDeep(q.where.status)
+                                });
+                                break;
+                            default:
+                                or.push({
+                                    type: projectTypeIndustrialId
+                                });
+                                or.push({
+                                    type: projectTypeCompetitiveId
+                                });
+                                break;
+                        }
+
+                        q.where.or = or;
+
+                        delete q.where.status;
+                        delete q.where.type;
+
+                        break;
+                }
+            }
 
             query = q;
 
