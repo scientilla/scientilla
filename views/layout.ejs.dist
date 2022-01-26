@@ -78,7 +78,8 @@
       + Use a different preprocessor, like TypeScript
 -->
 <% if (typeof host !== 'undefined') { %>
-<script src="//<%= host %>:35732/livereload.js"></script>
+<!--<script src="//<%= host %>/js/livereload.js?port=443"></script>-->
+<!--<script src="//<%= host %>:35732/livereload.js"></script>-->
 <% } %>
 <!--SCRIPTS-->
 <!--SCRIPTS END-->
