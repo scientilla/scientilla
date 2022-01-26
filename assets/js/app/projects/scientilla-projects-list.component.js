@@ -77,7 +77,7 @@
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
-            query = q;
+            query = await ProjectService.updateFilterQuery(q);
 
             vm.projects = await ProjectService.get(vm.researchEntity, query, favorites);
         }
