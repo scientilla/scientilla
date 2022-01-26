@@ -2,7 +2,7 @@
   "$id": "projectAgreement",
   "type": "object",
   "properties": {
-    "code": {
+    "acronym": {
       "type": "string"
     },
     "title": {
@@ -11,7 +11,10 @@
     "subject": {
       "type": "string"
     },
-    "agreementType": {
+    "type": {
+      "type": "string"
+    },
+    "link": {
       "type": "string"
     },
     "startDate": {
@@ -36,16 +39,18 @@
         }
       ]
     },
-    "budget": {
-      "type": "number"
-    },
-    "contribution": {
-      "type": "number"
-    },
     "partners": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "institute": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          }
+        }
       }
     },
     "pis": {
@@ -67,12 +72,6 @@
         "required": [
           "email"
         ]
-      }
-    },
-    "institutes": {
-      "type": "array",
-      "items": {
-        "type": "integer"
       }
     }
   }
