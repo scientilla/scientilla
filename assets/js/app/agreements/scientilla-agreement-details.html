@@ -1,11 +1,19 @@
 <div>
-
-    <scientilla-research-item-authors research-item="vm.agreement"
-                                      collapsed="vm.collapsed"
-                                      type="default"></scientilla-research-item-authors>
+    <scientilla-research-item-authors
+        research-item="vm.agreement"
+        collapsed="vm.collapsed"
+        type="default"
+    ></scientilla-research-item-authors>
 </div>
 
-<h3 class="agreement-title" ng-bind-html='vm.agreement | title'></h3>
+<h3 class="agreement-acronym" ng-bind-html='vm.agreement.acronym'></h3>
+
+<ng-container
+        ng-if="vm.agreement.title"
+        class="agreement-title"
+>
+    {{ vm.agreement.title }}
+</ng-container>
 
 <ng-container
         ng-if="vm.agreement.projectData.subject"

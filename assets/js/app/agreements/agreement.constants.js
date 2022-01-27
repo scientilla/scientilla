@@ -39,6 +39,7 @@ const agreementFieldRules = {
 };
 
 const agreementRequiredFields = [
+    'acronym',
     'title',
     'agreementType',
     'partners',

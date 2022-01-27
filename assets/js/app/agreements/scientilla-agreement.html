@@ -4,14 +4,22 @@
     </li>
     <li class="agreement-metadata">
         <div>
-            <scientilla-research-item-authors research-item="vm.agreement"
-                                              collapsed="vm.collapsed"
-                                              type="preview"></scientilla-research-item-authors>
+            <scientilla-research-item-authors
+                research-item="vm.agreement"
+                collapsed="vm.collapsed"
+                type="preview"
+            ></scientilla-research-item-authors>
         </div>
 
-        <h2 class="agreement-title has-action"
+        <h2
+            class="agreement-acronym has-action"
             ng-click="vm.openDetails()"
-            ng-bind-html='vm.agreement | title'></h2>
+            ng-bind-html='vm.agreement.acronym'
+        ></h2>
+
+        <ng-container ng-if="vm.agreement.title">
+            {{ vm.agreement.title }}
+        </ng-container>
 
         <ng-container ng-if="vm.agreement.projectData.agreementType">
             {{ vm.agreement.projectData.agreementType }}
@@ -19,7 +27,7 @@
 
         <ul
             class="agreement-partners"
-            ng-if="vm.agreement.projectData.partners"
+            ng-if="vm.agreement.projectData.partners && vm.agreement.projectData.partners.length > 0"
         >
             <li ng-repeat="partner in vm.agreement.projectData.partners">
                 {{ partner }}

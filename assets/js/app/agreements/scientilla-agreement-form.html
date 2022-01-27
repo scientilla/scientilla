@@ -15,6 +15,25 @@
             autocomplete="off">
 
         <div class="form-group">
+            <label for="acronym">Acronym *</label>
+            <input
+                    type="text"
+                    id="acronym"
+                    name="acronym"
+                    placeholder="Acronym"
+                    class="form-control"
+                    ng-model="vm.agreementData.acronym"
+                    ng-class="{'is-invalid' : vm.errors.acronym}"
+                    ng-blur="vm.checkValidation('acronym')"
+                    ng-change="vm.fieldValueHasChanged('acronym')"
+            >
+            <scientilla-error-messages
+                    class="error-messages"
+                    errors="vm.errors.acronym"
+            ></scientilla-error-messages>
+        </div>
+
+        <div class="form-group">
             <label for="title">Title *</label>
             <input
                     type="text"
@@ -62,7 +81,8 @@
                         ng-options="option.key as option.label for option in vm.agreementTypes"
                         ng-class="{'is-invalid' : vm.errors.agreementType}"
                         ng-blur="vm.checkValidation('agreementType')"
-                        ng-change="vm.checkValidation('agreementType')">
+                        ng-change="vm.checkValidation('agreementType')"
+                >
                     <option value="" disabled class="hidden">Type</option>
                 </select>
             </div>
