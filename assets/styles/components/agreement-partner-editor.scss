@@ -10,4 +10,16 @@
             padding:  0px 1rem;
         }
     }
+
+    .partner-fields{
+        @include normalize-listing;
+        display: grid;
+        margin: 0px -1rem;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+
+        & > li{
+            padding:  0px 1rem;
+        }
+    }
 }

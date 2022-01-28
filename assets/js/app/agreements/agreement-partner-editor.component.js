@@ -23,7 +23,8 @@
         vm.removePartner = removePartner;
 
         vm.$onInit = function () {
-            vm.newPartner = '';
+            vm.institute = '';
+            vm.department = '';
             vm.isDuplicate = false;
 
             if (!_.isArray(vm.partners)) {
@@ -35,12 +36,16 @@
         };
 
         function addPartner($event = false) {
-            if (vm.partners.includes(vm.newPartner)) {
+            if (vm.partners.find(p => p.institute === vm.institute && p.department === vm.department)) {
                 vm.isDuplicate = true;
             } else {
-                if (vm.newPartner.length > 0) {
-                    vm.partners.push(vm.newPartner);
-                    vm.newPartner = '';
+                if (vm.institute.length > 0) {
+                    vm.partners.push({
+                        institute: vm.institute,
+                        department: vm.department
+                    });
+                    vm.institute = '';
+                    vm.department = '';
                     vm.isDuplicate = false;
                     vm.unsavedData = true;
                 }
@@ -56,7 +61,6 @@
         function removePartner(partner) {
             const index = vm.partners.indexOf(partner);
             vm.partners.splice(index, 1);
-            vm.checkValidation({field: 'partners'});
             vm.unsavedData = true;
         }
     }
