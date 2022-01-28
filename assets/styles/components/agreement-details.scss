@@ -6,27 +6,20 @@
     }
 
     .agreement-partners{
-        @include normalize-listing;
         @include clearfix;
-        margin-top: 1rem;
-
-        & > li{
-            display: inline-block;
-
-            & + li{
-                &:before{
-                    content: ', '
-                }
-            }
-        }
+        margin-bottom: 1rem;
     }
 
     .agreement-pis {
+        @include normalize-listing;
         @include clearfix;
+        display: inline-block;
+        vertical-align: top;
 
         .agreement-pi {
             display: block;
             float: left;
+            text-transform: capitalize;
 
             & + .agreement-pi {
                 &:before {

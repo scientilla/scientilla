@@ -18,7 +18,10 @@ const agreementTypes = [
         label: 'Research'
     }, {
         key: 'management',
-        label: 'Management / Quadro?'
+        label: 'Management'
+    }, {
+        key: 'centers',
+        label: 'Centers'
     }
 ];
 
@@ -45,7 +48,7 @@ const agreementFieldRules = {
 const agreementRequiredFields = [
     'acronym',
     'title',
-    'agreementType',
+    'type',
     'partners',
     'pis',
     'authorsStr',
