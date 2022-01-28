@@ -715,12 +715,15 @@
                     break;
                 case constant === 'group':
                     const user = AuthService.user;
+                    const types = _.cloneDeep(groupTypes);
+                    delete types.PROJECT;
+
                     formStructures[constant].type.values = [{
                         value: '?',
                         label: 'All'
                     }].concat(
-                        Object.keys(groupTypes)
-                            .map(k => ({label: groupTypeLabels[k], value: groupTypes[k]}))
+                        Object.keys(types)
+                            .map(k => ({label: groupTypeLabels[k], value: types[k]}))
                     );
 
                     formStructures[constant].code.ngIf = user.isAdmin();

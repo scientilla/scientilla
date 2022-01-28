@@ -7,10 +7,11 @@
         'GroupsService',
         'Notification',
         'ModalService',
-        'AuthService'
+        'AuthService',
+        'groupTypes'
     ];
 
-    function GroupBrowsingController(GroupsService, Notification, ModalService, AuthService) {
+    function GroupBrowsingController(GroupsService, Notification, ModalService, AuthService, groupTypes) {
         const vm = this;
 
         vm.user = AuthService.user;
@@ -27,6 +28,12 @@
 
         function onFilter(q) {
             query = q;
+
+            if (!_.has(query, 'where')) {
+                query.where = {};
+            }
+
+            query.where.type = { '!': groupTypes.PROJECT };
 
             return GroupsService.getGroups(query)
                 .then(function (groups) {
