@@ -1,204 +1,248 @@
 <div class="modal-header">
     <h3>{{ !!vm.agreement.id ? 'Edit' : 'New' }} agreement</h3>
     <button
-            type="button"
-            class="close"
-            ng-click="vm.cancel()">
+        type="button"
+        class="close"
+        ng-click="vm.cancel()"
+    >
         <i class="fas fa-times"></i>
     </button>
 </div>
 
 <div class="modal-body">
     <form
-            name="form"
-            class="{{vm.status.class}}"
-            autocomplete="off">
+        name="form"
+        class="{{vm.status.class}}"
+        autocomplete="off"
+    >
+        <div class="form-group">
+            <label for="acronym">Acronym *</label>
+            <input
+                type="text"
+                id="acronym"
+                name="acronym"
+                placeholder="Acronym"
+                class="form-control"
+                ng-model="vm.agreementData.acronym"
+                ng-class="{'is-invalid' : vm.errors.acronym}"
+                ng-blur="vm.checkValidation('acronym')"
+                ng-change="vm.fieldValueHasChanged('acronym')"
+            >
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.acronym"
+            ></scientilla-error-messages>
+        </div>
 
         <div class="form-group">
             <label for="title">Title *</label>
             <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    placeholder="Title"
-                    class="form-control"
-                    ng-model="vm.agreementData.title"
-                    ng-class="{'is-invalid' : vm.errors.title}"
-                    ng-blur="vm.checkValidation('title')"
-                    ng-change="vm.fieldValueHasChanged('title')"
+                type="text"
+                id="title"
+                name="title"
+                placeholder="Title"
+                class="form-control"
+                ng-model="vm.agreementData.title"
+                ng-class="{'is-invalid' : vm.errors.title}"
+                ng-blur="vm.checkValidation('title')"
+                ng-change="vm.fieldValueHasChanged('title')"
             >
             <scientilla-error-messages
-                    class="error-messages"
-                    errors="vm.errors.title"
+                class="error-messages"
+                errors="vm.errors.title"
             ></scientilla-error-messages>
         </div>
 
         <div class="form-group">
             <label for="subject">Subject</label>
             <textarea
-                    name="subject"
-                    id="subject"
-                    class="form-control"
-                    cols="30"
-                    rows="3"
-                    ng-model="vm.agreementData.subject"
+                name="subject"
+                id="subject"
+                class="form-control"
+                cols="30"
+                rows="3"
+                ng-model="vm.agreementData.subject"
             ></textarea>
             <scientilla-error-messages
-                    class="error-messages"
-                    errors="vm.errors.subject"
+                class="error-messages"
+                errors="vm.errors.subject"
             ></scientilla-error-messages>
         </div>
 
         <div class="form-group">
             <label for="agreementType">Type *</label>
-            <div class="select-wrapper" ng-class="{'is-invalid' : vm.errors.agreementType}">
+            <div
+                class="select-wrapper"
+                ng-class="{'is-invalid' : vm.errors.agreementType}"
+            >
                 <select
-                        class="form-control"
-                        id="agreementType"
-                        name="agreementType"
-                        placeholder="Type"
-                        ng-model="vm.agreementData.agreementType"
-                        ng-model-options="{ allowInvalid: true }"
-                        ng-options="option.key as option.label for option in vm.agreementTypes"
-                        ng-class="{'is-invalid' : vm.errors.agreementType}"
-                        ng-blur="vm.checkValidation('agreementType')"
-                        ng-change="vm.checkValidation('agreementType')">
-                    <option value="" disabled class="hidden">Type</option>
+                    class="form-control"
+                    id="agreementType"
+                    name="agreementType"
+                    placeholder="Type"
+                    ng-model="vm.agreementData.type"
+                    ng-model-options="{ allowInvalid: true }"
+                    ng-options="option.key as option.label for option in vm.agreementTypes"
+                    ng-class="{'is-invalid' : vm.errors.type}"
+                    ng-blur="vm.checkValidation('type')"
+                    ng-change="vm.checkValidation('type')"
+                >
+                    <option
+                        value=""
+                        disabled
+                        class="hidden"
+                    >Type</option>
                 </select>
             </div>
             <scientilla-error-messages
-                    class="error-messages"
-                    errors="vm.errors.agreementType"
+                class="error-messages"
+                errors="vm.errors.type"
             ></scientilla-error-messages>
         </div>
 
         <agreement-partner-editor
-                partners="vm.agreementData.partners"
-                unsaved-data="vm.unsavedData"
-                errors="vm.errors"
-                check-validation="vm.checkValidation(field)"
-                field-value-has-changed="vm.fieldValueHasChanged(field)"
+            partners="vm.agreementData.partners"
+            unsaved-data="vm.unsavedData"
+            errors="vm.errors"
+            check-validation="vm.checkValidation(field)"
+            field-value-has-changed="vm.fieldValueHasChanged(field)"
         ></agreement-partner-editor>
 
-        <div class="form-group">
-            <label>Partners institute</label>
-            <input type="text"
-                   placeholder="Add institute"
-                   class="form-control">
-        </div>
-
         <agreement-referrer-editor
-                referrers="vm.agreementData.pis"
-                unsaved-data="vm.unsavedData"
-                authors-str="vm.agreementData.authorsStr"
-                errors="vm.errors"
-                check-validation="vm.checkValidation(field)"
-                field-value-has-changed="vm.fieldValueHasChanged(field)"
+            referrers="vm.agreementData.pis"
+            unsaved-data="vm.unsavedData"
+            authors-str="vm.agreementData.authorsStr"
+            errors="vm.errors"
+            check-validation="vm.checkValidation(field)"
+            field-value-has-changed="vm.fieldValueHasChanged(field)"
         ></agreement-referrer-editor>
 
         <div class="form-group">
             <label for="subject">Author string * <em>(will be generated automatically from referrers.)</em></label>
             <input
-                    id="authorsStr"
-                    type="text"
-                    name="authorsStr"
-                    class="form-control"
-                    placeholder="Referrers string"
-                    ng-disabled="true"
-                    ng-model="vm.agreementData.authorsStr"
-                    ng-class="{'is-invalid' : vm.errors.authorsStr}"
+                id="authorsStr"
+                type="text"
+                name="authorsStr"
+                class="form-control"
+                placeholder="Referrers string"
+                ng-disabled="true"
+                ng-model="vm.agreementData.authorsStr"
+                ng-class="{'is-invalid' : vm.errors.authorsStr}"
             >
             <scientilla-error-messages
-                    class="error-messages"
-                    errors="vm.errors.authorsStr"
+                class="error-messages"
+                errors="vm.errors.authorsStr"
             ></scientilla-error-messages>
         </div>
 
         <div class="form-group">
             <label for="subject">Start date *</label>
             <input
-                    id="start-date"
-                    type="text"
-                    name="start-date"
-                    class="form-control"
-                    placeholder="Start date"
-                    datepickerMode="month"
-                    placeholder="dd/mm/yyyy"
-                    transform-date
-                    datepicker-options="vm.datePickerOptions"
-                    uib-datepicker-popup="dd/MM/yyyy"
-                    show-button-bar="false"
-                    is-open="vm.openStartDate"
-                    ng-click="vm.openStartDate = true"
-                    ng-model="vm.agreementData.startDate"
-                    ng-class="{'is-invalid' : vm.errors.startDate}"
-                    ng-blur="vm.checkValidation('startDate')"
-                    ng-change="vm.fieldValueHasChanged('startDate')"
+                id="start-date"
+                type="text"
+                name="start-date"
+                class="form-control"
+                placeholder="Start date"
+                datepickerMode="month"
+                placeholder="dd/mm/yyyy"
+                transform-date
+                datepicker-options="vm.datePickerOptions"
+                uib-datepicker-popup="dd/MM/yyyy"
+                show-button-bar="false"
+                is-open="vm.openStartDate"
+                ng-click="vm.openStartDate = true"
+                ng-model="vm.agreementData.startDate"
+                ng-class="{'is-invalid' : vm.errors.startDate}"
+                ng-blur="vm.checkValidation('startDate')"
+                ng-change="vm.fieldValueHasChanged('startDate')"
             >
             <scientilla-error-messages
-                    class="error-messages"
-                    errors="vm.errors.startDate"
+                class="error-messages"
+                errors="vm.errors.startDate"
             ></scientilla-error-messages>
         </div>
 
         <div class="form-group">
             <label for="end-date">End date</label>
             <input
-                    id="end-date"
-                    type="text"
-                    name="end-date"
-                    class="form-control"
-                    placeholder="End date"
-                    datepickerMode="month"
-                    placeholder="dd/mm/yyyy"
-                    transform-date
-                    datepicker-options="vm.datePickerOptions"
-                    uib-datepicker-popup="dd/MM/yyyy"
-                    show-button-bar="false"
-                    is-open="vm.openEndDate"
-                    ng-click="vm.openEndDate = true"
-                    ng-model="vm.agreementData.endDate"
-                    ng-class="{'is-invalid' : vm.errors.endDate}"
-                    ng-blur="vm.checkValidation('endDate')"
-                    ng-change="vm.fieldValueHasChanged('endDate')"
+                id="end-date"
+                type="text"
+                name="end-date"
+                class="form-control"
+                placeholder="End date"
+                datepickerMode="month"
+                placeholder="dd/mm/yyyy"
+                transform-date
+                datepicker-options="vm.datePickerOptions"
+                uib-datepicker-popup="dd/MM/yyyy"
+                show-button-bar="false"
+                is-open="vm.openEndDate"
+                ng-click="vm.openEndDate = true"
+                ng-model="vm.agreementData.endDate"
+                ng-class="{'is-invalid' : vm.errors.endDate}"
+                ng-blur="vm.checkValidation('endDate')"
+                ng-change="vm.fieldValueHasChanged('endDate')"
             >
             <scientilla-error-messages
-                    class="error-messages"
-                    errors="vm.errors.endDate"
+                class="error-messages"
+                errors="vm.errors.endDate"
+            ></scientilla-error-messages>
+        </div>
+
+        <div class="form-group">
+            <label for="link">Link</label>
+            <input
+                type="text"
+                id="link"
+                name="link"
+                placeholder="Link"
+                class="form-control"
+                ng-model="vm.agreementData.link"
+                ng-class="{'is-invalid' : vm.errors.link}"
+                ng-blur="vm.checkValidation('link')"
+                ng-change="vm.fieldValueHasChanged('link')"
+            >
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.link"
             ></scientilla-error-messages>
         </div>
 
         <ul class="modal-buttons">
             <li>
                 <scientilla-button
-                        type="button"
-                        click="vm.save"
-                        ng-disabled="vm.formStatus.saveState !== 'ready to save' || !vm.unsavedData">
+                    type="button"
+                    click="vm.save"
+                    ng-disabled="vm.formStatus.saveState !== 'ready to save' || !vm.unsavedData"
+                >
                     {{ vm.formStatus.saveMessage }}
                 </scientilla-button>
             </li>
             <li>
                 <scientilla-button
-                        type="submit"
-                        ng-disabled="vm.formStatus.verifyState !== 'ready to verify'"
-                        click="vm.verify">{{ vm.formStatus.verifyMessage }}
+                    type="submit"
+                    ng-disabled="vm.formStatus.verifyState !== 'ready to verify'"
+                    click="vm.verify"
+                >{{ vm.formStatus.verifyMessage }}
                 </scientilla-button>
             </li>
             <li>
                 <scientilla-button
-                        type="cancel"
-                        click="vm.cancel">Close
+                    type="cancel"
+                    click="vm.cancel"
+                >Close
                 </scientilla-button>
             </li>
         </ul>
 
         <div
-                ng-if="vm.errorText"
-                class="modal-error"
-                ng-class="{
+            ng-if="vm.errorText"
+            class="modal-error"
+            ng-class="{
                 'text-danger' : vm.formStatus.mode == 'verify',
                 'text-warning': vm.formStatus.mode == 'draft'
-            }">
+            }"
+        >
             {{ vm.errorText }}
         </div>
     </form>

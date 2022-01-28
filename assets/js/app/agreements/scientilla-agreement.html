@@ -4,27 +4,37 @@
     </li>
     <li class="agreement-metadata">
         <div>
-            <scientilla-research-item-authors research-item="vm.agreement"
-                                              collapsed="vm.collapsed"
-                                              type="preview"></scientilla-research-item-authors>
+            <scientilla-research-item-authors
+                research-item="vm.agreement"
+                collapsed="vm.collapsed"
+                type="preview"
+            ></scientilla-research-item-authors>
         </div>
 
-        <h2 class="agreement-title has-action"
+        <h2
+            class="agreement-acronym has-action"
             ng-click="vm.openDetails()"
-            ng-bind-html='vm.agreement | title'></h2>
+            ng-bind-html='vm.agreement.acronym'
+        ></h2>
 
-        <ng-container ng-if="vm.agreement.projectData.agreementType">
-            {{ vm.agreement.projectData.agreementType }}
+        <ng-container ng-if="vm.agreement.title">
+            {{ vm.agreement.title }}<br />
         </ng-container>
 
-        <ul
-            class="agreement-partners"
-            ng-if="vm.agreement.projectData.partners"
-        >
-            <li ng-repeat="partner in vm.agreement.projectData.partners">
-                {{ partner }}
-            </li>
-        </ul>
+        <ng-container ng-if="vm.agreement.projectData.agreementType">
+            {{ vm.getTypeLabel(vm.agreement.projectData.agreementType) }}<br />
+        </ng-container>
+
+        <ng-container ng-if="vm.agreement.projectData.partners && vm.agreement.projectData.partners.length > 0">
+            <ul class="agreement-partners">
+                <li ng-repeat="partner in vm.agreement.projectData.partners">
+                    {{ partner.institute }}
+                    <ng-container ng-if="partner.department">
+                        - {{ partner.department }}
+                    </ng-container>
+                </li>
+            </ul>
+        </ng-container>
 
         <ul class="agreement-actions">
             <li

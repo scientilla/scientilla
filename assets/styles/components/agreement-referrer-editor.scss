@@ -10,4 +10,10 @@
             padding:  0px 1rem;
         }
     }
+
+    .referrer-list{
+        & > li{
+            text-transform: capitalize;
+        }
+    }
 }

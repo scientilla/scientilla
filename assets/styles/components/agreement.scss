@@ -24,8 +24,8 @@
         }
     }
 
-    .agreement-title{
-        margin: 1rem 0px;
+    .agreement-acronym{
+        margin: 0px 0px 1rem 0px;
         font-size: 2rem;
         line-height: 2.2rem;
     }
@@ -42,15 +42,10 @@
         @include normalize-listing;
         @include clearfix;
         margin-top: 1rem;
+        margin-bottom: 1rem;
 
         & > li{
-            display: inline-block;
-
-            & + li{
-                &:before{
-                    content: ', '
-                }
-            }
+            display: block;
         }
     }
 

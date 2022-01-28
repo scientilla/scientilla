@@ -286,4 +286,3 @@ module.exports = _.merge({}, BaseModel, {
     }
 });
 
-
