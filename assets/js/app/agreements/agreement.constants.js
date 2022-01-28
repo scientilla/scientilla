@@ -35,6 +35,10 @@ const agreementFieldRules = {
         allowNull: true,
         isDate: true,
         message: 'Not a valid date.'
+    },
+    link: {
+        regex: /^(http|https):\/\//,
+        message: 'This link should start with http:// or https://'
     }
 };
 
