@@ -62,6 +62,9 @@
 
         const rules = [];
 
+        const types = _.cloneDeep(groupTypes);
+        delete types.PROJECT;
+
         vm.formStructure = {
             name: {
                 inputType: 'text',
@@ -100,7 +103,7 @@
                 inputType: 'select',
                 label: 'Group Type',
                 defaultValue: vm.group.type || groupTypes.RESEARCH_LINE,
-                values: Object.keys(groupTypes).map(k => ({label: groupTypeLabels[k], value: groupTypes[k]})),
+                values: Object.keys(types).map(k => ({label: groupTypeLabels[k], value: types[k]})),
                 ngIf: isAdmin,
                 type: 'field'
             },
