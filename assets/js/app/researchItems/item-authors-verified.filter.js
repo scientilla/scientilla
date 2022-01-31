@@ -11,6 +11,9 @@
             const verifiedAuthors = researchItem.verified;
 
             return authorsStr.split(/,\s?/).map((authorStr, index) => {
+                if (!_.has(researchItem, 'authors')) {
+                    return authorStr;
+                }
                 const author = researchItem.authors.find(a => a.position === index);
                 if (!author) return authorStr;
 

@@ -12,6 +12,10 @@
             return authorsStr.split(/,\s?/).map(function (authorStr, index) {
                 let htmlAuthor = authorStr;
 
+                if (!_.has(researchItem, 'authors')) {
+                    return htmlAuthor;
+                }
+
                 const author = researchItem.authors.find(a => a.position === index);
 
                 if (author) {
