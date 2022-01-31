@@ -56,13 +56,24 @@
             </uib-tab>
             <uib-tab
                 index="4"
+                heading="Projects"
+            >
+                <scientilla-projects-list
+                    ng-if="vm.researchEntity"
+                    research-entity="vm.researchEntity"
+                    section="vm.projectListSections.GROUP"
+                    active="vm.activeTabIndex === 4"
+                ></scientilla-projects-list>
+            </uib-tab>
+            <uib-tab
+                index="5"
                 heading="Patents"
             >
                 <scientilla-patents-list
                     ng-if="vm.researchEntity"
                     research-entity="vm.researchEntity"
                     section="vm.patentListSections.GROUP"
-                    active="vm.activeTabIndex === 4"
+                    active="vm.activeTabIndex === 5"
                 ></scientilla-patents-list>
             </uib-tab>
         </uib-tabset>
