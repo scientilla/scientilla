@@ -1,0 +1,34 @@
+<div class="modal-header">
+    <h3>Edit administrators</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+
+    <scientilla-multicomplete
+        items="vm.group.administrators"
+        query="vm.getUsersQuery"
+        filter="vm.group.administrators"
+        title="Administrators">
+    </scientilla-multicomplete>
+
+    <ul class="modal-buttons">
+        <li>
+            <scientilla-button
+                type="submit"
+                click="vm.submit()"
+            >Save</scientilla-button>
+        </li>
+        <li>
+            <scientilla-button
+                type="cancel"
+                click="vm.cancel()"
+            >Cancel</scientilla-button>
+        </li>
+    </ul>
+</div>
