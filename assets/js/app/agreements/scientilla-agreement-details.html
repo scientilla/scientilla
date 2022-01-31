@@ -15,6 +15,10 @@
     <strong>Title:</strong> {{ vm.agreement.title }}<br />
 </ng-container>
 
+<ng-container ng-if="vm.agreement.projectData.type">
+    <strong>Type:</strong> {{ vm.agreement.projectData.type }}<br />
+</ng-container>
+
 <ng-container
     ng-if="vm.agreement.projectData.subject"
     class="agreement-subject"

@@ -17,7 +17,8 @@
         'context',
         'ModalService',
         'agreementDownloadFileName',
-        'agreementExportUrl'
+        'agreementExportUrl',
+        'GroupsService'
     ];
 
     function controller(
@@ -27,7 +28,8 @@
         context,
         ModalService,
         agreementDownloadFileName,
-        agreementExportUrl
+        agreementExportUrl,
+        GroupsService
     ) {
         const vm = this;
 
@@ -36,7 +38,6 @@
         vm.onFilter = onFilter;
         vm.unverify = (agreement) => ProjectService.unverify(vm.researchEntity, agreement);
         vm.exportDownload = agreements => ProjectService.exportDownload(agreements, 'csv', agreementDownloadFileName, agreementExportUrl);
-
         vm.subResearchEntity = context.getSubResearchEntity();
 
         let query = {
@@ -76,6 +77,12 @@
             vm.agreements = await ProjectService.get(vm.researchEntity, q, false, agreementPopulates);
         }
 
+        vm.editAdmins = async agreement => {
+            if (agreement.group) {
+                const group = await GroupsService.getGroup(agreement.group.id);
+                ModalService.openScientillaAgreementAdminForm(group);
+            }
+        };
         /* jshint ignore:end */
     }
 

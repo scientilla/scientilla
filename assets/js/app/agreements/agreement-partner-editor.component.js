@@ -14,15 +14,19 @@
             }
         });
 
-    agreementPartnerEditor.$inject = [];
+    agreementPartnerEditor.$inject = [
+        'Restangular'
+    ];
 
-    function agreementPartnerEditor() {
+    function agreementPartnerEditor(Restangular) {
         const vm = this;
 
         vm.addPartner = addPartner;
         vm.removePartner = removePartner;
+        vm.getInstitutes = getInstitutes;
 
-        vm.$onInit = function () {
+        /* jshint ignore:start */
+        vm.$onInit = async function () {
             vm.institute = '';
             vm.department = '';
             vm.isDuplicate = false;
@@ -30,7 +34,10 @@
             if (!_.isArray(vm.partners)) {
                 vm.partners = [];
             }
+
+            vm.institutes = await Restangular.one('agreements', 'unique-partner-institutes').get();
         };
+        /* jshint ignore:end */
 
         vm.$onDestroy = function () {
         };
@@ -62,6 +69,10 @@
             const index = vm.partners.indexOf(partner);
             vm.partners.splice(index, 1);
             vm.unsavedData = true;
+        }
+
+        function getInstitutes(search) {
+            return vm.institutes.filter(i => i.toLowerCase().includes(search.toLowerCase()));
         }
     }
 

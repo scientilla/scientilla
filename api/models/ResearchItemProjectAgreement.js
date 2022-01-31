@@ -48,5 +48,12 @@ module.exports = _.merge({}, BaseModel, {
     },
     validationErrors() {
         return validate.errors;
+    },
+    getUniquePartnerInstitutes: async function () {
+        const queryPath = `api/queries/uniquePartnerInstitutes.sql`;
+        const sql = SqlService.readQueryFromFs(queryPath);
+        const results = await SqlService.query(sql);
+        const institutes = results.map(r => r.institute);
+        return institutes.sort();
     }
 });

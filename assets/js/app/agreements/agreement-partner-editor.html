@@ -11,6 +11,11 @@
                             placeholder="Institute *"
                             ng-model="vm.institute"
                             ng-class="{'is-invalid' : vm.errors.partners}"
+                            uib-typeahead="institute as institute for institute in vm.getInstitutes($viewValue)"
+                            typeahead-loading="searching"
+                            typeahead-no-results="noResults"
+                            typeahead-editable="true"
+                            typeahead-select-on-blur="false"
                         />
                     </li>
                     <li>

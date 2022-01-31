@@ -69,7 +69,6 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
-            console.log(vm.agreement);
             vm.researchEntity = await context.getResearchEntity();
             if (_.has(vm.agreement, 'projectData')) {
                 vm.agreementData = vm.agreement.projectData;
@@ -153,8 +152,6 @@
 
             vm.errorText = '';
             vm.errors = ValidateService.validate(vm.agreementData, false, agreementRequiredFields, agreementFieldRules);
-
-            console.log(vm.errors);
 
             setAgreement();
 

@@ -386,6 +386,25 @@
                 });
         };
 
+        service.openScientillaAgreementAdminForm = function (group) {
+
+            const scopeVars = {
+                group: group
+            };
+
+            return openModal(`<scientilla-agreement-admin-form
+                    group="vm.group"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                 ></scientilla-agreement-admin-form>`,
+                scopeVars,
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+        };
+
         service.openDocumentAffiliationForm = function (document) {
             const scopeVars = {
                 document: document
