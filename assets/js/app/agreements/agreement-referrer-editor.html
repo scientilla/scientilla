@@ -11,7 +11,6 @@
                     placeholder="Add referrer"
                     ng-model="vm.newReferrer"
                     ng-class="{'is-invalid' : vm.errors.pis}"
-                    nng-change="vm.fieldValueHasChanged({field: 'pis'})"
                     uib-typeahead="user as user.getDisplayName() for user in vm.getUsers($viewValue)"
                     ng-keydown="$event.keyCode === 13 && vm.addReferrer($event)"
                     typeahead-loading="searching"
