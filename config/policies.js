@@ -238,5 +238,9 @@ module.exports.policies = {
 
     AllMembershipController: defaultPolicy,
 
-    AllMembershipGroupController: defaultPolicy
+    AllMembershipGroupController: defaultPolicy,
+
+    AgreementController: _.defaults({
+        getUniquePartnerInstitutes: isLogged,
+    }, defaultPolicy),
 };
