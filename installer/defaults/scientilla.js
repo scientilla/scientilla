@@ -40,7 +40,10 @@ module.exports.scientilla = {
             },
             "project_industrial": {
                 "origin": "",
-                "request": {
+                "requestUsers": {
+                    "url": ""
+                },
+                "requestGroups": {
                     "url": ""
                 }
             },
@@ -92,6 +95,18 @@ module.exports.scientilla = {
                     "fn": "GruntTaskRunner.run",
                     "params": [
                         "import:external:metadata"
+                    ]
+                },
+                {
+                    "fn": "GruntTaskRunner.run'",
+                    "params": [
+                        "cleaner:accessLogs"
+                    ]
+                },
+                {
+                    "fn": "GruntTaskRunner.run",
+                    "params": [
+                        "cleaner:logFiles"
                     ]
                 },
                 {
@@ -156,5 +171,9 @@ module.exports.scientilla = {
     ],
     "registerEnabled": true,
     "maxUserFavorite": "5",
-    "maxGroupFavorite": "5"
+    "maxGroupFavorite": "5",
+    "logs": {
+        "accessLogRetentionDays": 30,
+        "logFilesRetentionDays": 180
+    }
 };

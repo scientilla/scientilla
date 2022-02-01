@@ -102,6 +102,10 @@ module.exports = _.merge({}, BaseModel, {
             type: 'JSON',
             columnName: 'project_data'
         },
+        typeKey: {
+            type: 'STRING',
+            columnName: 'key'
+        },
         verified: {
             collection: 'projectverify',
             via: 'project'
@@ -139,7 +143,7 @@ module.exports = _.merge({}, BaseModel, {
         },
         toJSON() {
             const project = this.toObject();
-            if (project.members)
+            if (project.typeKey === ResearchItemTypes.PROJECT_COMPETITIVE && project.members)
                 project.pi = project.members
                     .filter(m => ['pi', 'co_pi'].includes(m.role))
                     .map(m => ({
@@ -147,6 +151,15 @@ module.exports = _.merge({}, BaseModel, {
                         name: m.name,
                         surname: m.surname
                     }));
+            if (project.typeKey === ResearchItemTypes.PROJECT_INDUSTRIAL && project.researchLines) {
+                project.inCashContribution = project.researchLines.reduce(
+                    (total, rl) => total + (rl.inCashContribution || 0),
+                    0);
+                project.inKindContribution = project.researchLines.reduce(
+                    (total, rl) => total + (rl.inKindContribution || 0),
+                    0);
+                project.totalContribution = project.inCashContribution + project.inKindContribution;
+            }
             if (project.researchLines)
                 project.lines = project.researchLines.map(rl => ({
                     code: rl.code,

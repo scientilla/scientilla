@@ -80,7 +80,7 @@
                 values: [],
                 matchColumn: 'type',
                 type: 'field',
-                defaultValue: 'project_competitive', //allProjectTypes.value,
+                defaultValue: allProjectTypes.value,
                 defaultValues: []
             },
             title: {
@@ -100,6 +100,13 @@
             pi: {
                 inputType: 'text',
                 label: 'PI',
+                matchColumn: 'authorsStr',
+                matchRule: 'contains',
+                type: 'field'
+            },
+            proposer: {
+                inputType: 'text',
+                label: 'Proposer',
                 matchColumn: 'authorsStr',
                 matchRule: 'contains',
                 type: 'field'
@@ -256,23 +263,23 @@
                 matchRule: 'contains',
                 type: 'field',
             },
-            year: {
-                inputType: 'range',
-                values: {},
-                label: 'Start year',
-                subLabel: '(range between)',
-                matchColumn: 'startYear',
-                rules: [
-                    {
-                        value: 'min',
-                        rule: '>='
-                    }, {
-                        value: 'max',
-                        rule: '<='
-                    }
-                ],
-                type: 'field',
-            }
+            // year: {
+            //     inputType: 'range',
+            //     values: {},
+            //     label: 'Start year',
+            //     subLabel: '(range between)',
+            //     matchColumn: 'startYear',
+            //     rules: [
+            //         {
+            //             value: 'min',
+            //             rule: '>='
+            //         }, {
+            //             value: 'max',
+            //             rule: '<='
+            //         }
+            //     ],
+            //     type: 'field',
+            // }
         };
 
         const agreementGroupFormStructure = {
@@ -483,8 +490,7 @@
             ).filter(type => type.value !== 'project_agreement');
 
             // Show only competitive projects
-            //formStructures[constant].projectType.values = projectTypes;
-            formStructures[constant].projectType.values = projectTypes.filter(type => type.value === 'project_competitive');
+            formStructures[constant].projectType.values = projectTypes;
             formStructures[constant].status.values = await getProjectStatuses();
             formStructures[constant].payment.values = getProjectPayments();
             formStructures[constant].category.values = getProjectCategories();
@@ -519,18 +525,18 @@
         async function setupAgreementStructure(constant, researchEntity, type = 'agreement_drafts') {
             formStructures[constant].agreementType.values = getAgreementTypes();
             const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, type);
-            formStructures[constant].year.defaultValues = defaultValues;
-            let yearValue = _.first(formStructures[constant].year.defaultValues);
-            if (_.isNil(yearValue)) {
-                yearValue = {
-                    min: 2000,
-                    max: new Date().getFullYear()
-                };
-            }
-            formStructures[constant].year.values = {
-                min: parseInt(yearValue.min),
-                max: parseInt(yearValue.max)
-            };
+            // formStructures[constant].year.defaultValues = defaultValues;
+            // let yearValue = _.first(formStructures[constant].year.defaultValues);
+            // if (_.isNil(yearValue)) {
+            //     yearValue = {
+            //         min: 2000,
+            //         max: new Date().getFullYear()
+            //     };
+            // }
+            // formStructures[constant].year.values = {
+            //     min: parseInt(yearValue.min),
+            //     max: parseInt(yearValue.max)
+            // };
         }
 
         async function setupPatentStructure(constant, researchEntity) {
@@ -709,12 +715,15 @@
                     break;
                 case constant === 'group':
                     const user = AuthService.user;
+                    const types = _.cloneDeep(groupTypes);
+                    delete types.PROJECT;
+
                     formStructures[constant].type.values = [{
                         value: '?',
                         label: 'All'
                     }].concat(
-                        Object.keys(groupTypes)
-                            .map(k => ({label: groupTypeLabels[k], value: groupTypes[k]}))
+                        Object.keys(types)
+                            .map(k => ({label: groupTypeLabels[k], value: types[k]}))
                     );
 
                     formStructures[constant].code.ngIf = user.isAdmin();

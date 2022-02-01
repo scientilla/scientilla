@@ -28,7 +28,7 @@
 </ng-container>
 
 <ng-container ng-if="!vm.patent.translation && vm.patent.patentData.priority">
-    <em><strong>Priority</strong></em>
+    <em><strong>Priority Application</strong></em>
 </ng-container>
 
 <ng-container ng-if="!vm.patent.translation && !vm.patent.patentData.priority">
@@ -48,8 +48,8 @@
 </ng-container>
 
 <ng-container ng-if="vm.patent.patentData.assignees">
-    <strong ng-if="vm.patent.patentData.assignees.length === 1">Assignee:</strong>
-    <strong ng-if="vm.patent.patentData.assignees.length > 1">Assignees:</strong>
+    <strong ng-if="vm.patent.patentData.assignees.length === 1">Applicant:</strong>
+    <strong ng-if="vm.patent.patentData.assignees.length > 1">Applicants:</strong>
     <ul>
         <li ng-repeat="assignee in vm.patent.patentData.assignees">
             {{ assignee.name }}<br>
@@ -97,15 +97,9 @@
 <br ng-if="vm.patent.patentData.publication || vm.patent.patentData.publicationDate">
 
 <ng-container ng-if="vm.patent.patentData.abandonedExpiredAssignedDate">
-    <strong>Abandoned expired assigned date:</strong> {{ vm.patent.patentData.abandonedExpiredAssignedDate }}<br>
+    <strong>Withdrawal / Abandonment / Expiration / Assignment Date:</strong> {{ vm.patent.patentData.abandonedExpiredAssignedDate }}<br>
 </ng-container>
 
 <ng-container ng-if="vm.patent.patentData.priorityPctExpirationDate">
-    <strong>Priority pct expiration date:</strong> {{ vm.patent.patentData.priorityPctExpirationDate }}<br>
-</ng-container>
-
-<br ng-if="vm.patent.patentData.abandonedExpiredAssignedDate || vm.patent.patentData.priorityPctExpirationDate">
-
-<ng-container ng-if="vm.patent.patentData.espacenetUrl">
-    <strong>Espacenet URL:</strong> <a href="{{ vm.patent.patentData.espacenetUrl }}" target="_blank">{{ vm.patent.patentData.espacenetUrl }}</a><br>
+    <strong>Priority / PCT / Patent Expiration Date:</strong> {{ vm.patent.patentData.priorityPctExpirationDate }}<br>
 </ng-container>

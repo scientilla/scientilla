@@ -153,6 +153,10 @@
             }
           }
         },
+        "experiencesInternal": {
+          "type": "array",
+          "items": { "$ref": "profileDefs#/definitions/ifJobTitleCheckHiddenPrivacy" }
+        },
         "experiencesExternal": {
           "type": "array",
           "items": {
@@ -211,12 +215,33 @@
               }
             ]
           }
-        },
-        "internalExperiences": {
-          "type": "array",
-          "items": { "$ref": "profileDefs#/definitions/ifJobTitleCheckHiddenPrivacy" }
         }
-      }
+      },
+      "required": [
+        "username",
+        "name",
+        "surname",
+        "jobTitle",
+        "roleCategory",
+        "phone",
+        "gender",
+        "nationality",
+        "dateOfBirth",
+        "groups",
+        "image",
+        "titles",
+        "description",
+        "role",
+        "website",
+        "address",
+        "interests",
+        "socials",
+        "experiencesInternal",
+        "experiencesExternal",
+        "education",
+        "certificates",
+        "skillCategories"
+      ]
     }
   }
 }

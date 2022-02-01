@@ -118,6 +118,79 @@
           "code"
         ]
       }
+    },
+    "industrialMembers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "oneOf": [
+              {
+                "enum": [
+                  ""
+                ]
+              },
+              {
+                "format": "email"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "surname": {
+            "type": "string"
+          },
+          "contribution": {
+            "type": "number"
+          },
+          "annualContribution": {
+            "$ref": "projectDefs#/definitions/annualContribution"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      }
+    },
+    "industrialReasearchLines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "inKindContribution": {
+            "type": "number"
+          },
+          "inKindAnnualContribution": {
+            "$ref": "projectDefs#/definitions/annualContribution"
+          },
+          "inCashContribution": {
+            "type": "number"
+          },
+          "inCashAnnualContribution": {
+            "$ref": "projectDefs#/definitions/annualContribution"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      }
     }
   }
 }

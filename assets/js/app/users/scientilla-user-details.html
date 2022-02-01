@@ -59,7 +59,7 @@
             <uib-tab
                 index="5"
                 heading="Patents"
-                ng-if="vm.user.isScientific() && vm.loggedUser.isAdmin()">
+                ng-if="vm.user.isScientific()">
                 <scientilla-patents-list
                     ng-if="vm.researchEntity"
                     research-entity="vm.researchEntity"

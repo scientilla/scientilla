@@ -5,19 +5,16 @@
     "code": {
       "type": "string"
     },
-    "acronym": {
-      "type": "string"
-    },
     "title": {
       "type": "string"
     },
     "type": {
       "type": "string"
     },
-    "payment": {
+    "category": {
       "type": "string"
     },
-    "category": {
+    "payment": {
       "type": "string"
     },
     "startDate": {
@@ -35,10 +32,10 @@
       "type": "string"
     },
     "members": {
-      "$ref": "projectDefs#/definitions/members"
+      "$ref": "projectDefs#/definitions/industrialMembers"
     },
     "reasearchLines": {
-      "$ref": "projectDefs#/definitions/reasearchLines"
+      "$ref": "projectDefs#/definitions/industrialReasearchLines"
     }
   },
   "required": [

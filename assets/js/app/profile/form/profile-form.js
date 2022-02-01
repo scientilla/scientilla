@@ -39,6 +39,7 @@
         vm.profileIsLoaded = false;
         vm.selectedItem = '0';
         vm.profileImage = false;
+        vm.areSaveButtonsEnabled = false;
 
         let originalProfileJson = '';
 
@@ -167,6 +168,10 @@
                     profileWatcher();
                 }
 
+                if (!_.isEmpty(vm.profile)) {
+                    vm.areSaveButtonsEnabled = true;
+                }
+
                 profileWatcher = $scope.$watch('vm.profile', function(evt){
                     vm.changed['basic-info'] = isChanged('basic-info');
                     vm.changed['about-me'] = isChanged('about-me');
@@ -181,6 +186,8 @@
                 }, true);
 
                 $scope.$broadcast('setupBasicInformation', vm.profile);
+            }).catch(() => {
+                Notification.error('Something went wrong when receiving your profile, please try again!');
             });
         }
 
@@ -265,7 +272,11 @@
 
         function cancel() {
             if (_.isFunction(vm.checkAndClose())) {
-                vm.checkAndClose()(() => angular.toJson(vm.profile) === originalProfileJson);
+                if (vm.areSaveButtonsEnabled) {
+                    vm.checkAndClose()(() => angular.toJson(vm.profile) === originalProfileJson);
+                } else {
+                    vm.checkAndClose()(() => true);
+                }
             }
         }
 

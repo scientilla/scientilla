@@ -504,9 +504,9 @@ async function saveProfile(req) {
     const profileWithErrors = _.merge({}, profile, errors);
 
     if (hasFiles) {
-        const failedTasks = await runGruntTasks();
+        const errors = await runGruntTasks();
 
-        if (failedTasks.length > 0) {
+        if (errors.length > 0) {
             message = 'Something went wrong while saving the image!';
         }
     }
@@ -553,15 +553,23 @@ async function exportProfile (researchEntityId, type, options = {}) {
  * @returns {Array} tasks
  */
 async function runGruntTasks() {
-    const tasks = [];
+    const errors = [];
+
     switch (sails.config.environment) {
         case 'development':
-            tasks.push(await GruntTaskRunner.run('copy:profileDev'));
+            await GruntTaskRunner.run('copy:profileDev').catch(() => {
+                errors.push('Profile dev task failed!');
+            });
             break;
         case 'production':
-            tasks.push(await GruntTaskRunner.run('copy:profileBuild'));
+            await GruntTaskRunner.run('copy:profileBuild').catch(() => {
+                errors.push('Profile build task failed!');
+            });
+            break;
+        default:
+            errors.push('Wrong environment');
             break;
     }
 
-    return tasks.filter(task => task.type !== 'success');
+    return errors;
 }
