@@ -2,13 +2,13 @@
     <ul class="referrer-listing">
         <li>
             <div class="form-group">
-                <label>Referrers *</label>
+                <label>Scientific coordinators *</label>
                 <input
                     id="referrer"
                     name="referrer"
                     type="text"
                     class="form-control"
-                    placeholder="Add referrer"
+                    placeholder="Add scientific coordinator"
                     ng-model="vm.newReferrer"
                     ng-class="{'is-invalid' : vm.errors.pis}"
                     uib-typeahead="user as user.getDisplayName() for user in vm.getUsers($viewValue)"
@@ -21,7 +21,7 @@
                     ng-if="vm.isDuplicate"
                     class="invalid-feedback"
                 >
-                    This referrer is already been added.
+                    This scientific coordinator is already been added.
                 </div>
                 <scientilla-error-messages
                     class="error-messages"
