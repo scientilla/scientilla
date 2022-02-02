@@ -766,10 +766,10 @@
         };
 
         service.getProjectsByYear = chartsData => {
-            const competitiveInCashProjectsKey = 'Competitive In Cash Projects';
-            const competitiveInKindProjectsKey = 'Competitive In Kind Projects';
-            const industrialInCashProjectsKey = 'Industrial In Cash Projects';
-            const industrialInKindProjectsKey = 'Industrial In Kind Projects';
+            const competitiveInCashProjectsKey = 'Competitive In Cash';
+            const competitiveInKindProjectsKey = 'Competitive In Kind';
+            const industrialInCashProjectsKey = 'Industrial In Cash';
+            const industrialInKindProjectsKey = 'Industrial In Kind';
 
             if (
                 !_.has(chartsData, 'annualContributionCompetitiveProjectsByYear') ||
@@ -780,22 +780,22 @@
              const data = [{
                 key: competitiveInCashProjectsKey,
                 values: chartsData.annualContributionCompetitiveProjectsByYear.map(d => {
-                    return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution) / 1000 };
+                    return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution)};
                 })
             }, {
                 key: competitiveInKindProjectsKey,
                 values: chartsData.annualContributionCompetitiveProjectsByYear.map(d => {
-                    return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) / 1000 };
+                    return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) };
                 })
             },{
                 key: industrialInCashProjectsKey,
                 values: chartsData.annualContributionIndustrialProjectsByYear.map(d => {
-                    return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution) / 1000 };
+                    return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution) };
                 })
             }, {
                 key: industrialInKindProjectsKey,
                 values: chartsData.annualContributionIndustrialProjectsByYear.map(d => {
-                    return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) / 1000 };
+                    return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) };
                 })
             }];
 
@@ -862,23 +862,22 @@
             const rangeY = getRangeY(maxY);
 
             return {
-                title: 'Projects',
+                title: 'Annual contribution',
                 data: data,
                 options: getMultiBarChartConfig({
                     color: colors,
                     reduceXTicks: false,
                     stacked: true,
                     xAxis: {
-                        axisLabel: 'Year',
                         rotateLabels: 50,
                         showMaxMin: false,
                         tickValues: rangeX,
                         tickFormat: d => d3.format('')(d)
                     },
                     yAxis: {
-                        axisLabel: '€',
+                        axisLabel: 'EUR',
                         tickValues: rangeY,
-                        tickFormat: d => d3.format('.2f')(d)
+                        tickFormat: d => d3.format('.2s')(d)
                     }
                 }),
             };
@@ -946,13 +945,13 @@
                     color: colors,
                     reduceXTicks: false,
                     xAxis: {
-                        axisLabel: '',
                         rotateLabels: 50,
                         showMaxMin: false,
                         tickValues: rangeX,
                         tickFormat: d => d3.format('')(d)
                     },
                     yAxis: {
+                        axisLabel: 'Number of applications',
                         tickValues: rangeY,
                         tickFormat: d => d3.format('')(d)
                     }
@@ -1089,7 +1088,16 @@
             let step = 1;
 
             switch (true) {
-                case maxY > 40000:
+                case maxY > 10000000:
+                    step = 5000000;
+                    break;
+                case maxY > 1000000 && maxY <= 10000000:
+                    step = 500000;
+                    break;
+                case maxY > 100000 && maxY <= 1000000:
+                    step = 50000;
+                    break;
+                case maxY > 40000 && maxY <= 100000:
                     step = 10000;
                     break;
                 case maxY > 20000 && maxY <= 40000:
