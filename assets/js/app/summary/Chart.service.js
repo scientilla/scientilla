@@ -766,20 +766,36 @@
         };
 
         service.getProjectsByYear = chartsData => {
-            const competitiveProjectsKey = 'Competitive Projects';
-            const industrialProjectsKey = 'Industrial Projects';
-            if (!_.has(chartsData, 'annualContributionCompetitiveProjectsByYear') || !_.has(chartsData, 'annualContributionIndustrialProjectsByYear')) {
+            const competitiveInCashProjectsKey = 'Competitive In Cash Projects';
+            const competitiveInKindProjectsKey = 'Competitive In Kind Projects';
+            const industrialInCashProjectsKey = 'Industrial In Cash Projects';
+            const industrialInKindProjectsKey = 'Industrial In Kind Projects';
+
+            if (
+                !_.has(chartsData, 'annualContributionCompetitiveProjectsByYear') ||
+                !_.has(chartsData, 'annualContributionIndustrialProjectsByYear')
+            ) {
                 return;
             }
-            const data = [{
-                key: competitiveProjectsKey,
+             const data = [{
+                key: competitiveInCashProjectsKey,
                 values: chartsData.annualContributionCompetitiveProjectsByYear.map(d => {
-                    return { year: parseInt(d.year), value: parseFloat(d.contribution) / 1000 };
+                    return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution) / 1000 };
                 })
             }, {
-                key: industrialProjectsKey,
+                key: competitiveInKindProjectsKey,
+                values: chartsData.annualContributionCompetitiveProjectsByYear.map(d => {
+                    return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) / 1000 };
+                })
+            },{
+                key: industrialInCashProjectsKey,
                 values: chartsData.annualContributionIndustrialProjectsByYear.map(d => {
-                    return { year: parseInt(d.year), value: parseFloat(d.contribution) / 1000 };
+                    return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution) / 1000 };
+                })
+            }, {
+                key: industrialInKindProjectsKey,
+                values: chartsData.annualContributionIndustrialProjectsByYear.map(d => {
+                    return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) / 1000 };
                 })
             }];
 
@@ -801,28 +817,46 @@
                 yearRange.max
             );
 
-            const competitiveProjectsData = data.find(d => d.key === competitiveProjectsKey);
-            const industrialProjectsData = data.find(d => d.key === industrialProjectsKey);
+            const competitiveInCashProjectsData = data.find(d => d.key === competitiveInCashProjectsKey);
+            const competitiveInKindProjectsData = data.find(d => d.key === competitiveInKindProjectsKey);
+            const industrialInCashProjectsData = data.find(d => d.key === industrialInCashProjectsKey);
+            const industrialInKindProjectsData = data.find(d => d.key === industrialInKindProjectsKey);
             const yearOperator = year => v => v.year === year;
 
             for (let i = yearRange.min; i <= yearRange.max; i++) {
-                if (!competitiveProjectsData.values.find(yearOperator(i))) {
-                    competitiveProjectsData.values.push({
+                if (!competitiveInCashProjectsData.values.find(yearOperator(i))) {
+                    competitiveInCashProjectsData.values.push({
                         year: i,
                         value: 0
                     });
                 }
 
-                if (!industrialProjectsData.values.find(yearOperator(i))) {
-                    industrialProjectsData.values.push({
+                if (!competitiveInKindProjectsData.values.find(yearOperator(i))) {
+                    competitiveInKindProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (!industrialInCashProjectsData.values.find(yearOperator(i))) {
+                    industrialInCashProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (!industrialInKindProjectsData.values.find(yearOperator(i))) {
+                    industrialInKindProjectsData.values.push({
                         year: i,
                         value: 0
                     });
                 }
             }
 
-            competitiveProjectsData.values = _.orderBy(competitiveProjectsData.values, 'year');
-            industrialProjectsData.values = _.orderBy(industrialProjectsData.values, 'year');
+            competitiveInCashProjectsData.values = _.orderBy(competitiveInCashProjectsData.values, 'year');
+            competitiveInKindProjectsData.values = _.orderBy(competitiveInKindProjectsData.values, 'year');
+            industrialInCashProjectsData.values = _.orderBy(industrialInCashProjectsData.values, 'year');
+            industrialInKindProjectsData.values = _.orderBy(industrialInKindProjectsData.values, 'year');
 
             const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
@@ -835,13 +869,14 @@
                     reduceXTicks: false,
                     stacked: true,
                     xAxis: {
-                        axisLabel: '',
+                        axisLabel: 'Year',
                         rotateLabels: 50,
                         showMaxMin: false,
                         tickValues: rangeX,
                         tickFormat: d => d3.format('')(d)
                     },
                     yAxis: {
+                        axisLabel: '€',
                         tickValues: rangeY,
                         tickFormat: d => d3.format('.2f')(d)
                     }

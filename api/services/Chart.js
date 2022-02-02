@@ -360,8 +360,7 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
             'groupAndSubgroupMembersByNationalityOfRoles': 'groupAndSubgroupMembersByNationalityOfRoles',
             'priorityAndProsecutionPatentsByYear': 'priorityAndProsecutionPatentsByYear',
             'annualContributionCompetitiveProjectsByYear': 'annualContributionCompetitiveProjectsByYear',
-            'annualContributionIndustrialProjectsByYear': 'annualContributionIndustrialProjectsByYear',
-            'priorityAndProsecutionPatentsByYear': 'priorityAndProsecutionPatentsByYear'
+            'annualContributionIndustrialProjectsByYear': 'annualContributionIndustrialProjectsByYear'
         };
         const transforms = {};
         transforms[ResearchEntityTypes.USER] = {};
