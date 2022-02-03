@@ -256,9 +256,9 @@
                 matchRule: 'contains',
                 type: 'field',
             },
-            pi: {
+            scientificCoordinator: {
                 inputType: 'text',
-                label: 'PI',
+                label: 'Scientific coordinator',
                 matchColumn: 'authorsStr',
                 matchRule: 'contains',
                 type: 'field',
