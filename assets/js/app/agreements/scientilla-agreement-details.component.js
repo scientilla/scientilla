@@ -18,6 +18,14 @@
 
         vm.$onInit = function () {
         };
+
+        vm.getTypeLabel = type => {
+            const agreementType = agreementTypes.find(t => t.key === type);
+            if (agreementType) {
+                return agreementType.label;
+            }
+            return '';
+        }
     }
 
 })();

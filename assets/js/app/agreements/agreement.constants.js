@@ -8,8 +8,8 @@ const agreementListSections = {
 
 const agreementTypes = [
     {
-        key: 'implementing',
-        label: 'Implementing'
+        key: 'framework',
+        label: 'Framework'
     }, {
         key: 'institutional',
         label: 'Institutional'
@@ -17,11 +17,11 @@ const agreementTypes = [
         key: 'research',
         label: 'Research'
     }, {
-        key: 'management',
-        label: 'Management'
+        key: 'executive',
+        label: 'Executive'
     }, {
-        key: 'centers',
-        label: 'Centers'
+        key: 'other',
+        label: 'Other'
     }
 ];
 

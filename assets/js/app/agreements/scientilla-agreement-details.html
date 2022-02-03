@@ -16,7 +16,7 @@
 </ng-container>
 
 <ng-container ng-if="vm.agreement.projectData.type">
-    <strong>Type:</strong> {{ vm.agreement.projectData.type }}<br />
+    <strong>Type:</strong> {{ vm.getTypeLabel(vm.agreement.projectData.type) }}<br />
 </ng-container>
 
 <ng-container
@@ -24,13 +24,6 @@
     class="agreement-subject"
 >
     <strong>Subject:</strong> {{ vm.agreement.projectData.subject }}<br />
-</ng-container>
-
-<ng-container
-    ng-if="vm.agreement.projectData.agreementType"
-    class="agreement-type"
->
-    <strong>Total budget:</strong> {{ vm.agreement.projectData.agreementType }}<br />
 </ng-container>
 
 <ng-container ng-if="vm.agreement.projectData.budget">
@@ -50,7 +43,7 @@
 </ng-container>
 
 <ng-container ng-if="vm.agreement.projectData.partners && vm.agreement.projectData.partners.length > 0">
-    <strong>Partner{{ vm.agreement.projectData.partners.length === 1 ? '' : 's'}}:</strong>
+    <strong>Counterpart{{ vm.agreement.projectData.partners.length === 1 ? '' : 's'}}:</strong>
     <ul class="agreement-partners">
         <li ng-repeat="partner in vm.agreement.projectData.partners">
             {{ partner.institute }}
@@ -62,7 +55,7 @@
 </ng-container>
 
 <ng-container ng-if="vm.agreement.projectData.pis && vm.agreement.projectData.pis.length > 0">
-    <strong>PIs:</strong>
+    <strong>Scientific coordinator{{ vm.agreement.projectData.pis.length === 1 ? '' : 's'}}:</strong>
     <ul class="agreement-pis">
         <li class="agreement-pi" ng-repeat="pi in vm.agreement.projectData.pis">
             {{ pi.surname }} {{ pi.name }}
