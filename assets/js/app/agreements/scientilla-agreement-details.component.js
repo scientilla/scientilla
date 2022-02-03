@@ -25,7 +25,7 @@
                 return agreementType.label;
             }
             return '';
-        }
+        };
     }
 
 })();
