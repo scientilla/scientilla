@@ -2,10 +2,10 @@
 
 <div
     class="summary-projects-technology-transfer-container"
-    ng-if="!vm.loading && vm.charts"
+    ng-if="!vm.loading && vm.charts && (vm.charts.patentsByYear || vm.charts.projectsByYear)"
 >
     <div class="row">
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-6" ng-if="vm.charts.patentsByYear">
             <div class="patents-container">
                 <h3>{{ vm.charts.patentsByYear.title }}</h3>
                 <div class="chart-container">
@@ -17,7 +17,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-6" ng-if="vm.charts.projectsByYear">
             <div class="projects-container">
                 <h3>{{ vm.charts.projectsByYear.title }}</h3>
                 <div class="chart-container">
@@ -31,3 +31,7 @@
         </div>
     </div>
 </div>
+
+<p ng-if="!vm.loading && vm.charts && !vm.charts.patentsByYear && !vm.charts.projectsByYear">
+    This group has no patent or project data.
+</p>

@@ -49,8 +49,8 @@
             vm.charts = {};
 
             $timeout(() => {
-                vm.charts.patentsByYear = ChartService.getPatentsByYear(chartsData);
-                vm.charts.projectsByYear = ChartService.getProjectsByYear(chartsData);
+                vm.charts.patentsByYear = ChartService.getPatentsByYear(chartsData) || false;
+                vm.charts.projectsByYear = ChartService.getProjectsByYear(chartsData) || false;
             });
         };
 
