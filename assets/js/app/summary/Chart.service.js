@@ -1055,7 +1055,7 @@
             let min = 0;
             let max = 0;
 
-            const data = []
+            const data = [];
 
             if (_.has(chartsData, 'priorityAndProsecutionPatentsByYear')) {
                 min = _.min(chartsData.priorityAndProsecutionPatentsByYear.map(d => parseInt(d.year)));
@@ -1066,7 +1066,8 @@
                     values: chartsData.priorityAndProsecutionPatentsByYear.filter(d => d.priority).map(d => {
                         return { year: parseInt(d.year), value: parseInt(d.count) };
                     })
-                })
+                });
+
                 data.push({
                     key: prosecutionKey,
                     values: chartsData.priorityAndProsecutionPatentsByYear.filter(d => !d.priority).map(d => {
