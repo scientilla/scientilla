@@ -10,61 +10,43 @@
             });
 
         controller.$inject = [
-            'context',
-            'ChartService'
+            '$scope',
+            '$controller',
+            'context'
         ];
 
         function controller(
-            context,
-            ChartService
+            $scope,
+            $controller,
+            context
         ) {
             const vm = this;
 
-            vm.lastRefresh = new Date();
-            vm.recalculating = false;
-            vm.chartsData = {};
+            angular.extend(vm, $controller('TabsController', {$scope: $scope}));
 
-            vm.isMainGroup = isMainGroup;
-            vm.recalculate = recalculate;
+            vm.activeTabIndex = 0;
 
-            vm.profile = false;
+            vm.tabIdentifiers = [
+                {
+                    index: 0,
+                    slug: 'document-charts',
+                    tabName: 'summary-overview',
+                }, {
+                    index: 1,
+                    slug: 'metric-charts',
+                    tabName: 'summary-metrics',
+                }, {
+                    index: 2,
+                    slug: 'projects-and-technology-transfer',
+                    tabName: 'summary-projects-technology-transfer',
+                }
+            ];
 
-            /* jshint ignore:start */
-            vm.$onInit = async () => {
+            vm.$onInit = () => {
                 vm.subResearchEntity = context.getSubResearchEntity();
 
-                const refresh = !isMainGroup();
-
-                vm.documentOverviewChartData = await ChartService.getDocumentsOverviewChartData(vm.subResearchEntity, refresh);
-                vm.bibliometricChartData = await ChartService.getBibliometricChartData(vm.subResearchEntity, refresh);
-
-                if (vm.bibliometricChartData.chartDataDate && vm.bibliometricChartData.chartDataDate[0].max) {
-                    vm.lastRefresh = new Date(vm.bibliometricChartData.chartDataDate[0].max);
-                }
-
+                vm.initializeTabs(vm.tabIdentifiers);
             };
-
-            async function recalculate() {
-                if (vm.recalculating)
-                    return;
-
-                vm.recalculating = true;
-
-                const refresh = !isMainGroup();
-
-                vm.chartsData = await ChartService.getData(vm.subResearchEntity, refresh);
-
-                if (vm.chartsData.chartDataDate && vm.chartsData.chartDataDate[0].max) {
-                    vm.lastRefresh = new Date(vm.chartsData.chartDataDate[0].max);
-                }
-                vm.recalculating = false;
-            }
-            /* jshint ignore:end */
-
-            function isMainGroup() {
-                return vm.subResearchEntity.id === 1;
-            }
         }
     }
-
 )();

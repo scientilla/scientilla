@@ -54,6 +54,11 @@
                 template: params => `<scientilla-user-details
                     user-id="${params.id}"
                     active-tab="bibliometric-charts"></scientilla-user-details>`
+            })
+            .when("/users/:id/projects-technology-transfer", {
+                template: params => `<scientilla-user-details
+                    user-id="${params.id}"
+                    active-tab="projects-technology-transfer"></scientilla-user-details>`
             });
     }
 

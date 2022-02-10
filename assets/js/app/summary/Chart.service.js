@@ -12,35 +12,51 @@
     let styles = {};
     let colors = [];
     const data = [];
-    const documentsOverviewCharts = [
-        'journalsByYear',
-        'conferencesByYear',
-        'booksByYear',
-        'bookSeriesByYear',
-        'documentsByType',
-        'disseminationTalksByYear',
-        'scientificTalksByYear'
-    ];
-    const bibliometricCharts = [
-        'journalsByYear',
-        'conferencesByYear',
-        'booksByYear',
-        'bookSeriesByYear',
-        'filteredAffiliatedJournalsByYear',
-        'filteredAffiliatedConferencesByYear',
-        'filteredAffiliatedBooksByYear',
-        'filteredAffiliatedBookSeriesByYear',
-        'filteredNotAffiliatedJournalsByYear',
-        'filteredNotAffiliatedConferencesByYear',
-        'filteredNotAffiliatedBooksByYear',
-        'filteredNotAffiliatedBookSeriesByYear',
-        'hindexPerYear',
-        'citationsPerYear',
-        'citationsPerDocumentYear',
-        'totalIfPerYear',
-        'totalSjrPerYear',
-        'totalSnipPerYear',
-        'chartDataDate'
+    const chartKeys = [
+        {
+            name: 'documentsOverviewCharts',
+            keys: [
+                'journalsByYear',
+                'conferencesByYear',
+                'booksByYear',
+                'bookSeriesByYear',
+                'documentsByType',
+                'disseminationTalksByYear',
+                'scientificTalksByYear'
+            ]
+        }, {
+            name: 'bibliometricCharts',
+            keys: [
+                'journalsByYear',
+                'conferencesByYear',
+                'booksByYear',
+                'bookSeriesByYear',
+                'filteredAffiliatedJournalsByYear',
+                'filteredAffiliatedConferencesByYear',
+                'filteredAffiliatedBooksByYear',
+                'filteredAffiliatedBookSeriesByYear',
+                'filteredNotAffiliatedJournalsByYear',
+                'filteredNotAffiliatedConferencesByYear',
+                'filteredNotAffiliatedBooksByYear',
+                'filteredNotAffiliatedBookSeriesByYear',
+                'hindexPerYear',
+                'citationsPerYear',
+                'citationsPerDocumentYear',
+                'totalIfPerYear',
+                'totalSjrPerYear',
+                'totalSnipPerYear',
+                'chartDataDate'
+            ]
+        }, {
+            name: 'projectAndPatentCharts',
+            keys: [
+                'annualContributionCompetitiveProjectsByYear',
+                'annualContributionIndustrialProjectsByYear',
+                'totalContributionIndustrialProjectsByYear',
+                'totalContributionCompetitiveProjectsByYear',
+                'priorityAndProsecutionPatentsByYear'
+            ]
+        }
     ];
 
     function ChartService(DocumentTypesService, EventsService, $timeout) {
@@ -84,12 +100,20 @@
 
         /* jshint ignore:start */
         service.getDocumentsOverviewChartData = async (researchEntity, refresh = false) => {
-            return await getData(researchEntity, refresh, documentsOverviewCharts, 'documentsOverviewCharts');
+            return await getData(researchEntity, refresh, 'documentsOverviewCharts');
         };
 
         service.getBibliometricChartData = async (researchEntity, refresh = false) => {
-            return await getData(researchEntity, refresh, bibliometricCharts, 'bibliometricCharts');
+            return await getData(researchEntity, refresh, 'bibliometricCharts');
         };
+
+        service.getProjectsAndPatentsChartData = async (researchEntity, refresh = false) => {
+            return await getData(researchEntity, refresh, 'projectAndPatentCharts');
+        };
+
+        service.getAllChartData = async (researchEntity, refresh = false) => {
+            return await getData(researchEntity, refresh, 'all');
+        }
         /* jshint ignore:end */
 
         service.setStyles = (customizations) => {
@@ -743,6 +767,377 @@
             };
         };
 
+        service.getProjectTotalContributionsByYear = chartsData => {
+            const competitiveInCashProjectsKey = 'Competitive In Cash';
+            const competitiveInKindProjectsKey = 'Competitive In Kind';
+            const industrialInCashProjectsKey = 'Industrial In Cash';
+            const industrialInKindProjectsKey = 'Industrial In Kind';
+            const data = [];
+
+            if (
+                _.has(chartsData, 'totalContributionCompetitiveProjectsByYear') &&
+                !_.isEmpty(chartsData.totalContributionCompetitiveProjectsByYear)
+            ) {
+                data.push({
+                    key: competitiveInCashProjectsKey,
+                    values: chartsData.totalContributionCompetitiveProjectsByYear.map(d => {
+                        return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution)};
+                    })
+                });
+
+                data.push({
+                    key: competitiveInKindProjectsKey,
+                    values: chartsData.totalContributionCompetitiveProjectsByYear.map(d => {
+                        return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) };
+                    })
+                });
+            }
+
+            if (
+                _.has(chartsData, 'totalContributionIndustrialProjectsByYear') &&
+                !_.isEmpty(chartsData.totalContributionIndustrialProjectsByYear)
+            ) {
+                data.push({
+                    key: industrialInCashProjectsKey,
+                    values: chartsData.totalContributionIndustrialProjectsByYear.map(d => {
+                        return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution) };
+                    })
+                });
+
+                data.push({
+                    key: industrialInKindProjectsKey,
+                    values: chartsData.totalContributionIndustrialProjectsByYear.map(d => {
+                        return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) };
+                    })
+                });
+            }
+
+            const yearRange = {
+                min: _.min(
+                    chartsData.totalContributionCompetitiveProjectsByYear.map(d => parseInt(d.year)).concat(
+                        chartsData.totalContributionIndustrialProjectsByYear.map(d => parseInt(d.year))
+                    )
+                ),
+                max: _.max(
+                    chartsData.totalContributionCompetitiveProjectsByYear.map(d => parseInt(d.year)).concat(
+                        chartsData.totalContributionIndustrialProjectsByYear.map(d => parseInt(d.year))
+                    )
+                )
+            };
+
+            const rangeX = getRangeX(
+                yearRange.min,
+                yearRange.max
+            );
+
+            const competitiveInCashProjectsData = data.find(d => d.key === competitiveInCashProjectsKey);
+            const competitiveInKindProjectsData = data.find(d => d.key === competitiveInKindProjectsKey);
+            const industrialInCashProjectsData = data.find(d => d.key === industrialInCashProjectsKey);
+            const industrialInKindProjectsData = data.find(d => d.key === industrialInKindProjectsKey);
+            const yearOperator = year => v => v.year === year;
+
+            for (let i = yearRange.min; i <= yearRange.max; i++) {
+                if (competitiveInCashProjectsData && !competitiveInCashProjectsData.values.find(yearOperator(i))) {
+                    competitiveInCashProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (competitiveInKindProjectsData && !competitiveInKindProjectsData.values.find(yearOperator(i))) {
+                    competitiveInKindProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (industrialInCashProjectsData && !industrialInCashProjectsData.values.find(yearOperator(i))) {
+                    industrialInCashProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (industrialInKindProjectsData && !industrialInKindProjectsData.values.find(yearOperator(i))) {
+                    industrialInKindProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+            }
+
+            if (competitiveInCashProjectsData) {
+                competitiveInCashProjectsData.values = _.orderBy(competitiveInCashProjectsData.values, 'year');
+            }
+
+            if (competitiveInKindProjectsData) {
+                competitiveInKindProjectsData.values = _.orderBy(competitiveInKindProjectsData.values, 'year');
+            }
+
+            if (industrialInCashProjectsData) {
+                industrialInCashProjectsData.values = _.orderBy(industrialInCashProjectsData.values, 'year');
+            }
+
+            if (industrialInKindProjectsData) {
+                industrialInKindProjectsData.values = _.orderBy(industrialInKindProjectsData.values, 'year');
+            }
+
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
+            const rangeY = getRangeY(maxY);
+
+            return {
+                title: 'Total contribution',
+                data: data,
+                options: getMultiBarChartConfig({
+                    color: colors,
+                    reduceXTicks: false,
+                    stacked: true,
+                    xAxis: {
+                        rotateLabels: 50,
+                        showMaxMin: false,
+                        tickValues: rangeX,
+                        tickFormat: d => d3.format('')(d)
+                    },
+                    yAxis: {
+                        axisLabel: 'EUR',
+                        tickValues: rangeY,
+                        tickFormat: d => d3.format('.2s')(d)
+                    }
+                }),
+            };
+        };
+
+        service.getProjectAnnualContributionsByYear = chartsData => {
+            const competitiveInCashProjectsKey = 'Competitive In Cash';
+            const competitiveInKindProjectsKey = 'Competitive In Kind';
+            const industrialInCashProjectsKey = 'Industrial In Cash';
+            const industrialInKindProjectsKey = 'Industrial In Kind';
+            const data = [];
+
+            if (
+                _.has(chartsData, 'annualContributionCompetitiveProjectsByYear') &&
+                !_.isEmpty(chartsData.annualContributionCompetitiveProjectsByYear)
+            ) {
+                data.push({
+                    key: competitiveInCashProjectsKey,
+                    values: chartsData.annualContributionCompetitiveProjectsByYear.map(d => {
+                        return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution)};
+                    })
+                });
+
+                data.push({
+                    key: competitiveInKindProjectsKey,
+                    values: chartsData.annualContributionCompetitiveProjectsByYear.map(d => {
+                        return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) };
+                    })
+                });
+            }
+
+            if (
+                _.has(chartsData, 'annualContributionIndustrialProjectsByYear') &&
+                !_.isEmpty(chartsData.annualContributionIndustrialProjectsByYear)
+            ) {
+                data.push({
+                    key: industrialInCashProjectsKey,
+                    values: chartsData.annualContributionIndustrialProjectsByYear.map(d => {
+                        return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution) };
+                    })
+                });
+
+                data.push({
+                    key: industrialInKindProjectsKey,
+                    values: chartsData.annualContributionIndustrialProjectsByYear.map(d => {
+                        return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) };
+                    })
+                });
+            }
+
+            const years = [];
+
+            if (_.has(chartsData, 'annualContributionCompetitiveProjectsByYear')) {
+                chartsData.annualContributionCompetitiveProjectsByYear.map(d => years.push(parseInt(d.year)));
+            }
+
+            if (_.has(chartsData, 'annualContributionIndustrialProjectsByYear')) {
+                chartsData.annualContributionIndustrialProjectsByYear.map(d => years.push(parseInt(d.year)));
+            }
+
+            const yearRange = {
+                min: _.min(years),
+                max: _.max(years)
+            };
+
+            const rangeX = getRangeX(
+                yearRange.min,
+                yearRange.max
+            );
+
+            const competitiveInCashProjectsData = data.find(d => d.key === competitiveInCashProjectsKey);
+            const competitiveInKindProjectsData = data.find(d => d.key === competitiveInKindProjectsKey);
+            const industrialInCashProjectsData = data.find(d => d.key === industrialInCashProjectsKey);
+            const industrialInKindProjectsData = data.find(d => d.key === industrialInKindProjectsKey);
+            const yearOperator = year => v => v.year === year;
+
+            for (let i = yearRange.min; i <= yearRange.max; i++) {
+                if (competitiveInCashProjectsData && !competitiveInCashProjectsData.values.find(yearOperator(i))) {
+                    competitiveInCashProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (competitiveInKindProjectsData && !competitiveInKindProjectsData.values.find(yearOperator(i))) {
+                    competitiveInKindProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (industrialInCashProjectsData && !industrialInCashProjectsData.values.find(yearOperator(i))) {
+                    industrialInCashProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (industrialInKindProjectsData && !industrialInKindProjectsData.values.find(yearOperator(i))) {
+                    industrialInKindProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+            }
+
+            if (competitiveInCashProjectsData) {
+                competitiveInCashProjectsData.values = _.orderBy(competitiveInCashProjectsData.values, 'year');
+            }
+
+            if (competitiveInKindProjectsData) {
+                competitiveInKindProjectsData.values = _.orderBy(competitiveInKindProjectsData.values, 'year');
+            }
+
+            if (industrialInCashProjectsData) {
+                industrialInCashProjectsData.values = _.orderBy(industrialInCashProjectsData.values, 'year');
+            }
+
+            if (industrialInKindProjectsData) {
+                industrialInKindProjectsData.values = _.orderBy(industrialInKindProjectsData.values, 'year');
+            }
+
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
+            const rangeY = getRangeY(maxY);
+
+            return {
+                title: 'Annual contribution',
+                data: data,
+                options: getMultiBarChartConfig({
+                    color: colors,
+                    reduceXTicks: false,
+                    stacked: true,
+                    xAxis: {
+                        rotateLabels: 50,
+                        showMaxMin: false,
+                        tickValues: rangeX,
+                        tickFormat: d => d3.format('')(d)
+                    },
+                    yAxis: {
+                        axisLabel: 'EUR',
+                        tickValues: rangeY,
+                        tickFormat: d => d3.format('.2s')(d)
+                    }
+                }),
+            };
+        };
+
+        service.getPatentsByYear = chartsData => {
+            const priorityKey = 'Priority';
+            const prosecutionKey = 'Prosecutions';
+            let min = 0;
+            let max = 0;
+
+            const data = [];
+
+            if (_.has(chartsData, 'priorityAndProsecutionPatentsByYear')) {
+                min = _.min(chartsData.priorityAndProsecutionPatentsByYear.map(d => parseInt(d.year)));
+                max = _.max(chartsData.priorityAndProsecutionPatentsByYear.map(d => parseInt(d.year)));
+
+                data.push({
+                    key: priorityKey,
+                    values: chartsData.priorityAndProsecutionPatentsByYear.filter(d => d.priority).map(d => {
+                        return { year: parseInt(d.year), value: parseInt(d.count) };
+                    })
+                });
+
+                data.push({
+                    key: prosecutionKey,
+                    values: chartsData.priorityAndProsecutionPatentsByYear.filter(d => !d.priority).map(d => {
+                        return { year: parseInt(d.year), value: parseInt(d.count) };
+                    })
+                });
+            }
+
+            const yearRange = {
+                min: min,
+                max: max
+            };
+
+            const rangeX = getRangeX(
+                yearRange.min,
+                yearRange.max
+            );
+
+            const priorityData = data.find(d => d.key === priorityKey);
+            const prosecutionData = data.find(d => d.key === prosecutionKey);
+            const yearOperator = year => v => v.year === year;
+
+            for (let i = yearRange.min; i <= yearRange.max; i++) {
+                if (_.has(priorityData, 'values') && !priorityData.values.find(yearOperator(i))) {
+                    priorityData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (_.has(prosecutionData, 'values') && !prosecutionData.values.find(yearOperator(i))) {
+                    prosecutionData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+            }
+
+            if (_.has(priorityData, 'values')) {
+                priorityData.values = _.orderBy(priorityData.values, 'year');
+            }
+
+            if (_.has(prosecutionData, 'values')) {
+                prosecutionData.values = _.orderBy(prosecutionData.values, 'year');
+            }
+
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
+            const rangeY = getRangeY(maxY);
+
+            return {
+                title: 'Patents',
+                data: data,
+                options: getMultiBarChartConfig({
+                    color: colors,
+                    reduceXTicks: false,
+                    xAxis: {
+                        rotateLabels: 50,
+                        showMaxMin: false,
+                        tickValues: rangeX,
+                        tickFormat: d => d3.format('')(d)
+                    },
+                    yAxis: {
+                        axisLabel: 'Number of applications',
+                        tickValues: rangeY,
+                        tickFormat: d => d3.format('')(d)
+                    }
+                }),
+            };
+        };
+
         return service;
 
         // private
@@ -858,16 +1253,33 @@
                 new Date(minX, 0),
                 new Date(maxX, 0),
                 step
-            );
+            ).map(r => r.getFullYear());
 
-            return range.map(r => r.getFullYear());
+            const maxXYear = new Date(maxX, 0).getFullYear();
+            if (range[range.length - 1] + step <= maxXYear) {
+                range.push(maxXYear);
+            }
+
+            return range;
         }
 
         function getRangeY(maxY, addMax = false) {
             let step = 1;
 
             switch (true) {
-                case maxY > 40000:
+                case maxY > 10000000:
+                    step = 5000000;
+                    break;
+                case maxY > 1000000 && maxY <= 10000000:
+                    step = 500000;
+                    break;
+                case maxY > 500000 && maxY <= 1000000:
+                    step = 100000;
+                    break;
+                case maxY > 100000 && maxY <= 500000:
+                    step = 50000;
+                    break;
+                case maxY > 40000 && maxY <= 100000:
                     step = 10000;
                     break;
                 case maxY > 20000 && maxY <= 40000:
@@ -923,23 +1335,40 @@
         }
 
         /* jshint ignore:start */
-        async function getData (researchEntity, refresh = false, charts = [], name) {
-            if (!data[researchEntity.researchEntity] || !_.has(data[researchEntity.researchEntity], name) || refresh) {
-                const res = await researchEntity.all('charts').getList({refresh: !!refresh, charts});
+        async function getData (researchEntity, refresh = false, name) {
+            let chartNames = [];
+            if (name === 'all') {
+                chartNames = [...new Set([].concat.apply([], chartKeys.map(c => c.keys)))];
+            } else {
+                chartNames = chartKeys.find(k => k.name === name).keys;
+            }
 
-                if (data[researchEntity.researchEntity]) {
-                    data[researchEntity.researchEntity][name] = res[0];
-                } else {
-                    data[researchEntity.researchEntity] = {
-                        [name]: res[0]
-                    };
+            let missingCharts = [];
+            if (!data[researchEntity.researchEntity] || refresh) {
+                missingCharts = _.cloneDeep(chartNames);
+            } else {
+                missingCharts = chartNames.filter(n => !Object.keys(data[researchEntity.researchEntity]).includes(n));
+            }
+
+            if (missingCharts.length > 0) {
+                const res = await researchEntity.all('charts').getList({refresh: !!refresh, charts: missingCharts});
+
+                for (const name of chartNames) {
+                    if (data[researchEntity.researchEntity]) {
+                        if (_.has(res[0], name)) {
+                            data[researchEntity.researchEntity][name] = res[0][name];
+                        }
+                    } else {
+                        data[researchEntity.researchEntity] = {
+                            [name]: res[0][name]
+                        };
+                    }
+
+                    // Delete data from array after one hour
+                    $timeout(() => {
+                        deleteData(researchEntity, name);
+                    }, 60 * 60 * 1000);
                 }
-
-                // Delete data from array after one hour
-                const hour = 60 * 60 * 1000;
-                $timeout(() => {
-                    deleteData(researchEntity, name);
-                }, hour);
 
                 EventsService.subscribeAll(researchEntity, [
                     EventsService.DRAFT_VERIFIED,
@@ -950,11 +1379,18 @@
                     EventsService.RESEARCH_ITEM_DRAFT_VERIFIED,
                     EventsService.AUTH_LOGOUT
                 ], () => {
-                    deleteData(researchEntity, name);
+                    for (const name of chartNames) {
+                        deleteData(researchEntity, name);
+                    }
                 });
             }
 
-            return data[researchEntity.researchEntity][name];
+            return Object.keys(data[researchEntity.researchEntity])
+                .filter(k => chartNames.includes(k))
+                .reduce((obj, key) => {
+                    obj[key] = data[researchEntity.researchEntity][key];
+                    return obj;
+                }, {});
         }
         /* jshint ignore:end */
 

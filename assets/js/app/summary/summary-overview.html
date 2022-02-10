@@ -1,6 +1,9 @@
-<scientilla-loading is-loading="!vm.charts"></scientilla-loading>
+<scientilla-loading is-loading="vm.loading"></scientilla-loading>
 
-<div class="summary-overview-container" ng-if="vm.charts">
+<div
+    class="summary-overview-container"
+    ng-if="!vm.loading && vm.charts"
+>
     <div class="info-button-container">
         <button ng-click="vm.showInfo()" class="btn btn-primary info-button">
             <i class="fas fa-info-circle fa-left"></i>Info
@@ -13,9 +16,11 @@
             <h3 class="chart-title">{{ vm.mainChart.title }}</h3>
             <div class="chart-outer-container">
                 <div class="chart-container">
-                    <nvd3 options="vm.mainChart.options"
-                          data="vm.mainChart.data"
-                          class="chart"></nvd3>
+                    <nvd3
+                        options="vm.mainChart.options"
+                        data="vm.mainChart.data"
+                        class="chart"
+                    ></nvd3>
                 </div>
             </div>
         </li>
@@ -26,9 +31,11 @@
                 <h3 class="chart-title">{{chart.title}}</h3>
                 <div class="chart-outer-container">
                     <div class="chart-container">
-                        <nvd3 options="chart.options"
-                              data="chart.data"
-                              class="chart"></nvd3>
+                        <nvd3
+                            options="chart.options"
+                            data="chart.data"
+                            class="chart"
+                        ></nvd3>
                     </div>
                 </div>
             </div>

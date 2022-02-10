@@ -71,18 +71,26 @@
                     param: getSlugOrId
                 }
             })
-            .when("/groups/:group/documents-overview", {
+            .when("/groups/:group/document-charts", {
                 template: () => `<scientilla-group-details
                     group-param="$resolve.param"
-                    active-tab="documents-overview"></scientilla-group-details>`,
+                    active-tab="document-charts"></scientilla-group-details>`,
                 resolve: {
                     param: getSlugOrId
                 }
             })
-            .when("/groups/:group/bibliometric-charts", {
+            .when("/groups/:group/metric-charts", {
                 template: () => `<scientilla-group-details
                     group-param="$resolve.param"
-                    active-tab="bibliometric-charts"></scientilla-group-details>`,
+                    active-tab="metric-charts"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
+            })
+            .when("/groups/:group/projects-technology-transfer", {
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="projects-technology-transfer"></scientilla-group-details>`,
                 resolve: {
                     param: getSlugOrId
                 }
@@ -150,20 +158,29 @@
                     param: getSlugOrId
                 }
             })
-            .when("/:group/documents-overview", {
+            .when("/:group/document-charts", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details
                     group-param="$resolve.param"
-                    active-tab="documents-overview"></scientilla-group-details>`,
+                    active-tab="document-charts"></scientilla-group-details>`,
                 resolve: {
                     param: getSlugOrId
                 }
             })
-            .when("/:group/bibliometric-charts", {
+            .when("/:group/metric-charts", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details
                     group-param="$resolve.param"
-                    active-tab="bibliometric-charts"></scientilla-group-details>`,
+                    active-tab="metric-charts"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
+            })
+            .when("/:group/projects-technology-transfer", {
+                controller: 'requestHandler',
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="projects-technology-transfer"></scientilla-group-details>`,
                 resolve: {
                     param: getSlugOrId
                 }

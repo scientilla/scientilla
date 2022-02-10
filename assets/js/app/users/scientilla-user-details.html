@@ -70,13 +70,20 @@
                 index="6"
                 heading="Documents Overview"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.user.isScientific()">
-                <overview-tab research-entity="vm.user"></overview-tab>
+                <summary-overview research-entity="vm.user"></summary-overview>
             </uib-tab>
             <uib-tab
                 index="7"
                 heading="Bibliometric Charts"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.user.isScientific()">
-                <metrics-tab research-entity="vm.user"></metrics-tab>
+                <summary-metrics research-entity="vm.user"></summary-metrics>
+            </uib-tab>
+            <uib-tab
+                index="8"
+                heading="Projects and Technology Transfer"
+                ng-if="vm.loggedUser.isSuperViewer() && vm.user.isScientific()"
+            >
+                <summary-projects-technology-transfer research-entity="vm.user"></summary-projects-technology-transfer>
             </uib-tab>
         </uib-tabset>
     </div>

@@ -8,66 +8,72 @@
             controller,
             controllerAs: 'vm',
             bindings: {
-                chartsData: '<',
-                title: '@?'
+                researchEntity: '<'
             }
         });
 
     controller.$inject = [
         'ChartService',
         'ModalService',
-        '$scope',
-        '$timeout'
+        '$timeout',
+        '$element'
     ];
 
-    function controller(ChartService, ModalService, $scope, $timeout) {
+    function controller(ChartService, ModalService, $timeout, $element) {
         const vm = this;
 
-        vm.name = 'metrics';
+        vm.name = 'summary-metrics';
         vm.shouldBeReloaded = true;
+
         vm.charts = false;
-
-        let deregister;
-
         vm.showInfo = showInfo;
+        vm.isMainGroup = isMainGroup;
+        vm.recalculate = recalculate;
+
+        vm.recalculating = false;
 
         vm.$onInit = () => {
-            deregister = $scope.$watch('vm.chartsData', vm.reload);
+            const registerTab = requireParentMethod($element, 'registerTab');
+            registerTab(vm);
         };
 
-        vm.$onDestroy = () => {
-            deregister();
+        vm.$onDestroy = function () {
+            const unregisterTab = requireParentMethod($element, 'unregisterTab');
+            unregisterTab(vm);
         };
 
-        vm.reload = () => {
-            if (_.isEmpty(vm.chartsData))
-                return;
+         /* jshint ignore:start */
+         vm.getData = async () => {
+            return await ChartService.getBibliometricChartData(vm.researchEntity);
+        }
+        /* jshint ignore:end */
 
-            vm.charts = {};
+        vm.reload = chartsData => {
             $timeout(() => {
-                vm.charts.documentTotals = ChartService.getDocumentTotals(vm.chartsData);
-                vm.charts.hindexPerYear = ChartService.getHindexPerYear(vm.chartsData);
-                vm.charts.citationsPerDocumentYear = ChartService.getCitationsPerDocumentYear(vm.chartsData);
-                vm.charts.citationsPerYear = ChartService.getCitationsPerYear(vm.chartsData);
+                vm.charts = {};
+                vm.charts.documentTotals = ChartService.getDocumentTotals(chartsData);
+                vm.charts.hindexPerYear = ChartService.getHindexPerYear(chartsData);
+                vm.charts.citationsPerDocumentYear = ChartService.getCitationsPerDocumentYear(chartsData);
+                vm.charts.citationsPerYear = ChartService.getCitationsPerYear(chartsData);
                 vm.charts.journalMetricsPerYearLineChart = ChartService.getJournalMetricsPerYearLineChart(
-                    vm.chartsData
+                    chartsData
                 );
                 vm.charts.getJournalMetricsPerYearBarChart = ChartService.getJournalMetricsPerYearBarChart(
-                    vm.chartsData
+                    chartsData
                 );
-                vm.charts.filteredDocumentsByYear = ChartService.getFilteredDocumentsByYear(vm.chartsData);
+                vm.charts.filteredDocumentsByYear = ChartService.getFilteredDocumentsByYear(chartsData);
                 vm.charts.filteredDocumentsSourceTypeByYear = ChartService.getFilteredDocumentsSourceTypeByYear(
-                    vm.chartsData
+                    chartsData
                 );
 
-                const totalDocuments = ChartService.getTotalFilteredDocuments(vm.chartsData);
-                const totalImpactFactorDocuments = ChartService.getTotalFilteredDocuments(vm.chartsData);
+                const totalDocuments = ChartService.getTotalFilteredDocuments(chartsData);
+                const totalImpactFactorDocuments = ChartService.getTotalFilteredDocuments(chartsData);
                 const totalImpactFactorDocumentsOnJournals = ChartService.getTotalImpactFactorDocumentsOnJournals(
-                    vm.chartsData
+                    chartsData
                 );
-                const hIndex = ChartService.getHindex(vm.chartsData);
-                const totalCitations = ChartService.getTotalCitations(vm.chartsData);
-                const totalImpactFactor = ChartService.getTotalImpactFactor(vm.chartsData);
+                const hIndex = ChartService.getHindex(chartsData);
+                const totalCitations = ChartService.getTotalCitations(chartsData);
+                const totalImpactFactor = ChartService.getTotalImpactFactor(chartsData);
 
                 vm.documentsChartToShow = vm.charts.filteredDocumentsSourceTypeByYear;
                 vm.citationsChartToShow = vm.charts.citationsPerYear;
@@ -158,11 +164,40 @@
                     icons: ['icons-if icon-if', 'icons-if far fa-newspaper'],
                     format: 2
                 });
+
+                vm.charts.patentsByYear = ChartService.getPatentsByYear(chartsData);
+                vm.charts.projectsByYear = ChartService.getProjectAnnualContributionsByYear(chartsData);
+
+                if (chartsData.chartDataDate && chartsData.chartDataDate[0].max) {
+                    vm.lastRefresh = new Date(chartsData.chartDataDate[0].max);
+                }
             });
         };
+        /* jshint ignore:end */
 
         function showInfo() {
             ModalService.openWizard(['summary-metrics'], {isClosable: true});
         }
+
+        function isMainGroup() {
+            return vm.researchEntity.id === 1;
+        }
+
+        /* jshint ignore:start */
+        async function recalculate() {
+            if (vm.recalculating) {
+                return;
+            }
+
+            vm.recalculating = true;
+
+            const chartsData = await ChartService.getAllChartData(vm.researchEntity, true);
+
+            if (chartsData.chartDataDate[0].max) {
+                vm.lastRefresh = new Date(chartsData.chartDataDate[0].max);
+            }
+            vm.recalculating = false;
+        }
+        /* jshint ignore:end */
     }
 })();
