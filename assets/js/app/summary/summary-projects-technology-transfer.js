@@ -13,23 +13,20 @@
         });
 
     controller.$inject = [
-        'context',
         'ChartService',
         '$timeout',
         '$element'
     ];
 
-    function controller(context, ChartService, $timeout, $element) {
+    function controller(ChartService, $timeout, $element) {
         const vm = this;
 
-        vm.name = 'projectsTechnologyTransfer';
+        vm.name = 'summary-projects-technology-transfer';
         vm.shouldBeReloaded = true;
 
         vm.charts = {};
 
         vm.$onInit = () => {
-            //vm.subResearchEntity = context.getSubResearchEntity();
-
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
         };
@@ -50,7 +47,26 @@
 
             $timeout(() => {
                 vm.charts.patentsByYear = ChartService.getPatentsByYear(chartsData) || false;
-                vm.charts.projectsByYear = ChartService.getProjectsByYear(chartsData) || false;
+                vm.charts.projectAnnualContributionsByYear = ChartService.getProjectAnnualContributionsByYear(chartsData) || false;
+                vm.charts.projectTotalContributionsByYear = ChartService.getProjectTotalContributionsByYear(chartsData) || false;
+
+                vm.projectCharts = [];
+                if (vm.charts.projectAnnualContributionsByYear) {
+                    vm.projectCharts.push({
+                        icon: 'fas fa-chart-bar',
+                        chartSettings: vm.charts.projectAnnualContributionsByYear,
+                        default: true,
+                        title: vm.charts.projectAnnualContributionsByYear.title
+                    });
+                }
+
+                if ( vm.charts.projectTotalContributionsByYear) {
+                    vm.projectCharts.push({
+                        icon: 'fas fa-chart-bar',
+                        chartSettings: vm.charts.projectTotalContributionsByYear,
+                        title: vm.charts.projectTotalContributionsByYear.title
+                    });
+                }
             });
         };
 

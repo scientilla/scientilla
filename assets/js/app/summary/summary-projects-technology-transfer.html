@@ -2,36 +2,25 @@
 
 <div
     class="summary-projects-technology-transfer-container"
-    ng-if="!vm.loading && vm.charts && (vm.charts.patentsByYear || vm.charts.projectsByYear)"
+    ng-if="!vm.loading && (vm.charts || vm.projectCharts.length > 0)"
 >
     <div class="row">
-        <div class="col-12 col-lg-6" ng-if="vm.charts.patentsByYear">
+        <div class="col-12 col-lg-6">
             <div class="patents-container">
                 <h3>{{ vm.charts.patentsByYear.title }}</h3>
-                <div class="chart-container">
-                    <nvd3
-                        options="vm.charts.patentsByYear.options"
-                        data="vm.charts.patentsByYear.data"
-                        class="chart"
-                    ></nvd3>
-                </div>
+                <nvd3
+                    options="vm.charts.patentsByYear.options"
+                    data="vm.charts.patentsByYear.data"
+                    class="chart-container"
+                ></nvd3>
             </div>
         </div>
-        <div class="col-12 col-lg-6" ng-if="vm.charts.projectsByYear">
-            <div class="projects-container">
-                <h3>{{ vm.charts.projectsByYear.title }}</h3>
-                <div class="chart-container">
-                    <nvd3
-                        options="vm.charts.projectsByYear.options"
-                        data="vm.charts.projectsByYear.data"
-                        class="chart"
-                    ></nvd3>
-                </div>
-            </div>
+        <div class="col-12 col-lg-6">
+            <scientilla-chart-selector
+                charts="vm.projectCharts"
+                class="project-chart-container"
+            >
+            </scientilla-chart-selector>
         </div>
     </div>
 </div>
-
-<p ng-if="!vm.loading && vm.charts && !vm.charts.patentsByYear && !vm.charts.projectsByYear">
-    This group has no patent or project data.
-</p>

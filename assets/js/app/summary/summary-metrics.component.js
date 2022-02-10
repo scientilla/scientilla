@@ -22,7 +22,7 @@
     function controller(ChartService, ModalService, $timeout, $element) {
         const vm = this;
 
-        vm.name = 'metrics';
+        vm.name = 'summary-metrics';
         vm.shouldBeReloaded = true;
 
         vm.charts = false;
@@ -166,7 +166,7 @@
                 });
 
                 vm.charts.patentsByYear = ChartService.getPatentsByYear(chartsData);
-                vm.charts.projectsByYear = ChartService.getProjectsByYear(chartsData);
+                vm.charts.projectsByYear = ChartService.getProjectAnnualContributionsByYear(chartsData);
 
                 if (chartsData.chartDataDate && chartsData.chartDataDate[0].max) {
                     vm.lastRefresh = new Date(chartsData.chartDataDate[0].max);

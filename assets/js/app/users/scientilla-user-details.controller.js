@@ -65,11 +65,15 @@
             }, {
                 index: 6,
                 slug: 'documents-overview',
-                tabName: 'overview-tab'
+                tabName: 'summary-overview'
             }, {
                 index: 7,
                 slug: 'bibliometric-charts',
-                tabName: 'metrics-tab'
+                tabName: 'summary-metrics'
+            }, {
+                index: 8,
+                slug: 'projects-technology-transfer',
+                tabName: 'summary-projects-technology-transfer'
             }
         ];
 

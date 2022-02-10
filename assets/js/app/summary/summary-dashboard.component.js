@@ -30,15 +30,15 @@
                 {
                     index: 0,
                     slug: 'document-charts',
-                    tabName: 'overview',
+                    tabName: 'summary-overview',
                 }, {
                     index: 1,
                     slug: 'metric-charts',
-                    tabName: 'metrics',
+                    tabName: 'summary-metrics',
                 }, {
                     index: 2,
                     slug: 'projects-and-technology-transfer',
-                    tabName: 'projectsTechnologyTransfer',
+                    tabName: 'summary-projects-technology-transfer',
                 }
             ];
 

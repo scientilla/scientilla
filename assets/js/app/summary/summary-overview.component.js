@@ -23,7 +23,7 @@
         function controller(ChartService, ModalService, $window, $timeout, $element) {
             const vm = this;
 
-            vm.name = 'overview';
+            vm.name = 'summary-overview';
             vm.shouldBeReloaded = true;
 
             vm.changeChart = changeChart;

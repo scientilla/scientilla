@@ -2,23 +2,14 @@
     @include clearfix;
 
     .patents-container,
-    .projects-container{
+    .project-chart-container{
+        display: block;
         min-height: calc(100% - 3rem);
         margin-bottom: 3rem;
-        padding: 1rem 3rem;
+        padding: 1rem;
+        text-align: center;
         border: 1px solid $gray-300;
         border-radius: .25rem;
-        text-align: center;
-
-        h3{
-            margin: 0px;
-        }
-
-        .chart-container{
-            position: relative;
-            display: block;
-            padding-bottom: 60%;
-        }
 
         svg{
             position: absolute;
@@ -26,6 +17,28 @@
             left: 0px;
             width: 100% !important;
             height: 100% !important;
+        }
+
+        .chart-container{
+            position: relative;
+            display: block;
+            padding-bottom: 65.925%;
+        }
+    }
+
+    .patents-container{
+        h3{
+            margin: 0px;
+        }
+    }
+
+    .project-chart-container{
+        .top-listing{
+            @include normalize-listing;
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: auto 1fr;
+            text-align: center;
         }
     }
 }

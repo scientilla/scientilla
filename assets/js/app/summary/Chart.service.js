@@ -52,6 +52,8 @@
             keys: [
                 'annualContributionCompetitiveProjectsByYear',
                 'annualContributionIndustrialProjectsByYear',
+                'totalContributionIndustrialProjectsByYear',
+                'totalContributionCompetitiveProjectsByYear',
                 'priorityAndProsecutionPatentsByYear'
             ]
         }
@@ -765,23 +767,151 @@
             };
         };
 
-        service.getProjectsByYear = chartsData => {
+        service.getProjectTotalContributionsByYear = chartsData => {
             const competitiveInCashProjectsKey = 'Competitive In Cash';
             const competitiveInKindProjectsKey = 'Competitive In Kind';
             const industrialInCashProjectsKey = 'Industrial In Cash';
             const industrialInKindProjectsKey = 'Industrial In Kind';
+            const data = [];
 
             if (
-                (
-                    !_.has(chartsData, 'annualContributionCompetitiveProjectsByYear') ||
-                    _.isEmpty(chartsData.annualContributionCompetitiveProjectsByYear)
-                ) && (
-                    !_.has(chartsData, 'annualContributionIndustrialProjectsByYear') ||
-                    _.isEmpty(chartsData.annualContributionIndustrialProjectsByYear)
-                )
+                _.has(chartsData, 'totalContributionCompetitiveProjectsByYear') &&
+                !_.isEmpty(chartsData.totalContributionCompetitiveProjectsByYear)
             ) {
-                return;
+                data.push({
+                    key: competitiveInCashProjectsKey,
+                    values: chartsData.totalContributionCompetitiveProjectsByYear.map(d => {
+                        return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution)};
+                    })
+                });
+
+                data.push({
+                    key: competitiveInKindProjectsKey,
+                    values: chartsData.totalContributionCompetitiveProjectsByYear.map(d => {
+                        return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) };
+                    })
+                });
             }
+
+            if (
+                _.has(chartsData, 'totalContributionIndustrialProjectsByYear') &&
+                !_.isEmpty(chartsData.totalContributionIndustrialProjectsByYear)
+            ) {
+                data.push({
+                    key: industrialInCashProjectsKey,
+                    values: chartsData.totalContributionIndustrialProjectsByYear.map(d => {
+                        return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution) };
+                    })
+                });
+
+                data.push({
+                    key: industrialInKindProjectsKey,
+                    values: chartsData.totalContributionIndustrialProjectsByYear.map(d => {
+                        return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) };
+                    })
+                });
+            }
+
+            const yearRange = {
+                min: _.min(
+                    chartsData.totalContributionCompetitiveProjectsByYear.map(d => parseInt(d.year)).concat(
+                        chartsData.totalContributionIndustrialProjectsByYear.map(d => parseInt(d.year))
+                    )
+                ),
+                max: _.max(
+                    chartsData.totalContributionCompetitiveProjectsByYear.map(d => parseInt(d.year)).concat(
+                        chartsData.totalContributionIndustrialProjectsByYear.map(d => parseInt(d.year))
+                    )
+                )
+            };
+
+            const rangeX = getRangeX(
+                yearRange.min,
+                yearRange.max
+            );
+
+            const competitiveInCashProjectsData = data.find(d => d.key === competitiveInCashProjectsKey);
+            const competitiveInKindProjectsData = data.find(d => d.key === competitiveInKindProjectsKey);
+            const industrialInCashProjectsData = data.find(d => d.key === industrialInCashProjectsKey);
+            const industrialInKindProjectsData = data.find(d => d.key === industrialInKindProjectsKey);
+            const yearOperator = year => v => v.year === year;
+
+            for (let i = yearRange.min; i <= yearRange.max; i++) {
+                if (competitiveInCashProjectsData && !competitiveInCashProjectsData.values.find(yearOperator(i))) {
+                    competitiveInCashProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (competitiveInKindProjectsData && !competitiveInKindProjectsData.values.find(yearOperator(i))) {
+                    competitiveInKindProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (industrialInCashProjectsData && !industrialInCashProjectsData.values.find(yearOperator(i))) {
+                    industrialInCashProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+
+                if (industrialInKindProjectsData && !industrialInKindProjectsData.values.find(yearOperator(i))) {
+                    industrialInKindProjectsData.values.push({
+                        year: i,
+                        value: 0
+                    });
+                }
+            }
+
+            if (competitiveInCashProjectsData) {
+                competitiveInCashProjectsData.values = _.orderBy(competitiveInCashProjectsData.values, 'year');
+            }
+
+            if (competitiveInKindProjectsData) {
+                competitiveInKindProjectsData.values = _.orderBy(competitiveInKindProjectsData.values, 'year');
+            }
+
+            if (industrialInCashProjectsData) {
+                industrialInCashProjectsData.values = _.orderBy(industrialInCashProjectsData.values, 'year');
+            }
+
+            if (industrialInKindProjectsData) {
+                industrialInKindProjectsData.values = _.orderBy(industrialInKindProjectsData.values, 'year');
+            }
+
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
+            const rangeY = getRangeY(maxY);
+
+            return {
+                title: 'Total contribution',
+                data: data,
+                options: getMultiBarChartConfig({
+                    color: colors,
+                    reduceXTicks: false,
+                    stacked: true,
+                    xAxis: {
+                        rotateLabels: 50,
+                        showMaxMin: false,
+                        tickValues: rangeX,
+                        tickFormat: d => d3.format('')(d)
+                    },
+                    yAxis: {
+                        axisLabel: 'EUR',
+                        tickValues: rangeY,
+                        tickFormat: d => d3.format('.2s')(d)
+                    }
+                }),
+            };
+        };
+
+        service.getProjectAnnualContributionsByYear = chartsData => {
+            const competitiveInCashProjectsKey = 'Competitive In Cash';
+            const competitiveInKindProjectsKey = 'Competitive In Kind';
+            const industrialInCashProjectsKey = 'Industrial In Cash';
+            const industrialInKindProjectsKey = 'Industrial In Kind';
             const data = [];
 
             if (
@@ -822,17 +952,19 @@
                 });
             }
 
+            const years = [];
+
+            if (_.has(chartsData, 'annualContributionCompetitiveProjectsByYear')) {
+                chartsData.annualContributionCompetitiveProjectsByYear.map(d => years.push(parseInt(d.year)));
+            }
+
+            if (_.has(chartsData, 'annualContributionIndustrialProjectsByYear')) {
+                chartsData.annualContributionIndustrialProjectsByYear.map(d => years.push(parseInt(d.year)));
+            }
+
             const yearRange = {
-                min: _.min(
-                    chartsData.annualContributionCompetitiveProjectsByYear.map(d => parseInt(d.year)).concat(
-                        chartsData.annualContributionIndustrialProjectsByYear.map(d => parseInt(d.year))
-                    )
-                ),
-                max: _.max(
-                    chartsData.annualContributionCompetitiveProjectsByYear.map(d => parseInt(d.year)).concat(
-                        chartsData.annualContributionIndustrialProjectsByYear.map(d => parseInt(d.year))
-                    )
-                )
+                min: _.min(years),
+                max: _.max(years)
             };
 
             const rangeX = getRangeX(
@@ -920,29 +1052,33 @@
         service.getPatentsByYear = chartsData => {
             const priorityKey = 'Priority';
             const prosecutionKey = 'Prosecutions';
-            console.log(chartsData);
-            if (
-                !_.has(chartsData, 'priorityAndProsecutionPatentsByYear') ||
-                _.isEmpty(chartsData.priorityAndProsecutionPatentsByYear)
-            ) {
-                return;
+            let min = 0;
+            let max = 0;
+
+            const data = []
+
+            if (_.has(chartsData, 'priorityAndProsecutionPatentsByYear')) {
+                min = _.min(chartsData.priorityAndProsecutionPatentsByYear.map(d => parseInt(d.year)));
+                max = _.max(chartsData.priorityAndProsecutionPatentsByYear.map(d => parseInt(d.year)));
+
+                data.push({
+                    key: priorityKey,
+                    values: chartsData.priorityAndProsecutionPatentsByYear.filter(d => d.priority).map(d => {
+                        return { year: parseInt(d.year), value: parseInt(d.count) };
+                    })
+                })
+                data.push({
+                    key: prosecutionKey,
+                    values: chartsData.priorityAndProsecutionPatentsByYear.filter(d => !d.priority).map(d => {
+                        return { year: parseInt(d.year), value: parseInt(d.count) };
+                    })
+                });
             }
 
             const yearRange = {
-                min: _.min(chartsData.priorityAndProsecutionPatentsByYear.map(d => parseInt(d.year))),
-                max: _.max(chartsData.priorityAndProsecutionPatentsByYear.map(d => parseInt(d.year)))
+                min: min,
+                max: max
             };
-            const data = [{
-                key: priorityKey,
-                values: chartsData.priorityAndProsecutionPatentsByYear.filter(d => d.priority).map(d => {
-                    return { year: parseInt(d.year), value: parseInt(d.count) };
-                })
-            }, {
-                key: prosecutionKey,
-                values: chartsData.priorityAndProsecutionPatentsByYear.filter(d => !d.priority).map(d => {
-                    return { year: parseInt(d.year), value: parseInt(d.count) };
-                })
-            }];
 
             const rangeX = getRangeX(
                 yearRange.min,
@@ -954,14 +1090,14 @@
             const yearOperator = year => v => v.year === year;
 
             for (let i = yearRange.min; i <= yearRange.max; i++) {
-                if (!priorityData.values.find(yearOperator(i))) {
+                if (_.has(priorityData, 'values') && !priorityData.values.find(yearOperator(i))) {
                     priorityData.values.push({
                         year: i,
                         value: 0
                     });
                 }
 
-                if (!prosecutionData.values.find(yearOperator(i))) {
+                if (_.has(prosecutionData, 'values') && !prosecutionData.values.find(yearOperator(i))) {
                     prosecutionData.values.push({
                         year: i,
                         value: 0
@@ -969,8 +1105,13 @@
                 }
             }
 
-            priorityData.values = _.orderBy(priorityData.values, 'year');
-            prosecutionData.values = _.orderBy(prosecutionData.values, 'year');
+            if (_.has(priorityData, 'values')) {
+                priorityData.values = _.orderBy(priorityData.values, 'year');
+            }
+
+            if (_.has(prosecutionData, 'values')) {
+                prosecutionData.values = _.orderBy(prosecutionData.values, 'year');
+            }
 
             const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
