@@ -19,14 +19,15 @@ SELECT
 FROM research_item_patent rip
     JOIN "patent" p ON rip.research_item = p.id
     JOIN "verify" v ON rip.research_item = v.research_item
+    JOIN "group" g ON v.research_entity = g.research_entity
 WHERE
     p.translation = false AND (
-        v.research_entity = $1 OR
-        v.research_entity = ANY(
-            SELECT g.research_entity as research_entity
+        g.id = $1 OR
+        g.research_entity = ANY(
+            SELECT tmp_g.research_entity as research_entity
             FROM subg sg
-            JOIN "group" g on g.id = sg.child_group
-            WHERE sg.parent_group = $1
+            JOIN "group" tmp_g on tmp_g.id = sg.child_group
+            WHERE sg.parent_group = g.id
         )
     )
 GROUP BY p.year, p.priority
