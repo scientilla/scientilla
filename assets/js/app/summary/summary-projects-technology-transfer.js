@@ -53,7 +53,7 @@
                 vm.projectCharts = [];
                 if (vm.charts.projectAnnualContributionsByYear) {
                     vm.projectCharts.push({
-                        icon: 'fas fa-chart-bar',
+                        icon: 'custom-icon annual-contribution',
                         chartSettings: vm.charts.projectAnnualContributionsByYear,
                         default: true,
                         title: vm.charts.projectAnnualContributionsByYear.title
@@ -62,7 +62,7 @@
 
                 if ( vm.charts.projectTotalContributionsByYear) {
                     vm.projectCharts.push({
-                        icon: 'fas fa-chart-bar',
+                        icon: 'custom-icon total-contribution',
                         chartSettings: vm.charts.projectTotalContributionsByYear,
                         title: vm.charts.projectTotalContributionsByYear.title
                     });

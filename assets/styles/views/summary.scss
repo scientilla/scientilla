@@ -21,6 +21,27 @@
     }
 }
 
+.summary-projects-technology-transfer-container{
+    .custom-icon{
+        &:before{
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        &.annual-contribution{
+            &:before{
+                content: 'AC';
+            }
+        }
+
+        &.total-contribution{
+            &:before{
+                content: 'TC';
+            }
+        }
+    }
+}
+
 @include media-breakpoint-up(lg) {
     .summary {
         &.summary-profile {
