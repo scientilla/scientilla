@@ -1,0 +1,16 @@
+.document-form{
+    .realized-at-iit{
+        display: grid;
+        grid-template-columns: auto auto 1fr;
+        grid-template-rows: auto;
+
+        .form-radio{
+            margin-left: 1rem;
+
+            &,
+            & + .form-radio{
+                margin-top: .3rem;
+            }
+        }
+    }
+}

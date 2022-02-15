@@ -17,7 +17,6 @@
         });
 
     scientillaDocumentFormController.$inject = [
-        '$rootScope',
         'EventsService',
         'documentFieldsRules',
         '$scope',
@@ -26,19 +25,22 @@
         'context',
         'Restangular',
         'ModalService',
-        'documentCategories'
+        'documentCategories',
+        'languages'
     ];
 
-    function scientillaDocumentFormController($rootScope,
-                                              EventsService,
-                                              documentFieldsRules,
-                                              $scope,
-                                              $timeout,
-                                              DocumentTypesService,
-                                              context,
-                                              Restangular,
-                                              ModalService,
-                                              documentCategories) {
+    function scientillaDocumentFormController(
+        EventsService,
+        documentFieldsRules,
+        $scope,
+        $timeout,
+        DocumentTypesService,
+        context,
+        Restangular,
+        ModalService,
+        documentCategories,
+        languages
+    ) {
         const vm = this;
 
         vm.saveStatus = saveStatus();
@@ -93,6 +95,15 @@
                     vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
                 }
             }
+
+            vm.languageOptions = [];
+            Object.keys(languages).map(language => {
+                vm.languageOptions.push({
+                    label: languages[language].name,
+                    value: language
+                });
+            });
+            vm.languageOptions = _.orderBy(vm.languageOptions, 'label');
         };
 
         vm.$onDestroy = function () {
@@ -153,6 +164,8 @@
             const dereg = $scope.$watch('vm.document.type', newValue => {
                 const allowedSources = _.find(vm.documentTypes, {key: newValue}).allowedSources;
                 vm.sourceTypes = _.filter(allSourceTypes, s => allowedSources.includes(s.id));
+                vm.document.sourceType = false;
+                vm.document.realizedAtIIT = false;
             });
             deregisteres.push(dereg);
         }
