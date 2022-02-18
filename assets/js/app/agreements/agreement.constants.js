@@ -18,7 +18,10 @@ const agreementTypes = [
         label: 'Research'
     }, {
         key: 'management',
-        label: 'Management / Quadro?'
+        label: 'Management'
+    }, {
+        key: 'centers',
+        label: 'Centers'
     }
 ];
 
@@ -35,12 +38,17 @@ const agreementFieldRules = {
         allowNull: true,
         isDate: true,
         message: 'Not a valid date.'
+    },
+    link: {
+        regex: /^(http|https):\/\//,
+        message: 'This link should start with http:// or https://'
     }
 };
 
 const agreementRequiredFields = [
+    'acronym',
     'title',
-    'agreementType',
+    'type',
     'partners',
     'pis',
     'authorsStr',

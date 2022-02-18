@@ -32,8 +32,6 @@
         vm.$onInit = function () {
         };
 
-        vm.getTypeTitle = GroupsService.getTypeTitle;
-
         vm.getAgreementYears = () => {
             const years = [];
             if (vm.agreement.startYear) {
@@ -45,6 +43,10 @@
             }
 
             return TextService.joinStrings(years, ' - ');
+        };
+
+        vm.getTypeLabel = type => {
+            return agreementTypes.find(t => t.key === type).label;
         };
 
         function openDetails() {

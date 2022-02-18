@@ -20,6 +20,7 @@ const _ = require('lodash');
 
 const isLogged = ['isLogged'];
 const isAdmin = ['isAdmin'];
+const isSuperUser = ['isSuperUser'];
 const isActivityOwner = ['isActivityOwner'];
 const isGroupOwner = ['isGroupOwner'];
 const isResearchEntityOwner = ['isResearchEntityOwner'];
@@ -238,5 +239,23 @@ module.exports.policies = {
 
     AllMembershipController: defaultPolicy,
 
-    AllMembershipGroupController: defaultPolicy
+    AllMembershipGroupController: defaultPolicy,
+
+    PhdInstituteController: _.defaults({
+        destroy: isSuperUser,
+        create: isSuperUser,
+        update: isSuperUser
+    }, defaultPolicy),
+
+    PhdCourseController: _.defaults({
+        destroy: isSuperUser,
+        create: isSuperUser,
+        update: isSuperUser
+    }, defaultPolicy),
+
+    PhdCycleController: _.defaults({
+        destroy: isSuperUser,
+        create: isSuperUser,
+        update: isSuperUser
+    }, defaultPolicy),
 };
