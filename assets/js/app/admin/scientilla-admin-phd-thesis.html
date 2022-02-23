@@ -1,0 +1,163 @@
+<scientilla-backend-layout>
+    <div class="admin admin-phd-thesis">
+        <h2 class="title">PhD management</h2>
+
+        <div class="row">
+            <div class="col-12 col-lg-4">
+                <div class="step-container">
+                    <div class="step">
+                        <span class="step-number">1.</span>
+                        Select institute
+                    </div>
+                    <button
+                        class="btn btn-primary btn-add-item"
+                        ng-click="vm.openModal(vm.models.INSTITUTE, vm.actions.ADD)"
+                    >
+                        Add<i class="fas fa-plus fa-right"></i>
+                    </button>
+                </div>
+                <ul class="list-group">
+                    <li
+                        class="list-group-item has-actions"
+                        ng-repeat="institute in vm.institutes"
+                        ng-class="{'active': institute.id === vm.selectedInstitute.id}"
+                    >
+                        <span
+                            class="is-action"
+                            ng-click="vm.selectInstitute(institute)"
+                        >{{ institute.name }}</span>
+                        <ul class="actions">
+                            <li>
+                                <button
+                                    class="action-button"
+                                    ng-click="vm.openModal(vm.models.INSTITUTE, vm.actions.EDIT, institute)"
+                                ><i class="fas fa-pencil-alt"></i></button>
+                            </li>
+                            <li>
+                                <button
+                                    class="action-button"
+                                    ng-click="vm.delete(vm.models.INSTITUTE, institute)"
+                                    scientilla-click-confirm="Do you want to delete this institute?"
+                                ><i class="fas fa-times"></i></button>
+                            </li>
+                        </ul>
+                    </li>
+                    <li
+                        class="list-group-item"
+                        ng-if="vm.institutes.length === 0"
+                    >
+                        No institutes found...
+                    </li>
+                </ul>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="step-container">
+                    <div class="step">
+                        <span class="step-number">2.</span>
+                        Select course
+                    </div>
+                    <button
+                        class="btn btn-primary btn-add-item"
+                        ng-click="vm.openModal(vm.models.COURSE, vm.actions.ADD, vm.selectedInstitute)"
+                        ng-disabled="!vm.selectedInstitute"
+                    >
+                        Add<i class="fas fa-plus fa-right"></i>
+                    </button>
+                </div>
+                <ul class="list-group">
+                    <li
+                        class="list-group-item has-actions"
+                        ng-if="vm.selectedInstitute"
+                        ng-repeat="course in vm.courses"
+                        ng-class="{'active': course.id === vm.selectedCourse.id}"
+                    >
+                        <span
+                            class="is-action"
+                            ng-click="vm.selectCourse(course)"
+                        >{{ course.name }}</span>
+                        <ul class="actions">
+                            <li>
+                                <button
+                                    class="action-button"
+                                    ng-click="vm.openModal(vm.models.COURSE, vm.actions.EDIT, vm.selectedInstitute, course)"
+                                ><i class="fas fa-pencil-alt"></i></button>
+                            </li>
+                            <li>
+                                <button
+                                    class="action-button"
+                                    ng-click="vm.delete(vm.models.COURSE, course)"
+                                    scientilla-click-confirm="Do you want to delete this course?"
+                                ><i class="fas fa-times"></i></button>
+                            </li>
+                        </ul>
+                    </li>
+                    <li
+                        class="list-group-item"
+                        ng-if="!vm.selectedInstitute"
+                    >
+                        No institute selected...
+                    </li>
+                    <li
+                        class="list-group-item"
+                        ng-if="vm.selectedInstitute && vm.courses.length === 0"
+                    >
+                        No courses found...
+                    </li>
+                </ul>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="step-container">
+                    <div class="step">
+                        <span class="step-number">3.</span>
+                        Get cycles
+                    </div>
+                    <button
+                        class="btn btn-primary btn-add-item"
+                        ng-click="vm.openModal(vm.models.CYCLE, vm.actions.ADD, vm.selectedInstitute, vm.selectedCourse)"
+                        ng-disabled="!vm.selectedCourse"
+                    >
+                        Add<i class="fas fa-plus fa-right"></i>
+                    </button>
+                </div>
+                <ul class="list-group">
+                    <li
+                        class="list-group-item has-actions"
+                        ng-if="vm.selectedInstitute && vm.selectedCourse"
+                        ng-repeat="cycle in vm.cycles"
+                    >
+                        <span>{{ cycle.name }}</span>
+                        <ul class="actions">
+                            <li>
+                                <button
+                                    class="action-button"
+                                    ng-click="vm.openModal(vm.models.CYCLE, vm.actions.EDIT, vm.selectedInstitute, vm.selectedCourse, cycle)"
+                                ><i class="fas fa-pencil-alt"></i></button>
+                            </li>
+                            <li>
+                                <button
+                                    class="action-button"
+                                    ng-click="vm.delete(vm.models.CYCLE, cycle)"
+                                    scientilla-click-confirm="Do you want to delete this cycle?"
+                                ><i class="fas fa-times"></i></button>
+                            </li>
+                        </ul>
+                    </li>
+                    <li
+                        class="list-group-item"
+                        ng-if="!vm.selectedCourse"
+                    >
+                        No course selected...
+                    </li>
+                    <li
+                        class="list-group-item"
+                        ng-if="vm.selectedInstitute && vm.selectedCourse && vm.cycles.length === 0"
+                    >
+                        No cycles found...
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <scientilla-loading is-loading="vm.loading"></scientilla-loading>
+    </div>
+</scientilla-backend-layout>

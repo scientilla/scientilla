@@ -1,0 +1,122 @@
+<div class="modal-header">
+    <h3 class="modal-title">{{ vm.title }}</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()"
+    >
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <form
+        name="form"
+        class="{{vm.status.class}}"
+        autocomplete="off"
+    >
+        <div
+            class="form-group has-feedback"
+            ng-if="vm.showInstituteField"
+        >
+            <label for="institute">Institute</label>
+            <input
+                id="institute"
+                name="institute"
+                type="text"
+                class="form-control"
+                placeholder="Institute"
+                ng-model="vm.instituteName"
+                ng-disabled="vm.type !== vm.models.INSTITUTE"
+                data-ng-required="true"
+                ng-class="{'is-invalid' : vm.errors.institute}"
+                ng-blur="vm.checkValidation('institute')"
+                ng-change="vm.fieldValueHasChanged('institute')"
+                uib-typeahead="institute.name for institute in vm.getInstitutes()"
+                typeahead-loading="searching"
+                typeahead-no-results="noResults"
+            />
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.institute"
+            ></scientilla-error-messages>
+        </div>
+
+        <div
+            class="form-group has-feedback"
+            ng-if="vm.showCourseField"
+        >
+            <label for="course">Course</label>
+            <input id="course"
+                name="course"
+                type="text"
+                class="form-control"
+                placeholder="Course"
+                ng-model="vm.courseName"
+                ng-disabled="vm.type !== vm.models.COURSE"
+                data-ng-required="true"
+                ng-class="{'is-invalid' : vm.errors.course}"
+                ng-blur="vm.checkValidation('course')"
+                ng-change="vm.fieldValueHasChanged('course')"
+                uib-typeahead="course.name for course in vm.getCourses(vm.institute)"
+                typeahead-loading="searching"
+                typeahead-no-results="noResults"
+            />
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.course"
+            ></scientilla-error-messages>
+        </div>
+
+        <div
+            class="form-group has-feedback"
+            ng-if="vm.showCycleField"
+        >
+            <label for="cycle">Cycle</label>
+            <input id="cycle"
+                name="cycle"
+                type="text"
+                class="form-control"
+                placeholder="Cycle"
+                ng-model="vm.cycleName"
+                data-ng-required="true"
+                ng-class="{'is-invalid' : vm.errors.cycle}"
+                ng-blur="vm.checkValidation('cycle')"
+                ng-change="vm.fieldValueHasChanged('cycle')"
+                uib-typeahead="cycle.name for cycle in vm.getCycles(vm.course)"
+                typeahead-loading="searching"
+                typeahead-no-results="noResults"
+            />
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.cycle"
+            ></scientilla-error-messages>
+        </div>
+
+        <ul class="modal-buttons">
+            <li>
+                <button
+                    class="btn btn-primary"
+                    ng-click="vm.save()"
+                >
+                    Save
+                </button>
+            </li>
+            <li>
+                <button
+                    class="btn btn-outline-secondary"
+                    ng-click="vm.cancel()"
+                >
+                    Cancel
+                </button>
+            </li>
+        </ul>
+
+        <div
+            ng-if="vm.errorText"
+            class="modal-error text-danger"
+        >
+            {{ vm.errorText }}
+        </div>
+    </form>
+</div>

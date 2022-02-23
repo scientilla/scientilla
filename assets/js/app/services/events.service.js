@@ -57,7 +57,19 @@
             PROJECT_GROUP_CREATED: 'projectGroup.created',
             PROJECT_GROUP_DELETED: 'projectGroup.deleted',
 
-            GROUP_UPDATED: 'group.updated'
+            GROUP_UPDATED: 'group.updated',
+
+            PHD_INSTITUTE_CREATED: 'phdInstitute.created',
+            PHD_INSTITUTE_UPDATED: 'phdInstitute.updated',
+            PHD_INSTITUTE_DELETED: 'phdInstitute.deleted',
+
+            PHD_COURSE_CREATED: 'phdCourse.created',
+            PHD_COURSE_UPDATED: 'phdCourse.updated',
+            PHD_COURSE_DELETED: 'phdCourse.deleted',
+
+            PHD_CYCLE_CREATED: 'phdCycle.created',
+            PHD_CYCLE_UPDATED: 'phdCycle.updated',
+            PHD_CYCLE_DELETED: 'phdCycle.deleted',
         };
 
         service.publish = function (event, args) {
