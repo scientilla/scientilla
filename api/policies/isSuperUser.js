@@ -5,7 +5,8 @@ module.exports = function (req, res, next) {
         if (err) {
             return res.forbidden(err);
         }
-        if (user.role !== 'superuser'){
+
+        if (!['superuser', 'administrator'].includes(user.role)){
             sails.log.debug('access forbidden ' + req.path);
             return res.forbidden(err);
         }
