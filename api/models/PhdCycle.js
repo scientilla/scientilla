@@ -8,7 +8,7 @@ module.exports = _.merge({}, BaseModel, {
     attributes: {
         name: 'STRING',
         course: {
-            collection: 'PhdCourse'
+            model: 'PhdCourse'
         }
     }
 });
