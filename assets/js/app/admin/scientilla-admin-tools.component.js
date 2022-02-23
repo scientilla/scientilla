@@ -43,6 +43,10 @@
                     tabName: 'roleAssociation'
                 }, {
                     index: 5,
+                    slug: 'cid-association',
+                    tabName: 'cidAssociation'
+                }, {
+                    index: 6,
                     slug: 'group-overview',
                     tabName: 'groupOverview'
                 }
