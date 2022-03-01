@@ -16,7 +16,7 @@
         'phdModels',
         'EventsService',
         'Notification',
-        'AdminService'
+        'PhdThesisService'
     ];
 
     function controller(
@@ -26,7 +26,7 @@
         phdModels,
         EventsService,
         Notification,
-        AdminService
+        PhdThesisService
     ) {
         const vm = this;
 
@@ -46,7 +46,7 @@
                 EventsService.PHD_INSTITUTE_UPDATED,
                 EventsService.PHD_INSTITUTE_DELETED
             ], async () => {
-                vm.institutes = await AdminService.getInstitutes();
+                vm.institutes = await PhdThesisService.getInstitutes();
             });
 
             EventsService.subscribeAll(vm , [
@@ -54,7 +54,7 @@
                 EventsService.PHD_COURSE_UPDATED,
                 EventsService.PHD_COURSE_DELETED
             ], async () => {
-                vm.courses = await AdminService.getCourses(vm.selectedInstitute);
+                vm.courses = await PhdThesisService.getCourses(vm.selectedInstitute);
             });
 
             EventsService.subscribeAll(vm , [
@@ -62,12 +62,12 @@
                 EventsService.PHD_CYCLE_UPDATED,
                 EventsService.PHD_CYCLE_DELETED
             ], async () => {
-                vm.cycles = await AdminService.getCycles(vm.selectedCourse);
+                vm.cycles = await PhdThesisService.getCycles(vm.selectedCourse);
             });
 
             vm.selectedInstitute = false;
             vm.selectedCourse = false;
-            vm.institutes = await AdminService.getInstitutes();
+            vm.institutes = await PhdThesisService.getInstitutes();
         };
         /* jshint ignore:end */
 
@@ -137,12 +137,12 @@
         vm.selectInstitute = async institute => {
             vm.selectedInstitute = institute;
             vm.selectedCourse = false;
-            vm.courses = await AdminService.getCourses(institute);
+            vm.courses = await PhdThesisService.getCourses(institute);
         };
 
         vm.selectCourse = async course => {
             vm.selectedCourse = course;
-            vm.cycles = await AdminService.getCycles(course);
+            vm.cycles = await PhdThesisService.getCycles(course);
         };
         /* jshint ignore:end */
     }

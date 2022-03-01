@@ -1,11 +1,9 @@
 .document-form{
     .realized-at-iit{
-        display: grid;
-        grid-template-columns: auto auto 1fr;
-        grid-template-rows: auto;
-
         .form-radio{
+            display: inline-block;
             margin-left: 1rem;
+            vertical-align: top;
 
             &,
             & + .form-radio{

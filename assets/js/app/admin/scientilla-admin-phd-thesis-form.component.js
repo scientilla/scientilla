@@ -30,7 +30,7 @@
         'phdModels',
         'Notification',
         'EventsService',
-        'AdminService'
+        'PhdThesisService'
     ];
 
     function controller(
@@ -44,7 +44,7 @@
         phdModels,
         Notification,
         EventsService,
-        AdminService
+        PhdThesisService
     ) {
         const vm = this;
 
@@ -227,10 +227,10 @@
             $scope.form.$setUntouched();
         }
 
-        vm.getInstitutes = AdminService.getInstitutes;
+        vm.getInstitutes = PhdThesisService.getInstitutes;
 
-        vm.getCourses = AdminService.getCourses;
+        vm.getCourses = PhdThesisService.getCourses;
 
-        vm.getCycles = AdminService.getCycles;
+        vm.getCycles = PhdThesisService.getCycles;
     }
 })();

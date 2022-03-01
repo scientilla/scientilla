@@ -10,8 +10,7 @@
         'DocumentKinds',
         'documentFieldsRules',
         'documentOrigins',
-        'ValidateService',
-        'groupTypes'
+        'ValidateService'
     ];
 
     function Prototyper(
@@ -20,8 +19,7 @@
         DocumentKinds,
         documentFieldsRules,
         documentOrigins,
-        ValidateService,
-        groupTypes
+        ValidateService
     ) {
         const service = {
             toUserModel: toUserModel,
@@ -278,7 +276,17 @@
                 'affiliations',
                 'institutes',
                 'synchronized',
-                'origin'
+                'origin',
+                'handle',
+                'isPhdThesisInstitutional',
+                'academicInstitution',
+                'phdInstitute',
+                'phdCourse',
+                'phdCycle',
+                'curriculum',
+                'language',
+                'supervisors',
+                'otherSupervisors'
             ],
             create: function (documentData) {
                 var fields = _.union(['kind', 'draftCreator', 'draftGroupCreator'], documentPrototype.fields);
@@ -286,7 +294,7 @@
                 _.extend(document, documentPrototype);
                 return document;
             },
-            isValid: function () {
+            getRequiredFields: document => {
                 const requiredFields = [
                     'authorsStr',
                     'title',
@@ -295,11 +303,32 @@
                     'sourceType'
                 ];
                 // TODO: refactor, invited_talk should be read by a service;
-                const invitedTalkType = 'invited_talk';
-                if (this.type === invitedTalkType)
-                    requiredFields.push('itSource');
-                else
-                    requiredFields.push('source');
+                switch (document.type) {
+                    case 'invited_talk':
+                        requiredFields.push('itSource');
+                        break;
+                    case 'phd_thesis':
+                        break;
+                    default:
+                        requiredFields.push('source');
+                        break;
+                }
+
+                if (document.type === 'phd_thesis') {
+                    if (document.isPhdThesisInstitutional) {
+                        requiredFields.push('phdInstitute');
+                        requiredFields.push('phdCourse');
+                        requiredFields.push('phdCycle');
+                    }
+
+                    requiredFields.push('supervisors');
+                    requiredFields.push('otherSupervisors');
+                }
+
+                return requiredFields;
+            },
+            isValid: function () {
+                const requiredFields = this.getRequiredFields(this);
 
                 return _.every(requiredFields, v => this[v]) &&
                     _.every(documentFieldsRules, (rule, k) => {
@@ -308,24 +337,9 @@
                     });
             },
             validateDocument: function (field = false) {
-                const requiredFields = [
-                    'authorsStr',
-                    'title',
-                    'year',
-                    'type',
-                    'sourceType'
-                ];
+                const requiredFields = this.getRequiredFields(this);
 
-                // TODO: refactor, invited_talk should be read by a service;
-                const invitedTalkType = 'invited_talk';
-                if (this.type === invitedTalkType)
-                    requiredFields.push('itSource');
-                else
-                    requiredFields.push('source');
-
-                let document = this;
-
-                return ValidateService.validate(document, field, requiredFields, documentFieldsRules);
+                return ValidateService.validate(this, field, requiredFields, documentFieldsRules);
             },
             getAllCoauthors: function () {
                 return this.authors;

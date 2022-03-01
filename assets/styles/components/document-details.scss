@@ -3,9 +3,14 @@
         margin-bottom: 0px;
     }
 
+    .phd-thesis-extra{
+        @include normalize-listing;
+    }
+
     .document-details-abstract,
     .document-details-source,
-    .document-details-ids{
+    .document-details-ids,
+    .phd-thesis-extra{
         margin-top: 2rem;
         padding-top: 2rem;
         border-top: 1px solid $gray-300;

@@ -1,11 +1,11 @@
 (function () {
-    angular.module("admin").factory("AdminService", AdminService);
+    angular.module("documents").factory("PhdThesisService", PhdThesisService);
 
-    AdminService.$inject = [
+    PhdThesisService.$inject = [
       'Restangular'
     ];
 
-    function AdminService(Restangular) {
+    function PhdThesisService(Restangular) {
         const service = {};
 
         /* jshint ignore:start */

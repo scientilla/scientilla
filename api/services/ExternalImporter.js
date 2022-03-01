@@ -45,10 +45,14 @@ module.exports = {
             await OpenaireImporter.updateAllMetadata();
     },
     async updateDocumentMetadata(document, origin) {
-        if ((!origin || origin === DocumentOrigins.SCOPUS) && document.scopusId)
-            await ScopusExternalImporter.updateMetadata(document.scopusId);
-        if ((!origin || origin === DocumentOrigins.OPENAIRE) && document.doi)
-            await OpenaireImporter.updateMetadata(document.doi);
+        try{
+            if ((!origin || origin === DocumentOrigins.SCOPUS) && document.scopusId)
+                await ScopusExternalImporter.updateMetadata(document.scopusId);
+            if ((!origin || origin === DocumentOrigins.OPENAIRE) && document.doi)
+                await OpenaireImporter.updateMetadata(document.doi);
+        } catch (e) {
+            console.log(e);
+        }
     },
     updateDocument: async (origin, id) => {
         if (origin === DocumentOrigins.SCOPUS)
