@@ -17,7 +17,6 @@
         });
 
     scientillaDocumentFormController.$inject = [
-        '$rootScope',
         'EventsService',
         'documentFieldsRules',
         '$scope',
@@ -26,19 +25,24 @@
         'context',
         'Restangular',
         'ModalService',
-        'documentCategories'
+        'documentCategories',
+        'languages',
+        'PhdThesisService'
     ];
 
-    function scientillaDocumentFormController($rootScope,
-                                              EventsService,
-                                              documentFieldsRules,
-                                              $scope,
-                                              $timeout,
-                                              DocumentTypesService,
-                                              context,
-                                              Restangular,
-                                              ModalService,
-                                              documentCategories) {
+    function scientillaDocumentFormController(
+        EventsService,
+        documentFieldsRules,
+        $scope,
+        $timeout,
+        DocumentTypesService,
+        context,
+        Restangular,
+        ModalService,
+        documentCategories,
+        languages,
+        PhdThesisService
+    ) {
         const vm = this;
 
         vm.saveStatus = saveStatus();
@@ -82,6 +86,9 @@
 
             watchDocumentSourceType();
             watchDocumentType();
+            watchRealizedAtIIT();
+            watchPhdInstitution();
+            watchPhdCourse();
 
             $scope.$watch('form.$pristine', formUntouched => vm.unsavedData = !formUntouched);
 
@@ -93,6 +100,15 @@
                     vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
                 }
             }
+
+            vm.languageOptions = [];
+            Object.keys(languages).map(language => {
+                vm.languageOptions.push({
+                    label: languages[language].name,
+                    value: language
+                });
+            });
+            vm.languageOptions = _.orderBy(vm.languageOptions, 'label');
         };
 
         vm.$onDestroy = function () {
@@ -153,9 +169,56 @@
             const dereg = $scope.$watch('vm.document.type', newValue => {
                 const allowedSources = _.find(vm.documentTypes, {key: newValue}).allowedSources;
                 vm.sourceTypes = _.filter(allSourceTypes, s => allowedSources.includes(s.id));
+
+                if (newValue === 'phd_thesis') {
+                    if (!_.has(vm.document, 'isPhdThesisInstitutional')) {
+                        vm.document.isPhdThesisInstitutional = false;
+                    }
+
+                    if (!_.has(vm.document, 'sourceType') || vm.document.sourceType !== 'book') {
+                        vm.document.sourceType = 'book';
+                    }
+
+                    if (!_.has(vm.document, 'language') || !vm.document.language) {
+                        vm.document.language = 'en';
+                    }
+                }
             });
             deregisteres.push(dereg);
         }
+
+        /* jshint ignore:start */
+        function watchRealizedAtIIT() {
+            const dereg = $scope.$watch('vm.document.isPhdThesisInstitutional', async newValue => {
+                if (newValue) {
+                    vm.institutes = await PhdThesisService.getInstitutes();
+                } else {
+                    vm.document.phdInstitute = null;
+                    vm.document.phdCourse = null;
+                    vm.document.phdCycle = null;
+                }
+            });
+            deregisteres.push(dereg);
+        }
+
+        function watchPhdInstitution() {
+            const dereg = $scope.$watch('vm.document.phdInstitute', async newValue => {
+                if (newValue) {
+                    vm.courses = await PhdThesisService.getCourses({id: vm.document.phdInstitute});
+                }
+            });
+            deregisteres.push(dereg);
+        }
+
+        function watchPhdCourse() {
+            const dereg = $scope.$watch('vm.document.phdCourse', async newValue => {
+                if (newValue) {
+                    vm.cycles = await PhdThesisService.getCycles({id: vm.document.phdCourse});
+                }
+            });
+            deregisteres.push(dereg);
+        }
+        /* jshint ignore:end */
 
         function saveStatus() {
             return {

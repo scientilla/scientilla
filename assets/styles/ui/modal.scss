@@ -8,6 +8,15 @@
         top: 3rem;
         right: 3rem;
     }
+
+    .modal-title{
+        display: inline-block;
+        vertical-align: top;
+
+        &:first-letter {
+            text-transform: uppercase;
+        }
+    }
 }
 
 .modal-body{

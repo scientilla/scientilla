@@ -49,6 +49,9 @@
                 template: `<scientilla-admin-tools
                     active-tab="group-overview"></scientilla-admin-tools>`
             })
+            .when("/phd-management", {
+                template: '<scientilla-admin-phd-thesis></scientilla-admin-phd-thesis>'
+            })
             .when("/connectors", {
                 template: '<scientilla-admin-external-connectors></scientilla-admin-external-connectors>'
             })

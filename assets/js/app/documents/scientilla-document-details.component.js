@@ -13,10 +13,11 @@
 
     scientillaDocumentsDetails.$inject = [
         'documentTypes',
-        'documentSourceTypes'
+        'documentSourceTypes',
+        'languages'
     ];
 
-    function scientillaDocumentsDetails(documentTypes, documentSourceTypes) {
+    function scientillaDocumentsDetails(documentTypes, documentSourceTypes, languages) {
         const vm = this;
 
         vm.collapsed = true;
@@ -39,6 +40,10 @@
 
             if (vm.document.pages)
                 vm.bibliographicInformations.push('pp. ' + vm.document.pages);
+        };
+
+        vm.getLanguage = code => {
+           return languages[code].name;
         };
     }
 

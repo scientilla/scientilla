@@ -557,6 +557,34 @@
                 });
         };
 
+        service.openAdminPhdThesisForm = (type = false, action = false, institute = false, course = false, cycle = false) => {
+
+            const scopeVars = {
+                type,
+                action,
+                institute,
+                course,
+                cycle
+            };
+
+            return openModal(`<scientilla-admin-phd-thesis-form
+                    type="vm.type"
+                    action="vm.action"
+                    institute="vm.institute"
+                    course="vm.course"
+                    cycle="vm.cycle"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                ></scientilla-admin-phd-thesis-form>`,
+                scopeVars,
+                {
+                    size: 'sm',
+                    backdrop: 'static',
+                    keyboard: false
+                });
+        };
+
         service.openScientillaResearchItemForm = function (researchEntity, researchItem, category) {
             const scopeVars = {
                 researchItem: researchItem,

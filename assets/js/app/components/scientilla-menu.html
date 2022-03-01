@@ -194,6 +194,12 @@
                     class="list-group-item list-group-item-action"
                 >Tools</a>
                 <a
+                    ng-href="#/phd-management"
+                    ng-class="{active: vm.isActive('/phd-management')}"
+                    ng-if="vm.isAdmin()"
+                    class="list-group-item list-group-item-action"
+                >PhD management</a>
+                <a
                     ng-href="#/customize"
                     ng-class="{active: vm.isActive('/customize')}"
                     ng-if="vm.isAdmin()"

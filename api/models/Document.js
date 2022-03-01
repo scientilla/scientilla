@@ -31,6 +31,16 @@ const fields = [
     {name: 'iitPublicationsId'},
     {name: 'origin'},
     {name: 'kind'},
+    {name: 'handle'},
+    {name: 'isPhdThesisInstitutional'},
+    {name: 'curriculum'},
+    {name: 'supervisors'},
+    {name: 'otherSupervisors'},
+    {name: 'language'},
+    {name: 'academicInstitution'},
+    {name: 'phdInstitute'},
+    {name: 'phdCourse'},
+    {name: 'phdCycle'},
     {name: 'synchronized'},
     {name: 'synchronized_at'}
 ];
@@ -187,6 +197,35 @@ module.exports = _.merge({}, BaseModel, {
         draftGroupCreator: {
             model: 'Group'
         },
+        //phd thesis only fields
+        isPhdThesisInstitutional: {
+            columnName: 'is_phd_thesis_institutional',
+            type: 'BOOLEAN'
+        },
+        curriculum: 'STRING',
+        supervisors: 'STRING',
+        otherSupervisors: {
+            columnName: 'other_supervisors',
+            type: 'STRING'
+        },
+        language: 'STRING',
+        handle: 'STRING',
+        academicInstitution: {
+            columnName: 'academic_institution',
+            type: 'STRING'
+        },
+        phdInstitute: {
+            columnName: 'phd_institute',
+            model: 'PhdInstitute'
+        },
+        phdCourse: {
+            columnName: 'phd_course',
+            model: 'PhdCourse'
+        },
+        phdCycle: {
+            columnName: 'phd_cycle',
+            model: 'PhdCycle'
+        },
         isDraft: function () {
             return this.kind === DocumentKinds.DRAFT
         },
@@ -198,10 +237,24 @@ module.exports = _.merge({}, BaseModel, {
                 'type',
                 'sourceType'
             ];
-            if (this.type === DocumentTypes.INVITED_TALK)
-                requiredFields.push('itSource');
-            else
-                requiredFields.push('source');
+
+            switch (this.type) {
+                case DocumentTypes.PHD_THESIS:
+                    if (this.isPhdThesisInstitutional) {
+                        requiredFields.push('phdInstitute');
+                        requiredFields.push('phdCourse');
+                        requiredFields.push('phdCycle');
+                    }
+                    requiredFields.push('supervisors');
+                    requiredFields.push('otherSupervisors');
+                    break;
+                case DocumentTypes.INVITED_TALK:
+                    requiredFields.push('itSource');
+                    break;
+                default:
+                    requiredFields.push('source');
+                    break;
+            }
 
             return _.every(requiredFields, v => this[v]) && this.hasValidAuthorsStr() && this.hasValidYear();
         },
