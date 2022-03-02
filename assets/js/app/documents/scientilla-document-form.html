@@ -182,8 +182,8 @@
             </div>
 
             <div
-                class="col-12 col-sm-12"
-                ng-class="['invited_talk', 'phd_thesis'].includes(vm.document.type) ? 'col-md-5 col-lg-4' : 'col-md-6'"
+                class="col-12 col-sm-6"
+                ng-class="['invited_talk', 'phd_thesis'].includes(vm.document.type) ? 'col-md-5 col-lg-4' : 'col-md-3'"
             >
                 <div
                     ng-class="{
@@ -216,7 +216,8 @@
             </div>
 
             <div
-                class="col-12 col-sm-12 col-md-6"
+                class="col-12 col-sm-6"
+                ng-class="['phd_thesis'].includes(vm.document.type) ? 'col-md-6' : 'col-md-3'"
                 ng-if="!['invited_talk'].includes(vm.document.type)"
             >
                 <div
