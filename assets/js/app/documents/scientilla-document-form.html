@@ -579,12 +579,14 @@
                             'has-warning' : vm.errors.academicInstitution && vm.mode == 'draft'
                         }"
                     >
-                        <label for="academic-institutiom">Other academic institution</label>
+                        <label for="academic-institutiom">
+                            {{vm.document.isPhdThesisInstitutional ? 'Other academic institutions' : 'Academic institutions'}}
+                        </label>
                         <input
                             type="text"
                             class="form-control"
                             id="academic-institution"
-                            placeholder="Other academic institution"
+                            placeholder="{{vm.document.isPhdThesisInstitutional ? 'Other academic institutions' : 'Academic institutions'}}"
                             ng-model="vm.document.academicInstitution"
                             ng-class="{'is-invalid' : vm.errors.academicInstitution}"
                             ng-blur="vm.checkValidation('academicInstitution')"
