@@ -153,6 +153,7 @@ module.exports = _.merge({}, BaseModel, {
     createDraft: async function (ResearchEntityModel, researchEntityId, draftData) {
         const selectedDraftData = Document.selectData(draftData);
         selectedDraftData.kind = DocumentKinds.DRAFT;
+        Document.fixPhdPopulates(selectedDraftData);
         await Document.fixDocumentType(selectedDraftData);
         const researchEntity = await ResearchEntityModel.findOneById(researchEntityId).populate('drafts');
         let draft = await Document.create(selectedDraftData);
@@ -172,6 +173,7 @@ module.exports = _.merge({}, BaseModel, {
         return draft;
     },
     updateDraft: async function (ResearchEntityModel, draftId, draftData) {
+
         const d = await Document.findOneById(draftId);
         if (!d.kind || d.kind !== DocumentKinds.DRAFT)
             throw "Draft not found";
@@ -180,6 +182,7 @@ module.exports = _.merge({}, BaseModel, {
         selectedDraftData.kind = DocumentKinds.DRAFT;
         selectedDraftData.synchronized = false;
         selectedDraftData.synchronized_at = null;
+        Document.fixPhdPopulates(selectedDraftData);
         await Document.fixDocumentType(selectedDraftData);
         const updatedDrafts = await Document.update({id: draftId}, selectedDraftData);
         const updatedDraft = updatedDrafts[0];
