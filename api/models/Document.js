@@ -561,6 +561,7 @@ module.exports = _.merge({}, BaseModel, {
         selectedData.documenttype = await Document.getFixedCollection(DocumentType, selectedData.documenttype);
         if (!selectedData.documenttype)
             await Document.fixDocumentType(selectedData);
+        Document.fixPhdPopulates(selectedDraftData);
 
         const oldDoc = await Document.findOne(criteria);
         let doc;
@@ -639,6 +640,19 @@ module.exports = _.merge({}, BaseModel, {
         const documentType = DocumentTypes.getDocumentType(document.type);
         if (documentType)
             document.documenttype = documentType.id;
+    },
+    fixPhdPopulates(document) {
+        if (_.has(document, 'phdInstitute.id')) {
+            document.phdInstitute = document.phdInstitute.id;
+        }
+
+        if (_.has(document, 'phdCourse.id')) {
+            document.phdCourse = document.phdCourse.id;
+        }
+
+        if (_.has(document, 'phdCycle.id')) {
+            document.phdCycle = document.phdCycle.id;
+        }
     },
     async export(documentIds, format) {
         let documents = await Document.find({id: documentIds})

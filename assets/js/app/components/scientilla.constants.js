@@ -255,6 +255,7 @@
             message: 'This year is not valid. It should be like: 2018'
         },
         handle: {
+            allowNull: true,
             regex: /^(http|https):\/\//,
             message: 'This handle should start with http:// or https://'
         },

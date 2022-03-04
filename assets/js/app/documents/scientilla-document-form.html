@@ -456,7 +456,7 @@
                                 name="phd-institute"
                                 required
                                 placeholder="Academic institution"
-                                ng-model="vm.document.phdInstitute"
+                                ng-model="vm.phdInstituteId"
                                 ng-options="institute.id as institute.name for institute in vm.institutes"
                                 ng-class="{'is-invalid' : vm.errors.phdInstitute}"
                                 ng-blur="vm.checkValidation('phdInstitute')"
@@ -490,7 +490,7 @@
                                 name="phd-course"
                                 required
                                 placeholder="PhD course"
-                                ng-model="vm.document.phdCourse"
+                                ng-model="vm.phdCourseId"
                                 ng-options="course.id as course.name for course in vm.courses"
                                 ng-disabled="!vm.document.phdInstitute"
                                 ng-class="{'is-invalid' : vm.errors.phdCourse}"
@@ -525,7 +525,7 @@
                                 name="phd-cycle"
                                 required
                                 placeholder="Cycle"
-                                ng-model="vm.document.phdCycle"
+                                ng-model="vm.phdCycleId"
                                 ng-options="cycle.id as cycle.name for cycle in vm.cycles"
                                 ng-disabled="!vm.document.phdCourse"
                                 ng-class="{'is-invalid' : vm.errors.phdCycle}"
@@ -579,12 +579,14 @@
                             'has-warning' : vm.errors.academicInstitution && vm.mode == 'draft'
                         }"
                     >
-                        <label for="academic-institutiom">Other academic institution</label>
+                        <label for="academic-institutiom">
+                            {{vm.document.isPhdThesisInstitutional ? 'Other academic institutions' : 'Academic institutions'}}
+                        </label>
                         <input
                             type="text"
                             class="form-control"
                             id="academic-institution"
-                            placeholder="Other academic institution"
+                            placeholder="{{vm.document.isPhdThesisInstitutional ? 'Other academic institutions' : 'Academic institutions'}}"
                             ng-model="vm.document.academicInstitution"
                             ng-class="{'is-invalid' : vm.errors.academicInstitution}"
                             ng-blur="vm.checkValidation('academicInstitution')"

@@ -88,7 +88,18 @@
         <label class="inline-block">Academic institution:</label> {{vm.document.phdInstitute.name}}
     </li>
     <li ng-if="vm.document.academicInstitution">
-        <label class="inline-block">Other academic institution:</label> {{vm.document.academicInstitution}}
+        <label class="inline-block">
+            {{vm.document.isPhdThesisInstitutional ? 'Other academic institutions' : 'Academic institutions'}}:
+        </label> {{vm.document.academicInstitution}}
+    </li>
+    <li ng-if="vm.document.isPhdThesisInstitutional && vm.document.phdCourse">
+        <label class="inline-block">PhD course:</label> {{vm.document.phdCourse.name}}
+    </li>
+    <li ng-if="vm.document.isPhdThesisInstitutional && vm.document.curriculum">
+        <label class="inline-block">Curriculum:</label> {{vm.document.curriculum}}
+    </li>
+    <li ng-if="vm.document.isPhdThesisInstitutional && vm.document.phdCycle">
+        <label class="inline-block">Cycle:</label> {{vm.document.phdCycle.name}}
     </li>
 </ul>
 
@@ -101,21 +112,6 @@
     </li>
     <li ng-if="vm.document.otherSupervisors">
         <label class="inline-block">Supervisors:</label> {{vm.document.otherSupervisors}}
-    </li>
-</ul>
-
-<ul
-    class="phd-thesis-extra"
-    ng-if="['phd_thesis'].includes(vm.document.type) && vm.document.isPhdThesisInstitutional && (vm.document.phdCourse || vm.document.curriculum || vm.document.phdCycle)"
->
-    <li ng-if="vm.document.isPhdThesisInstitutional && vm.document.phdCourse">
-        <label class="inline-block">PhD course:</label> {{vm.document.phdCourse.name}}
-    </li>
-    <li ng-if="vm.document.isPhdThesisInstitutional && vm.document.curriculum">
-        <label class="inline-block">Curriculum:</label> {{vm.document.curriculum}}
-    </li>
-    <li ng-if="vm.document.isPhdThesisInstitutional && vm.document.phdCycle">
-        <label class="inline-block">Cycle:</label> {{vm.document.phdCycle.name}}
     </li>
 </ul>
 
