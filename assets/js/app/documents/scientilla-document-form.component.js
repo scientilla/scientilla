@@ -78,17 +78,37 @@
 
         const delay = 500;
 
-        vm.$onInit = function () {
+         /* jshint ignore:start */
+        vm.$onInit = async function () {
             if (_.isFunction(vm.document.clone))
                 documentBackup = vm.document.clone();
             else
                 documentBackup = _.cloneDeep(vm.document);
 
+            if (vm.document.type === 'phd_thesis') {
+                vm.institutes = await PhdThesisService.getInstitutes();
+
+                if (vm.document.phdInstitute) {
+                    vm.phdInstituteId = vm.document.phdInstitute.id;
+                    await getCoursesOfInstitute();
+                }
+
+                if (vm.document.phdCourse) {
+                    vm.phdCourseId = vm.document.phdCourse.id;
+                    await getCyclesOfCourse();
+                }
+
+                if (vm.document.phdCycle) {
+                    vm.phdCycleId = vm.document.phdCycle.id;
+                }
+            }
+
             watchDocumentSourceType();
             watchDocumentType();
             watchRealizedAtIIT();
-            watchPhdInstitution();
-            watchPhdCourse();
+            watchPhdInstitutionId();
+            watchPhdCourseId();
+            watchPhdCycleId();
 
             $scope.$watch('form.$pristine', formUntouched => vm.unsavedData = !formUntouched);
 
@@ -110,6 +130,7 @@
             });
             vm.languageOptions = _.orderBy(vm.languageOptions, 'label');
         };
+         /* jshint ignore:end */
 
         vm.$onDestroy = function () {
             for (const deregisterer of deregisteres)
@@ -188,10 +209,24 @@
         }
 
         /* jshint ignore:start */
+        async function getCoursesOfInstitute() {
+            vm.courses = await PhdThesisService.getCourses(vm.document.phdInstitute);
+        }
+
+        async function getCyclesOfCourse() {
+            vm.cycles = await PhdThesisService.getCycles(vm.document.phdCourse);
+        }
+
         function watchRealizedAtIIT() {
-            const dereg = $scope.$watch('vm.document.isPhdThesisInstitutional', async newValue => {
+            const dereg = $scope.$watch('vm.document.isPhdThesisInstitutional', async (newValue, oldValue) => {
+                if (newValue === oldValue) {
+                    return;
+                }
+
                 if (newValue) {
-                    vm.institutes = await PhdThesisService.getInstitutes();
+                    if (!vm.institutes) {
+                        vm.institutes = await PhdThesisService.getInstitutes();
+                    }
                 } else {
                     vm.document.phdInstitute = null;
                     vm.document.phdCourse = null;
@@ -201,24 +236,65 @@
             deregisteres.push(dereg);
         }
 
-        function watchPhdInstitution() {
-            const dereg = $scope.$watch('vm.document.phdInstitute', async newValue => {
-                if (newValue) {
-                    vm.courses = await PhdThesisService.getCourses({id: vm.document.phdInstitute});
+        function watchPhdInstitutionId() {
+            const dereg = $scope.$watch('vm.phdInstituteId', async (newValue, oldValue) => {
+                if (newValue === oldValue) {
+                    return;
+                }
+
+                if (newValue && vm.institutes) {
+                    const institute = vm.institutes.find(i => i.id === newValue);
+                    if (!institute) {
+                        return;
+                    }
+                    vm.phdCourseId = null;
+                    vm.phdCycleId = null;
+                    vm.document.phdInstitute = institute;
+                    vm.document.phdCourse = null;
+                    vm.document.phdCycle = null;
+                    await getCoursesOfInstitute();
                 }
             });
             deregisteres.push(dereg);
         }
 
-        function watchPhdCourse() {
-            const dereg = $scope.$watch('vm.document.phdCourse', async newValue => {
+        function watchPhdCourseId() {
+            const dereg = $scope.$watch('vm.phdCourseId', async (newValue, oldValue) => {
+                if (newValue === oldValue) {
+                    return;
+                }
+
                 if (newValue) {
-                    vm.cycles = await PhdThesisService.getCycles({id: vm.document.phdCourse});
+                    const course = vm.courses.find(c => c.id === newValue);
+                    if (!course) {
+                        return;
+                    }
+                    vm.phdCycleId = null;
+                    vm.document.phdCourse = course;
+                    vm.document.phdCycle = null;
+                    await getCyclesOfCourse()
                 }
             });
             deregisteres.push(dereg);
         }
         /* jshint ignore:end */
+
+        function watchPhdCycleId() {
+            const dereg = $scope.$watch('vm.phdCycleId', (newValue, oldValue) => {
+                if (newValue === oldValue) {
+                    return;
+                }
+
+                if (newValue) {
+                    const cycle = vm.cycles.find(c => c.id === newValue);
+                    if (!cycle) {
+                        return;
+                    }
+                    vm.document.phdCycle = cycle;
+                }
+            });
+            deregisteres.push(dereg);
+        }
 
         function saveStatus() {
             return {
@@ -310,7 +386,6 @@
                 $timeout(function () {
                     vm.saveStatus.setState('ready to save');
                 }, 1000);
-
 
             return vm.document;
         }
