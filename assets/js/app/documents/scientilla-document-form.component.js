@@ -187,11 +187,11 @@
         }
 
         function watchDocumentType() {
-            const dereg = $scope.$watch('vm.document.type', (newValue, oldValue) => {
+            const dereg = $scope.$watch('vm.document.type', newValue => {
                 const allowedSources = _.find(vm.documentTypes, {key: newValue}).allowedSources;
                 vm.sourceTypes = _.filter(allSourceTypes, s => allowedSources.includes(s.id));
 
-                if (newValue !== oldValue && newValue === 'phd_thesis') {
+                if (newValue === 'phd_thesis') {
                     if (!_.has(vm.document, 'isPhdThesisInstitutional') || !vm.document.isPhdThesisInstitutional) {
                         vm.document.isPhdThesisInstitutional = false;
                     }
