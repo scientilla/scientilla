@@ -33,7 +33,9 @@
                 query.where = {};
             }
 
-            query.where.type = { '!': groupTypes.PROJECT };
+            if (!_.has(query, 'where.type')) {
+                query.where.type = { '!': groupTypes.PROJECT };
+            }
 
             return GroupsService.getGroups(query)
                 .then(function (groups) {

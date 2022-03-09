@@ -51,144 +51,146 @@
         <span class="project-status" ng-class="vm.project.status"></span><br>
     </ng-container>
 
-    <ng-container ng-if="vm.project.totalContribution">
-        <strong>Total contribution:</strong>
-        {{ vm.project.totalContribution | valuta }}
-        <span class="project-total-contribution" ng-class="vm.project.totalContribution"></span><br>
-    </ng-container>
-
-    <ng-container ng-if="vm.project.payment === vm.industrialProjectPayments['inCash/inKind']">
-        <ng-container ng-if="vm.project.inCashContribution">
-            <strong>In cash contribution:</strong>
-            {{ vm.project.inCashContribution | valuta }}
-            <span class="project-in-cash-contribution" ng-class="vm.project.inCashContribution"></span><br>
+    <ng-container ng-if="vm.showBudgetDetails">
+        <ng-container ng-if="vm.project.totalContribution">
+            <strong>Total contribution:</strong>
+            {{ vm.project.totalContribution | valuta }}
+            <span class="project-total-contribution" ng-class="vm.project.totalContribution"></span><br>
         </ng-container>
 
-        <ng-container ng-if="vm.project.inKindContribution">
-            <strong>In kind contribution:</strong>
-            {{ vm.project.inKindContribution | valuta }}
-            <span class="project-in-kind-contribution" ng-class="vm.project.inKindContribution"></span><br>
+        <ng-container ng-if="vm.project.payment === vm.industrialProjectPayments['inCash/inKind']">
+            <ng-container ng-if="vm.project.inCashContribution">
+                <strong>In cash contribution:</strong>
+                {{ vm.project.inCashContribution | valuta }}
+                <span class="project-in-cash-contribution" ng-class="vm.project.inCashContribution"></span><br>
+            </ng-container>
+
+            <ng-container ng-if="vm.project.inKindContribution">
+                <strong>In kind contribution:</strong>
+                {{ vm.project.inKindContribution | valuta }}
+                <span class="project-in-kind-contribution" ng-class="vm.project.inKindContribution"></span><br>
+            </ng-container>
         </ng-container>
-    </ng-container>
 
-    <ng-container ng-if="vm.project.members.length > 0 && (vm.project.payment === vm.industrialProjectPayments['InCash'] || vm.project.payment === vm.industrialProjectPayments['inCash/inKind'])">
-        <br>
-        <strong>In cash annual funding members:</strong>
-        <div class="table-responsive">
-            <table class="table">
-                <tr ng-repeat="member in vm.project.members|limitTo:1">
-                    <th class="name-column">Name</th>
-                    <th ng-repeat="year in vm.inCashAnnualFundingMembersYears">
-                        {{ year }}
-                    </th>
-                </tr>
-                <tr ng-repeat="member in vm.project.members">
-                    <td class="name-column">
-                        <ng-container ng-if="vm.isUser(member)">
-                            <a href="{{ vm.getUserUrl(member) }}" ng-click="vm.closeModal()">
+        <ng-container ng-if="vm.project.members.length > 0 && (vm.project.payment === vm.industrialProjectPayments['InCash'] || vm.project.payment === vm.industrialProjectPayments['inCash/inKind'])">
+            <br>
+            <strong>In cash annual funding members:</strong>
+            <div class="table-responsive">
+                <table class="table">
+                    <tr ng-repeat="member in vm.project.members|limitTo:1">
+                        <th class="name-column">Name</th>
+                        <th ng-repeat="year in vm.inCashAnnualFundingMembersYears">
+                            {{ year }}
+                        </th>
+                    </tr>
+                    <tr ng-repeat="member in vm.project.members">
+                        <td class="name-column">
+                            <ng-container ng-if="vm.isUser(member)">
+                                <a href="{{ vm.getUserUrl(member) }}" ng-click="vm.closeModal()">
+                                    {{ vm.getAlias(member) }}
+                                </a>
+                            </ng-container>
+                            <ng-container ng-if="!vm.isUser(member)">
                                 {{ vm.getAlias(member) }}
-                            </a>
-                        </ng-container>
-                        <ng-container ng-if="!vm.isUser(member)">
-                            {{ vm.getAlias(member) }}
-                        </ng-container>
-                    </td>
-                    <td ng-repeat="year in vm.inCashAnnualFundingMembersYears">
-                        {{ vm.getInCashAnnualContribution(member, year) }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </ng-container>
+                            </ng-container>
+                        </td>
+                        <td ng-repeat="year in vm.inCashAnnualFundingMembersYears">
+                            {{ vm.getInCashAnnualContribution(member, year) }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </ng-container>
 
-    <ng-container ng-if="vm.project.members.length > 0 && (vm.project.payment === vm.industrialProjectPayments['InKind'] || vm.project.payment === vm.industrialProjectPayments['inCash/inKind'])">
-        <br>
-        <strong>In kind annual funding members:</strong>
-        <div class="table-responsive">
-            <table class="table">
-                <tr ng-repeat="member in vm.project.members|limitTo:1">
-                    <th class="name-column">Name</th>
-                    <th ng-repeat="year in vm.inKindAnnualFundingMembersYears">
-                        {{ year }}
-                    </th>
-                </tr>
-                <tr ng-repeat="member in vm.project.members">
-                    <td class="name-column">
-                        <ng-container ng-if="vm.isUser(member)">
-                            <a href="{{ vm.getUserUrl(member) }}" ng-click="vm.closeModal()">
+        <ng-container ng-if="vm.project.members.length > 0 && (vm.project.payment === vm.industrialProjectPayments['InKind'] || vm.project.payment === vm.industrialProjectPayments['inCash/inKind'])">
+            <br>
+            <strong>In kind annual funding members:</strong>
+            <div class="table-responsive">
+                <table class="table">
+                    <tr ng-repeat="member in vm.project.members|limitTo:1">
+                        <th class="name-column">Name</th>
+                        <th ng-repeat="year in vm.inKindAnnualFundingMembersYears">
+                            {{ year }}
+                        </th>
+                    </tr>
+                    <tr ng-repeat="member in vm.project.members">
+                        <td class="name-column">
+                            <ng-container ng-if="vm.isUser(member)">
+                                <a href="{{ vm.getUserUrl(member) }}" ng-click="vm.closeModal()">
+                                    {{ vm.getAlias(member) }}
+                                </a>
+                            </ng-container>
+                            <ng-container ng-if="!vm.isUser(member)">
                                 {{ vm.getAlias(member) }}
-                            </a>
-                        </ng-container>
-                        <ng-container ng-if="!vm.isUser(member)">
-                            {{ vm.getAlias(member) }}
-                        </ng-container>
-                    </td>
-                    <td ng-repeat="year in vm.inKindAnnualFundingMembersYears">
-                        {{ vm.getInKindAnnualContribution(member, year) }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </ng-container>
+                            </ng-container>
+                        </td>
+                        <td ng-repeat="year in vm.inKindAnnualFundingMembersYears">
+                            {{ vm.getInKindAnnualContribution(member, year) }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </ng-container>
 
-    <ng-container ng-if="vm.project.researchLines.length > 0 && (vm.project.payment === vm.industrialProjectPayments['InCash'] || vm.project.payment === vm.industrialProjectPayments['inCash/inKind'])">
-        <br>
-        <strong>In cash annual funding research lines:</strong>
-        <div class="table-responsive">
-            <table class="table">
-                <tr>
-                    <th class="name-column">Name</th>
-                    <th ng-repeat="year in vm.inCashAnnualContributionYears">
-                        {{ year }}
-                    </th>
-                </tr>
-                <tr ng-repeat="researchLine in vm.project.researchLines">
-                    <td class="name-column">
-                        <ng-container ng-if="vm.isGroup(researchLine)">
-                            <a href="{{ vm.getGroupUrl(researchLine) }}" ng-click="vm.closeModal()">
+        <ng-container ng-if="vm.project.researchLines.length > 0 && (vm.project.payment === vm.industrialProjectPayments['InCash'] || vm.project.payment === vm.industrialProjectPayments['inCash/inKind'])">
+            <br>
+            <strong>In cash annual funding research lines:</strong>
+            <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <th class="name-column">Name</th>
+                        <th ng-repeat="year in vm.inCashAnnualContributionYears">
+                            {{ year }}
+                        </th>
+                    </tr>
+                    <tr ng-repeat="researchLine in vm.project.researchLines">
+                        <td class="name-column">
+                            <ng-container ng-if="vm.isGroup(researchLine)">
+                                <a href="{{ vm.getGroupUrl(researchLine) }}" ng-click="vm.closeModal()">
+                                    {{ vm.getGroupName(researchLine) }}
+                                </a>
+                            </ng-container>
+                            <ng-container ng-if="!vm.isGroup(researchLine)">
                                 {{ vm.getGroupName(researchLine) }}
-                            </a>
-                        </ng-container>
-                        <ng-container ng-if="!vm.isGroup(researchLine)">
-                            {{ vm.getGroupName(researchLine) }}
-                        </ng-container>
-                    </td>
-                    <td ng-repeat="year in vm.inCashAnnualContributionYears">
-                        {{ vm.getInCashAnnualContribution(researchLine, year) }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </ng-container>
+                            </ng-container>
+                        </td>
+                        <td ng-repeat="year in vm.inCashAnnualContributionYears">
+                            {{ vm.getInCashAnnualContribution(researchLine, year) }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </ng-container>
 
-    <ng-container ng-if="vm.project.researchLines.length > 0 && (vm.project.payment === industrialProjectPayments['InKind'] || vm.project.payment === vm.industrialProjectPayments['inCash/inKind'])">
-        <br>
-        <strong>In kind annual funding research lines:</strong>
-        <div class="table-responsive">
-            <table class="table">
-                <tr>
-                    <th class="name-column">Name</th>
-                    <th ng-repeat="year in vm.inKindAnnualContributionYears">
-                        {{ year }}
-                    </th>
-                </tr>
-                <tr ng-repeat="researchLine in vm.project.researchLines">
-                    <td class="name-column">
-                        <ng-container ng-if="vm.isGroup(researchLine)">
-                            <a href="{{ vm.getGroupUrl(researchLine) }}" ng-click="vm.closeModal()">
+        <ng-container ng-if="vm.project.researchLines.length > 0 && (vm.project.payment === industrialProjectPayments['InKind'] || vm.project.payment === vm.industrialProjectPayments['inCash/inKind'])">
+            <br>
+            <strong>In kind annual funding research lines:</strong>
+            <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <th class="name-column">Name</th>
+                        <th ng-repeat="year in vm.inKindAnnualContributionYears">
+                            {{ year }}
+                        </th>
+                    </tr>
+                    <tr ng-repeat="researchLine in vm.project.researchLines">
+                        <td class="name-column">
+                            <ng-container ng-if="vm.isGroup(researchLine)">
+                                <a href="{{ vm.getGroupUrl(researchLine) }}" ng-click="vm.closeModal()">
+                                    {{ vm.getGroupName(researchLine) }}
+                                </a>
+                            </ng-container>
+                            <ng-container ng-if="!vm.isGroup(researchLine)">
                                 {{ vm.getGroupName(researchLine) }}
-                            </a>
-                        </ng-container>
-                        <ng-container ng-if="!vm.isGroup(researchLine)">
-                            {{ vm.getGroupName(researchLine) }}
-                        </ng-container>
-                    </td>
-                    <td ng-repeat="year in vm.inKindAnnualContributionYears">
-                        {{ vm.getInKindAnnualContribution(researchLine, year) }}
-                    </td>
-                </tr>
-            </table>
-        </div>
+                            </ng-container>
+                        </td>
+                        <td ng-repeat="year in vm.inKindAnnualContributionYears">
+                            {{ vm.getInKindAnnualContribution(researchLine, year) }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </ng-container>
     </ng-container>
 </ng-container>
 
