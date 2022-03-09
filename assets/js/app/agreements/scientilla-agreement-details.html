@@ -26,6 +26,10 @@
     <strong>Institute budget:</strong> €{{ vm.agreement.projectData.contribution }}<br />
 </ng-container>
 
+<ng-container ng-if="vm.agreement.status">
+    <strong>Status:</strong> {{ vm.agreement.status }} <span class="agreement-status" ng-class="vm.agreement.status"></span><br />
+</ng-container>
+
 <ng-container ng-if="vm.agreement.projectData.startDate">
     <strong>Start date:</strong> {{ vm.agreement.projectData.startDate | date: 'd/M/y'}}<br />
 </ng-container>

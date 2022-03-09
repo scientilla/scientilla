@@ -11,12 +11,13 @@
             }
         });
 
-    scientillaAgreementDetails.$inject = [];
+    scientillaAgreementDetails.$inject = ['AgreementService'];
 
-    function scientillaAgreementDetails() {
+    function scientillaAgreementDetails(AgreementService) {
         const vm = this;
 
         vm.$onInit = function () {
+            vm.agreement.status = AgreementService.getStatus(vm.agreement);
         };
 
         vm.getTypeLabel = type => {
