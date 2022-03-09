@@ -242,6 +242,13 @@
         };
 
         const agreementFormStructure = {
+            acronym: {
+                inputType: 'text',
+                label: 'Acronym',
+                matchColumn: 'acronym',
+                matchRule: 'contains',
+                type: 'field',
+            },
             title: {
                 inputType: 'text',
                 label: 'Title',
@@ -263,23 +270,23 @@
                 matchRule: 'contains',
                 type: 'field',
             },
-            // year: {
-            //     inputType: 'range',
-            //     values: {},
-            //     label: 'Start year',
-            //     subLabel: '(range between)',
-            //     matchColumn: 'startYear',
-            //     rules: [
-            //         {
-            //             value: 'min',
-            //             rule: '>='
-            //         }, {
-            //             value: 'max',
-            //             rule: '<='
-            //         }
-            //     ],
-            //     type: 'field',
-            // }
+            year: {
+                inputType: 'range',
+                values: {},
+                label: 'Start year',
+                subLabel: '(range between)',
+                matchColumn: 'startYear',
+                rules: [
+                    {
+                        value: 'min',
+                        rule: '>='
+                    }, {
+                        value: 'max',
+                        rule: '<='
+                    }
+                ],
+                type: 'field',
+            }
         };
 
         const agreementGroupFormStructure = {
@@ -504,8 +511,8 @@
             formStructures[constant].year.minMaxYears.push({ key: 'project_competitive', values: minMaxYears.find(m => m.item_key === 'project_competitive')});
             formStructures[constant].year.minMaxYears.push({ key: 'project_industrial', values: minMaxYears.find(m => m.item_key === 'project_industrial')});
 
-            formStructures[constant].year.defaultValues = defaultValues;
             const defaultValues = formStructures[constant].year.minMaxYears.find(v => v.key === 'project_competitive');
+            formStructures[constant].year.defaultValues = defaultValues;
 
             if (_.isNil(defaultValues) || _.isNil(defaultValues.values)) {
                 formStructures[constant].year.defaultValues = {
@@ -522,21 +529,23 @@
             };
         }
 
-        async function setupAgreementStructure(constant, researchEntity, type = 'agreement_drafts') {
+        async function setupAgreementStructure(constant, researchEntity, type = 'verified_agreements') {
             formStructures[constant].agreementType.values = getAgreementTypes();
-            const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, type);
-            // formStructures[constant].year.defaultValues = defaultValues;
-            // let yearValue = _.first(formStructures[constant].year.defaultValues);
-            // if (_.isNil(yearValue)) {
-            //     yearValue = {
-            //         min: 2000,
-            //         max: new Date().getFullYear()
-            //     };
-            // }
-            // formStructures[constant].year.values = {
-            //     min: parseInt(yearValue.min),
-            //     max: parseInt(yearValue.max)
-            // };
+            const minMaxYears = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'agreement');
+            formStructures[constant].year.defaultValues = minMaxYears.find(v => v.item_key === type);
+            let yearValue = formStructures[constant].year.defaultValues;
+            if (_.isNil(yearValue)) {
+                yearValue = {
+                    min: 2000,
+                    max: new Date().getFullYear()
+                };
+            }
+            formStructures[constant].year.values = {
+                min: parseInt(yearValue.min),
+                max: parseInt(yearValue.max)
+            };
+            formStructures[constant].year.floor = parseInt(yearValue.min);
+            formStructures[constant].year.ceil = parseInt(yearValue.max);
         }
 
         async function setupPatentStructure(constant, researchEntity) {
@@ -666,7 +675,7 @@
                     structure =  formStructures[constant];
                     break;
                 case constant === 'agreement':
-                    await setupAgreementStructure(constant, researchEntity);
+                    await setupAgreementStructure(constant, researchEntity, 'draft_agreements');
                     structure = formStructures[constant];
                     break;
                 case constant === 'agreement-group':

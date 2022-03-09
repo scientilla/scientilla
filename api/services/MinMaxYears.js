@@ -6,8 +6,7 @@
 const sqlQueries = {
     'accomplishment': 'api/queries/minMaxYearsAccomplishments.sql',
     'project': 'api/queries/minMaxYearsProjects.sql',
-    'verified_agreements': 'api/queries/minMaxYearsVerifiedAgreements.sql',
-    'agreement_drafts': 'api/queries/minMaxYearsAgreementDrafts.sql',
+    'agreement': 'api/queries/minMaxYearsAgreements.sql',
     'patent': 'api/queries/minMaxYearsPatents.sql',
 };
 
