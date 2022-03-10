@@ -8,10 +8,18 @@
     GroupService.$inject = [
         'Restangular',
         'Prototyper',
-        'Notification'
+        'Notification',
+        'groupTypes',
+        'groupTypeLabels'
     ];
 
-    function GroupService(Restangular, Prototyper, Notification) {
+    function GroupService(
+        Restangular,
+        Prototyper,
+        Notification,
+        groupTypes,
+        groupTypeLabels
+    ) {
         var service = Restangular.service("groups");
 
         service.getNewGroup = getNewGroup;
@@ -34,6 +42,7 @@
         service.getParentMembershipGroups = getParentMembershipGroups;
         service.getTypeTitle = getTypeTitle;
         service.createInstituteStructure = createInstituteStructure;
+        service.getGroupTypeLabel = getGroupTypeLabel;
 
         return service;
 
@@ -316,7 +325,23 @@
             }
         }
 
-        return service;
-    }
+        function getGroupTypeLabel(type) {
+            switch(type) {
+                case groupTypes.INSTITUTE:
+                    return groupTypeLabels.INSTITUTE;
+                case groupTypes.CENTER:
+                    return groupTypeLabels.CENTER;
+                case groupTypes.RESEARCH_LINE:
+                    return groupTypeLabels.RESEARCH_LINE;
+                case groupTypes.FACILITY:
+                    return groupTypeLabels.FACILITY;
+                case groupTypes.DIRECTORATE:
+                    return groupTypeLabels.DIRECTORATE;
+                case groupTypes.PROJECT:
+                    return 'Agreement';
+            }
 
+            return '';
+        }
+    }
 }());

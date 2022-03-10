@@ -20,10 +20,21 @@
 }
 
 .dropdown-toggle{
+    position: relative;
+    padding-right: 2.5rem;
+
     &.only-icon{
         &:after{
             margin-left: 0px;
         }
+    }
+
+    &:after{
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        display: block;
+        margin-top: -2px;
     }
 }
 
