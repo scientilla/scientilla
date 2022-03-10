@@ -118,24 +118,6 @@
         ></agreement-referrer-editor>
 
         <div class="form-group">
-            <label for="subject">Author string * <em>(will be generated automatically from the scientific coordinators.)</em></label>
-            <input
-                id="authorsStr"
-                type="text"
-                name="authorsStr"
-                class="form-control"
-                placeholder="Referrers string"
-                ng-disabled="true"
-                ng-model="vm.agreementData.authorsStr"
-                ng-class="{'is-invalid' : vm.errors.authorsStr}"
-            >
-            <scientilla-error-messages
-                class="error-messages"
-                errors="vm.errors.authorsStr"
-            ></scientilla-error-messages>
-        </div>
-
-        <div class="form-group">
             <label for="subject">Start date *</label>
             <input
                 id="start-date"
