@@ -117,6 +117,7 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/projects/export']: 'Project.export',
     ['put ' + apiPrfx + '/projects/:projectId/group']: 'Project.generateGroup',
     ['post ' + apiPrfx + '/patents/export']: 'Patent.export',
+    ['post ' + apiPrfx + '/agreements/export']: 'Agreement.export',
     ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-profile']: 'ResearchEntity.getProfile',
     ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-edit-profile']: 'ResearchEntity.getEditProfile',
     ['post ' + apiPrfx + '/researchentities/:researchEntityId/save-profile']: 'ResearchEntity.saveProfile',

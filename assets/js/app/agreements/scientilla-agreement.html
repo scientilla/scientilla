@@ -18,11 +18,15 @@
         ></h2>
 
         <ng-container ng-if="vm.agreement.title">
-            {{ vm.agreement.title }}<br />
+            <strong>Title:</strong> {{ vm.agreement.title }}<br />
         </ng-container>
 
         <ng-container ng-if="vm.agreement.projectData.agreementType">
-            {{ vm.getTypeLabel(vm.agreement.projectData.agreementType) }}<br />
+            <strong>Type:</strong> {{ vm.getTypeLabel(vm.agreement.projectData.agreementType) }}<br />
+        </ng-container>
+
+        <ng-container ng-if="vm.agreement.status">
+            <strong>Status:</strong> {{ vm.agreement.status }} <span class="agreement-status" ng-class="vm.agreement.status"></span><br />
         </ng-container>
 
         <ng-container ng-if="vm.agreement.projectData.partners && vm.agreement.projectData.partners.length > 0">

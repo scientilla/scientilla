@@ -245,14 +245,18 @@ module.exports = _.merge({}, BaseModel, {
                 surname: m.surname
             }));
     },
-    async export(projectIds, format) {
+    async export(projectIds, format, type = ResearchItemTypes.PROJECT) {
         const projects = await Project.find({id: projectIds})
             .populate([
                 'type',
             ]);
 
-        if (format === 'csv')
+        if (format === 'csv') {
+            if (type === ResearchItemTypes.PROJECT_AGREEMENT) {
+                return Exporter.agreementsToCsv(projects);
+            }
             return Exporter.projectsToCsv(projects);
+        }
 
         throw {
             success: false,

@@ -243,6 +243,7 @@ module.exports.policies = {
 
     AgreementController: _.defaults({
         getUniquePartnerInstitutes: isLogged,
+        export: isLogged
     }, defaultPolicy),
 
     PhdInstituteController: _.defaults({

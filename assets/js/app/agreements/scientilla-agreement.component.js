@@ -14,13 +14,13 @@
         });
 
     controller.$inject = [
-        'GroupsService',
+        'AgreementService',
         'ModalService',
         'TextService'
     ];
 
     function controller(
-        GroupsService,
+        AgreementService,
         ModalService,
         TextService
     ) {
@@ -30,6 +30,7 @@
         vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
 
         vm.$onInit = function () {
+            vm.agreement.status = AgreementService.getStatus(vm.agreement);
         };
 
         vm.getAgreementYears = () => {

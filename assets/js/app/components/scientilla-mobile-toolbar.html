@@ -21,25 +21,38 @@
                 ></i>
                 {{ vm.subResearchEntity.getDisplayName() }}
             </button>
-            <ul
+            <div
                 uib-dropdown-menu
                 class="dropdown-menu"
-                role="menu"
-                aria-labelledby="single-button">
-                <li role="menuitem">
-                    <a class="dropdown-item"
-                       ng-click="vm.changeContextToUser(vm.user)">
-                        {{vm.user.getDisplayName()}}
-                    </a>
-                </li>
-                <li ng-repeat="g in vm.user.administratedGroups"
-                    role="menuitem">
-                    <a class="dropdown-item"
-                       ng-click="vm.changeContextToGroup(g)">
-                        {{g.getDisplayName()}}
-                    </a>
-                </li>
-            </ul>
+            >
+                <ul
+                    class="group-type-listing"
+                    role="menu"
+                    aria-labelledby="single-button"
+                >
+                    <li role="menuitem">
+                        <a
+                            class="dropdown-item"
+                            ng-click="vm.changeContextToUser(vm.user)"
+                        >
+                            {{ vm.user.getDisplayName() }}
+                        </a>
+                    </li>
+                    <li ng-repeat="(type, groups) in vm.groupsByType">
+                        <span class="group-type">{{ vm.getGroupTypeLabel(type) }}</span>
+                        <ul class="group-listing">
+                            <li ng-repeat="group in groups">
+                                <a
+                                    class="dropdown-item"
+                                    ng-click="vm.changeContextToGroup(group)"
+                                >
+                                    {{ group.getDisplayName() }}
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </li>
 

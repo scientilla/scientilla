@@ -42,6 +42,7 @@
         vm.profile = false;
         vm.isUser = isUser;
         vm.isGroup = isGroup;
+        vm.getGroupTypeLabel = GroupsService.getGroupTypeLabel;
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
@@ -80,12 +81,14 @@
             await AuthService.refreshUserAccount();
             vm.isLogged = AuthService.isLogged;
             vm.user = AuthService.user;
+            vm.groupsByType = _.groupBy(vm.user.administratedGroups, 'type');
         }
         /* jshint ignore:end */
 
         function refresh() {
             vm.isLogged = AuthService.isLogged;
             vm.user = AuthService.user;
+            vm.groupsByType = _.groupBy(vm.user.administratedGroups, 'type');
             Settings.getSettings()
                 .then(function (settings) {
                     vm.isRegisterEnabled = settings.registerEnabled;

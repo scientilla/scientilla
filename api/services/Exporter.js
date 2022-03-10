@@ -17,7 +17,8 @@ module.exports = {
     getBibtex,
     accomplishmentsToCsv,
     projectsToCsv,
-    patentsToCsv
+    patentsToCsv,
+    agreementsToCsv
 };
 
 function bibtexInit() {
@@ -142,6 +143,45 @@ function accomplishmentsToCsv(researchItems) {
         row.push(researchItem.place);
         row.push(researchItem.description);
         row.push(researchItem.type.label);
+
+        return row;
+    }));
+
+    let csv = 'data:text/csv;charset=utf-8,';
+
+    rows.forEach(function (rowArray) {
+        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
+            .join(',') + '\r\n';
+    });
+
+    return csv;
+}
+
+function agreementsToCsv(researchItems) {
+    const rows = [[
+        'Acronym',
+        'Title',
+        'Subject',
+        'Agreement type',
+        'Counterparts',
+        'Scientific coordinators',
+        'Author string',
+        'Start date',
+        'End date',
+        'Link'
+    ]].concat(researchItems.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+        row.push(researchItem.acronym);
+        row.push(researchItem.title);
+        row.push(researchItem.projectData.subject);
+        row.push(researchItem.projectType);
+        row.push(researchItem.projectData.partners.map(p => p.institute + ' ' + p.department).join(', '));
+        row.push(researchItem.projectData.pis.map(pi => pi.surname + ' ' + pi.name).join(', '));
+        row.push(researchItem.authorsStr);
+        row.push(researchItem.startDate);
+        row.push(researchItem.endDate);
+        row.push(researchItem.projectData.link);
 
         return row;
     }));

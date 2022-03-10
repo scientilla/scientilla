@@ -18,13 +18,15 @@
     CollaboratorForm.$inject = [
         'UsersService',
         'GroupsService',
-        'Notification'
+        'Notification',
+        '$scope'
     ];
 
     function CollaboratorForm(
         UsersService,
         GroupsService,
-        Notification
+        Notification,
+        $scope
     ) {
         const vm = this;
 
@@ -35,12 +37,26 @@
         vm.selectedUserActive = true;
 
         let originalCollaboratorJson = JSON.stringify(false);
+        let selectedUserWatcher;
 
         vm.$onInit = function () {
             if (vm.collaborator) {
-                vm.selectedUser = vm.collaborator;
-                vm.selectedUserActive = vm.selectedUser.membership.active;
+                vm.selectedCollaborator = vm.collaborator;
+                vm.selectedUserActive = vm.collaborator.membership.active;
                 originalCollaboratorJson = angular.toJson(vm.collaborator);
+            }
+
+            selectedUserWatcher = $scope.$watch('vm.selectedUser', (newValue, oldValue) => {
+                if (newValue) {
+                    vm.selectedCollaborator = _.cloneDeep(newValue);
+                    vm.selectedUser = null;
+                }
+            });
+        };
+
+        vm.$destroy = function () {
+            if (_.isFunction(selectedUserWatcher)) {
+                selectedUserWatcher();
             }
         };
 
@@ -70,6 +86,7 @@
             }
 
             delete vm.selectedUser;
+            delete vm.selectedCollaborator;
 
             if (_.isFunction(vm.checkAndClose())) {
                 vm.checkAndClose()(() => true);
