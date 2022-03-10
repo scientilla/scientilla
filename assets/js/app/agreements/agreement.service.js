@@ -11,7 +11,7 @@
             let status = '';
 
             if (_.has(agreement, 'startDate') && (moment(agreement.startDate).isBefore(moment()) || moment(agreement.startDate).isSame(moment(), 'day'))) {
-                status = 'started';
+                status = 'active';
             }
 
             if (_.has(agreement, 'endDate') && moment(agreement.endDate).isBefore(moment())) {
