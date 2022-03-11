@@ -901,7 +901,10 @@
                     yAxis: {
                         axisLabel: 'EUR',
                         tickValues: rangeY,
-                        tickFormat: d => d3.format('.2s')(d)
+                        tickFormat: value => {
+                            const prefix = d3.formatPrefix(value, '.1f');
+                            return prefix.scale(value).toFixed(1) + prefix.symbol;
+                        }
                     }
                 }),
             };
@@ -1043,7 +1046,10 @@
                     yAxis: {
                         axisLabel: 'EUR',
                         tickValues: rangeY,
-                        tickFormat: d => d3.format('.2s')(d)
+                        tickFormat: value => {
+                            const prefix = d3.formatPrefix(value, '.1f');
+                            return prefix.scale(value).toFixed(1) + prefix.symbol;
+                        }
                     }
                 }),
             };
