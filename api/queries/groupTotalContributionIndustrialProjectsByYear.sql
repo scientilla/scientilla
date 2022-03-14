@@ -35,15 +35,14 @@ WITH RECURSIVE subg(parent_group, child_group, level) AS (
                 WHERE sg.parent_group = g.id
             )
         ) AND (
-            research_lines @> (
-                select json_agg(codes) as codes
-                from (
-                    SELECT tmp_g.code as code
+            research_lines @> ANY(
+                ARRAY(
+                    SELECT json_build_object('code', tmp_g.code)::jsonb as code
                     FROM subg sg
                     JOIN "group" tmp_g on tmp_g.id = sg.child_group
                     WHERE sg.parent_group = g.id
-                ) codes
-            )::jsonb OR
+                )::jsonb[]
+            ) OR
             research_lines @> json_build_object('code', g.code)::jsonb
         )
 
