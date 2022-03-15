@@ -238,5 +238,7 @@ module.exports.policies = {
 
     AllMembershipController: defaultPolicy,
 
-    AllMembershipGroupController: defaultPolicy
+    AllMembershipGroupController: defaultPolicy,
+
+    TaskController: defaultAdminPolicy
 };

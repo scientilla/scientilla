@@ -16,10 +16,11 @@
         'ChartService',
         'ModalService',
         '$timeout',
-        '$element'
+        '$element',
+        'TaskService'
     ];
 
-    function controller(ChartService, ModalService, $timeout, $element) {
+    function controller(ChartService, ModalService, $timeout, $element, TaskService) {
         const vm = this;
 
         vm.name = 'summary-metrics';
@@ -31,19 +32,24 @@
         vm.recalculate = recalculate;
 
         vm.recalculating = false;
+        const command = 'chart:recalculate';
 
-        vm.$onInit = () => {
+        /* jshint ignore:start */
+        vm.$onInit = async () => {
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
+
+            await checkIsRecalculating();
         };
+        /* jshint ignore:end */
 
         vm.$onDestroy = function () {
             const unregisterTab = requireParentMethod($element, 'unregisterTab');
             unregisterTab(vm);
         };
 
-         /* jshint ignore:start */
-         vm.getData = async () => {
+        /* jshint ignore:start */
+        vm.getData = async () => {
             return await ChartService.getBibliometricChartData(vm.researchEntity);
         }
         /* jshint ignore:end */
@@ -191,12 +197,21 @@
 
             vm.recalculating = true;
 
-            const chartsData = await ChartService.getAllChartData(vm.researchEntity, true);
+            try{
+                await TaskService.run(command);
 
-            if (chartsData.chartDataDate[0].max) {
-                vm.lastRefresh = new Date(chartsData.chartDataDate[0].max);
-            }
+                const chartsData = await ChartService.getAllChartData(vm.researchEntity);
+
+                if (chartsData.chartDataDate[0].max) {
+                    vm.lastRefresh = new Date(chartsData.chartDataDate[0].max);
+                }
+            } catch(e) {}
+
             vm.recalculating = false;
+        }
+
+        async function checkIsRecalculating() {
+            vm.recalculating = await TaskService.isRunning(command);
         }
         /* jshint ignore:end */
     }

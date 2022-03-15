@@ -88,9 +88,14 @@
 
     <div ng-if="vm.isMainGroup()">
         <div class="calculate-text">Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}</div>
-        <scientilla-button click="vm.recalculate">Recalculate data</scientilla-button>
-        <scientilla-loading
-            is-loading="vm.recalculating"
-            text="Recalculating ..."></scientilla-loading>
+        <scientilla-button
+            click="vm.recalculate"
+            ng-disabled="vm.recalculating"
+        >
+            <i
+                ng-if="vm.recalculating"
+                class="fas fa-spinner fa-spin fa-left"
+            ></i>{{vm.recalculating ? 'Recalculating data' : 'Recalculate data'}}
+        </scientilla-button>
     </div>
 </div>

@@ -174,6 +174,9 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/backup/remove']: 'Backup.remove',
     ['post ' + apiPrfx + '/backup/download']: 'Backup.download',
 
+    ['get ' + apiPrfx + '/task/:command']: 'Task.isRunning',
+    ['post ' + apiPrfx + '/task']: 'Task.run',
+
     ['get ' + apiPrfx + '/logs/tasks']: 'Log.getTasks',
     ['get ' + apiPrfx + '/logs/:taskName/:date?']: 'Log.read',
 

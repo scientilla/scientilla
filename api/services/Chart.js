@@ -3,11 +3,11 @@ const Promise = require("bluebird");
 const _ = require("lodash");
 
 module.exports = {
-    getChartsData
+    getChartsData,
+    recalculate
 };
 
 async function getChartsData(id, Model, chartsKeys, refresh, roles) {
-
     const documentTypes = DocumentTypes.get();
 
     const excludedDocumentTypes = [
@@ -567,4 +567,38 @@ function getYearRange(elements) {
         min: parseInt(_.minBy(elements, 'year').year, 10),
         max: parseInt(_.maxBy(elements, 'year').year, 10),
     };
+}
+
+async function recalculate() {
+    const chartKeys = [
+        'journalsByYear',
+        'conferencesByYear',
+        'booksByYear',
+        'bookSeriesByYear',
+        'documentsByType',
+        'disseminationTalksByYear',
+        'scientificTalksByYear',
+        'filteredAffiliatedJournalsByYear',
+        'filteredAffiliatedConferencesByYear',
+        'filteredAffiliatedBooksByYear',
+        'filteredAffiliatedBookSeriesByYear',
+        'filteredNotAffiliatedJournalsByYear',
+        'filteredNotAffiliatedConferencesByYear',
+        'filteredNotAffiliatedBooksByYear',
+        'filteredNotAffiliatedBookSeriesByYear',
+        'hindexPerYear',
+        'citationsPerYear',
+        'citationsPerDocumentYear',
+        'totalIfPerYear',
+        'totalSjrPerYear',
+        'totalSnipPerYear',
+        'chartDataDate',
+        'annualContributionCompetitiveProjectsByYear',
+        'annualContributionIndustrialProjectsByYear',
+        'totalContributionIndustrialProjectsByYear',
+        'totalContributionCompetitiveProjectsByYear',
+        'priorityAndProsecutionPatentsByYear'
+    ]
+
+    await getChartsData(1, Group, chartKeys, true, []);
 }
