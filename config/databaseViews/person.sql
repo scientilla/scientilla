@@ -557,7 +557,7 @@ SELECT
         SELECT
           DISTINCT amg.group
         FROM
-          all_membership_group_without_id amgwi
+          all_membership_group_without_id amg
         WHERE
           amg.user = u.id
           AND active = true
@@ -573,7 +573,7 @@ SELECT
         SELECT
           DISTINCT amg.group
         FROM
-          all_membership_group_without_id amgwi
+          all_membership_group_without_id amg
         WHERE
           amg.user = u.id
       ),
