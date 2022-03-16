@@ -648,7 +648,7 @@
                     'has-warning' : vm.errors.supervisors && vm.mode == 'draft'
                 }"
             >
-                <label for="iit-supervisors">IIT supervisors (must be in the form "Doe J., Smith Simpson J. V.") *</label>
+                <label for="iit-supervisors">IIT supervisors (must be in the form "Doe J., Smith Simpson J. V.") {{vm.document.isPhdThesisInstitutional ? '*' : ''}}</label>
                 <input
                     type="text"
                     name="iit-supervisors"
@@ -656,7 +656,6 @@
                     id="iit-supervisors"
                     placeholder="IIT supervisors"
                     ng-model="vm.document.supervisors"
-                    data-ng-required="true"
                     ng-model-options="{ allowInvalid: true }"
                     ng-class="{'is-invalid' : vm.errors.supervisors}"
                     ng-blur="vm.checkValidation('supervisors')"
@@ -675,7 +674,7 @@
                     'has-warning' : vm.errors.otherSupervisors && vm.mode == 'draft'
                 }"
             >
-                <label for="other-supervisors">Supervisors (must be in the form "Doe J., Smith Simpson J. V.") *</label>
+                <label for="other-supervisors">Supervisors (must be in the form "Doe J., Smith Simpson J. V.")</label>
                 <input
                     type="text"
                     name="other-supervisors"
@@ -683,7 +682,6 @@
                     id="other-supervisors"
                     placeholder="Supervisors"
                     ng-model="vm.document.otherSupervisors"
-                    data-ng-required="true"
                     ng-model-options="{ allowInvalid: true }"
                     ng-class="{'is-invalid' : vm.errors.otherSupervisors}"
                     ng-blur="vm.checkValidation('otherSupervisors')"
