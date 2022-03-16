@@ -1,4 +1,4 @@
-/* global GeneralSettings, RoleAssociations */
+/* global GeneralSetting, RoleAssociations */
 
 module.exports = {
     attributes: {
@@ -7,12 +7,12 @@ module.exports = {
     },
     tableName: 'general_settings',
     async setSetting(name, data) {
-        const currentSettings = await GeneralSettings.findOne({name});
+        const currentSettings = await GeneralSetting.findOne({name});
 
         if (currentSettings)
-            await GeneralSettings.update({name}, {data});
+            await GeneralSetting.update({name}, {data});
         else
-            await GeneralSettings.create({name, data});
+            await GeneralSetting.create({name, data});
 
         if (name === 'role-associations')
             RoleAssociations.init();
@@ -20,6 +20,6 @@ module.exports = {
         return this.getSetting(name);
     },
     async getSetting(name) {
-        return await GeneralSettings.findOne({name});
+        return await GeneralSetting.findOne({name});
     }
 };

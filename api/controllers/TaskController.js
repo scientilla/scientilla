@@ -1,5 +1,3 @@
-const GeneralSettings = require('../services/GeneralSettings');
-
 const name = 'tasks';
 
 module.exports = {
@@ -26,9 +24,9 @@ module.exports = {
     },
     isRunning: async function (req, res) {
         const command = req.params.command;
-        const setting = await GeneralSettings.findOrCreate(name);
+        const setting = await GeneralSetting.findOne({name});
 
-        if (_.has(setting.data, command)) {
+        if (setting && _.has(setting.data, command)) {
             res.halt(Promise.resolve(setting.data[command]));
         } else {
             res.halt(Promise.resolve(false));

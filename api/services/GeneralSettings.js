@@ -1,19 +1,19 @@
-/* global GeneralSettings */
+/* global GeneralSetting */
 
 module.exports = {
   findOrCreate: async name => {
-    let setting = await GeneralSettings.findOne({name});
+    let setting = await GeneralSetting.findOne({name});
 
     if (!setting) {
-      setting = await GeneralSettings.create({name, data: {}});
+      setting = await GeneralSetting.create({name, data: {}});
     }
 
     return setting;
   },
   save: async (name, data) => {
-    await GeneralSettings.update({name}, {data});
+    await GeneralSetting.update({name}, {data});
 
-    return await GeneralSettings.findOne({name});
+    return await GeneralSetting.findOne({name});
   }
 };
 

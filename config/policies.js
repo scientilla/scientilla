@@ -240,5 +240,8 @@ module.exports.policies = {
 
     AllMembershipGroupController: defaultPolicy,
 
-    TaskController: defaultAdminPolicy
+    TaskController: _.defaults({
+        run: isAdmin,
+        isRunning: isAdmin
+    }, defaultAdminPolicy),
 };
