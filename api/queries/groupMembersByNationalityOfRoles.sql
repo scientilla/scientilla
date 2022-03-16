@@ -7,7 +7,8 @@ FROM general_settings gs,
      JOIN "user" u ON u.research_entity = ud.research_entity
      JOIN membership m ON u.id = m.user
      JOIN "group" g ON g.id = m.group
-WHERE m.active = TRUE AND
+WHERE gs.name = 'role-associations' AND
+      m.active = TRUE AND
       m."group" = $1 AND
       (
           (roles->>'roleCategory')::text IS NOT NULL AND

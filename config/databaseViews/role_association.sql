@@ -7,6 +7,7 @@ SELECT 1 AS id,
 FROM (
          SELECT jsonb_array_elements(gs.data) AS associations
          FROM general_settings gs
+         WHERE gs.name = 'role-associations'
      ) a,
      general_settings gs
 WHERE gs.name = 'role-associations'
