@@ -244,9 +244,8 @@ module.exports = _.merge({}, BaseModel, {
                         requiredFields.push('phdInstitute');
                         requiredFields.push('phdCourse');
                         requiredFields.push('phdCycle');
+                        requiredFields.push('supervisors');
                     }
-                    requiredFields.push('supervisors');
-                    requiredFields.push('otherSupervisors');
                     break;
                 case DocumentTypes.INVITED_TALK:
                     requiredFields.push('itSource');

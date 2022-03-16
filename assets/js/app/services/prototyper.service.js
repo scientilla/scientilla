@@ -314,15 +314,11 @@
                         break;
                 }
 
-                if (document.type === 'phd_thesis') {
-                    if (document.isPhdThesisInstitutional) {
-                        requiredFields.push('phdInstitute');
-                        requiredFields.push('phdCourse');
-                        requiredFields.push('phdCycle');
-                    }
-
+                if (document.type === 'phd_thesis' && document.isPhdThesisInstitutional) {
+                    requiredFields.push('phdInstitute');
+                    requiredFields.push('phdCourse');
+                    requiredFields.push('phdCycle');
                     requiredFields.push('supervisors');
-                    requiredFields.push('otherSupervisors');
                 }
 
                 return requiredFields;
