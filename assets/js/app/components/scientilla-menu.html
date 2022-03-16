@@ -184,7 +184,7 @@
                 >Agreements</a>
             </div>
         </li>
-        <li ng-if="vm.isAdmin()">
+        <li ng-if="vm.isAdmin() || vm.isSuperUser()">
             <label>Admin</label>
             <div class="list-group">
                 <a
@@ -202,7 +202,7 @@
                 <a
                     ng-href="#/phd-management"
                     ng-class="{active: vm.isActive('/phd-management')}"
-                    ng-if="vm.isAdmin()"
+                    ng-if="vm.isAdmin() || vm.isSuperUser()"
                     class="list-group-item list-group-item-action"
                 >PhD management</a>
                 <a
