@@ -25,6 +25,9 @@ module.exports.bootstrap = async function (cb) {
         await Cron.start();
     }
 
+    // Reset all the tasks
+    await GeneralSetting.destroy({name: 'tasks'});
+
     cb();
 };
 

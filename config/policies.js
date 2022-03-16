@@ -263,4 +263,9 @@ module.exports.policies = {
         create: isSuperUser,
         update: isSuperUser
     }, defaultPolicy),
+
+    TaskController: _.defaults({
+        run: isAdmin,
+        isRunning: isAdmin
+    }, defaultAdminPolicy),
 };

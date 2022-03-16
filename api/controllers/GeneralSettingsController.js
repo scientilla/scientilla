@@ -1,15 +1,15 @@
-/* global GeneralSettings */
+/* global GeneralSetting */
 
 module.exports = {
     getByName: async function (req, res) {
         const name = req.params.name;
-        const result = await GeneralSettings.getSetting(name);
+        const result = await GeneralSetting.getSetting(name);
         res.halt(Promise.resolve(result));
     },
     saveByName: async function (req, res) {
         const name = req.params.name;
         const data = JSON.parse(req.body.data);
-        const result = await GeneralSettings.setSetting(name, data);
+        const result = await GeneralSetting.setSetting(name, data);
 
         switch (name) {
             case 'cid-associations':

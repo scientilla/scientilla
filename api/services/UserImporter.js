@@ -612,7 +612,7 @@ async function removeExpiredUsers() {
 }
 
 async function analyseUserImport() {
-    let roleAssociations = await GeneralSettings.findOne({name: 'role-associations'});
+    let roleAssociations = await GeneralSetting.findOne({name: 'role-associations'});
     const ignoredRoles = getIgnoredRoles();
     const govAndControl = 'Gov. & Control';
 
@@ -1675,7 +1675,7 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
  */
 async function overrideCIDAssociations(employees = [], email = getDefaultEmail(), logMethod = false) {
     let foundAssociations = false;
-    let cidAssociations = await GeneralSettings.findOne({ name: 'cid-associations' });
+    let cidAssociations = await GeneralSetting.findOne({ name: 'cid-associations' });
 
     if (_.has(cidAssociations, 'data')) {
         cidAssociations = cidAssociations.data;

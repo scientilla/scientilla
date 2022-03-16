@@ -1,4 +1,4 @@
-/* global Importer, ExternalImporter, AgreementsImporter */
+/* global GruntTaskRunner */
 const Sails = require('sails');
 
 module.exports = function (grunt) {
