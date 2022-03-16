@@ -11,6 +11,8 @@ const startLine = '\n┌─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ 
 const endLine = '\n└─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─┘\n';
 const newLine = '\r\n';
 
+const name = 'tasks';
+
 module.exports = {
     run
 };
@@ -18,6 +20,14 @@ module.exports = {
 async function run(command) {
     const startedAt = moment();
     const taskName = command.split(':').slice(0, 2).join(':');
+
+    const setting = await GeneralSettings.findOrCreate(name);
+    if (_.has(setting.data, command) && setting.data[command]) {
+        return Promise.resolve('Already running!');
+    }
+
+    setting.data[command] = true;
+    await GeneralSettings.save(name, JSON.stringify(setting.data));
 
     const startString = 'grunt ' + command + ' started at ' + startedAt.format('DD/MM/YYYY HH:mm:ss');
 
@@ -39,7 +49,7 @@ async function run(command) {
             appendToFile(taskName, startedAt, data.toString());
         });
 
-        gruntTask.on('exit', function (code) {
+        gruntTask.on('exit', async function (code) {
             const endedAt = moment();
             const duration = moment.duration(endedAt.diff(startedAt)).humanize(true);
             const endString = `grunt ${command} finished with code ${code} at ${endedAt.format('DD/MM/YYYY HH:mm:ss')} ${duration}`;
@@ -49,6 +59,10 @@ async function run(command) {
             sails.log.info(endString);
             appendToFile(taskName, startedAt, endString + newLine);
             appendToFile(taskName, startedAt, endLine);
+
+            setting.data[command] = false;
+            await GeneralSettings.save(name, JSON.stringify(setting.data));
+
             resolve();
         });
     });
