@@ -655,12 +655,12 @@ async function importProjects() {
                 let startYear = null;
                 let endYear = null;
 
-                if (_.has(projectData, 'startDate') && typeof projectData.startDate === 'string') {
-                    startYear = projectData.startDate.slice(0, projectData.startDate.indexOf('-'));
+                if (_.has(projectData, 'instituteStartDate') && typeof projectData.instituteStartDate === 'string') {
+                    startYear = projectData.instituteStartDate.slice(0, projectData.instituteStartDate.indexOf('-'));
                 }
 
-                if (_.has(projectData, 'endDate') && typeof projectData.endDate === 'string') {
-                    endYear = projectData.endDate.slice(0, projectData.endDate.indexOf('-'));
+                if (_.has(projectData, 'instituteEndDate') && typeof projectData.instituteEndDate === 'string') {
+                    endYear = projectData.instituteEndDate.slice(0, projectData.instituteEndDate.indexOf('-'));
                 }
 
                 const pis = projectData.members.filter(member => ['pi', 'co_pi'].includes(member.role));
