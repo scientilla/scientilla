@@ -2,7 +2,7 @@ WITH unique_years AS (
     SELECT DISTINCT years.year
     FROM (
         SELECT
-            substring(ripc.project_data ->> 'startDate' from 1 for 4) :: NUMERIC as YEAR
+            substring(ripc.project_data ->> 'instituteStartDate' from 1 for 4) :: NUMERIC as YEAR
         FROM "research_item_project_competitive" ripc
             JOIN verify v ON ripc.research_item = v.research_item
             JOIN "user" u ON v.research_entity = u.research_entity
@@ -21,7 +21,7 @@ WITH unique_years AS (
         UNION
 
         SELECT
-            substring(ripc.project_data ->> 'startDate' from 1 for 4) :: NUMERIC as YEAR
+            substring(ripc.project_data ->> 'instituteStartDate' from 1 for 4) :: NUMERIC as YEAR
         FROM "research_item_project_competitive" ripc
             JOIN verify v ON ripc.research_item = v.research_item
             JOIN "user" u ON v.research_entity = u.research_entity
@@ -53,7 +53,7 @@ FULL JOIN (
     JOIN (
         SELECT
             ripc.id,
-            substring(ripc.project_data ->> 'startDate' from 1 for 4) :: NUMERIC as YEAR,
+            substring(ripc.project_data ->> 'instituteStartDate' from 1 for 4) :: NUMERIC as YEAR,
             (members ->> 'contributionObtained') :: NUMERIC as in_cash_contribution
         FROM "research_item_project_competitive" ripc
             JOIN verify v ON ripc.research_item = v.research_item
@@ -82,7 +82,7 @@ FULL JOIN (
     JOIN (
         SELECT
             ripc.id,
-            substring(ripc.project_data ->> 'startDate' from 1 for 4) :: NUMERIC as YEAR,
+            substring(ripc.project_data ->> 'instituteStartDate' from 1 for 4) :: NUMERIC as YEAR,
             (members ->> 'contributionObtained') :: NUMERIC as in_kind_contribution
         FROM "research_item_project_competitive" ripc
             JOIN verify v ON ripc.research_item = v.research_item
