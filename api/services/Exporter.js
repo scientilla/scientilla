@@ -20,6 +20,10 @@ module.exports = {
     patentsToCsv
 };
 
+function formatValue(value) {
+    return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(value);
+}
+
 function bibtexInit() {
     if (!_.isEmpty(bibtexDocumentTypes))
         return;
@@ -169,9 +173,9 @@ function projectsToCsv(researchItems) {
         'Category',
         'Payment',
         'Status',
-        'Total contribution',
-        'In cash contribution',
-        'In kind contribution'
+        'Total contribution [EUR]',
+        'In cash contribution [EUR]',
+        'In kind contribution [EUR]'
     ]].concat(industrialProjects.map(ri => {
         const researchItem = ri.toJSON();
         const row = [];
@@ -184,9 +188,9 @@ function projectsToCsv(researchItems) {
         row.push(researchItem.category);
         row.push(researchItem.payment);
         row.push(researchItem.status);
-        row.push(researchItem.totalContribution);
-        row.push(researchItem.inCashContribution);
-        row.push(researchItem.inKindContribution);
+        row.push(formatValue(researchItem.totalContribution));
+        row.push(formatValue(researchItem.inCashContribution));
+        row.push(formatValue(researchItem.inKindContribution));
 
         return row;
     }));
@@ -214,8 +218,8 @@ function projectsToCsv(researchItems) {
         'Payment',
         'IIT role',
         'Status',
-        'Institute budget',
-        'Institute funding'
+        'Institute budget [EUR]',
+        'Institute funding [EUR]'
     ]].concat(competitiveProjects.map(ri => {
         const researchItem = ri.toJSON();
         const row = [];
@@ -232,8 +236,8 @@ function projectsToCsv(researchItems) {
         row.push(researchItem.payment);
         row.push(researchItem.role);
         row.push(researchItem.status);
-        row.push(researchItem.projectData.instituteBudget);
-        row.push(researchItem.projectData.instituteContribution);
+        row.push(formatValue(researchItem.projectData.instituteBudget));
+        row.push(formatValue(researchItem.projectData.instituteContribution));
 
         return row;
     }));
