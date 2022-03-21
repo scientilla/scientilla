@@ -126,7 +126,8 @@ const competitiveProjectActions = {
     'FAS Toscana': 'FAS Toscana',
 };
 
-const projectDownloadFileName = 'Projects_Export.csv';
+const competitiveProjectDownloadFileName = 'Competitive_Projects_Export.csv';
+const industrialProjectDownloadFileName = 'Industrial_Projects_Export.csv';
 
 const projectExportUrl = '/api/v1/projects/export';
 
@@ -141,5 +142,6 @@ angular.module('app')
     .constant('projectStatuses', projectStatuses)
     .constant('competitiveProjectFundings', competitiveProjectFundings)
     .constant('competitiveProjectActions', competitiveProjectActions)
-    .constant('projectDownloadFileName', projectDownloadFileName)
+    .constant('competitiveProjectDownloadFileName', competitiveProjectDownloadFileName)
+    .constant('industrialProjectDownloadFileName', industrialProjectDownloadFileName)
     .constant('projectExportUrl', projectExportUrl);
