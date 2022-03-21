@@ -21,6 +21,10 @@ module.exports = {
     agreementsToCsv
 };
 
+function formatValue(value) {
+    return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(value);
+}
+
 function bibtexInit() {
     if (!_.isEmpty(bibtexDocumentTypes))
         return;
@@ -197,7 +201,50 @@ function agreementsToCsv(researchItems) {
 }
 
 function projectsToCsv(researchItems) {
-    const rows = [[
+    // Industrial projects
+    const industrialProjects = researchItems.filter(researchItem => researchItem.type.key === ResearchItemTypes.PROJECT_INDUSTRIAL);
+    const rowsIndustrial = [[
+        'Title',
+        'Abstract',
+        'Type',
+        'Code',
+        'Start date',
+        'End date',
+        'Category',
+        'Payment',
+        'Status',
+        'Total contribution [EUR]',
+        'In cash contribution [EUR]',
+        'In kind contribution [EUR]'
+    ]].concat(industrialProjects.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+        row.push(researchItem.title);
+        row.push(researchItem.abstract);
+        row.push(researchItem.type.label);
+        row.push(researchItem.code);
+        row.push(researchItem.startDate);
+        row.push(researchItem.endDate);
+        row.push(researchItem.category);
+        row.push(researchItem.payment);
+        row.push(researchItem.status);
+        row.push(formatValue(researchItem.totalContribution));
+        row.push(formatValue(researchItem.inCashContribution));
+        row.push(formatValue(researchItem.inKindContribution));
+
+        return row;
+    }));
+
+    let csvIndustrial = 'data:text/csv;charset=utf-8,';
+
+    rowsIndustrial.forEach(function (rowArray) {
+        csvIndustrial += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
+            .join(',') + '\r\n';
+    });
+
+    // Competitive projects
+    const competitiveProjects = researchItems.filter(researchItem => researchItem.type.key === ResearchItemTypes.PROJECT_COMPETITIVE);
+    const rowsCompetitive = [[
         'Title',
         'Abstract',
         'Type',
@@ -207,11 +254,13 @@ function projectsToCsv(researchItems) {
         'End date',
         'Funding type',
         'Action type',
+        'Category',
+        'Payment',
         'IIT role',
         'Status',
-        'Institute budget',
-        'Institute funding',
-    ]].concat(researchItems.map(ri => {
+        'Institute budget [EUR]',
+        'Institute funding [EUR]'
+    ]].concat(competitiveProjects.map(ri => {
         const researchItem = ri.toJSON();
         const row = [];
         row.push(researchItem.title);
@@ -221,33 +270,33 @@ function projectsToCsv(researchItems) {
         row.push(researchItem.acronym);
         row.push(researchItem.startDate);
         row.push(researchItem.endDate);
-
-        if (researchItem.type.key === ResearchItemTypes.PROJECT_COMPETITIVE) {
-            row.push(researchItem.projectType);
-        } else {
-            row.push('/');
-        }
-
-        if (researchItem.type.key === ResearchItemTypes.PROJECT_COMPETITIVE) {
-            row.push(researchItem.projectType2);
-        } else {
-            row.push('/');
-        }
-
+        row.push(researchItem.projectType);
+        row.push(researchItem.projectType2);
+        row.push(researchItem.category);
+        row.push(researchItem.payment);
         row.push(researchItem.role);
         row.push(researchItem.status);
-        row.push(researchItem.projectData.instituteBudget);
-        row.push(researchItem.projectData.instituteContribution);
+        row.push(formatValue(researchItem.projectData.instituteBudget));
+        row.push(formatValue(researchItem.projectData.instituteContribution));
 
         return row;
     }));
 
-    let csv = 'data:text/csv;charset=utf-8,';
+    let csvCompetitive = 'data:text/csv;charset=utf-8,';
 
-    rows.forEach(function (rowArray) {
-        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
+    rowsCompetitive.forEach(function (rowArray) {
+        csvCompetitive += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
             .join(',') + '\r\n';
     });
+
+    const csv = {};
+    if (industrialProjects.length > 0) {
+        csv[ResearchItemTypes.PROJECT_INDUSTRIAL] = csvIndustrial;
+    }
+
+    if (competitiveProjects.length > 0) {
+        csv[ResearchItemTypes.PROJECT_COMPETITIVE] = csvCompetitive;
+    }
 
     return csv;
 }
