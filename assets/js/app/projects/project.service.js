@@ -87,21 +87,36 @@
         }
         /* jshint ignore:end */
 
-        function exportDownload(items, format = 'csv', filename = projectDownloadFileName, url = projectExportUrl) {
+        function exportDownload(items, format = 'csv', url = projectExportUrl) {
             $http.post(url, {
                 format: format,
                 projectIds: items.map(d => d.id)
             }).then((res) => {
-                const element = document.createElement('a');
-                element.setAttribute('href', encodeURI(res.data));
-                element.setAttribute('download', filename);
+                if (_.has(res.data, projectTypeCompetitive)) {
+                    const element = document.createElement('a');
+                    element.setAttribute('href', encodeURI(res.data[projectTypeCompetitive]));
+                    element.setAttribute('download', competitiveProjectDownloadFileName);
 
-                element.style.display = 'none';
-                document.body.appendChild(element);
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
 
-                element.click();
+                    element.click();
 
-                document.body.removeChild(element);
+                    document.body.removeChild(element);
+                }
+
+                if (_.has(res.data, projectTypeIndustrial)) {
+                    const element = document.createElement('a');
+                    element.setAttribute('href', encodeURI(res.data[projectTypeIndustrial]));
+                    element.setAttribute('download', industrialProjectDownloadFileName);
+
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+
+                    element.click();
+
+                    document.body.removeChild(element);
+                }
             });
         }
 
