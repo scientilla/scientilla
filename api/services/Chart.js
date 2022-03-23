@@ -1,4 +1,4 @@
-/* global SqlService, ChartData, PerformanceCalculator, DocumentTypes, SourceTypes, DocumentMetric, SourceMetric, ResearchEntityTypes */
+/* global SqlService, ChartData, PerformanceCalculator, Group, DocumentTypes, SourceTypes, DocumentMetric, SourceMetric, ResearchEntityTypes */
 const Promise = require("bluebird");
 const _ = require("lodash");
 
@@ -569,7 +569,7 @@ function getYearRange(elements) {
     };
 }
 
-async function recalculate() {
+async function recalculate(groupId) {
     const chartKeys = [
         'journalsByYear',
         'conferencesByYear',
@@ -600,5 +600,5 @@ async function recalculate() {
         'priorityAndProsecutionPatentsByYear'
     ]
 
-    await getChartsData(1, Group, chartKeys, true, []);
+    await getChartsData(groupId, Group, chartKeys, true, []);
 }

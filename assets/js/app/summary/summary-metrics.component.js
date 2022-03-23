@@ -17,10 +17,11 @@
         'ModalService',
         '$timeout',
         '$element',
-        'TaskService'
+        'TaskService',
+        'groupTypes'
     ];
 
-    function controller(ChartService, ModalService, $timeout, $element, TaskService) {
+    function controller(ChartService, ModalService, $timeout, $element, TaskService, groupTypes) {
         const vm = this;
 
         vm.name = 'summary-metrics';
@@ -28,11 +29,11 @@
 
         vm.charts = false;
         vm.showInfo = showInfo;
-        vm.isMainGroup = isMainGroup;
+        vm.hasRefreshDisabled = hasRefreshDisabled;
         vm.recalculate = recalculate;
 
         vm.recalculating = false;
-        const command = 'chart:recalculate';
+        const command = `chart:recalculate:${vm.researchEntity.id}`;
 
         /* jshint ignore:start */
         vm.$onInit = async () => {
@@ -179,14 +180,20 @@
                 }
             });
         };
+
         /* jshint ignore:end */
 
         function showInfo() {
             ModalService.openWizard(['summary-metrics'], {isClosable: true});
         }
 
-        function isMainGroup() {
-            return vm.researchEntity.id === 1;
+        function hasRefreshDisabled() {
+            return vm.researchEntity.getType() === 'group' &&
+                [
+                    groupTypes.INSTITUTE,
+                    groupTypes.CENTER,
+                    groupTypes.RESEARCH_DOMAIN
+                ].includes(vm.researchEntity.type);
         }
 
         /* jshint ignore:start */
@@ -197,15 +204,16 @@
 
             vm.recalculating = true;
 
-            try{
-                await TaskService.run(command);
+            try {
+                await TaskService.run(`${command}:${vm.researchEntity.id}`);
 
                 const chartsData = await ChartService.getAllChartData(vm.researchEntity);
 
                 if (chartsData.chartDataDate[0].max) {
                     vm.lastRefresh = new Date(chartsData.chartDataDate[0].max);
                 }
-            } catch(e) {}
+            } catch (e) {
+            }
 
             vm.recalculating = false;
         }
@@ -213,6 +221,7 @@
         async function checkIsRecalculating() {
             vm.recalculating = await TaskService.isRunning(command);
         }
+
         /* jshint ignore:end */
     }
 })();

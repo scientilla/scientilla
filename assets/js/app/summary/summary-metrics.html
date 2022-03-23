@@ -86,7 +86,7 @@
         </div>
     </div>
 
-    <div ng-if="vm.isMainGroup()">
+    <div ng-if="vm.hasRefreshDisabled() ">
         <div class="calculate-text">Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}</div>
         <scientilla-button
             click="vm.recalculate"
