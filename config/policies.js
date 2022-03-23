@@ -266,6 +266,6 @@ module.exports.policies = {
 
     TaskController: _.defaults({
         run: isAdmin,
-        isRunning: isAdmin
+        isRunning: isLogged
     }, defaultAdminPolicy),
 };
