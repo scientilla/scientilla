@@ -302,7 +302,7 @@
         }
 
         function getTypeTitle(type, groups) {
-            const key = Object.keys(groupTypes).find(k => groupTypes[k] === type)
+            const key = Object.keys(groupTypes).find(k => groupTypes[k] === type);
             return groups.length > 1 ? groupTypePluralLabels[key] || '' : groupTypeLabels[key];
         }
 
