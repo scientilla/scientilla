@@ -3,10 +3,10 @@
     class="sidebar-menu"
 >
     <ul class="sidebar-listing">
-        <li>
+        <li ng-id="!vm.user.isViewOnly()">
             <a
                 class="btn btn-dashboard"
-                ng-if="!vm.user.isViewOnly() && vm.isUser()"
+                ng-if="vm.isUser()"
                 ng-href="{{ vm.getUrl('profile') }}"
                 ng-class="{
                     'btn-primary' : vm.isActive('/profile', true),
@@ -16,7 +16,7 @@
             </a>
             <a
                 class="btn btn-dashboard"
-                ng-if="(!vm.user.isViewOnly() && vm.isUser() && vm.subResearchEntity.isScientific()) || (vm.isGroup() && !vm.isProject())"
+                ng-if="(vm.isUser() && vm.subResearchEntity.isScientific()) || (vm.isGroup() && !vm.isProject())"
                 ng-href="{{ vm.getUrl('dashboard') }}"
                 ng-class="{
                     'btn-primary' : vm.isActive('/dashboard', true),

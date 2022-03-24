@@ -45,7 +45,10 @@
                                 role="menu"
                                 aria-labelledby="single-button"
                             >
-                                <li role="menuitem">
+                                <li
+                                    role="menuitem"
+                                    ng-if="vm.user.name !== 'Dashboards'"
+                                >
                                     <a
                                         class="dropdown-item"
                                         ng-click="vm.changeContextToUser(vm.user)"

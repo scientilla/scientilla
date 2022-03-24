@@ -19,6 +19,8 @@
             'researchEntityService',
             'AccomplishmentService',
             'UsersService',
+            'GroupsService',
+            'path'
         ];
 
         function controller(
@@ -27,7 +29,9 @@
             context,
             researchEntityService,
             AccomplishmentService,
-            UsersService
+            UsersService,
+            GroupsService,
+            path
         ) {
             const vm = this;
 
@@ -49,6 +53,13 @@
 
             /* jshint ignore:start */
             vm.$onInit = async () => {
+
+                if (AuthService.user.name === 'Dashboards' && AuthService.user.administratedGroups.filter(g => g.id === 1)) {
+                    GroupsService.getGroup(1)
+                        .then(group => {
+                            path.goTo(group.slug + '/info');
+                        });
+                }
 
                 vm.researchEntity = AuthService.user.researchEntity;
                 vm.profile = await UsersService.getProfile(vm.researchEntity);
