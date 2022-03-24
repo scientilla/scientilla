@@ -6,7 +6,8 @@
     ChartService.$inject = [
         'DocumentTypesService',
         'EventsService',
-        '$timeout'
+        '$timeout',
+        'groupTypes'
     ];
 
     let styles = {};
@@ -59,7 +60,7 @@
         }
     ];
 
-    function ChartService(DocumentTypesService, EventsService, $timeout) {
+    function ChartService(DocumentTypesService, EventsService, $timeout, groupTypes) {
         const service = {
             previewDefaultOptions: {
                 chart: {
@@ -99,20 +100,20 @@
         };
 
         /* jshint ignore:start */
-        service.getDocumentsOverviewChartData = async (researchEntity, refresh = false) => {
-            return await getData(researchEntity, refresh, 'documentsOverviewCharts');
+        service.getDocumentsOverviewChartData = async (researchEntity) => {
+            return await getData(researchEntity, 'documentsOverviewCharts');
         };
 
-        service.getBibliometricChartData = async (researchEntity, refresh = false) => {
-            return await getData(researchEntity, refresh, 'bibliometricCharts');
+        service.getBibliometricChartData = async (researchEntity) => {
+            return await getData(researchEntity, 'bibliometricCharts');
         };
 
-        service.getProjectsAndPatentsChartData = async (researchEntity, refresh = false) => {
-            return await getData(researchEntity, refresh, 'projectAndPatentCharts');
+        service.getProjectsAndPatentsChartData = async (researchEntity) => {
+            return await getData(researchEntity, 'projectAndPatentCharts');
         };
 
-        service.getAllChartData = async (researchEntity, refresh = false) => {
-            return await getData(researchEntity, refresh, 'all');
+        service.getAllChartData = async (researchEntity) => {
+            return await getData(researchEntity, 'all');
         }
         /* jshint ignore:end */
 
@@ -139,14 +140,14 @@
                 monochromatics.push(tinycolor(color)
                     .monochromatic(10)
                     .sort((a, b) => {
-                       a = a.toHsl();
-                       b = b.toHsl();
+                        a = a.toHsl();
+                        b = b.toHsl();
 
-                       if (a.l > b.l) {
-                           return 1;
-                       }
+                        if (a.l > b.l) {
+                            return 1;
+                        }
 
-                       return -1;
+                        return -1;
                     })
                     .map(c => {
                         const hsl = c.toHsl();
@@ -163,8 +164,8 @@
 
             while (!done) {
                 let addedColor = false;
-                for (let i = 0; i < monochromatics.length; i++ ) {
-                    if (i%2 === 0) {
+                for (let i = 0; i < monochromatics.length; i++) {
+                    if (i % 2 === 0) {
                         color = monochromatics[i].shift();
                     } else {
                         color = monochromatics[i].pop();
@@ -781,14 +782,14 @@
                 data.push({
                     key: competitiveInCashProjectsKey,
                     values: chartsData.totalContributionCompetitiveProjectsByYear.map(d => {
-                        return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution)};
+                        return {year: parseInt(d.year), value: parseFloat(d.in_cash_contribution)};
                     })
                 });
 
                 data.push({
                     key: competitiveInKindProjectsKey,
                     values: chartsData.totalContributionCompetitiveProjectsByYear.map(d => {
-                        return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) };
+                        return {year: parseInt(d.year), value: parseFloat(d.in_kind_contribution)};
                     })
                 });
             }
@@ -800,14 +801,14 @@
                 data.push({
                     key: industrialInCashProjectsKey,
                     values: chartsData.totalContributionIndustrialProjectsByYear.map(d => {
-                        return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution) };
+                        return {year: parseInt(d.year), value: parseFloat(d.in_cash_contribution)};
                     })
                 });
 
                 data.push({
                     key: industrialInKindProjectsKey,
                     values: chartsData.totalContributionIndustrialProjectsByYear.map(d => {
-                        return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) };
+                        return {year: parseInt(d.year), value: parseFloat(d.in_kind_contribution)};
                     })
                 });
             }
@@ -924,14 +925,14 @@
                 data.push({
                     key: competitiveInCashProjectsKey,
                     values: chartsData.annualContributionCompetitiveProjectsByYear.map(d => {
-                        return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution)};
+                        return {year: parseInt(d.year), value: parseFloat(d.in_cash_contribution)};
                     })
                 });
 
                 data.push({
                     key: competitiveInKindProjectsKey,
                     values: chartsData.annualContributionCompetitiveProjectsByYear.map(d => {
-                        return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) };
+                        return {year: parseInt(d.year), value: parseFloat(d.in_kind_contribution)};
                     })
                 });
             }
@@ -943,14 +944,14 @@
                 data.push({
                     key: industrialInCashProjectsKey,
                     values: chartsData.annualContributionIndustrialProjectsByYear.map(d => {
-                        return { year: parseInt(d.year), value: parseFloat(d.in_cash_contribution) };
+                        return {year: parseInt(d.year), value: parseFloat(d.in_cash_contribution)};
                     })
                 });
 
                 data.push({
                     key: industrialInKindProjectsKey,
                     values: chartsData.annualContributionIndustrialProjectsByYear.map(d => {
-                        return { year: parseInt(d.year), value: parseFloat(d.in_kind_contribution) };
+                        return {year: parseInt(d.year), value: parseFloat(d.in_kind_contribution)};
                     })
                 });
             }
@@ -1070,14 +1071,14 @@
                 data.push({
                     key: priorityKey,
                     values: chartsData.priorityAndProsecutionPatentsByYear.filter(d => d.priority).map(d => {
-                        return { year: parseInt(d.year), value: parseInt(d.count) };
+                        return {year: parseInt(d.year), value: parseInt(d.count)};
                     })
                 });
 
                 data.push({
                     key: prosecutionKey,
                     values: chartsData.priorityAndProsecutionPatentsByYear.filter(d => !d.priority).map(d => {
-                        return { year: parseInt(d.year), value: parseInt(d.count) };
+                        return {year: parseInt(d.year), value: parseInt(d.count)};
                     })
                 });
             }
@@ -1239,7 +1240,7 @@
         }
 
         function getRangeX(minX, maxX) {
-            let step = 1;
+            let step;
 
             const maxXValue = parseInt(maxX, 10);
             const minXValue = parseInt(minX, 10);
@@ -1341,7 +1342,8 @@
         }
 
         /* jshint ignore:start */
-        async function getData (researchEntity, refresh = false, name) {
+        async function getData(researchEntity, name) {
+            const refresh = isRefreshable(researchEntity);
             let chartNames = [];
             if (name === 'all') {
                 chartNames = [...new Set([].concat.apply([], chartKeys.map(c => c.keys)))];
@@ -1349,7 +1351,7 @@
                 chartNames = chartKeys.find(k => k.name === name).keys;
             }
 
-            let missingCharts = [];
+            let missingCharts;
             if (!data[researchEntity.researchEntity] || refresh) {
                 missingCharts = _.cloneDeep(chartNames);
             } else {
@@ -1398,6 +1400,7 @@
                     return obj;
                 }, {});
         }
+
         /* jshint ignore:end */
 
         function deleteData(researchEntity, name) {
@@ -1410,6 +1413,14 @@
 
                 EventsService.unsubscribeAll(researchEntity);
             }
+        }
+
+        function isRefreshable(researchEntity) {
+            return ![
+                groupTypes.INSTITUTE,
+                groupTypes.CENTER,
+                groupTypes.RESEARCH_DOMAIN
+            ].includes(researchEntity.type);
         }
     }
 }());

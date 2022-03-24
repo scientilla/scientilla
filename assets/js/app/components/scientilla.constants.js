@@ -282,6 +282,7 @@
         INSTITUTE: 'Institute',
         CENTER: 'Center',
         RESEARCH_LINE: 'Research Line',
+        RESEARCH_DOMAIN: 'Research Domain',
         FACILITY: 'Facility',
         DIRECTORATE: 'Directorate',
         PROJECT: 'Project'
@@ -291,9 +292,20 @@
         INSTITUTE: 'Institute',
         CENTER: 'Center',
         RESEARCH_LINE: 'Research line',
+        RESEARCH_DOMAIN: 'Research domain',
         FACILITY: 'Facility',
         DIRECTORATE: 'Directorate',
         PROJECT: 'Project'
+    };
+
+    const groupTypePluralLabels = {
+        INSTITUTE: 'Institutes',
+        CENTER: 'Centers',
+        RESEARCH_LINE: 'Research lines',
+        RESEARCH_DOMAIN: 'Research domains',
+        FACILITY: 'Facilities',
+        DIRECTORATE: 'Directorates',
+        PROJECT: 'Projects'
     };
 
     const apiPrefix = '/api/v1';
@@ -379,6 +391,7 @@
         .constant('documentTypes', documentTypes)
         .constant('groupTypes', groupTypes)
         .constant('groupTypeLabels', groupTypeLabels)
+        .constant('groupTypePluralLabels', groupTypePluralLabels)
         .constant('documentSearchForm', documentSearchForm)
         .constant('documentFieldsRules', documentFieldsRules)
         .constant('documentOrigins', documentOrigins)

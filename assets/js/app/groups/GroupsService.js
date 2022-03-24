@@ -10,7 +10,8 @@
         'Prototyper',
         'Notification',
         'groupTypes',
-        'groupTypeLabels'
+        'groupTypeLabels',
+        'groupTypePluralLabels'
     ];
 
     function GroupService(
@@ -18,7 +19,8 @@
         Prototyper,
         Notification,
         groupTypes,
-        groupTypeLabels
+        groupTypeLabels,
+        groupTypePluralLabels
     ) {
         var service = Restangular.service("groups");
 
@@ -32,7 +34,7 @@
         service.get = get;
         service.getGroup = getGroup;
         service.addCollaborator = addCollaborator;
-        service.updateCollaborator= updateCollaborator;
+        service.updateCollaborator = updateCollaborator;
         service.removeCollaborator = removeCollaborator;
         service.addRelative = addRelative;
         service.removeChild = removeChild;
@@ -92,7 +94,7 @@
 
             associationsKeys.forEach(key => delete group[key]);
             return service.save(group)
-                .then(function (g) {
+                .then(function () {
                     associationsKeys.forEach(key => group[key] = associations[key]);
                     group.administrators = administrators;
                     return group;
@@ -114,7 +116,7 @@
         }
 
         function getGroups(query) {
-            const populate = {populate: ['administrators', 'attributes', 'groupAttributes','childGroups', 'parentGroups', 'pis']};
+            const populate = {populate: ['administrators', 'attributes', 'groupAttributes', 'childGroups', 'parentGroups', 'pis']};
             const q = _.merge({}, query, populate);
 
             return service.getList(q);
@@ -131,7 +133,7 @@
 
         function getParentMembershipGroups(groupId) {
             return Restangular.all('membershipgroups').customGET('', {
-                where: { child_group: groupId },
+                where: {child_group: groupId},
                 populate: ['parent_group', 'child_group']
             }).then(res => {
                 return res.items;
@@ -218,6 +220,7 @@
                 return service.createInstituteStructure(institute, membershipGroups);
             });
         }
+
         /* jshint ignore:end */
 
         function addCollaborator(group, user, active) {
@@ -299,49 +302,14 @@
         }
 
         function getTypeTitle(type, groups) {
-            switch (true) {
-                case type === 'Research Line' && groups.length === 1:
-                    return 'Research line';
-                case type === 'Research Line' && groups.length > 1:
-                    return 'Research lines';
-                case type === 'Institute' && groups.length === 1:
-                    return 'Institute';
-                case type === 'Institute' && groups.length > 1:
-                    return 'Institutes';
-                case type === 'Center' && groups.length === 1:
-                    return 'Center';
-                case type === 'Center' && groups.length > 1:
-                    return 'Centers';
-                case type === 'Facility' && groups.length === 1:
-                    return 'Facility';
-                case type === 'Facility' && groups.length > 1:
-                    return 'Facilities';
-                case type === 'Directorate' && groups.length === 1:
-                    return 'Directorate';
-                case type === 'Directorate' && groups.length > 1:
-                    return 'Directorates';
-                default:
-                    return '';
-            }
+            const key = Object.keys(groupTypes).find(k => groupTypes[k] === type);
+            return groups.length > 1 ? groupTypePluralLabels[key] || '' : groupTypeLabels[key];
         }
 
         function getGroupTypeLabel(type) {
-            switch(type) {
-                case groupTypes.INSTITUTE:
-                    return groupTypeLabels.INSTITUTE;
-                case groupTypes.CENTER:
-                    return groupTypeLabels.CENTER;
-                case groupTypes.RESEARCH_LINE:
-                    return groupTypeLabels.RESEARCH_LINE;
-                case groupTypes.FACILITY:
-                    return groupTypeLabels.FACILITY;
-                case groupTypes.DIRECTORATE:
-                    return groupTypeLabels.DIRECTORATE;
-                case groupTypes.PROJECT:
-                    return 'Agreement';
-            }
-
-            return '';
+            if (type === groupTypes.PROJECT)
+                return 'Agreement';
+            return groupTypeLabels[Object.keys(groupTypes).find(k => groupTypes[k] === type)] || '';
         }
     }
 }());

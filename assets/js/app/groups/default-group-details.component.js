@@ -13,7 +13,7 @@
             }
         });
 
-        DefaultGroupDetailsController.$inject = [
+    DefaultGroupDetailsController.$inject = [
         'GroupsService',
         'context',
         'AuthService',
@@ -21,7 +21,8 @@
         '$controller',
         'ResearchEntitiesService',
         '$timeout',
-        'ModalService'
+        'ModalService',
+        'groupTypes'
     ];
 
     function DefaultGroupDetailsController(
@@ -32,7 +33,8 @@
         $controller,
         ResearchEntitiesService,
         $timeout,
-        ModalService
+        ModalService,
+        groupTypes
     ) {
         const vm = this;
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
@@ -69,6 +71,7 @@
             vm.group = await GroupsService.getGroup(vm.group.id);
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
         }
+
         /* jshint ignore:end */
 
         vm.isAdmin = function () {
@@ -82,7 +85,13 @@
         vm.isScientific = function () {
             if (!vm.group)
                 return true;
-            return ['Institute', 'Center', 'Research Line', 'Facility'].includes(vm.group.type);
+            return [
+                groupTypes.INSTITUTE,
+                groupTypes.CENTER,
+                groupTypes.RESEARCH_LINE,
+                groupTypes.RESEARCH_DOMAIN,
+                groupTypes.FACILITY
+            ].includes(vm.group.type);
         };
 
         function addCollaborator() {
