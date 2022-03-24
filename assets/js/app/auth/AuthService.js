@@ -9,15 +9,23 @@
         "ModalService",
         "localStorageService",
         "EventsService",
-        "$http"
+        "$http",
+        "context",
+        "$location",
+        "GroupsService"
     ];
 
-    function AuthService(Restangular,
-                         UsersService,
-                         ModalService,
-                         localStorageService,
-                         EventsService,
-                         $http) {
+    function AuthService(
+        Restangular,
+        UsersService,
+        ModalService,
+        localStorageService,
+        EventsService,
+        $http,
+        context,
+        $location,
+        GroupsService
+    ) {
 
         const service = {
             isLogged: false,
@@ -75,6 +83,14 @@
                     $http.defaults.headers.common.access_token = service.jwtToken;
 
                     setLocaleStorage();
+
+                    if (service.user.name === 'Dashboards' && service.user.administratedGroups.filter(g => g.id === 1)) {
+                        GroupsService.getGroup(1)
+                            .then(group => {
+                                context.setSubResearchEntity(group);
+                                $location.path(group.slug + '/info');
+                            });
+                    }
 
                     return UsersService.getProfile(service.user.researchEntity, false, true).then(() => {
                         EventsService.publish(EventsService.AUTH_LOGIN, service.user);

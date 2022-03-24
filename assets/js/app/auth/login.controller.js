@@ -5,12 +5,10 @@
 
     LoginController.$inject = [
         'AuthService',
-        'Notification',
-        '$scope',
-        '$location'
+        'Notification'
     ];
 
-    function LoginController(AuthService, Notification, $scope, $location) {
+    function LoginController(AuthService, Notification) {
         var vm = this;
 
         vm.STATUS_WAITING = 0;
