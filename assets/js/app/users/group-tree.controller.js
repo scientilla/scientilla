@@ -63,7 +63,10 @@
             vm.subResearchEntity = context.getSubResearchEntity();
 
             allMembershipGroups = await researchEntityService.getAllMembershipGroups(vm.user.id, {});
-            if (!vm.subResearchEntity.isSuperViewer()) {
+            if (
+                (vm.subResearchEntity.getType() === 'user' && !vm.subResearchEntity.isSuperViewer()) ||
+                vm.subResearchEntity.getType() === 'group'
+            ) {
                 allMembershipGroups = allMembershipGroups.filter(m => m.active)
             }
             const groupedAllMembershipGroups = _.groupBy(allMembershipGroups, 'child_group.name');
