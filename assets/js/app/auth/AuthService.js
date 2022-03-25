@@ -84,7 +84,12 @@
 
                     setLocaleStorage();
 
-                    if (service.user.name === 'Dashboards' && service.user.administratedGroups.filter(g => g.id === 1)) {
+                    if (
+                        _.has(service, 'user.name') &&
+                        _.has(service, 'user.administratedGroups') &&
+                        service.user.name === 'Dashboards' &&
+                        service.user.administratedGroups.find(g => g.id === 1)
+                    ) {
                         GroupsService.getGroup(1)
                             .then(group => {
                                 context.setSubResearchEntity(group);
