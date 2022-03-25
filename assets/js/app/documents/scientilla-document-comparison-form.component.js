@@ -59,10 +59,7 @@
             }
 
             if (vm.duplicates.length > 2) {
-                var warning =  'Please notify that there are ' + vm.duplicates.length;
-                warning += ' duplicates.';
-
-                Notification.warning(warning);
+                Notification.warning(`Please notify that there are ${vm.duplicates.length} duplicates.`);
             }
 
             if (vm.duplicates.length > 0) {
@@ -71,6 +68,10 @@
                 vm.duplicates.forEach(d => {
                     d.isReplaceable = isReplaceable(d);
                 });
+            }
+
+            if (vm.duplicates.length === 1) {
+                vm.isReplaceable = isReplaceable(vm.duplicates[0]);
             }
         };
 
