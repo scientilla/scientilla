@@ -54,7 +54,12 @@
             /* jshint ignore:start */
             vm.$onInit = async () => {
 
-                if (AuthService.user.name === 'Dashboards' && AuthService.user.administratedGroups.filter(g => g.id === 1)) {
+                if (
+                    _.has(AuthService, 'user.name') &&
+                    _.has(AuthService, 'user.administratedGroups') &&
+                    AuthService.user.name === 'Dashboards' &&
+                    AuthService.user.administratedGroups.find(g => g.id === 1)
+                ) {
                     GroupsService.getGroup(1)
                         .then(group => {
                             path.goTo(group.slug + '/info');
