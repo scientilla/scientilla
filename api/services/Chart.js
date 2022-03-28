@@ -303,11 +303,11 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
     };
 
     async function query(chart) {
-        const sql = getSql(chart.queryName);
+        const sql = await getSql(chart.queryName);
         return await SqlService.query(sql, chart.params);
     }
 
-    function getSql(queryName) {
+    async function getSql(queryName) {
         const queries = {};
         queries[ResearchEntityTypes.USER] = {
             'filteredAffiliatedDocumentsByYear': 'filteredAffiliatedDocumentsByYear',
@@ -359,7 +359,7 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         };
         const sqlFileName = queries[researchEntityType][queryName] ? queries[researchEntityType][queryName] : queryName;
         const chartQueryPath = `api/queries/${sqlFileName}.sql`;
-        const chartQuerySql = SqlService.readQueryFromFs(chartQueryPath);
+        const chartQuerySql = await SqlService.readQueryFromFs(chartQueryPath);
         return transforms[researchEntityType][queryName] ?
             transforms[researchEntityType][queryName](chartQuerySql) :
             chartQuerySql;

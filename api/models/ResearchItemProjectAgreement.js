@@ -1,4 +1,4 @@
-/* global require, ResearchItemProjectAgreement, JsonValidator */
+/* global require, ResearchItemProjectAgreement, JsonValidator, SqlService */
 'use strict';
 
 const BaseModel = require("../lib/BaseModel.js");
@@ -51,7 +51,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     getUniquePartnerInstitutes: async function () {
         const queryPath = `api/queries/uniquePartnerInstitutes.sql`;
-        const sql = SqlService.readQueryFromFs(queryPath);
+        const sql = await SqlService.readQueryFromFs(queryPath);
         const results = await SqlService.query(sql);
         const institutes = results.map(r => r.institute);
         return institutes.sort();

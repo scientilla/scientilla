@@ -1,3 +1,5 @@
+/* global SqlService */
+
 "use strict";
 
 const path = require('path');
@@ -196,13 +198,13 @@ module.exports = {
     autoCreatedAt: false,
     getUniqueRoleCategories: async function () {
         const queryPath = `api/queries/uniqueRoleCategoriesOfPeople.sql`;
-        const sql = SqlService.readQueryFromFs(queryPath);
+        const sql = await SqlService.readQueryFromFs(queryPath);
         const categories = await SqlService.query(sql);
         return categories.map(c => c.role_category).sort();
     },
     getUniqueNationalities: async function () {
         const queryPath = `api/queries/uniqueNationalitiesOfPeople.sql`;
-        const sql = SqlService.readQueryFromFs(queryPath);
+        const sql = await SqlService.readQueryFromFs(queryPath);
         const nationalities = await SqlService.query(sql);
         return nationalities.map(n => n.nationality).sort();
     }

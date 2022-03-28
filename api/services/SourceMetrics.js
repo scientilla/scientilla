@@ -1,9 +1,8 @@
 // SourceMetrics.js - in api/services
-/* global SqlService */
+/* global SqlService, GruntTaskRunner */
 
 "use strict";
 
-const _ = require('lodash');
 const path = require('path');
 
 const metricsFolder = path.join('metrics_import');
@@ -23,7 +22,7 @@ async function getMetrics(req) {
     const type = req.params.type;
 
     if (type && sqlQueries[type]) {
-        const sql = SqlService.readQueryFromFs(sqlQueries[type]);
+        const sql = await SqlService.readQueryFromFs(sqlQueries[type]);
         return await SqlService.query(sql);
     }
 
@@ -39,7 +38,7 @@ async function importMetrics(req) {
             maxBytes: 10000000000000,
             saveAs: filename,
             dirname: path.resolve(sails.config.appPath, metricsFolder)
-        }, async function (err, file) {
+        }, async function (err) {
             if (err) {
                 reject('Failed to upload the source metrics file!');
             }

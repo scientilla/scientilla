@@ -19,7 +19,7 @@ async function get(req) {
     const type = req.params.type;
 
     if (type && sqlQueries[type]) {
-        const sql = SqlService.readQueryFromFs(sqlQueries[type]);
+        const sql = await SqlService.readQueryFromFs(sqlQueries[type]);
         return await SqlService.query(sql, [researchEntityId]);
     }
 

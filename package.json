@@ -71,7 +71,6 @@
     "string-similarity": "^1.0.0",
     "textangular": "^1.5.16",
     "ui-bootstrap4": "^3.0.4",
-    "waterline-sql-builder": "github:scientilla/waterline-sql-builder",
     "waterlock": "~0.1.0",
     "waterlock-ldap-auth": "^0.1.3",
     "waterlock-local-auth": "^0.0.6",
