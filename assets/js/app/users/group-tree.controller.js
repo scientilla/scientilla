@@ -16,7 +16,8 @@
         'GroupsService',
         '$scope',
         'Prototyper',
-        'context'
+        'context',
+        'groupTypes'
     ];
 
     function controller(
@@ -24,7 +25,8 @@
         GroupsService,
         $scope,
         Prototyper,
-        context
+        context,
+        groupTypes
     ) {
         const vm = this;
 
@@ -63,6 +65,7 @@
             vm.subResearchEntity = context.getSubResearchEntity();
 
             allMembershipGroups = await researchEntityService.getAllMembershipGroups(vm.user.id, {});
+            allMembershipGroups = allMembershipGroups.filter(m => m.group.type !== groupTypes.RESEARCH_DOMAIN);
             if (
                 (vm.subResearchEntity.getType() === 'user' && !vm.subResearchEntity.isSuperViewer()) ||
                 vm.subResearchEntity.getType() === 'group'
