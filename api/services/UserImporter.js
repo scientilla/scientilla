@@ -20,6 +20,7 @@ const convert = require('xml-js');
 const path = require('path');
 const util = require('util');
 const fs = require('fs');
+const GroupTypes = require('./GroupTypes');
 
 const writeFile = util.promisify(fs.writeFile);
 const readdir = util.promisify(fs.readdir);
@@ -1587,7 +1588,7 @@ function getProfileGroups(allMembershipGroups, activeGroups, contract, defaultPr
             const offices = lines.filter(line => line.code === code).map(line => line.office).filter(o => o);
 
             if (offices.length === 1 && offices[0] === 'IIT') {
-                group.type = 'Institute';
+                group.type = GroupTypes.INSTITUTE;
                 group.name = 'Istituto Italiano di Tecnologia';
                 group.code = 'IIT';
                 skipCenter = true;
@@ -1600,23 +1601,23 @@ function getProfileGroups(allMembershipGroups, activeGroups, contract, defaultPr
 
             if (!skipCenter) {
                 // This will return the first parent group.
-                const membershipGroup = allMembershipGroups.find(g => g.child_group === codeGroup.id && g.parent_group.active);
+                const membershipGroup = allMembershipGroups.find(g =>
+                    g.child_group === codeGroup.id &&
+                    g.parent_group &&
+                    g.parent_group.active &&
+                    g.parent_group.type === GroupTypes.CENTER
+                );
 
                 if (_.has(membershipGroup, 'parent_group')) {
-                    const parentGroup = membershipGroup.parent_group;
-                    if (parentGroup && parentGroup.type === 'Center') {
-                        group.center = {
-                            name: parentGroup.name,
-                            code: parentGroup.code,
-                            privacy: defaultPrivacy
-                        };
-                    } else {
-                        sails.log.info(`We are only expecting a center as parent group! ${parentGroup.name} ${parentGroup.code}`);
-                    }
+                    group.center = {
+                        name: membershipGroup.parent_group.name,
+                        code: membershipGroup.parent_group.code,
+                        privacy: defaultPrivacy
+                    };
                 }
             }
         } else {
-            group.type = 'Institute';
+            group.type = GroupTypes.INSTITUTE;
             group.name = 'Istituto Italiano di Tecnologia';
             group.code = 'IIT';
             group.privacy = defaultPrivacy;
