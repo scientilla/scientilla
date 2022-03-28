@@ -1,6 +1,5 @@
 /* global SqlService, ChartData, PerformanceCalculator, Group, DocumentTypes, SourceTypes, DocumentMetric, SourceMetric, ResearchEntityTypes */
 const Promise = require("bluebird");
-const _ = require("lodash");
 
 module.exports = {
     getChartsData,
@@ -116,36 +115,39 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'hindexPerYear',
-        fn: hindexPerYear,
-        requires: ['documents', 'citations'],
+        queryName: 'hindexPerYear',
+        fn: query,
+        params: [id],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'citationsPerYear',
-        fn: citationsPerYear,
-        requires: ['citations'],
+        queryName: 'citationsPerYear',
+        fn: query,
+        params: [id],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'citationsPerDocumentYear',
-        fn: citationsPerDocumentYear,
-        requires: ['documents', 'citations'],
+        queryName: 'citationsPerDocumentYear',
+        fn: query,
+        params: [id],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'totalIfPerYear',
-        fn: getTotalMetricPerYear,
-        metricName: 'IF',
-        requires: ['documents', 'docsMetrics', 'metrics'],
+        queryName: 'totalMetricPerYear',
+        fn: query,
+        params: [id, 'IF'],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'totalSjrPerYear',
-        fn: getTotalMetricPerYear,
-        metricName: 'SJR',
-        requires: ['documents', 'docsMetrics', 'metrics'],
+        queryName: 'totalMetricPerYear',
+        fn: query,
+        params: [id, 'SJR'],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'totalSnipPerYear',
-        fn: getTotalMetricPerYear,
-        metricName: 'SNIP',
-        requires: ['documents', 'docsMetrics', 'metrics'],
+        queryName: 'totalMetricPerYear',
+        fn: query,
+        params: [id, 'SNIP'],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'chartDataDate',
@@ -160,7 +162,7 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupAndSubgroupMembersTotal',
         queryName: 'groupAndSubgroupMembersTotal',
         fn: query,
@@ -172,109 +174,109 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupAndSubgroupMembersByRole',
         queryName: 'groupAndSubgroupMembersByRole',
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupMembersByGender',
         queryName: 'groupMembersByGender',
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupMembersByGenderOfRoles',
         queryName: 'groupMembersByGenderOfRoles',
         fn: query,
         params: [id, roles],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupAndSubgroupMembersByGender',
         queryName: 'groupAndSubgroupMembersByGender',
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupAndSubgroupMembersByGenderOfRoles',
         queryName: 'groupAndSubgroupMembersByGenderOfRoles',
         fn: query,
         params: [id, roles],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupMembersByAgeRange',
         queryName: 'groupMembersByAgeRange',
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupMembersByAgeRangeOfRoles',
         queryName: 'groupMembersByAgeRangeOfRoles',
         fn: query,
         params: [id, roles],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupAndSubgroupMembersByAgeRange',
         queryName: 'groupAndSubgroupMembersByAgeRange',
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupAndSubgroupMembersByAgeRangeOfRoles',
         queryName: 'groupAndSubgroupMembersByAgeRangeOfRoles',
         fn: query,
         params: [id, roles],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupMembersByNationality',
         queryName: 'groupMembersByNationality',
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupMembersByNationalityOfRoles',
         queryName: 'groupMembersByNationalityOfRoles',
         fn: query,
         params: [id, roles],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupAndSubgroupMembersByNationality',
         queryName: 'groupAndSubgroupMembersByNationality',
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'groupAndSubgroupMembersByNationalityOfRoles',
         queryName: 'groupAndSubgroupMembersByNationalityOfRoles',
         fn: query,
         params: [id, roles],
         researchEntityTypes: [ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'annualContributionCompetitiveProjectsByYear',
         queryName: 'annualContributionCompetitiveProjectsByYear',
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'annualContributionIndustrialProjectsByYear',
         queryName: 'annualContributionIndustrialProjectsByYear',
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'totalContributionIndustrialProjectsByYear',
         queryName: 'totalContributionIndustrialProjectsByYear',
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'totalContributionCompetitiveProjectsByYear',
         queryName: 'totalContributionCompetitiveProjectsByYear',
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
-    },  {
+    }, {
         key: 'priorityAndProsecutionPatentsByYear',
         queryName: 'priorityAndProsecutionPatentsByYear',
         fn: query,
@@ -282,13 +284,12 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }];
 
-    let selectedCharts = [];
-    let documents = [];
-    let citations = [];
-    let docsMetrics = [];
-    let metrics = [];
+    let selectedCharts;
+    if (chartsKeys.length > 0)
+        selectedCharts = charts.filter(c => chartsKeys.includes(c.key) && c.researchEntityTypes.includes(researchEntityType));
+    else
+        selectedCharts = charts.filter(c => c.researchEntityTypes.includes(researchEntityType));
 
-    await setData();
 
     const promises = selectedCharts.map(chart => cachedChartData(chart, refresh));
     const results = await Promise.all(promises);
@@ -301,35 +302,6 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         items: [res]
     };
 
-    async function setData() {
-
-        if (chartsKeys.length > 0)
-            selectedCharts = charts.filter(c => chartsKeys.includes(c.key) && c.researchEntityTypes.includes(researchEntityType));
-        else
-            selectedCharts = charts.filter(c => c.researchEntityTypes.includes(researchEntityType));
-
-        if (refresh || !await areChartsCached()) {
-            if (selectedCharts.find(sc =>
-                sc.requires
-                && (
-                    sc.requires.includes('documents')
-                    || sc.requires.includes('citations')
-                    || sc.requires.includes('docsMetrics')
-                    || sc.requires.includes('metrics')
-                )))
-                await setDocuments();
-
-            if (selectedCharts.find(sc => sc.requires && sc.requires.includes('citations')))
-                await setCitations();
-
-            if (selectedCharts.find(sc => sc.requires && (sc.requires.includes('docsMetrics') || sc.requires.includes('metrics'))))
-                await setDocumentsMetrics();
-
-            if (selectedCharts.find(sc => sc.requires && sc.requires.includes('metrics')))
-                await setMetrics();
-        }
-    }
-
     async function query(chart) {
         const sql = getSql(chart.queryName);
         return await SqlService.query(sql, chart.params);
@@ -338,9 +310,6 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
     function getSql(queryName) {
         const queries = {};
         queries[ResearchEntityTypes.USER] = {
-            'chartDataDate': 'chartDataDate',
-            'documentsByType': 'documentsByType',
-            'documentsByYear': 'documentsByYear',
             'filteredAffiliatedDocumentsByYear': 'filteredAffiliatedDocumentsByYear',
             'filteredNotAffiliatedDocumentsByYear': 'filteredNotAffiliatedDocumentsByYear',
             'invitedTalksByYear': 'invitedTalksByYear',
@@ -352,9 +321,6 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         };
 
         queries[ResearchEntityTypes.GROUP] = {
-            'chartDataDate': 'chartDataDate',
-            'documentsByType': 'documentsByType',
-            'documentsByYear': 'documentsByYear',
             'filteredAffiliatedDocumentsByYear': 'filteredAffiliatedDocumentsByYearGroup',
             'filteredNotAffiliatedDocumentsByYear': 'filteredNotAffiliatedDocumentsByYearGroup',
             'invitedTalksByYear': 'invitedTalksByYear',
@@ -385,131 +351,18 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         transforms[ResearchEntityTypes.GROUP] = {
             'documentsByType': (q) => q.replace(/authorship/g, 'authorshipgroup'),
             'documentsByYear': (q) => q.replace(/authorship/g, 'authorshipgroup'),
-            'invitedTalksByYear': (q) => q.replace(/authorship/g, 'authorshipgroup')
+            'invitedTalksByYear': (q) => q.replace(/authorship/g, 'authorshipgroup'),
+            'hindexPerYear': (q) => q.replace(/authorship/g, 'authorshipgroup'),
+            'citationsPerYear': (q) => q.replace(/authorship/g, 'authorshipgroup'),
+            'citationsPerDocumentYear': (q) => q.replace(/authorship/g, 'authorshipgroup'),
+            'totalMetricPerYear': (q) => q.replace(/authorship/g, 'authorshipgroup'),
         };
-        const chartQueryPath = `api/queries/${queries[researchEntityType][queryName]}.sql`;
+        const sqlFileName = queries[researchEntityType][queryName] ? queries[researchEntityType][queryName] : queryName;
+        const chartQueryPath = `api/queries/${sqlFileName}.sql`;
         const chartQuerySql = SqlService.readQueryFromFs(chartQueryPath);
         return transforms[researchEntityType][queryName] ?
             transforms[researchEntityType][queryName](chartQuerySql) :
             chartQuerySql;
-    }
-
-    async function hindexPerYear() {
-        if (!documents.length) return [];
-        const yearRange = getYearRange(documents);
-        const years = _.range(yearRange.min, Math.max(new Date().getFullYear(), yearRange.max) + 1);
-        return await Promise.all(years.map(async y => ({
-                year: y,
-                value: await getHIndex(y)
-            })
-        ));
-    }
-
-    async function citationsPerYear() {
-        if (!citations.length) return [];
-        const yearRange = getYearRange(citations);
-
-        return _.range(yearRange.min, yearRange.max + 1)
-            .map(y => {
-                const yearCitations = citations.filter(c => parseInt(c.year, 10) === y);
-                const yearTotal = yearCitations.reduce((res, cit) => cit.citations + res, 0);
-                return {
-                    year: y,
-                    value: yearTotal
-                };
-            });
-    }
-
-    async function citationsPerDocumentYear() {
-        const documentYearCitations = citations.map(c => ({
-            year: parseInt(documents.find(d => d.id === c.document).year, 10),
-            citations: c.citations
-        }));
-
-        if (!documentYearCitations.length) return [];
-        const yearRange = getYearRange(documentYearCitations);
-
-        return _.range(yearRange.min, yearRange.max + 1)
-            .map(y => {
-                const yearCitations = documentYearCitations.filter(c => c.year === y);
-                const yearTotal = yearCitations.reduce((res, cit) => cit.citations + res, 0);
-                return {
-                    year: y,
-                    value: yearTotal
-                };
-            });
-    }
-
-    async function getTotalMetricPerYear(chart) {
-        const chartMetrics = metrics.filter(dm => dm.name === chart.metricName);
-        const docs = documents.map(d => {
-            const documentMetricsIds = docsMetrics.filter(dm => dm.document === d.id).map(dm => dm.metric);
-            const impactFactorsAllYears = chartMetrics.filter(i => documentMetricsIds.includes(i.id));
-            const year = Math.max(...impactFactorsAllYears.map(m => parseInt(m.year, 10)));
-            const metric = impactFactorsAllYears.find(m => m.year === year);
-            return {
-                year: d.year,
-                metric: metric ? parseFloat(metric.value) : 0
-            };
-        }).filter(d => d.metric);
-
-        if (!docs.length) return [];
-        const yearRange = getYearRange(docs);
-
-        return _.range(yearRange.min, yearRange.max + 1)
-            .map(y => {
-                const yearDocs = docs.filter(c => parseInt(c.year, 10) === y);
-                const yearTotal = yearDocs.reduce((res, doc) => doc.metric + res, 0);
-                return {
-                    year: y,
-                    value: yearTotal
-                };
-            });
-    }
-
-    async function setDocuments() {
-        const researchEntity = await Model.findOne({id: id}).populate('documents');
-        documents = researchEntity.documents.filter(d => !excludedDocumentTypes.includes(d.documenttype));
-    }
-
-    async function setCitations() {
-        citations = await PerformanceCalculator.getScopusCitations(documents, new Date().getFullYear() + 1);
-    }
-
-    async function setDocumentsMetrics() {
-        docsMetrics = await DocumentMetric.find({document: documents.map(d => d.id)});
-    }
-
-    async function setMetrics() {
-        const docsMetricsIds = docsMetrics.map(dm => dm.metric);
-        const filterOnQuery = docsMetricsIds.length < 2000;
-
-        const query = {name: ['IF', 'SJR', 'SNIP']};
-        if (filterOnQuery)
-            query.id = docsMetricsIds;
-
-        metrics = (await SourceMetric.find(query));
-
-        if (!filterOnQuery)
-            metrics = metrics.filter(dm => docsMetricsIds.includes(dm.id));
-    }
-
-    async function getHIndex(year) {
-        const cits = citations.filter(c => c.year <= year);
-        const citationsTotals = PerformanceCalculator.getCitationTotals(cits);
-        return PerformanceCalculator.calculateHIndex(citationsTotals);
-    }
-
-    async function areChartsCached() {
-        const cc = selectedCharts.filter(c => !c.nocache);
-
-        const cachedCharts = await ChartData.find({
-            key: cc.map(c => c.key),
-            researchEntityType: researchEntityType,
-            researchEntity: id
-        });
-
-        return cachedCharts.length === cc.length;
     }
 
     async function cachedChartData(chart, refresh) {
@@ -560,13 +413,6 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         });
 
     }
-}
-
-function getYearRange(elements) {
-    return {
-        min: parseInt(_.minBy(elements, 'year').year, 10),
-        max: parseInt(_.maxBy(elements, 'year').year, 10),
-    };
 }
 
 async function recalculate(groupId) {

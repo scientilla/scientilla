@@ -1,6 +1,5 @@
-SELECT research_entity,
-       year,
-       max(h) as h
+SELECT year,
+       max(h) as value
 FROM (
          SELECT "researchEntity"                                                  AS research_entity,
                 dic.value                                                         AS value,
@@ -10,7 +9,7 @@ FROM (
          FROM authorship a
                   JOIN document d ON a.document = d.id
                   JOIN document_incremental_citation dic
-                       ON a.document = dic.document AND NULLIF(d.year, '')::int <= dic.year
+                       ON d."scopusId" = dic.scopus_id AND NULLIF(d.year, '')::int <= dic.year
                   JOIN generate_series(1900,
                                        date_part('year', now())::int) AS year_range
                        ON dic.year = year_range
