@@ -1600,7 +1600,7 @@ function getProfileGroups(allMembershipGroups, activeGroups, contract, defaultPr
             }
 
             if (!skipCenter) {
-                // This will return the first parent group.
+                // This will return the first parent group of type center.
                 const membershipGroup = allMembershipGroups.find(g =>
                     g.child_group === codeGroup.id &&
                     g.parent_group &&
