@@ -31,12 +31,13 @@ module.exports = {
 };
 
 async function query(sql, params) {
-    return db.query(sql, params)
-        .catch(err => {
-            sails.log.debug('The following query generated an error');
-            sails.log.debug(sql);
-            sails.log.debug(err);
-        });
+    try {
+        return db.query(sql, params)
+    } catch (err) {
+        sails.log.debug('The following query generated an error');
+        sails.log.debug(sql);
+        sails.log.debug(err);
+    }
 }
 
 async function readQueryFromFs(filePath) {
