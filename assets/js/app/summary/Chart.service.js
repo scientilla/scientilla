@@ -1,4 +1,4 @@
-/* global d3, tinycolor */
+/* global angular, d3, tinycolor */
 (function () {
     "use strict";
     angular.module("services").factory("ChartService", ChartService);
@@ -6,8 +6,7 @@
     ChartService.$inject = [
         'DocumentTypesService',
         'EventsService',
-        '$timeout',
-        'groupTypes'
+        '$timeout'
     ];
 
     let styles = {};
@@ -60,7 +59,7 @@
         }
     ];
 
-    function ChartService(DocumentTypesService, EventsService, $timeout, groupTypes) {
+    function ChartService(DocumentTypesService, EventsService, $timeout) {
         const service = {
             previewDefaultOptions: {
                 chart: {
@@ -1343,7 +1342,7 @@
 
         /* jshint ignore:start */
         async function getData(researchEntity, name) {
-            const refresh = isRefreshable(researchEntity);
+            const refresh = true;
             let chartNames = [];
             if (name === 'all') {
                 chartNames = [...new Set([].concat.apply([], chartKeys.map(c => c.keys)))];
@@ -1413,14 +1412,6 @@
 
                 EventsService.unsubscribeAll(researchEntity);
             }
-        }
-
-        function isRefreshable(researchEntity) {
-            return ![
-                groupTypes.INSTITUTE,
-                groupTypes.CENTER,
-                groupTypes.RESEARCH_DOMAIN
-            ].includes(researchEntity.type);
         }
     }
 }());

@@ -1,3 +1,5 @@
+/* global angular */
+
 (function () {
     "use strict";
 
@@ -16,12 +18,10 @@
         'ChartService',
         'ModalService',
         '$timeout',
-        '$element',
-        'TaskService',
-        'groupTypes'
+        '$element'
     ];
 
-    function controller(ChartService, ModalService, $timeout, $element, TaskService, groupTypes) {
+    function controller(ChartService, ModalService, $timeout, $element) {
         const vm = this;
 
         vm.name = 'summary-metrics';
@@ -29,18 +29,11 @@
 
         vm.charts = false;
         vm.showInfo = showInfo;
-        vm.hasRefreshDisabled = hasRefreshDisabled;
-        vm.recalculate = recalculate;
-
-        vm.recalculating = false;
-        const command = `chart:recalculate:${vm.researchEntity.id}`;
 
         /* jshint ignore:start */
         vm.$onInit = async () => {
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
-
-            await checkIsRecalculating();
         };
         /* jshint ignore:end */
 
@@ -175,9 +168,6 @@
                 vm.charts.patentsByYear = ChartService.getPatentsByYear(chartsData);
                 vm.charts.projectsByYear = ChartService.getProjectAnnualContributionsByYear(chartsData);
 
-                if (chartsData.chartDataDate && chartsData.chartDataDate[0].max) {
-                    vm.lastRefresh = new Date(chartsData.chartDataDate[0].max);
-                }
             });
         };
 
@@ -185,41 +175,6 @@
 
         function showInfo() {
             ModalService.openWizard(['summary-metrics'], {isClosable: true});
-        }
-
-        function hasRefreshDisabled() {
-            return vm.researchEntity.getType() === 'group' &&
-                [
-                    groupTypes.INSTITUTE,
-                    groupTypes.CENTER,
-                    groupTypes.RESEARCH_DOMAIN
-                ].includes(vm.researchEntity.type);
-        }
-
-        /* jshint ignore:start */
-        async function recalculate() {
-            if (vm.recalculating) {
-                return;
-            }
-
-            vm.recalculating = true;
-
-            try {
-                await TaskService.run(`${command}:${vm.researchEntity.id}`);
-
-                const chartsData = await ChartService.getAllChartData(vm.researchEntity);
-
-                if (chartsData.chartDataDate[0].max) {
-                    vm.lastRefresh = new Date(chartsData.chartDataDate[0].max);
-                }
-            } catch (e) {
-            }
-
-            vm.recalculating = false;
-        }
-
-        async function checkIsRecalculating() {
-            vm.recalculating = await TaskService.isRunning(command);
         }
 
         /* jshint ignore:end */
