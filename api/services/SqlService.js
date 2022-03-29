@@ -46,5 +46,5 @@ async function readQueryFromFs(filePath) {
 }
 
 async function refreshMaterializedView(view) {
-    await query('REFRESH MATERIALIZED VIEW $1;', view);
+    await query(`REFRESH MATERIALIZED VIEW ${view}`);
 }
