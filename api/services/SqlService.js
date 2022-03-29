@@ -1,4 +1,4 @@
-// SqlService.js - in api/services
+/* global sails */
 
 "use strict";
 
@@ -27,7 +27,8 @@ const db = pgp(connectionStr);
 
 module.exports = {
     readQueryFromFs,
-    query
+    query,
+    refreshMaterializedView
 };
 
 async function query(sql, params) {
@@ -42,4 +43,8 @@ async function query(sql, params) {
 
 async function readQueryFromFs(filePath) {
     return readFile(filePath, 'utf8');
+}
+
+async function refreshMaterializedView(view) {
+    await query('REFRESH MATERIALIZED VIEW $1;', view);
 }

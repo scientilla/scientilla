@@ -1,5 +1,5 @@
-/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship, ExternalImporter, Citation, ExternalDocumentMetadata, Institute */
-// ScopusExternalImporter.js - in api/services
+/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector */
+/* global User, Group, Authorship, ExternalImporter, Citation, ExternalDocumentMetadata, Institute, SqlService */
 
 "use strict";
 
@@ -64,6 +64,9 @@ module.exports = {
             await Promise.all(scopusIds.slice(i, i + parallelRequests).map(
                 scopusId => updateCitations(scopusId).catch(err => errors.push(err))
             ));
+
+        await SqlService.refreshMaterializedView('document_scopus_citation');
+        await SqlService.refreshMaterializedView('document_scopus_incremental_citation');
 
         sails.log.info('updated ' + scopusIds.length + ' citations');
         sails.log.info('errors: ');

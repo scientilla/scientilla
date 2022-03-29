@@ -1,7 +1,7 @@
 /* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator */
 /* global MembershipGroup, GroupTypes, ResearchEntityData, ResearchItemTypes, ResearchItem, ResearchItemKinds, Project */
 /* global Verify, Membership, MembershipGroup, GroupTypes, ResearchEntityData, Utils, Patent */
-/* global GeneralSetting */
+/* global GeneralSetting, SqlService */
 
 // Importer.js - in api/services
 
@@ -437,6 +437,8 @@ async function importSourceMetrics(filename) {
     } else {
         sails.log.info('Source metrics import stopped: File not found!');
     }
+
+    await SqlService.refreshMaterializedView('latest_source_metric');
 
     sails.log.info('imported ' + recordsCount + ' records');
 }
