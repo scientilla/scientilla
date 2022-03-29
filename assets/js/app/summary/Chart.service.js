@@ -1352,7 +1352,7 @@
             }
 
             let missingCharts;
-            if (!data[researchEntity.researchEntity] || refresh) {
+            if (!data[researchEntity.researchEntity]) {
                 missingCharts = _.cloneDeep(chartNames);
             } else {
                 missingCharts = chartNames.filter(n => !Object.keys(data[researchEntity.researchEntity]).includes(n));
