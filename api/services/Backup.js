@@ -52,7 +52,7 @@ async function makeBackup(autoBackup = false) {
     sails.log.info(`Creating backup file ${binaryBackupFilename}`);
 
     const connectionString = getConnectionString();
-    const binaryBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${binaryBackupFilepath}" --inserts -F c`;
+    const binaryBackupCmd = `pg_dump --dbname ${connectionString} --clean --create --file "${binaryBackupFilepath}" --if-exists --inserts --format c`;
 
     try {
         await runCommand(binaryBackupCmd, 'binary backup creation');
@@ -99,7 +99,7 @@ async function restoreBackup(filename = null, autoBackup = false) {
     sails.log.info(`Restoring backup file ${backupFilename}`);
 
     const connectionString = getConnectionString();
-    const binaryBackupCmd = `pg_restore -d ${connectionString} -n public -c -F c -j 3 ${backupFilepath}`;
+    const binaryBackupCmd = `pg_restore --dbname ${connectionString} --schema public --clean --format c --jobs 3 ${backupFilepath}`;
 
     try {
         await runCommand(binaryBackupCmd, 'binary backup restore');
