@@ -1,17 +1,14 @@
-'user strict'
+'use strict'
 
 module.exports = function (req, res, next) {
-
     const acceptedKeys = sails.config.scientilla.APIKeys;
 
     if (!_.isEmpty(acceptedKeys)) {
-
         if (req.headers && req.headers.authorization) {
             const authorization = req.headers.authorization;
             const tokenParts = authorization.split(' ');
 
             if (tokenParts.length === 2) {
-
                 const bearerPrefix = tokenParts[0];
                 let apiKey = tokenParts[1];
 

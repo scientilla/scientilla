@@ -19,31 +19,38 @@
 const _ = require('lodash');
 
 const isLogged = ['isLogged'];
-const isAdmin = ['isAdmin'];
-const isSuperUser = ['isSuperUser'];
 const isActivityOwner = ['isActivityOwner'];
 const isGroupOwner = ['isGroupOwner'];
 const isResearchEntityOwner = ['isResearchEntityOwner'];
 const hasValidAPIKey = ['hasValidAPIKey'];
+const hasRole = require('../api/policies/hasRole.js');
+
+const ROLES = {
+    USER: 'user',
+    SUPERUSER: 'superuser',
+    ADMINISTRATOR: 'administrator',
+    EVALUATOR: 'evaluator',
+    GUEST: 'guest'
+};
 
 const defaultPolicy = {
     '*': isLogged,
     findOne: true,
     find: true,
     populate: true,
-    destroy: isAdmin,
-    create: isAdmin,
-    update: isAdmin
+    destroy: hasRole([ROLES.ADMINISTRATOR]),
+    create: hasRole([ROLES.ADMINISTRATOR]),
+    update: hasRole([ROLES.ADMINISTRATOR])
 };
 
 const defaultAdminPolicy = {
-    '*': isAdmin,
-    findOne: isAdmin,
-    find: isAdmin,
-    populate: isAdmin,
-    destroy: isAdmin,
-    create: isAdmin,
-    update: isAdmin
+    '*': hasRole([ROLES.ADMINISTRATOR]),
+    findOne: hasRole([ROLES.ADMINISTRATOR]),
+    find: hasRole([ROLES.ADMINISTRATOR]),
+    populate: hasRole([ROLES.ADMINISTRATOR]),
+    destroy: hasRole([ROLES.ADMINISTRATOR]),
+    create: hasRole([ROLES.ADMINISTRATOR]),
+    update: hasRole([ROLES.ADMINISTRATOR])
 };
 
 module.exports.policies = {
@@ -203,33 +210,33 @@ module.exports.policies = {
     }, defaultPolicy),
 
     BackupController: _.defaults({
-        getDumps: isAdmin,
-        make: isAdmin,
-        restore: isAdmin,
-        upload: isAdmin,
-        remove: isAdmin
+        getDumps: hasRole([ROLES.ADMINISTRATOR]),
+        make: hasRole([ROLES.ADMINISTRATOR]),
+        restore: hasRole([ROLES.ADMINISTRATOR]),
+        upload: hasRole([ROLES.ADMINISTRATOR]),
+        remove: hasRole([ROLES.ADMINISTRATOR])
     }, defaultAdminPolicy),
 
     CustomizeController: _.defaults({
         getCustomizations: true,
-        setCustomizations: isAdmin,
-        resetCustomizations: isAdmin
+        setCustomizations: hasRole([ROLES.ADMINISTRATOR]),
+        resetCustomizations: hasRole([ROLES.ADMINISTRATOR])
     }, defaultAdminPolicy),
 
     SourceMetricController: _.defaults({
-        getMetrics: isAdmin,
-        importMetrics: isAdmin,
-        assignMetrics: isAdmin
+        getMetrics: hasRole([ROLES.ADMINISTRATOR]),
+        importMetrics: hasRole([ROLES.ADMINISTRATOR]),
+        assignMetrics: hasRole([ROLES.ADMINISTRATOR])
     }, defaultAdminPolicy),
 
     LogController: _.defaults({
-        getTasks: isAdmin,
-        read: isAdmin
+        getTasks: hasRole([ROLES.ADMINISTRATOR]),
+        read: hasRole([ROLES.ADMINISTRATOR])
     }, defaultAdminPolicy),
 
     GeneralSettingsController: _.defaults({
-        getByName: isAdmin,
-        saveByName: isAdmin,
+        getByName: hasRole([ROLES.ADMINISTRATOR]),
+        saveByName: hasRole([ROLES.ADMINISTRATOR])
     }, defaultAdminPolicy),
 
     PersonController: _.defaults({
@@ -247,25 +254,25 @@ module.exports.policies = {
     }, defaultPolicy),
 
     PhdInstituteController: _.defaults({
-        destroy: isSuperUser,
-        create: isSuperUser,
-        update: isSuperUser
+        destroy: hasRole([ROLES.SUPERUSER, ROLES.ADMINISTRATOR]),
+        create: hasRole([ROLES.SUPERUSER, ROLES.ADMINISTRATOR]),
+        update: hasRole([ROLES.SUPERUSER, ROLES.ADMINISTRATOR])
     }, defaultPolicy),
 
     PhdCourseController: _.defaults({
-        destroy: isSuperUser,
-        create: isSuperUser,
-        update: isSuperUser
+        destroy: hasRole([ROLES.SUPERUSER, ROLES.ADMINISTRATOR]),
+        create: hasRole([ROLES.SUPERUSER, ROLES.ADMINISTRATOR]),
+        update: hasRole([ROLES.SUPERUSER, ROLES.ADMINISTRATOR])
     }, defaultPolicy),
 
     PhdCycleController: _.defaults({
-        destroy: isSuperUser,
-        create: isSuperUser,
-        update: isSuperUser
+        destroy: hasRole([ROLES.SUPERUSER, ROLES.ADMINISTRATOR]),
+        create: hasRole([ROLES.SUPERUSER, ROLES.ADMINISTRATOR]),
+        update: hasRole([ROLES.SUPERUSER, ROLES.ADMINISTRATOR])
     }, defaultPolicy),
 
     TaskController: _.defaults({
-        run: isAdmin,
+        run: hasRole([ROLES.SUPERUSER, ROLES.EVALUATOR, ROLES.ADMINISTRATOR]),
         isRunning: isLogged
     }, defaultAdminPolicy),
 };
