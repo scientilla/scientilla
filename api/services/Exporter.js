@@ -205,7 +205,6 @@ function projectsToCsv(researchItems) {
     const industrialProjects = researchItems.filter(researchItem => researchItem.type.key === ResearchItemTypes.PROJECT_INDUSTRIAL);
     const rowsIndustrial = [[
         'Title',
-        'Abstract',
         'Type',
         'Code',
         'Start date',
@@ -220,7 +219,6 @@ function projectsToCsv(researchItems) {
         const researchItem = ri.toJSON();
         const row = [];
         row.push(researchItem.title);
-        row.push(researchItem.abstract);
         row.push(researchItem.type.label);
         row.push(researchItem.code);
         row.push(researchItem.startDate);
@@ -246,7 +244,6 @@ function projectsToCsv(researchItems) {
     const competitiveProjects = researchItems.filter(researchItem => researchItem.type.key === ResearchItemTypes.PROJECT_COMPETITIVE);
     const rowsCompetitive = [[
         'Title',
-        'Abstract',
         'Type',
         'Code',
         'Acronym',
@@ -264,7 +261,6 @@ function projectsToCsv(researchItems) {
         const researchItem = ri.toJSON();
         const row = [];
         row.push(researchItem.title);
-        row.push(researchItem.abstract);
         row.push(researchItem.type.label);
         row.push(researchItem.code);
         row.push(researchItem.acronym);
