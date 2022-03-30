@@ -5,4 +5,5 @@ FROM authorship a
          JOIN latest_source_metric lsm ON d.source = lsm.source
 WHERE a."researchEntity" = $1
   AND lsm.name = $2
+  AND d.documenttype <> ALL ($3 :: INT[])
 GROUP BY d.year

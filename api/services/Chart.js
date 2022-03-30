@@ -117,37 +117,37 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         key: 'hindexPerYear',
         queryName: 'hindexPerYear',
         fn: query,
-        params: [id],
+        params: [id, excludedDocumentTypes],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'citationsPerYear',
         queryName: 'citationsPerYear',
         fn: query,
-        params: [id],
+        params: [id, excludedDocumentTypes],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'citationsPerDocumentYear',
         queryName: 'citationsPerDocumentYear',
         fn: query,
-        params: [id],
+        params: [id, excludedDocumentTypes],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'totalIfPerYear',
         queryName: 'totalMetricPerYear',
         fn: query,
-        params: [id, 'IF'],
+        params: [id, 'IF', excludedDocumentTypes],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'totalSjrPerYear',
         queryName: 'totalMetricPerYear',
         fn: query,
-        params: [id, 'SJR'],
+        params: [id, 'SJR', excludedDocumentTypes],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'totalSnipPerYear',
         queryName: 'totalMetricPerYear',
         fn: query,
-        params: [id, 'SNIP'],
+        params: [id, 'SNIP', excludedDocumentTypes],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
     }, {
         key: 'chartDataDate',

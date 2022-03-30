@@ -14,6 +14,7 @@ FROM (
                                        date_part('year', now())::int) AS year_range
                        ON dic.year = year_range
          WHERE a."researchEntity" IS NOT NULL
+           AND d.documenttype <> ALL ($2 :: INT[])
      ) AS index
 WHERE h <= value
   AND research_entity = $1
