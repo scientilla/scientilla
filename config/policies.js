@@ -25,7 +25,6 @@ const isResearchEntityOwner = ['isResearchEntityOwner'];
 const hasValidAPIKey = ['hasValidAPIKey'];
 const hasRole = require('../api/policies/hasRole.js');
 
-
 const ROLES = {
     USER: 'user',
     SUPERUSER: 'superuser',
