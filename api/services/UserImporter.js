@@ -827,6 +827,8 @@ function isFormerGuestStudent(employee) {
  function getUserImportRequestOptions(type, extraParams = {}) {
     const options = _.cloneDeep(sails.config.scientilla.userImport);
 
+    options.responseEncoding = 'latin1';
+
     const trans = (type === 'history') ? '/public/storico_contrattuale_UO_node' : '/public/scheda_persona_flat';
     options.params = Object.assign({
             rep: 'PROD',
