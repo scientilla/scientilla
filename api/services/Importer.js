@@ -1,4 +1,4 @@
-/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator */
+/* global sails, Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator */
 /* global MembershipGroup, GroupTypes, ResearchEntityData, ResearchItemTypes, ResearchItem, ResearchItemKinds, Project */
 /* global Verify, Membership, MembershipGroup, GroupTypes, ResearchEntityData, Utils, Patent */
 /* global GeneralSetting, SqlService */
@@ -841,7 +841,7 @@ async function importProjects() {
             if (!m) {
                 prj.members.push(member);
             } else {
-                m[paymentLabel + 'Contribution'] =  (m[paymentLabel + 'Contribution'] || 0) + member[paymentLabel + 'Contribution'];
+                m[paymentLabel + 'Contribution'] = (m[paymentLabel + 'Contribution'] || 0) + member[paymentLabel + 'Contribution'];
                 m[paymentLabel + 'AnnualContribution'] = !Array.isArray(m[paymentLabel + 'AnnualContribution']) ?
                     member[paymentLabel + 'AnnualContribution']
                     : mergeAnnualContributions(m[paymentLabel + 'AnnualContribution'], member[paymentLabel + 'AnnualContribution']);
@@ -1093,8 +1093,14 @@ async function importPatents() {
         throw (e);
     }
 
+    if (!Array.isArray(res.result) && res.result.length < 10) {
+        sails.log.error('Not enought results!!');
+        return;
+    }
+
     let importErrors = 0;
     let totalItems = 0, created = 0, updated = 0;
+    const importedPatents = [];
 
     for (const item of res.result) {
         if (!item.patent_family.docket) {
@@ -1119,6 +1125,7 @@ async function importPatents() {
 
                 const patentFamilyData = mapObject(item.patent_family, patentFamilySchema);
                 const patentData = mapObject(patent, patentSchema);
+                importedPatents.push(patentData);
 
                 if (!patentData.application) {
                     importErrors++;
@@ -1158,6 +1165,17 @@ async function importPatents() {
 
         }
     }
+
+    const allExternalPatents = await Patent.find({kind: 'e'});
+    const toDeleteCodes = _.difference(
+        allExternalPatents.map(p => p.code),
+        importedPatents.map(p => p.id + '')
+    );
+
+    const patentsToDelete = await Patent.find({code: toDeleteCodes});
+    await Verify.destroy({researchItem: patentsToDelete.map(p => p.id)});
+    await ResearchItem.destroy({id: patentsToDelete.map(p => p.id)});
+
 
     sails.log.info(`import ${ResearchItemTypes.PATENT} completed`);
     sails.log.info(`${totalItems} found`);
