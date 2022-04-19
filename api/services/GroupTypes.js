@@ -7,5 +7,6 @@ module.exports = {
     RESEARCH_LINE: 'Research Line',
     RESEARCH_DOMAIN: 'Research Domain',
     FACILITY: 'Facility',
-    PROJECT: 'Project'
+    PROJECT: 'Project',
+    DIRECTORATE: 'Directorate'
 };
