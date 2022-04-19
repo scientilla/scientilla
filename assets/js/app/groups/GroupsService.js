@@ -124,8 +124,11 @@
 
         function getMembershipGroups() {
             return Restangular.all('membershipgroups').customGET('', {
-                //where: {active: true},
-                populate: ['parent_group', 'child_group']
+                where: {
+                    active: true
+                },
+                populate: ['parent_group', 'child_group'],
+                limit: 1000
             }).then(res => {
                 return res.items;
             });
@@ -175,11 +178,13 @@
 
                 // Add our current element to its parent's `childGroups` array
                 const group = Prototyper.toGroupModel(el.child_group);
-                group.childGroups = el.childGroups || [];
-                if (!_.has(parentEl, 'childGroups')) {
-                    parentEl.childGroups = [];
+                if (group.active) {
+                    group.childGroups = el.childGroups || [];
+                    if (!_.has(parentEl, 'childGroups')) {
+                        parentEl.childGroups = [];
+                    }
+                    parentEl.childGroups.push(group);
                 }
-                parentEl.childGroups.push(group);
             });
 
             return institute;
