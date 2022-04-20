@@ -172,6 +172,8 @@ app.post('/basic-configuration', (req, res) => {
     configuration.institute.city = req.body['institute-city']
     configuration.institute.scopusId = req.body['institute-scopus-id']
 
+    configuration.matrix.url = req.body['matrix-url']
+
     configuration.ldap.connection.url = req.body['ldap-connection-url']
     configuration.ldap.connection.bindDn = req.body['ldap-connection-bind-dn']
     configuration.ldap.connection.bindCredentials = req.body['ldap-connection-bind-credentials']
