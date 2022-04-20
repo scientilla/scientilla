@@ -63,14 +63,6 @@ module.exports.scientilla = {
         "city": "Genoa",
         "scopusId": ""
     },
-    "mainInstituteImport": {
-        "userImportUrl": "http://example.com/users",
-        "usersCreationCondition": {
-            "attribute": "scientificRole",
-            "value": true
-        },
-        "officialGroupsImportUrl": "http://example.com/groups"
-    },
     "crons": [
         {
             "name": "daily",
