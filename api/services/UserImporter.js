@@ -286,10 +286,6 @@ async function importUsers(email = getDefaultEmail()) {
                     let active = false;
                     let code = line.codice;
 
-                    if (_.has(line, 'UO') && line.UO === 'IIT') {
-                        code = 'IIT1.01DS';
-                    }
-
                     if (
                         _.has(employee, 'stato_dip') &&
                         employee.stato_dip !== 'cessato' && (
@@ -300,14 +296,23 @@ async function importUsers(email = getDefaultEmail()) {
                         active = true;
                     }
 
-                    const uniqueStep = uniqueSteps.find(step => step.code === code);
-                    if (uniqueStep) {
-                        uniqueStep.active = active;
-                    } else {
-                        uniqueSteps.push({
-                            code,
-                            active
-                        });
+                    function handleStep(code, active) {
+                        const uniqueStep = uniqueSteps.find(step => step.code === code);
+                        if (uniqueStep) {
+                            uniqueStep.active = active;
+                        } else {
+                            uniqueSteps.push({
+                                code,
+                                active
+                            });
+                        }
+                    }
+
+                    handleStep(code, active);
+
+                    if (_.has(line, 'UO') && line.UO === 'IIT') {
+                        code = 'IIT1.01DS';
+                        handleStep(code, active);
                     }
                 }
             }
@@ -1456,10 +1461,9 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
         if (!_.isEmpty(contract['linea_' + i]) && !_.isEmpty(contract['UO_' + i])) {
             if (contract['UO_' + i] === 'IIT') {
                 codes.push('IIT1.01DS');
-            } else {
-                codes.push(contract['linea_' + i]);
             }
 
+            codes.push(contract['linea_' + i]);
         }
     }
     return codes;
