@@ -259,6 +259,9 @@ async function run() {
             const structures = currentMatrix[name].filter(structure => structure.type === matrixType);
 
             for (const structure of structures) {
+                if (!structure.cdr) {
+                    continue;
+                }
                 const active = (structure.endDate === null || moment(structure.endDate, dateFormat).isAfter(moment())) && structure.public;
                 let group = await Group.findOne({code: structure.cdr});
                 const pis = structure[getPiLabel(type)];
@@ -349,7 +352,7 @@ async function run() {
                         _.isEmpty(missingPis) &&
                         group.active === active
                     ) {
-                        upToDateStructures.push(group)
+                        upToDateStructures.push(group);
                     } else {
 
                         // Create center membershipgroup if needed
@@ -459,7 +462,7 @@ async function run() {
                             });
                             createdStructureGroupMemberships.push(membership);
                         } else {
-                            sails.log.debug(`Missing center: ${structure.center.code}!`)
+                            sails.log.debug(`Missing center: ${structure.center.code}!`);
                         }
                     }
 
@@ -503,7 +506,7 @@ async function run() {
 
                 // Create or update ResearchEntityData
                 let researchEntityData = await ResearchEntityData.findOne({research_entity: group.researchEntity});
-                const fullMatrixStructure = fullMatrix[name].find(s => s.code === structure.code);
+                const fullMatrixStructure = fullMatrix[name].find(s => s.cdr === structure.cdr);
                 if (!researchEntityData) {
                     researchEntityData = await ResearchEntityData.create({researchEntity: group.researchEntity, importedData: {matrix: fullMatrixStructure}});
                     createdStructureResearchEntityData.push(researchEntityData);
