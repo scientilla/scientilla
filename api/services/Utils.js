@@ -53,6 +53,14 @@ async function waitForSuccessfulRequest(options, logMethod = false, print = true
             }));
     }
 
+    if (sails.config.environment === 'development') {
+        options.httpsAgent = new https.Agent({
+            rejectUnauthorized: false
+        });
+
+        options.timeout = 0;
+    }
+
     let response = await tryRequest(options, maxAttempts, logMethod, print);
 
     if (response && _.has(response, 'status') && response.status === 200) {

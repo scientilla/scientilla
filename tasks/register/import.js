@@ -1,4 +1,4 @@
-/* global Importer, ExternalImporter, AgreementsImporter */
+/* global Importer, ExternalImporter, AgreementsImporter, MatrixImporter */
 const Sails = require('sails');
 const getMethod = require('../taskHelper').getMethod;
 
@@ -23,7 +23,8 @@ module.exports = function (grunt) {
                 'users': UserImporter.importUsers,
                 'update-profile-groups': UserImporter.updateUserProfileGroups,
                 'analyse-user-import': UserImporter.analyseUserImport,
-                'agreements': Importer.importAgreements
+                'agreements': Importer.importAgreements,
+                'matrix': MatrixImporter.run,
             };
 
             try {
