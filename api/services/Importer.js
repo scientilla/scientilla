@@ -9,7 +9,6 @@
 
 module.exports = {
     importSources,
-    importGroups,
     importSourceMetrics,
     importDirectorates,
     importProjects,

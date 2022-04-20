@@ -7,7 +7,6 @@ module.exports = function (grunt) {
         const done = this.async();
         Sails.load({hooks: {grunt: false}}, async () => {
             const methods = {
-                'groups': Importer.importGroups,
                 'sources': Importer.importSources,
                 'sourcesMetrics': Importer.importSourceMetrics,
                 'external': {
@@ -19,7 +18,6 @@ module.exports = function (grunt) {
                 'expired': UserImporter.removeExpiredUsers,
                 'projects': Importer.importProjects,
                 'patents': Importer.importPatents,
-                'directorates': Importer.importDirectorates,
                 'users': UserImporter.importUsers,
                 'update-profile-groups': UserImporter.updateUserProfileGroups,
                 'analyse-user-import': UserImporter.analyseUserImport,
