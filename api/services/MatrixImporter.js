@@ -119,28 +119,32 @@ async function run() {
     sails.log.debug(`----------------------------------------------------`);
 
     // Centers
-    const institute = await Group.findOne({type: GroupTypes.INSTITUTE});
-
     // 2.1 Get the unique centers from Matrix by looping over all the items
     const centers = []
     if (_.has(fullMatrix, 'supports')) {
         for (const support of fullMatrix.supports) {
-            for (const center of support.centers) {
-                centers.push({
-                    code: center.code,
-                    name: center.name
-                });
+            const active = (support.endDate === null || moment(support.endDate, dateFormat).isAfter(moment())) && support.public;
+            if (active) {
+                for (const center of support.centers) {
+                    centers.push({
+                        code: center.code,
+                        name: center.name
+                    });
+                }
             }
         }
     }
 
     if (_.has(fullMatrix, 'researchStructures')) {
         for (const researchStructure of fullMatrix.researchStructures) {
-            for (const center of researchStructure.centers) {
-                centers.push({
-                    code: center.code,
-                    name: center.name
-                });
+            const active = (researchStructure.endDate === null || moment(researchStructure.endDate, dateFormat).isAfter(moment())) && researchStructure.public;
+            if (active) {
+                for (const center of researchStructure.centers) {
+                    centers.push({
+                        code: center.code,
+                        name: center.name
+                    });
+                }
             }
         }
     }
@@ -560,7 +564,6 @@ async function run() {
         sails.log.debug(`----------------------------------------------------`);
     };
 
-    // Different types in Scientilla and Matrix?
     await handleStructure('supports', GroupTypes.DIRECTORATE);
 
     await handleStructure('researchStructures', GroupTypes.RESEARCH_LINE);
