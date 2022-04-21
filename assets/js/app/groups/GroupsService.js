@@ -145,7 +145,7 @@
 
         function createInstituteStructure(institute, membershipGroups) {
 
-            membershipGroups = _.orderBy(membershipGroups, 'parent_group.id', 'desc');
+            membershipGroups = _.orderBy(membershipGroups.filter(mg => _.has(mg, 'child_group') && _.has(mg, 'parent_group')), 'parent_group.id', 'desc');
 
             // Map the index of membershipGroups with child group => index = value, child group id = key
             const indexMapping = membershipGroups.reduce((acc, el, i) => {
@@ -184,6 +184,7 @@
                         parentEl.childGroups = [];
                     }
                     parentEl.childGroups.push(group);
+                    parentEl.childGroups = _.orderBy(parentEl.childGroups, 'name');
                 }
             });
 
