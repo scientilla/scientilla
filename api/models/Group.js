@@ -143,6 +143,11 @@ module.exports = _.merge({}, SubResearchEntity, {
             collection: 'groupattribute',
             via: 'researchEntity',
         },
+        groupData: {
+            collection: 'groupData',
+            via: 'group',
+            unique: true
+        },
         getType: function () {
             return 'group';
         },

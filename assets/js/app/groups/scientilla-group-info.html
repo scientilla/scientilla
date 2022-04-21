@@ -24,12 +24,26 @@
                                         <a ng-href="#{{ pi.getProfileUrl() }}">{{ pi.getDisplayName() }}</a>
                                     </li>
                                 </ul>
+                                <i
+                                    class="fas fa-history"
+                                    ng-if="vm.pis.length > 1"
+                                    uib-tooltip-html="vm.getPisTooltipHTML(vm.pis)"
+                                    tooltip-placement="top"
+                                    tooltip-class="text-left"
+                                ></i>
                             </li>
                             <li ng-if="vm.group.starting_date">
                                 <strong>Starting date:</strong> {{ vm.group.starting_date | date : 'd LLLL yyyy' }}
                             </li>
                             <li ng-if="vm.center">
                                 <strong>Center:</strong> <a ng-href="#{{ vm.center.getProfileUrl() }}">{{ vm.center.name }}</a>
+                                <i
+                                    class="fas fa-history"
+                                    ng-if="vm.centers.length > 1"
+                                    uib-tooltip-html="vm.getCentersTooltipHTML(vm.centers)"
+                                    tooltip-placement="top"
+                                    tooltip-class="text-left"
+                                ></i>
                             </li>
                             <li ng-if="vm.researchDomain">
                                 <strong>Research domain:</strong> {{ vm.researchDomain.name }}
