@@ -22,7 +22,8 @@
         'ResearchEntitiesService',
         '$timeout',
         'ModalService',
-        'groupTypes'
+        'groupTypes',
+        'DateService'
     ];
 
     function DefaultGroupDetailsController(
@@ -34,7 +35,8 @@
         ResearchEntitiesService,
         $timeout,
         ModalService,
-        groupTypes
+        groupTypes,
+        DateService
     ) {
         const vm = this;
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
@@ -42,8 +44,15 @@
         vm.loggedUser = AuthService.user;
         vm.refreshGroup = refreshGroup;
         vm.addCollaborator = addCollaborator;
+        vm.format = DateService.format;
 
         let activeTabWatcher = null;
+
+        vm.getDescriptionsTooltipHTML = descriptions => {
+            return `<ul class="tooltip-listing">${descriptions.map(description => `<li>
+                <strong>${description.description}</strong> (${vm.format(description.startDate).toLocaleDateString()} - ${description.endDate ? vm.format(description.endDate).toLocaleDateString() : 'now'})
+            </li>`).join('')}</ul>`;
+        };
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
@@ -57,6 +66,8 @@
             });
 
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
+
+            vm.descriptions = vm.group.getDescriptionHistory();
 
             vm.initializeTabs(vm.tabs);
         };
