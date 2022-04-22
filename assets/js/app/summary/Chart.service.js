@@ -886,7 +886,8 @@
             const rangeY = getRangeY(maxY);
 
             return {
-                title: 'Total contribution',
+                title: 'Total contribution *',
+                text: '* The Total Contribution is allocated in the project\'s starting year and not in the year when the project was won. This representation might differ from other representations available in other IIT documents. If you need to use certified data, please contact <a href="mailto:projects@iit.it">Projects Office</a> and <a href="mailto:tt_admin@iit.it">Technology Transfer Office</a>.',
                 data: data,
                 options: getMultiBarChartConfig({
                     color: colors,
