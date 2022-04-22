@@ -64,7 +64,8 @@
                     vm.projectCharts.push({
                         icon: 'custom-icon total-contribution',
                         chartSettings: vm.charts.projectTotalContributionsByYear,
-                        title: vm.charts.projectTotalContributionsByYear.title
+                        title: vm.charts.projectTotalContributionsByYear.title,
+                        text: vm.charts.projectTotalContributionsByYear.text
                     });
                 }
             });

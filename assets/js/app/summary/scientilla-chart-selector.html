@@ -26,4 +26,7 @@
             ng-attr-id="{{ chart.id }}"
             class="chart"></nvd3>
     </div>
+    <div ng-if="vm.selectedChart.text" class="chart-text">
+        <em ng-bind-html="vm.selectedChart.text"></em>
+    </div>
 </div>
