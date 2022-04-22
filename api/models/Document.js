@@ -560,7 +560,7 @@ module.exports = _.merge({}, BaseModel, {
         selectedData.documenttype = await Document.getFixedCollection(DocumentType, selectedData.documenttype);
         if (!selectedData.documenttype)
             await Document.fixDocumentType(selectedData);
-        Document.fixPhdPopulates(selectedDraftData);
+        Document.fixPhdPopulates(selectedData);
 
         const oldDoc = await Document.findOne(criteria);
         let doc;
