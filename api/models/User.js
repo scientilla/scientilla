@@ -198,10 +198,6 @@ module.exports = _.merge({}, SubResearchEntity, {
             collection: 'Membership',
             via: 'user',
         },
-        attributes: {
-            collection: 'Attribute',
-            through: 'userattribute'
-        },
         userData: {
             collection: 'userData',
             via: 'user',

@@ -29,13 +29,12 @@
             'orcidId',
             'scopusId',
             'jobTitle',
-            'attributes',
             'alreadyOpenedSuggested',
             'already_changed_profile',
             'config'
         ];
 
-        const userPopulates = ['administratedGroups', 'attributes', 'aliases', 'memberships', 'groupMemberships', 'userData'];
+        const userPopulates = ['administratedGroups', 'aliases', 'memberships', 'groupMemberships', 'userData'];
 
         service.getNewUser = function () {
             var user = {
