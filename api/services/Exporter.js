@@ -423,8 +423,8 @@ function getBibtex(doc) {
     bibtexInit();
 
     const entryType = bibtexDocumentTypes.includes(doc.documenttype.key) ?
-        bibtexDocumentTypesMap[doc.documenttype.key] :
-        bibtexDourceTypesMap[doc.source.sourcetype.key];
+        _.has(doc, 'documenttype.key') && bibtexDocumentTypesMap[doc.documenttype.key] :
+        _.has(doc, 'source.sourcetype.key') && bibtexDourceTypesMap[doc.source.sourcetype.key];
 
     if (!entryType) return;
 

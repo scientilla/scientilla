@@ -82,7 +82,7 @@
                 'members',
                 'memberships',
                 'pis',
-                'attributes'
+                'groupData'
             ];
             const associations = {};
             associationsKeys.forEach(key => associations[key] = group[key]);
@@ -102,12 +102,12 @@
 
 
         function getGroup(groupId) {
-            const populate = {populate: ['members', 'administrators', 'attributes', 'memberships', 'childGroups', 'parentGroups', 'pis', 'groupData']};
+            const populate = {populate: ['members', 'administrators', 'memberships', 'childGroups', 'parentGroups', 'pis', 'groupData']};
             return service.one(groupId).get(populate);
         }
 
         function get(query) {
-            const populate = {populate: ['members', 'administrators', 'attributes', 'memberships', 'childGroups', 'parentGroups', 'pis', 'groupData']};
+            const populate = {populate: ['members', 'administrators', 'memberships', 'childGroups', 'parentGroups', 'pis', 'groupData']};
             const q = _.merge({}, query, populate);
             return service.getList(q).then(res => {
                 return res[0];
@@ -115,7 +115,7 @@
         }
 
         function getGroups(query) {
-            const populate = {populate: ['administrators', 'attributes', 'childGroups', 'parentGroups', 'pis', 'groupData']};
+            const populate = {populate: ['administrators', 'childGroups', 'parentGroups', 'pis', 'groupData']};
             const q = _.merge({}, query, populate);
 
             return service.getList(q);
@@ -127,7 +127,7 @@
                     active: true
                 },
                 populate: ['parent_group', 'child_group'],
-                limit: 1000
+                limit: 10000
             }).then(res => {
                 return res.items;
             });
