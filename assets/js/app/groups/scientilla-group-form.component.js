@@ -53,6 +53,7 @@
         let formValues = {};
         let originalGroupJson = '';
         let timeout;
+        const watchers = [];
 
         const delay = 500;
 
@@ -69,7 +70,8 @@
             name: {
                 inputType: 'text',
                 label: 'Title',
-                defaultValue: vm.group.name,
+                defaultValue: vm.group.name || '',
+                disabled: isDisabled(vm.group),
                 ngIf: isAdmin,
                 required: true,
                 type: 'field'
@@ -78,6 +80,7 @@
                 inputType: 'text',
                 label: 'Slug',
                 defaultValue: vm.group.slug,
+                disabled: isDisabled(vm.group),
                 ngIf: isAdmin,
                 type: 'field'
             },
@@ -85,6 +88,7 @@
                 inputType: 'text',
                 label: 'Short Name',
                 defaultValue: vm.group.shortname,
+                disabled: isDisabled(vm.group),
                 type: 'field'
             },
             description: {
@@ -121,34 +125,60 @@
                     {label: 'Yes', value: true},
                     {label: 'No', value: false}
                 ],
+                disabled: isDisabled(vm.group),
                 ngIf: isAdmin,
                 type: 'field'
             },
             onChange: function (values) {
                 formValues = values;
+                vm.formStructure.name.disabled = isDisabled(values);
+                vm.formStructure.slug.disabled = isDisabled(values);
+                vm.formStructure.shortname.disabled = isDisabled(values);
+                vm.formStructure.active.disabled = isDisabled(values);
             }
         };
 
         vm.$onInit = function () {
             if (_.has(vm.group, 'id')) {
                 vm.formStructure.code.disabled = true;
+                vm.formStructure.type.disabled = true;
+            } else {
+                const newGroupTypes = _.cloneDeep(groupTypes);
+                delete newGroupTypes.INSTITUTE;
+                delete newGroupTypes.CENTER;
+                delete newGroupTypes.RESEARCH_DOMAIN;
+                delete newGroupTypes.RESEARCH_LINE;
+                delete newGroupTypes.FACILITY;
+                delete newGroupTypes.DIRECTORATE;
+                delete newGroupTypes.PROJECT;
+                vm.formStructure.type.values = Object.keys(newGroupTypes).map(k => ({label: groupTypeLabels[k], value: newGroupTypes[k]}));
+                vm.formStructure.type.defaultValue = newGroupTypes.OTHER;
             }
 
             delete vm.group.members;
             delete vm.group.memberships;
-            $scope.$watch('vm.group.name', nameChanged);
+
+            watchers.push($scope.$watch('vm.group.name', nameChanged));
 
             const originalGroup = angular.copy(vm.group);
             if (!originalGroup.slug)
                 originalGroup.slug = calculateSlug(originalGroup);
 
             if (originalGroup.type === undefined)
-                originalGroup.type = groupTypes.RESEARCH_LINE;
+                originalGroup.type = groupTypes.OTHER;
 
             if (originalGroup.active === undefined)
                 originalGroup.active = true;
 
             originalGroupJson = angular.toJson(originalGroup);
+        };
+
+        vm.$onDestroy = function () {
+            for (const watcher in watchers) {
+                if (_.isFunction(watcher)) {
+                    watcher();
+                }
+            }
         };
 
         function validate(field = false) {
@@ -170,6 +200,10 @@
         }
 
         function fieldValueHasChanged(field = false) {
+            if (!field || !_.has(field, 'name') || _.isEmpty(field.name)) {
+                return;
+            }
+
             $timeout.cancel(timeout);
 
             timeout = $timeout(function () {
@@ -260,6 +294,20 @@
 
         function isAdmin() {
             return AuthService.user.isAdmin();
+        }
+
+        function isDisabled(group) {
+            switch (group.type) {
+                case types.INSTITUTE:
+                case types.CENTER:
+                case types.RESEARCH_DOMAIN:
+                case types.RESEARCH_LINE:
+                case types.FACILITY:
+                case types.DIRECTORATE:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 })();
