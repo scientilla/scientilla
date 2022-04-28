@@ -153,6 +153,7 @@
                 delete newGroupTypes.PROJECT;
                 vm.formStructure.type.values = Object.keys(newGroupTypes).map(k => ({label: groupTypeLabels[k], value: newGroupTypes[k]}));
                 vm.formStructure.type.defaultValue = newGroupTypes.OTHER;
+                vm.formStructure.type.disabled = false;
             }
 
             delete vm.group.members;
