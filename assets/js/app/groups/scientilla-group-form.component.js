@@ -143,28 +143,28 @@
         };
 
         vm.$onInit = function () {
-            switch(vm.group.type) {
-                case groupTypes.INSTITUTE:
-                case groupTypes.CENTER:
-                case groupTypes.RESEARCH_DOMAIN:
-                case groupTypes.RESEARCH_LINE:
-                case groupTypes.FACILITY:
-                case groupTypes.DIRECTORATE:
-                    vm.formStructure.type.values = [{label: groupTypeLabels[vm.group.type], value: groupTypes[vm.group.type]}];
-                    vm.formStructure.type.defaultValue = vm.group.type;
-                    break;
-                default:
-                    const newGroupTypes = _.cloneDeep(groupTypes);
-                    delete newGroupTypes.INSTITUTE;
-                    delete newGroupTypes.CENTER;
-                    delete newGroupTypes.RESEARCH_DOMAIN;
-                    delete newGroupTypes.RESEARCH_LINE;
-                    delete newGroupTypes.FACILITY;
-                    delete newGroupTypes.DIRECTORATE;
-                    delete newGroupTypes.PROJECT;
-                    vm.formStructure.type.values = Object.keys(newGroupTypes).map(k => ({label: groupTypeLabels[k], value: newGroupTypes[k]}));
-                    vm.formStructure.type.defaultValue = newGroupTypes.OTHER;
-                    break;
+            if (_.has(vm.group, 'type') && (
+                vm.group.type === groupTypes.INSTITUTE ||
+                vm.group.type === groupTypes.CENTER ||
+                vm.group.type === groupTypes.RESEARCH_DOMAIN ||
+                vm.group.type === groupTypes.RESEARCH_LINE ||
+                vm.group.type === groupTypes.FACILITY ||
+                vm.group.type === groupTypes.DIRECTORATE
+            )) {
+                const type = Object.keys(groupTypes).find(key => groupTypes[key] === vm.group.type);
+                vm.formStructure.type.values = [{label: groupTypeLabels[type], value: groupTypes[type]}];
+                vm.formStructure.type.defaultValue = vm.group.type;
+            } else {
+                const newGroupTypes = _.cloneDeep(groupTypes);
+                delete newGroupTypes.INSTITUTE;
+                delete newGroupTypes.CENTER;
+                delete newGroupTypes.RESEARCH_DOMAIN;
+                delete newGroupTypes.RESEARCH_LINE;
+                delete newGroupTypes.FACILITY;
+                delete newGroupTypes.DIRECTORATE;
+                delete newGroupTypes.PROJECT;
+                vm.formStructure.type.values = Object.keys(newGroupTypes).map(k => ({label: groupTypeLabels[k], value: newGroupTypes[k]}));
+                vm.formStructure.type.defaultValue = newGroupTypes.OTHER;
             }
 
             delete vm.group.members;
