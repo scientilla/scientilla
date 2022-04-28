@@ -48,7 +48,6 @@ async function run() {
         }
     }));
 
-    // 1.1 Get the research domains
     const upToDateResearchDomains = [];
     const updatedResearchDomains = [];
     const createdResearchDomains = [];
