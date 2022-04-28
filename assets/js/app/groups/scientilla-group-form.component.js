@@ -150,7 +150,7 @@
                 case groupTypes.RESEARCH_LINE:
                 case groupTypes.FACILITY:
                 case groupTypes.DIRECTORATE:
-                    vm.formStructure.type.values = [{label: groupTypeLabels[vm.group.type], value: newGroupTypes[vm.group.type]}];
+                    vm.formStructure.type.values = [{label: groupTypeLabels[vm.group.type], value: groupTypes[vm.group.type]}];
                     vm.formStructure.type.defaultValue = vm.group.type;
                     break;
                 default:
