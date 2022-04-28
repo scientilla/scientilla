@@ -30,26 +30,18 @@ function getPiLabel(type) {
  *
  * The groups of type Center, Research Line, Facility, Support (=directorate) & Research Domain that are not found in matrix will be set as not active.
  * The same happens for not public items. Both will keep the last membershipgroup record without changing the active state.
- *
- * Steps:
- * 1. Research domains
- * 1.1 Get the research domains from Matrix
- * 1.2 Create or update the group in Scientilla if needed.
- * 1.3 Change the active state of research domains that are in Scientilla but not in Matrix to false
- * 2. Centers
- * 2.1 Get the unique centers from Matrix by looping over all the items
- * 2.2 Create or update the group in Scientilla if needed.
- * 2.3 Create if not already exists a membershipgroup between the unique centers and the institute
- * 2.4 Change the active state of centers that are in Scientilla but not in Matrix to false
  */
 async function run() {
+    // Get the options from the configuration
     const options = _.cloneDeep(sails.config.scientilla.matrix);
+    // Get the current matrix output
     const currentMatrix = await Utils.waitForSuccessfulRequest(Object.assign({}, options, {
         params: {
             viewSupports: true,
             viewNotPublic: true
         }
     }));
+    // Get the full matrix output
     const fullMatrix = await Utils.waitForSuccessfulRequest(Object.assign({}, options, {
         params: {
             all: true
@@ -61,10 +53,10 @@ async function run() {
     const updatedResearchDomains = [];
     const createdResearchDomains = [];
 
+    // Check of matrix has the property 'researchDomains'
     if (_.has(fullMatrix, 'researchDomains')) {
         // Loop over the research domains received from matrix
         for (const researchDomain of fullMatrix.researchDomains) {
-            // 1.2 Create or update the group in Scientilla if needed.
 
             // Find group of type research domain by code
             let group = await Group.findOne({code: researchDomain.code});
@@ -78,6 +70,7 @@ async function run() {
                     group.type === GroupTypes.RESEARCH_DOMAIN &&
                     group.active === true
                 ) {
+                    // Push to an array to log later
                     upToDateResearchDomains.push(group);
                 } else {
                     // If they are not equal, update the group
@@ -87,6 +80,8 @@ async function run() {
                         type: GroupTypes.RESEARCH_DOMAIN,
                         active: true
                     });
+
+                    // Push to an array to log later
                     updatedResearchDomains.push(group);
                 }
             } else {
@@ -97,13 +92,16 @@ async function run() {
                     type: GroupTypes.RESEARCH_DOMAIN,
                     active: true
                 });
+
+                // Push to an array to log later
                 createdResearchDomains.push(group);
             }
         }
     }
+    // Merge the handled research domains into one array
     const handledResearchDomains = upToDateResearchDomains.concat(updatedResearchDomains, createdResearchDomains);
 
-    // 1.3 Change the active state of research domains that are in Scientilla but not in Matrix to false
+    // Update the active state of research domains that are in Scientilla but not in Matrix to false
     const deactivatedResearchDomains = handledResearchDomains.length > 0 && await Group.update({
         id: {'!': handledResearchDomains.map(researchDomain => researchDomain.id)},
         type: GroupTypes.RESEARCH_DOMAIN,
@@ -112,43 +110,59 @@ async function run() {
         active: false
     }) || [];
 
+    // Log the information
     sails.log.debug(`Research domains up-to-date: ${upToDateResearchDomains.length}`);
     sails.log.debug(`Research domains updated: ${updatedResearchDomains.length}`);
     sails.log.debug(`Research domains created: ${createdResearchDomains.length}`);
     sails.log.debug(`Research domains de-activated: ${deactivatedResearchDomains.length}`);
     sails.log.debug(`----------------------------------------------------`);
 
-    // Centers
-    // 2.1 Get the unique centers from Matrix by looping over all the items
-    const centers = []
-    if (_.has(fullMatrix, 'supports')) {
-        for (const support of fullMatrix.supports) {
-            const active = (support.endDate === null || moment(support.endDate, dateFormat).isAfter(moment())) && support.public;
-            if (active) {
-                for (const center of support.centers) {
-                    centers.push({
-                        code: center.code,
-                        name: center.name
-                    });
-                }
+    /*
+     * Get the centers of the structure
+     *
+     * @param {object} structure This the structure object
+     * @return {array} This returns an array with the centers of the structure
+     */
+    const getStructureCenters = structure => {
+        const centers = [];
+        // Calculate the active flag for the structure
+        const active = (structure.endDate === null || moment(structure.endDate, dateFormat).isAfter(moment())) && structure.public;
+        // If the structure is active`
+        if (active) {
+            // Loop over the centers
+            for (const center of structure.centers) {
+                // And push them to an array
+                centers.push({
+                    code: center.code,
+                    name: center.name
+                });
             }
+        }
+        return centers;
+    };
+
+    // Get the unique centers from Matrix by looping over all the items
+    let centers = [];
+    // Check of matrix has the property 'supports'
+    if (_.has(fullMatrix, 'supports')) {
+        // Loop over the support structures
+        for (const structure of fullMatrix.supports) {
+            // Merge the centers of the structure with the current ones
+            centers = centers.concat(getStructureCenters(structure));
         }
     }
 
+    // Check of matrix has the property 'researchStructures'
     if (_.has(fullMatrix, 'researchStructures')) {
-        for (const researchStructure of fullMatrix.researchStructures) {
-            const active = (researchStructure.endDate === null || moment(researchStructure.endDate, dateFormat).isAfter(moment())) && researchStructure.public;
-            if (active) {
-                for (const center of researchStructure.centers) {
-                    centers.push({
-                        code: center.code,
-                        name: center.name
-                    });
-                }
-            }
+        // Loop over the research structures
+        for (const structure of fullMatrix.researchStructures) {
+            // Merge the centers of the structure with the current ones
+            centers = centers.concat(getStructureCenters(structure));
         }
     }
+    // Get the unique centers
     const uniqueCenters = _.uniqWith(centers, _.isEqual);
+    // Print the number of unique centers
     sails.log.debug(`Unique centers found: ${uniqueCenters.length}`);
 
     const upToDateCenters = [];
@@ -159,8 +173,6 @@ async function run() {
 
     // Loop over the unique centers
     for (const center of uniqueCenters) {
-        // 2.2 Create or update the group in Scientilla if needed.
-
         // Find group of type center by code
         let group = await Group.findOne({code: center.code});
 
@@ -173,6 +185,7 @@ async function run() {
                 group.type === GroupTypes.CENTER &&
                 group.active === true
             ) {
+                // Push to an array to log later
                 upToDateCenters.push(group);
             } else {
                 // If they are not equal, update the group
@@ -182,6 +195,7 @@ async function run() {
                     type: GroupTypes.CENTER,
                     active: true
                 });
+                // Push to an array to log later
                 updatedCenters.push(group);
             }
         } else {
@@ -192,24 +206,29 @@ async function run() {
                 type: GroupTypes.CENTER,
                 active: true
             });
+            // Push to an array to log later
             createdCenters.push(group);
         }
 
-        // 2.3 Create if not already exists a membershipgroup between the unique centers and the institute
+        // Find the group membership of the center and the institute
         let membershipGroup = await MembershipGroup.findOne({
             parent_group: 1,
             child_group: group.id,
             synchronized: true
         });
 
+        // If the group membership is found
         if (membershipGroup) {
+            // Update the lastsynch date
             await MembershipGroup.update({id: membershipGroup.id}, {
                 lastsynch: moment().format(ISO8601Format),
                 active: true
             });
             membershipGroup = await MembershipGroup.find({id: membershipGroup.id});
+            // Push to an array to log later
             upToDateCenterGroupMemberships.push(membershipGroup);
         } else {
+            // Create new group membership between center and the institute
             membershipGroup = await MembershipGroup.create({
                 child_group: group.id,
                 parent_group: 1,
@@ -217,13 +236,15 @@ async function run() {
                 active: true,
                 synchronized: true
             });
+            // Push to an array to log later
             createdCenterGroupMemberships.push(membershipGroup);
         }
     }
 
+    // Merge the handled centers into one array
     const handledCenters = upToDateCenters.concat(updatedCenters, createdCenters);
 
-    // 2.4 Change the active state of centers that are in Scientilla but not in Matrix to false
+    // Change the active state of centers that are in Scientilla but not in Matrix to false
     const deactivatedCenters = handledCenters.length > 0 && await Group.update({
         id: {'!': handledCenters.map(center => center.id)},
         type: GroupTypes.CENTER,
@@ -232,6 +253,7 @@ async function run() {
         active: false
     }) || [];
 
+    // Log the information
     sails.log.debug(`Centers up-to-date: ${upToDateCenters.length}`);
     sails.log.debug(`Centers updated: ${updatedCenters.length}`);
     sails.log.debug(`Centers created: ${createdCenters.length}`);
@@ -240,7 +262,13 @@ async function run() {
     sails.log.debug(`Center memberships up-to-date: ${upToDateCenterGroupMemberships.length}`);
     sails.log.debug(`----------------------------------------------------`);
 
-    const handleStructure = async (name, type) => {
+    /*
+     * Handle the matrix structures of group type
+     *
+     * @param {string} name This the key name in matrix
+     * @param {string} type This is the name of group type
+     */
+    const handleMatrixOfGroupType = async (name, type) => {
         const upToDateStructures = [];
         const updatedStructures = [];
         const createdStructures = [];
@@ -257,49 +285,75 @@ async function run() {
 
         if (_.has(currentMatrix, name)) {
             let matrixType = type;
+
+            // The type of directorate in matrix is different so override
             if (type === GroupTypes.DIRECTORATE) {
                 matrixType = 'Support';
             }
+
+            // Filter the current matrix for structures of the wanted type
             const structures = currentMatrix[name].filter(structure => structure.type === matrixType);
 
+            // Loop over the structures
             for (const structure of structures) {
-                if (!structure.cdr) {
+                // Skip if the structure or structure cdr is empty
+                if (!structure || !structure.cdr) {
                     continue;
                 }
+
+                // Calculate the active flag for the structure group
                 const active = (structure.endDate === null || moment(structure.endDate, dateFormat).isAfter(moment())) && structure.public;
+
+                // Find the group in the database by the cdr
                 let group = await Group.findOne({code: structure.cdr});
+                // Get the pis from the structure
                 const pis = structure[getPiLabel(type)];
                 const structurePis = [];
 
+                // Check if the group exists
                 if (group) {
-                    let center
-                    let centerMembership
-                    if (_.has(structure, 'center') && !_.isEmpty(structure.center)) {
+                    let center;
+                    let centerMembership;
+
+                    // Check if the structure has a center
+                    if (_.has(structure, 'center.code')) {
+                        // Find the group of the center in the database
                         center = await Group.findOne({code: structure.center.code});
+
+                        // If found
                         if (center) {
+                            // Find the membership group record
                             centerMembership = await MembershipGroup.findOne({
                                 child_group: group.id,
                                 parent_group: center.id,
                                 synchronized: true
                             });
 
+                            // Push the membership to an array to log later
                             if (centerMembership) {
                                 upToDateStructureGroupMemberships.push(centerMembership);
                             }
                         }
                     }
 
-                    let mainResearchDomain
-                    let mainResearchDomainMembership
-                    if (_.has(structure, 'mainResearchDomain') && !_.isEmpty(structure.mainResearchDomain)) {
+                    let mainResearchDomain;
+                    let mainResearchDomainMembership;
+
+                    // Check of the structure has a main research domain
+                    if (_.has(structure, 'mainResearchDomain.code')) {
+                        // Find the group of the main research domain in the database
                         mainResearchDomain = await Group.findOne({code: structure.mainResearchDomain.code});
+
+                        // If found
                         if (mainResearchDomain) {
+                            // Find the membership group record
                             mainResearchDomainMembership = await MembershipGroup.findOne({
                                 child_group: group.id,
                                 parent_group: mainResearchDomain.id,
                                 synchronized: true
                             });
 
+                            // Push the membership to an array to log later
                             if (mainResearchDomainMembership) {
                                 upToDateStructureGroupMemberships.push(mainResearchDomainMembership);
                             }
@@ -308,37 +362,47 @@ async function run() {
 
                     const missingAdministrators = [];
                     const missingPis = [];
+                    // Loop over the structure pis
                     for (const structurePi of pis) {
+                        // Find the pi user in the database
                         const user = await User.findOne({username: structurePi.email});
 
+                        // Skip if the user is not found
                         if (!user) {
                             continue;
                         }
 
+                        // Find if the user is administrator of the group
                         const administrator = await GroupAdministrator.findOne({
                             administrator: user.id,
                             group: group.id
                         });
 
+                        // If the administrator is not found: push to an array to log later and create the group administrator
                         if (!administrator) {
                             missingAdministrators.push(user);
                         } else {
+                            // If found, push to an array to log later
                             uptoDateStructureAdministrators.push(administrator);
                         }
 
+                        // Find if the user is a pi of the group
                         const pi = await PrincipalInvestigator.findOne({
                             pi: user.id,
                             group: group.id
                         });
 
+                        // If the pi is not found: push to an array to log later and create the group pi
                         if (!pi) {
                             missingPis.push(user);
                         } else {
+                            // If found, push to an array to log later
                             upToDateStructurePis.push(pi);
                             structurePis.push(pi);
                         }
                     }
 
+                    // Check if the current group is equal to the structure comparing specific values
                     if (
                         group.type === type &&
                         group.slug === structure.slug &&
@@ -356,21 +420,25 @@ async function run() {
                         _.isEmpty(missingPis) &&
                         group.active === active
                     ) {
+                        // If equal: push to an array to log later
                         upToDateStructures.push(group);
                     } else {
+                        // If the group is not completely equal
 
-                        // Create center membershipgroup if needed
+                        // Create center membership group if needed
                         if (center) {
                             if (centerMembership) {
+                                // If the center membership is already existing, find the membership
                                 await MembershipGroup.update({id: centerMembership.id}, {
                                     lastsynch: moment().format(ISO8601Format),
                                     active: true
                                 });
-
                                 const membership = await MembershipGroup.findOne({id: centerMembership.id});
 
+                                // Push to an array to log later
                                 upToDateStructureGroupMemberships.push(membership);
                             } else {
+                                // If the center membership group is missing: create one
                                 const membership = await MembershipGroup.create({
                                     child_group: group.id,
                                     parent_group: center.id,
@@ -379,22 +447,25 @@ async function run() {
                                     synchronized: true
                                 });
 
+                                // Push to array to log later
                                 createdStructureGroupMemberships.push(membership);
                             }
                         }
 
-                        // Create research domain membershipgroup if needed
+                        // Create research domain membership group if needed
                         if (mainResearchDomain) {
                             if (mainResearchDomainMembership) {
+                                // If the main research domain membership is already existing, find the membership
                                 await MembershipGroup.update({id: mainResearchDomainMembership.id}, {
                                     lastsynch: moment().format(ISO8601Format),
                                     active: true
                                 });
-
                                 const membership = await MembershipGroup.findOne({id: mainResearchDomainMembership.id});
 
+                                // Push to an array to log later
                                 upToDateStructureGroupMemberships.push(membership);
                             } else {
+                                // If the main research domain membership group is missing: create one
                                 const membership = await MembershipGroup.create({
                                     child_group: group.id,
                                     parent_group: mainResearchDomain.id,
@@ -403,31 +474,35 @@ async function run() {
                                     synchronized: true
                                 });
 
+                                // Push to an array to log later
                                 createdStructureGroupMemberships.push(membership);
                             }
                         }
 
-                        // Create missing administrators
+                        // Loop over & create missing administrators
                         for (const user of missingAdministrators) {
                             const administrator = await GroupAdministrator.create({
                                 administrator: user.id,
                                 group: group.id
                             });
 
+                            // Push to an array to log later
                             createdStructureAdministrators.push(administrator);
                         }
 
-                        // Create missing pis
+                        // Loop over & create missing pis
                         for (const user of missingPis) {
                             const pi = await PrincipalInvestigator.create({
                                 pi: user.id,
                                 group: group.id
                             });
 
+                            // Push to an array to log later
                             createdStructurePis.push(pi);
                             structurePis.push(pi);
                         }
 
+                        // Update the group with the structure data
                         await Group.update({id: group.id}, {
                             type: type,
                             slug: structure.slug,
@@ -438,10 +513,11 @@ async function run() {
                         });
                         group = await Group.findOne({id: group.id});
 
+                        // Push to an array to log later
                         updatedStructures.push(group);
                     }
                 } else {
-                    // Create new group
+                    // Create new group with the structure data
                     group = await Group.create({
                         code: structure.cdr,
                         slug: structure.slug,
@@ -452,11 +528,14 @@ async function run() {
                         active: active
                     });
 
-                    // Create center membershipgroup
-                    if (_.has(structure, 'center') && !_.isEmpty(structure.center)) {
+                    // Create center membership group record
+                    if (_.has(structure, 'center.code')) {
+                        // Find the group of the center
                         const center = await Group.findOne({code: structure.center.code});
 
+                        // If found
                         if (center) {
+                            // Create the membership group record for the center & group
                             const membership = await MembershipGroup.create({
                                 child_group: group.id,
                                 parent_group: center.id,
@@ -464,16 +543,21 @@ async function run() {
                                 active: true,
                                 synchronized: true
                             });
+
+                            // Push to an array to log later
                             createdStructureGroupMemberships.push(membership);
                         } else {
+                            // If the center group is not found print the error
                             sails.log.debug(`Missing center: ${structure.center.code}!`);
                         }
                     }
 
-
+                    // Loop over the structure pis
                     for (const structurePi of pis) {
+                        // Find the pi user
                         const user = await User.findOne({username: structurePi.email});
 
+                        // Skip if not found
                         if (!user) {
                             continue;
                         }
@@ -484,6 +568,7 @@ async function run() {
                             group: group.id
                         });
 
+                        // Push to an array to log later
                         createdStructureAdministrators.push(administrator);
 
                         // Create group pi
@@ -492,46 +577,63 @@ async function run() {
                             group: group.id
                         });
 
+                        // Push to an array to log later
                         createdStructurePis.push(pi);
                         structurePis.push(pi);
                     }
 
+                    // Push to an array to log later
                     createdStructures.push(group);
                 }
 
-                // Remove the old pis
+                // Remove the old pis of the group from the database
                 const removedPis = structurePis.length > 0 && await PrincipalInvestigator.destroy({
                     id: {'!': structurePis.map(p => p.id)},
                     group: group.id
                 }) || [];
+
+                // Loop over the removed pis
                 for (const pi of removedPis) {
+                    // Push to an array to log later
                     removedStructurePis.push(pi);
                 }
 
-                // Create or update ResearchEntityData
+                // Find the research entity data record of the group
                 let researchEntityData = await ResearchEntityData.findOne({research_entity: group.researchEntity});
+                // Store the matrix structure temporarily
                 const fullMatrixStructure = fullMatrix[name].find(s => s.cdr === structure.cdr);
+
+                // If the research entity is not found
                 if (!researchEntityData) {
+                    // Create a new record
                     researchEntityData = await ResearchEntityData.create({researchEntity: group.researchEntity, importedData: {matrix: fullMatrixStructure}});
+
+                    // Push to an array to log later
                     createdStructureResearchEntityData.push(researchEntityData);
                 } else {
+                    // If the research entity is found: compare if it's equal to the current one
                     if (!_.isEqual(researchEntityData.importedData.matrix, fullMatrixStructure)) {
+                        // If not update the research entity data record
                         const tmpResearchEntityData = _.cloneDeep(researchEntityData);
                         tmpResearchEntityData.importedData.matrix = fullMatrixStructure;
                         researchEntityData = await ResearchEntityData.update({id: researchEntityData.id}, {importedData: tmpResearchEntityData.importedData});
+
+                        // Push to an array to log later
                         updatedStructureResearchEntityData.push(researchEntityData);
                     } else {
+                        // Push to an array to log later
                         upToDateStructureResearchEntityData.push(researchEntityData);
                     }
                 }
             }
         } else {
+            // Print if the key is not found in matrix
             sails.log.debug(`${name} not found in matrix!`);
         }
 
+        // Merge the handled structures into one array
         const handledStructures = upToDateStructures.concat(updatedStructures, createdStructures);
-
-        // Update the groups that are not in matrix anymore = that are active groups with the sync flag => set to not active
+        // Update the groups that are not in matrix anymore to not active
         const deactivatedStructures = handledStructures.length > 0 && await Group.update({
             id: {'!': handledStructures.map(s => s.id)},
             type: type,
@@ -540,12 +642,15 @@ async function run() {
             active: false
         }) || [];
 
+        // Merge the handled group memberships into one array
         const handledMemberships = createdStructureGroupMemberships.concat(upToDateStructureGroupMemberships);
+        // Remove the old group memberships of the handled structures
         const removedStructureMemberships = handledMemberships > 0 && handledStructures.length > 0 && await MembershipGroup.destroy({
             id: {'!': handledMemberships.map(m => m.id)},
             child_group: handledStructures.map(s => s.id)
         }) || [];
 
+        // Log the information
         sails.log.debug(`${type} structures up-to-date: ${upToDateStructures.length}`);
         sails.log.debug(`${type} structures updated: ${updatedStructures.length}`);
         sails.log.debug(`${type} structures created: ${createdStructures.length}`);
@@ -564,9 +669,12 @@ async function run() {
         sails.log.debug(`----------------------------------------------------`);
     };
 
-    await handleStructure('supports', GroupTypes.DIRECTORATE);
+    // Import the directorate data from matrix
+    await handleMatrixOfGroupType('supports', GroupTypes.DIRECTORATE);
 
-    await handleStructure('researchStructures', GroupTypes.RESEARCH_LINE);
+    // Import the research line data from matrix
+    await handleMatrixOfGroupType('researchStructures', GroupTypes.RESEARCH_LINE);
 
-    await handleStructure('researchStructures', GroupTypes.FACILITY);
+    // Import the facility data from matrix
+    await handleMatrixOfGroupType('researchStructures', GroupTypes.FACILITY);
 }
