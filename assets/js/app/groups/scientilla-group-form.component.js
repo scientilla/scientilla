@@ -108,6 +108,7 @@
                 label: 'Group Type',
                 defaultValue: vm.group.type || groupTypes.RESEARCH_LINE,
                 values: Object.keys(types).map(k => ({label: groupTypeLabels[k], value: types[k]})),
+                disabled: isDisabled(vm.group),
                 ngIf: isAdmin,
                 type: 'field'
             },
@@ -115,6 +116,7 @@
                 inputType: 'text',
                 label: 'CDR/CODE',
                 defaultValue: vm.group.code,
+                disabled: isDisabled(vm.group),
                 type: 'field'
             },
             active: {
@@ -131,6 +133,8 @@
             },
             onChange: function (values) {
                 formValues = values;
+                vm.formStructure.code.disabled = isDisabled(values);
+                vm.formStructure.type.disabled = isDisabled(values);
                 vm.formStructure.name.disabled = isDisabled(values);
                 vm.formStructure.slug.disabled = isDisabled(values);
                 vm.formStructure.shortname.disabled = isDisabled(values);
@@ -139,21 +143,28 @@
         };
 
         vm.$onInit = function () {
-            if (_.has(vm.group, 'id')) {
-                vm.formStructure.code.disabled = true;
-                vm.formStructure.type.disabled = true;
-            } else {
-                const newGroupTypes = _.cloneDeep(groupTypes);
-                delete newGroupTypes.INSTITUTE;
-                delete newGroupTypes.CENTER;
-                delete newGroupTypes.RESEARCH_DOMAIN;
-                delete newGroupTypes.RESEARCH_LINE;
-                delete newGroupTypes.FACILITY;
-                delete newGroupTypes.DIRECTORATE;
-                delete newGroupTypes.PROJECT;
-                vm.formStructure.type.values = Object.keys(newGroupTypes).map(k => ({label: groupTypeLabels[k], value: newGroupTypes[k]}));
-                vm.formStructure.type.defaultValue = newGroupTypes.OTHER;
-                vm.formStructure.type.disabled = false;
+            switch(vm.group.type) {
+                case groupTypes.INSTITUTE:
+                case groupTypes.CENTER:
+                case groupTypes.RESEARCH_DOMAIN:
+                case groupTypes.RESEARCH_LINE:
+                case groupTypes.FACILITY:
+                case groupTypes.DIRECTORATE:
+                    vm.formStructure.type.values = [{label: groupTypeLabels[vm.group.type], value: newGroupTypes[vm.group.type]}];
+                    vm.formStructure.type.defaultValue = vm.group.type;
+                    break;
+                default:
+                    const newGroupTypes = _.cloneDeep(groupTypes);
+                    delete newGroupTypes.INSTITUTE;
+                    delete newGroupTypes.CENTER;
+                    delete newGroupTypes.RESEARCH_DOMAIN;
+                    delete newGroupTypes.RESEARCH_LINE;
+                    delete newGroupTypes.FACILITY;
+                    delete newGroupTypes.DIRECTORATE;
+                    delete newGroupTypes.PROJECT;
+                    vm.formStructure.type.values = Object.keys(newGroupTypes).map(k => ({label: groupTypeLabels[k], value: newGroupTypes[k]}));
+                    vm.formStructure.type.defaultValue = newGroupTypes.OTHER;
+                    break;
             }
 
             delete vm.group.members;
