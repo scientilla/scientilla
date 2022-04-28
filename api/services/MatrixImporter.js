@@ -364,7 +364,10 @@ async function run() {
                     // Loop over the structure pis
                     for (const structurePi of pis) {
                         // Find the pi user in the database
-                        const user = await User.findOne({username: structurePi.email});
+                        const user = await User.findOne({or:[
+                            {username: structurePi.email},
+                            {legacyEmail: structurePi.email}
+                        ]});
 
                         // Skip if the user is not found
                         if (!user) {
@@ -554,7 +557,10 @@ async function run() {
                     // Loop over the structure pis
                     for (const structurePi of pis) {
                         // Find the pi user
-                        const user = await User.findOne({username: structurePi.email});
+                        const user = await User.findOne({or:[
+                            {username: structurePi.email},
+                            {legacyEmail: structurePi.email}
+                        ]});
 
                         // Skip if not found
                         if (!user) {
