@@ -135,6 +135,7 @@
 
             vm.researchDomain = vm.group.getResearchDomain();
             vm.interactions = vm.group.getInteractions();
+            vm.endingDate = vm.group.getEndingDate();
 
             const parentMembershipGroups = await GroupsService.getParentMembershipGroups(vm.group.id);
             vm.center = parentMembershipGroups.map(m => Prototyper.toGroupModel(m.parent_group)).find(g => g.type === 'Center');

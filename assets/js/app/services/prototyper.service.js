@@ -251,6 +251,12 @@
                 }
                 return [];
             },
+            getEndingDate: function () {
+                if (_.has(this, 'groupData') && this.groupData[0] && _.has(this.groupData[0], 'importedData.matrix.endDate')) {
+                    return this.groupData[0].importedData.matrix.endDate;
+                }
+                return false;
+            },
             isScientific: function () {
                 return true;
             }
