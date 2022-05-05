@@ -11,18 +11,16 @@
             <a ng-href="#{{ vm.institute.getProfileUrl() }}">
                 {{ vm.institute.name }}
             </a>
-            <ul>
-                <li ng-repeat="(type, groups) in vm.types">
+            <ul ng-if="vm.institute.types">
+                <li ng-repeat="(type, groups) in vm.institute.types track by $index">
                     <strong>{{ vm.getTypeTitle(type, groups) }} ({{ groups.length }})</strong>
                     <ul>
-                        <li
-                            ng-repeat="group in groups"
-                            ng-init="subtypes = vm.getGroupTypes(group)">
+                        <li ng-repeat="group in groups track by $index">
                             <a ng-href="#{{ group.getProfileUrl() }}">
                                 {{ group.name }}
                             </a>
-                            <ul ng-class="{ 'hidden': vm.getLength(subtypes) <= 0 }">
-                                <li ng-repeat="(subtype, subgroups) in subtypes">
+                            <ul ng-if="group.types">
+                                <li ng-repeat="(subtype, subgroups) in group.types track by $index">
                                     <strong>{{ vm.getTypeTitle(subtype, subgroups) }} ({{ subgroups.length }})</strong>
                                     <ul class="subgroup-listing">
                                         <li ng-repeat="subgroup in subgroups">

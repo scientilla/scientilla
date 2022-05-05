@@ -72,8 +72,8 @@
             ) {
                 allMembershipGroups = allMembershipGroups.filter(m => m.active)
             }
-            const groupedAllMembershipGroups = _.groupBy(allMembershipGroups, 'child_group.name');
 
+            const groupedAllMembershipGroups = _.groupBy(allMembershipGroups, 'child_group.name');
             const uniqueMemberships = [];
             for (const membership of allMembershipGroups) {
                 if (!uniqueMemberships.find(m => m.group.id === membership.group.id)) {
@@ -86,13 +86,11 @@
 
                 for (const membership of membershipGroup) {
                     const parentMembership = membershipGroup.find(m => m.level === membership.level + 1);
-
                     if (!parentMembership) {
                         continue;
                     }
 
                     const uniqueMembership = uniqueMemberships.find(m => m.group.id === parentMembership.group.id);
-
                     if (uniqueMembership) {
                         if (!_.has(uniqueMembership, 'childMemberships')) {
                             uniqueMembership.childMemberships = [];
@@ -101,22 +99,16 @@
                         if (!uniqueMembership.childMemberships.find(m => m.group.id === membership.group.id)) {
                             membership.group = Prototyper.toGroupModel(membership.group);
                             uniqueMembership.childMemberships.push(membership);
+                            uniqueMembership.childMemberships = _.orderBy(uniqueMembership.childMemberships, 'group.name');
                         }
+
+                        uniqueMembership.types = _.groupBy(uniqueMembership.childMemberships, 'group.type');
                     }
                 }
             }
 
             vm.mainMembership = uniqueMemberships.find(m => m.group.id === 1);
             vm.mainMembership.group = Prototyper.toGroupModel(vm.mainMembership.group);
-
-            if (allMembershipGroups.length > 1) {
-                vm.types = _.groupBy(vm.mainMembership.childMemberships, 'group.type');
-            }
-
-            if (!_.isEmpty(vm.types)) {
-                vm.hasTypes = true;
-            }
-
             vm.loading = false;
         }
         /* jshint ignore:end */
@@ -128,19 +120,11 @@
         };
 
         vm.isActiveMember = (user, group) => {
-            const membership = allMembershipGroups.find(m => m.user === user.id && m.group.id === group.id);
+            const membership = allMembershipGroups.find(m => m.user === user.id && group && m.group.id === group.id);
             if (membership) {
                 return membership.active;
             }
             return false;
-        };
-
-        vm.getGroupTypes = (group) => {
-            return _.groupBy(group.childMemberships, 'group.type');
-        };
-
-        vm.getLength = (subtypes) => {
-            return Object.keys(subtypes).length;
         };
     }
 })();
