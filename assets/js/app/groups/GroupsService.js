@@ -154,7 +154,6 @@
 
             // Loop over membership groups
             membershipGroups.forEach(el => {
-
                 let parentEl;
 
                 // Handle the main institute
@@ -186,6 +185,14 @@
                     parentEl.childGroups = _.orderBy(parentEl.childGroups, 'name');
                 }
             });
+
+            membershipGroups.forEach(el => {
+                // Group the childgroups by type
+                el.child_group.types = _.groupBy(el.child_group.childGroups, 'type');
+            });
+
+            // Group the childgroups by type
+            institute.types = _.groupBy(institute.childGroups, 'type');
 
             return institute;
         }
