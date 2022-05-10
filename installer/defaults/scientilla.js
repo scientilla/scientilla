@@ -63,13 +63,8 @@ module.exports.scientilla = {
         "city": "Genoa",
         "scopusId": ""
     },
-    "mainInstituteImport": {
-        "userImportUrl": "http://example.com/users",
-        "usersCreationCondition": {
-            "attribute": "scientificRole",
-            "value": true
-        },
-        "officialGroupsImportUrl": "http://example.com/groups"
+    "matrix": {
+        "url": "http://matrix.iit.it/api/matrix"
     },
     "crons": [
         {
@@ -140,13 +135,25 @@ module.exports.scientilla = {
                 {
                     "fn": "GruntTaskRunner.run",
                     "params": [
-                        "import:people"
+                        "import:matrix"
                     ]
                 },
                 {
                     "fn": "GruntTaskRunner.run",
                     "params": [
-                        "import:groups"
+                        "import:users"
+                    ]
+                },
+                {
+                    "fn": "GruntTaskRunner.run",
+                    "params": [
+                        "import:expired"
+                    ]
+                },
+                {
+                    "fn": "GruntTaskRunner.run",
+                    "params": [
+                        "import:update-profile-groups"
                     ]
                 },
                 {
@@ -173,7 +180,7 @@ module.exports.scientilla = {
     "maxUserFavorite": "5",
     "maxGroupFavorite": "5",
     "logs": {
-        "accessLogRetentionDays": 30,
-        "logFilesRetentionDays": 180
+        "accessLogRetentionDays": "30",
+        "logFilesRetentionDays": "180"
     }
 };

@@ -37,8 +37,6 @@
 
             vm.institute = GroupsService.createInstituteStructure(vm.institute, membershipGroups);
 
-            vm.types = _.groupBy(vm.institute.childGroups, 'type');
-
             vm.loading = false;
         };
         /* jshint ignore:end */
@@ -46,14 +44,6 @@
         vm.$onDestroy = function () {
             const unregisterTab = requireParentMethod($element, 'unregisterTab');
             unregisterTab(vm);
-        };
-
-        vm.getGroupTypes = (group) => {
-            return _.groupBy(group.childGroups, 'type');
-        };
-
-        vm.getLength = (subtypes) => {
-            return Object.keys(subtypes).length;
         };
 
         vm.getTypeTitle = GroupsService.getTypeTitle;

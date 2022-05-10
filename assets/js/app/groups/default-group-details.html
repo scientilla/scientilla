@@ -1,7 +1,16 @@
 <scientilla-backend-layout>
     <div class="groups group-detail">
         <div class="title-container">
-            <h1 class="title">{{ vm.group.getDisplayName() }}</h1>
+            <h1 class="title">
+                {{ vm.group.getDisplayName() }}
+                <i
+                    class="fas fa-history"
+                    ng-if="vm.descriptions.length > 1"
+                    uib-tooltip-html="vm.getDescriptionsTooltipHTML(vm.descriptions)"
+                    tooltip-placement="bottom"
+                    tooltip-class="text-left"
+                ></i>
+            </h1>
             <button
                 ng-if="vm.group && vm.activeTabIndex === 1 && vm.isGroupAdmin()"
                 ng-click="vm.addCollaborator()"

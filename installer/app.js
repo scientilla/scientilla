@@ -172,6 +172,8 @@ app.post('/basic-configuration', (req, res) => {
     configuration.institute.city = req.body['institute-city']
     configuration.institute.scopusId = req.body['institute-scopus-id']
 
+    configuration.matrix.url = req.body['matrix-url']
+
     configuration.ldap.connection.url = req.body['ldap-connection-url']
     configuration.ldap.connection.bindDn = req.body['ldap-connection-bind-dn']
     configuration.ldap.connection.bindCredentials = req.body['ldap-connection-bind-credentials']
@@ -179,11 +181,6 @@ app.post('/basic-configuration', (req, res) => {
     configuration.ldap.connection.searchFilter = req.body['ldap-connection-search-filter']
     configuration.ldap.connection.cache = req.body['ldap-connection-cache'] === 'on' ? true : false
     configuration.ldap.domain = req.body['ldap-domain']
-
-    configuration.mainInstituteImport.userImportUrl = req.body['main-institute-import-user-import-url']
-    configuration.mainInstituteImport.usersCreationCondition.attribute = req.body['main-institute-import-users-creation-condition-attribute']
-    configuration.mainInstituteImport.usersCreationCondition.value = req.body['main-institute-import-users-creation-condition-value'] === 'on' ? true : false
-    configuration.mainInstituteImport.officialGroupsImportUrl = req.body['main-institute-import-official-groups-import-url']
 
     configuration.crons = JSON.parse(req.body['crons'])
 

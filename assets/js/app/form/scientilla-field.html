@@ -60,12 +60,6 @@
         structure="vm.fieldStructure"
         errors="vm.errors">
     </scientilla-radio-field>
-    <scientilla-attribute-field
-        ng-if="vm.structure.inputType==='attribute'"
-        model="vm.values[vm.name]"
-        structure="vm.fieldStructure"
-        errors="vm.errors">
-    </scientilla-attribute-field>
     <scientilla-button
         ng-if="vm.isButton()"
         type="{{vm.structure.inputType}}"

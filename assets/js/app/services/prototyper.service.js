@@ -221,30 +221,41 @@
                     return userMembersihp && !userMembersihp.active;
                 });
             },
+            getPiHistory: function () {
+                if (_.has(this, 'groupData') && this.groupData[0] && _.has(this.groupData[0], 'importedData.matrix.pis')) {
+                    return this.groupData[0].importedData.matrix.pis;
+                }
+                return [];
+            },
+            getDescriptionHistory: function () {
+                if (_.has(this, 'groupData') && this.groupData[0] && _.has(this.groupData[0], 'importedData.matrix.descriptions')) {
+                    return this.groupData[0].importedData.matrix.descriptions;
+                }
+                return [];
+            },
+            getCenterHistory: function () {
+                if (_.has(this, 'groupData') && this.groupData[0] && _.has(this.groupData[0], 'importedData.matrix.centers')) {
+                    return this.groupData[0].importedData.matrix.centers;
+                }
+                return [];
+            },
             getResearchDomain: function () {
-                const researchDomain = this.attributes
-                    .filter(a => a.category === 'research_domain')
-                    .reduce((res, a) => {
-                        const ga = this.groupAttributes.find(ga => ga.attribute === a.id);
-                        if (ga.extra.type === 'main') return a;
-                        return res;
-                    }, null);
-
-                if (_.isObject(researchDomain))
-                    return researchDomain.value;
+                if (_.has(this, 'groupData') && this.groupData[0] && _.has(this.groupData[0], 'importedData.matrix.mainResearchDomain')) {
+                    return this.groupData[0].importedData.matrix.mainResearchDomain;
+                }
+                return false;
             },
             getInteractions: function () {
-                const interactionsGroupAttributes = this.groupAttributes.filter(ga => ga.extra.type === 'interaction');
-                const interactions = this.attributes
-                    .filter(a => a.category === 'research_domain')
-                    .reduce((res, a) => {
-                        const groupAttribute = interactionsGroupAttributes.find(ga => ga.attribute === a.id);
-                        if (groupAttribute)
-                            res.push(a);
-                        return res;
-                    }, []);
-
-                return interactions.map(i => i.value);
+                if (_.has(this, 'groupData') && this.groupData[0] && _.has(this.groupData[0], 'importedData.matrix.interactions')) {
+                    return this.groupData[0].importedData.matrix.interactions;
+                }
+                return [];
+            },
+            getEndingDate: function () {
+                if (_.has(this, 'groupData') && this.groupData[0] && _.has(this.groupData[0], 'importedData.matrix.endDate')) {
+                    return this.groupData[0].importedData.matrix.endDate;
+                }
+                return false;
             },
             isScientific: function () {
                 return true;

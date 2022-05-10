@@ -135,13 +135,10 @@ module.exports = _.merge({}, SubResearchEntity, {
         institute: {
             model: 'institute'
         },
-        attributes: {
-            collection: 'Attribute',
-            through: 'groupattribute'
-        },
-        groupAttributes: {
-            collection: 'groupattribute',
-            via: 'researchEntity',
+        groupData: {
+            collection: 'groupData',
+            via: 'group',
+            unique: true
         },
         getType: function () {
             return 'group';

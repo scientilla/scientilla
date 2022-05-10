@@ -82,8 +82,7 @@
                 'members',
                 'memberships',
                 'pis',
-                'attributes',
-                'groupAttributes'
+                'groupData'
             ];
             const associations = {};
             associationsKeys.forEach(key => associations[key] = group[key]);
@@ -103,12 +102,12 @@
 
 
         function getGroup(groupId) {
-            const populate = {populate: ['members', 'administrators', 'attributes', 'groupAttributes', 'memberships', 'childGroups', 'parentGroups', 'pis']};
+            const populate = {populate: ['members', 'administrators', 'memberships', 'childGroups', 'parentGroups', 'pis', 'groupData']};
             return service.one(groupId).get(populate);
         }
 
         function get(query) {
-            const populate = {populate: ['members', 'administrators', 'attributes', 'groupAttributes', 'memberships', 'childGroups', 'parentGroups', 'pis']};
+            const populate = {populate: ['members', 'administrators', 'memberships', 'childGroups', 'parentGroups', 'pis', 'groupData']};
             const q = _.merge({}, query, populate);
             return service.getList(q).then(res => {
                 return res[0];
@@ -116,7 +115,7 @@
         }
 
         function getGroups(query) {
-            const populate = {populate: ['administrators', 'attributes', 'groupAttributes', 'childGroups', 'parentGroups', 'pis']};
+            const populate = {populate: ['administrators', 'childGroups', 'parentGroups', 'pis', 'groupData']};
             const q = _.merge({}, query, populate);
 
             return service.getList(q);
@@ -124,8 +123,11 @@
 
         function getMembershipGroups() {
             return Restangular.all('membershipgroups').customGET('', {
-                //where: {active: true},
-                populate: ['parent_group', 'child_group']
+                where: {
+                    active: true
+                },
+                populate: ['parent_group', 'child_group'],
+                limit: 10000
             }).then(res => {
                 return res.items;
             });
@@ -142,7 +144,7 @@
 
         function createInstituteStructure(institute, membershipGroups) {
 
-            membershipGroups = _.orderBy(membershipGroups, 'parent_group.id', 'desc');
+            membershipGroups = _.orderBy(membershipGroups.filter(mg => _.has(mg, 'child_group') && _.has(mg, 'parent_group')), 'parent_group.id', 'desc');
 
             // Map the index of membershipGroups with child group => index = value, child group id = key
             const indexMapping = membershipGroups.reduce((acc, el, i) => {
@@ -152,7 +154,6 @@
 
             // Loop over membership groups
             membershipGroups.forEach(el => {
-
                 let parentEl;
 
                 // Handle the main institute
@@ -175,12 +176,23 @@
 
                 // Add our current element to its parent's `childGroups` array
                 const group = Prototyper.toGroupModel(el.child_group);
-                group.childGroups = el.childGroups || [];
-                if (!_.has(parentEl, 'childGroups')) {
-                    parentEl.childGroups = [];
+                if (group.active) {
+                    group.childGroups = el.childGroups || [];
+                    if (!_.has(parentEl, 'childGroups')) {
+                        parentEl.childGroups = [];
+                    }
+                    parentEl.childGroups.push(group);
+                    parentEl.childGroups = _.orderBy(parentEl.childGroups, 'name');
                 }
-                parentEl.childGroups.push(group);
             });
+
+            membershipGroups.forEach(el => {
+                // Group the childgroups by type
+                el.child_group.types = _.groupBy(el.child_group.childGroups, 'type');
+            });
+
+            // Group the childgroups by type
+            institute.types = _.groupBy(institute.childGroups, 'type');
 
             return institute;
         }

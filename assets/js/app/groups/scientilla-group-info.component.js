@@ -11,9 +11,29 @@
             }
         });
 
-    controller.$inject = ['$scope', '$element', 'ISO3166', 'genders', 'ChartService', 'GroupsService', 'Prototyper', 'AuthService'];
+    controller.$inject = [
+        '$scope',
+        '$element',
+        'ISO3166',
+        'genders',
+        'ChartService',
+        'GroupsService',
+        'Prototyper',
+        'AuthService',
+        'DateService'
+    ];
 
-    function controller($scope, $element, ISO3166, genders, ChartService, GroupsService, Prototyper, AuthService) {
+    function controller(
+        $scope,
+        $element,
+        ISO3166,
+        genders,
+        ChartService,
+        GroupsService,
+        Prototyper,
+        AuthService,
+        DateService
+    ) {
         const vm = this;
 
         vm.name = 'group-info';
@@ -24,6 +44,7 @@
         vm.firstTimeLoaded = false;
         vm.isLoading = false;
         vm.loggedUser = AuthService.user;
+        vm.format = DateService.format;
 
         let includeSubgroupsWatcher;
 
@@ -31,6 +52,9 @@
         vm.ageRangeData = [];
         vm.selectedRoles = [];
         vm.byRole = [];
+        vm.pis = [];
+        vm.descriptions = [];
+        vm.centers = [];
 
         const excludeTitle = 'Click to exclude this role from the charts';
         const includeTitle = 'Click to include this role into the charts';
@@ -38,6 +62,18 @@
         let activeWatcher;
 
         vm.loadCharts = true;
+
+        vm.getPisTooltipHTML = pis => {
+            return `<ul class="tooltip-listing">${pis.map(pi => `<li>
+                <strong>${pi.fullName}</strong> (${vm.format(pi.startDate).toLocaleDateString()} - ${pi.endDate ? vm.format(pi.endDate).toLocaleDateString() : 'now'})
+            </li>`).join('')}</ul>`;
+        };
+
+        vm.getCentersTooltipHTML = centers => {
+            return `<ul class="tooltip-listing">${centers.map(center => `<li>
+                <strong>${center.name}</strong> (${vm.format(center.startDate).toLocaleDateString()} - ${center.endDate ? vm.format(center.endDate).toLocaleDateString() : 'now'})
+            </li>`).join('')}</ul>`;
+        };
 
         /* jshint ignore:start */
         vm.$onInit = async () => {
@@ -64,6 +100,9 @@
                     }
                 });
             }
+
+            vm.pis = vm.group.getPiHistory();
+            vm.centers = vm.group.getCenterHistory();
 
             initCharts();
         };
@@ -96,6 +135,7 @@
 
             vm.researchDomain = vm.group.getResearchDomain();
             vm.interactions = vm.group.getInteractions();
+            vm.endingDate = vm.group.getEndingDate();
 
             const parentMembershipGroups = await GroupsService.getParentMembershipGroups(vm.group.id);
             vm.center = parentMembershipGroups.map(m => Prototyper.toGroupModel(m.parent_group)).find(g => g.type === 'Center');

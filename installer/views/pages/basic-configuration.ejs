@@ -85,6 +85,28 @@
         </div>
     </div>
     <br>
+
+    <label for="">Matrix</label>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-xl-5">
+                    <div class="form-group">
+                        <label for="matrix-url">url *</label>
+                        <input
+                            name="matrix-url"
+                            id="matrix-url"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.matrix.url -%>">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+
     <label>LDAP</label>
     <div class="card">
         <div class="card-body">
@@ -179,60 +201,7 @@
             </div>
         </div>
     </div>
-    <br>
-    <label>Main institute import</label>
-    <div class="card">
-        <div class="card-body">
-            <div class="form-group">
-                <label for="main-institute-import-user-import-url">User import URL</label>
-                <input
-                    name="main-institute-import-user-import-url"
-                    id="main-institute-import-user-import-url"
-                    type="text"
-                    class="form-control"
-                    value="<%-configuration.mainInstituteImport.userImportUrl -%>">
-            </div>
 
-            <label>Users creation condition</label>
-            <ul class="sub-listing">
-                <li>
-                    <div class="form-group">
-                        <label for="main-institute-import-users-creation-condition-attribute">Attribute</label>
-                        <input
-                            name="main-institute-import-users-creation-condition-attribute"
-                            id="main-institute-import-users-creation-condition-attribute"
-                            type="text"
-                            class="form-control"
-                            value="<%-configuration.mainInstituteImport.usersCreationCondition.attribute -%>">
-                    </div>
-                </li>
-                <li>
-                    <div class="form-group">
-                        <label for="main-institute-import-users-creation-condition-value">Value</label>
-                        <label class="form-checkbox">
-                            <input
-                                name="main-institute-import-users-creation-condition-value"
-                                id="main-institute-import-users-creation-condition-value"
-                                type="checkbox"
-                                <%= configuration.mainInstituteImport.usersCreationCondition.value ? 'checked' : '' %>>
-                            <span>Enabled</span>
-                        </label>
-                    </div>
-                </li>
-            </ul>
-
-            <div class="form-group">
-                <label for="main-institute-import-official-groups-import-url">Official groups import URL</label>
-                <input
-                    name="main-institute-import-official-groups-import-url"
-                    id="main-institute-import-official-groups-import-url"
-                    type="text"
-                    class="form-control"
-                    value="<%-configuration.mainInstituteImport.officialGroupsImportUrl -%>">
-            </div>
-        </div>
-    </div>
-    <br>
     <label for="">Cron jobs</label>
     <div class="card">
         <div class="card-body">

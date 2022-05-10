@@ -285,7 +285,8 @@
         RESEARCH_DOMAIN: 'Research Domain',
         FACILITY: 'Facility',
         DIRECTORATE: 'Directorate',
-        PROJECT: 'Project'
+        PROJECT: 'Project',
+        OTHER: 'Other'
     };
 
     const groupTypeLabels = {
@@ -295,7 +296,8 @@
         RESEARCH_DOMAIN: 'Research domain',
         FACILITY: 'Facility',
         DIRECTORATE: 'Directorate',
-        PROJECT: 'Project'
+        PROJECT: 'Project',
+        OTHER: 'Other'
     };
 
     const groupTypePluralLabels = {
@@ -305,7 +307,8 @@
         RESEARCH_DOMAIN: 'Research domains',
         FACILITY: 'Facilities',
         DIRECTORATE: 'Directorates',
-        PROJECT: 'Projects'
+        PROJECT: 'Projects',
+        OTHER: 'Others'
     };
 
     const apiPrefix = '/api/v1';
