@@ -273,6 +273,7 @@ async function run() {
         const createdStructures = [];
         const createdStructureGroupMemberships = [];
         const upToDateStructureGroupMemberships = [];
+        const removedStructureMemberships = [];
         const uptoDateStructureAdministrators = [];
         const createdStructureAdministrators = [];
         const upToDateStructurePis = [];
@@ -309,10 +310,13 @@ async function run() {
                 const pis = structure[getPiLabel(type)];
                 const structurePis = [];
 
+                let center;
+                let centerMembership;
+                let mainResearchDomain;
+                let mainResearchDomainMembership;
+
                 // Check if the group exists
                 if (group) {
-                    let center;
-                    let centerMembership;
 
                     // Check if the structure has a center
                     if (_.has(structure, 'center.code')) {
@@ -334,9 +338,6 @@ async function run() {
                             }
                         }
                     }
-
-                    let mainResearchDomain;
-                    let mainResearchDomainMembership;
 
                     // Check of the structure has a main research domain
                     if (_.has(structure, 'mainResearchDomain.code')) {
@@ -435,22 +436,26 @@ async function run() {
                                     lastsynch: moment().format(ISO8601Format),
                                     active: true
                                 });
-                                const membership = await MembershipGroup.findOne({id: centerMembership.id});
+                                centerMembership = await MembershipGroup.findOne({id: centerMembership.id});
 
                                 // Push to an array to log later
-                                upToDateStructureGroupMemberships.push(membership);
+                                upToDateStructureGroupMemberships.push(centerMembership);
                             } else {
                                 // If the center membership group is missing: create one
-                                const membership = await MembershipGroup.create({
+                                await MembershipGroup.create({
                                     child_group: group.id,
                                     parent_group: center.id,
                                     lastsynch: moment().format(ISO8601Format),
                                     active: true,
                                     synchronized: true
                                 });
+                                centerMembership = await MembershipGroup.findOne({
+                                    child_group: group.id,
+                                    parent_group: center.id
+                                });
 
                                 // Push to array to log later
-                                createdStructureGroupMemberships.push(membership);
+                                createdStructureGroupMemberships.push(centerMembership);
                             }
                         }
 
@@ -462,22 +467,26 @@ async function run() {
                                     lastsynch: moment().format(ISO8601Format),
                                     active: true
                                 });
-                                const membership = await MembershipGroup.findOne({id: mainResearchDomainMembership.id});
+                                mainResearchDomainMembership = await MembershipGroup.findOne({id: mainResearchDomainMembership.id});
 
                                 // Push to an array to log later
-                                upToDateStructureGroupMemberships.push(membership);
+                                upToDateStructureGroupMemberships.push(mainResearchDomainMembership);
                             } else {
                                 // If the main research domain membership group is missing: create one
-                                const membership = await MembershipGroup.create({
+                                await MembershipGroup.create({
                                     child_group: group.id,
                                     parent_group: mainResearchDomain.id,
                                     lastsynch: moment().format(ISO8601Format),
                                     active: true,
                                     synchronized: true
                                 });
+                                mainResearchDomainMembership = await MembershipGroup.findOne({
+                                    child_group: group.id,
+                                    parent_group: mainResearchDomain.id
+                                });
 
                                 // Push to an array to log later
-                                createdStructureGroupMemberships.push(membership);
+                                createdStructureGroupMemberships.push(mainResearchDomainMembership);
                             }
                         }
 
@@ -533,24 +542,56 @@ async function run() {
                     // Create center membership group record
                     if (_.has(structure, 'center.code')) {
                         // Find the group of the center
-                        const center = await Group.findOne({code: structure.center.code});
+                        center = await Group.findOne({code: structure.center.code});
 
                         // If found
                         if (center) {
                             // Create the membership group record for the center & group
-                            const membership = await MembershipGroup.create({
+                            await MembershipGroup.create({
                                 child_group: group.id,
                                 parent_group: center.id,
                                 lastsynch: moment().format(ISO8601Format),
                                 active: true,
                                 synchronized: true
                             });
+                            centerMembership = await MembershipGroup.findOne({
+                                child_group: group.id,
+                                parent_group: center.id
+                            });
 
                             // Push to an array to log later
-                            createdStructureGroupMemberships.push(membership);
+                            createdStructureGroupMemberships.push(centerMembership);
                         } else {
                             // If the center group is not found print the error
                             sails.log.debug(`Missing center: ${structure.center.code}!`);
+                        }
+                    }
+
+                    // Check of the structure has a main research domain
+                    if (_.has(structure, 'mainResearchDomain.code')) {
+                        // Find the group of the main research domain in the database
+                        mainResearchDomain = await Group.findOne({code: structure.mainResearchDomain.code});
+
+                        // If found
+                        if (mainResearchDomain) {
+                            // If the main research domain membership group is missing: create one
+                            await MembershipGroup.create({
+                                child_group: group.id,
+                                parent_group: mainResearchDomain.id,
+                                lastsynch: moment().format(ISO8601Format),
+                                active: true,
+                                synchronized: true
+                            });
+                            mainResearchDomainMembership = await MembershipGroup.findOne({
+                                child_group: group.id,
+                                parent_group: mainResearchDomain.id
+                            });
+
+                            // Push to an array to log later
+                            createdStructureGroupMemberships.push(mainResearchDomainMembership);
+                        } else {
+                            // If the center group is not found print the error
+                            sails.log.debug(`Missing main research domain: ${structure.mainResearchDomain.code}!`);
                         }
                     }
 
@@ -603,6 +644,27 @@ async function run() {
                     removedStructurePis.push(pi);
                 }
 
+                const membershipIds = [];
+                if (mainResearchDomainMembership) {
+                    membershipIds.push(mainResearchDomainMembership.id);
+                }
+
+                if (centerMembership) {
+                    membershipIds.push(centerMembership.id);
+                }
+
+                // Remove the other memberships
+                const removedMemberships = membershipIds.length > 0 && await MembershipGroup.destroy({
+                    id: {'!': membershipIds},
+                    child_group: group.id
+                }) || [];
+
+                // Loop over the removed memberships
+                for (const membership of removedMemberships) {
+                    // Push to an array to log later
+                    removedStructureMemberships.push(membership);
+                }
+
                 // Find the research entity data record of the group
                 let researchEntityData = await ResearchEntityData.findOne({research_entity: group.researchEntity});
                 // Store the matrix structure temporarily
@@ -645,14 +707,6 @@ async function run() {
             active: true
         }, {
             active: false
-        }) || [];
-
-        // Merge the handled group memberships into one array
-        const handledMemberships = createdStructureGroupMemberships.concat(upToDateStructureGroupMemberships);
-        // Remove the old group memberships of the handled structures
-        const removedStructureMemberships = handledMemberships > 0 && handledStructures.length > 0 && await MembershipGroup.destroy({
-            id: {'!': handledMemberships.map(m => m.id)},
-            child_group: handledStructures.map(s => s.id)
         }) || [];
 
         // Log the information
