@@ -27,12 +27,6 @@ SELECT EXISTS(
     FROM information_schema.tables
     WHERE
         table_schema = 'public' AND
-        table_name = 'attribute'
-) as attribute, EXISTS(
-    SELECT *
-    FROM information_schema.tables
-    WHERE
-        table_schema = 'public' AND
         table_name = 'auth'
 ) as auth, EXISTS(
     SELECT *
@@ -119,12 +113,6 @@ SELECT EXISTS(
         table_schema = 'public' AND
         table_name = 'groupadministrator'
 ) as groupadministrator, EXISTS(
-    SELECT *
-    FROM information_schema.tables
-    WHERE
-        table_schema = 'public' AND
-        table_name = 'groupattribute'
-) as groupattribute, EXISTS(
     SELECT *
     FROM information_schema.tables
     WHERE
@@ -226,10 +214,4 @@ SELECT EXISTS(
     WHERE
         table_schema = 'public' AND
         table_name = 'user'
-) as "user", EXISTS(
-    SELECT *
-    FROM information_schema.tables
-    WHERE
-        table_schema = 'public' AND
-        table_name = 'userattribute'
-) as userattribute;
+) as "user";
