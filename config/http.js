@@ -12,6 +12,7 @@
 const lodash = require('lodash');
 const fs = require('fs');
 const Promise = require('bluebird');
+const AccessLog = require('../api/services/AccessLog.js');
 
 module.exports.http = {
 
@@ -86,12 +87,7 @@ module.exports.http = {
         myRequestLogger: async function (req, res, next) {
             if (!req.path.startsWith('/api/v1/'))
                 return next();
-            const logData = {
-                path: req.path,
-                method: req.method
-            };
-            await
-                AccessLog.create(logData);
+            await AccessLog.create(req);
             return next();
         }
 

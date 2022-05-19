@@ -49,6 +49,10 @@
                     index: 6,
                     slug: 'group-overview',
                     tabName: 'groupOverview'
+                }, {
+                    index: 7,
+                    slug: 'access-log-viewer',
+                    tabName: 'accessLogViewer'
                 }
             ];
 

@@ -214,7 +214,8 @@ module.exports.policies = {
         make: hasRole([ROLES.ADMINISTRATOR]),
         restore: hasRole([ROLES.ADMINISTRATOR]),
         upload: hasRole([ROLES.ADMINISTRATOR]),
-        remove: hasRole([ROLES.ADMINISTRATOR])
+        remove: hasRole([ROLES.ADMINISTRATOR]),
+        download: hasRole([ROLES.ADMINISTRATOR])
     }, defaultAdminPolicy),
 
     CustomizeController: _.defaults({
@@ -274,5 +275,10 @@ module.exports.policies = {
     TaskController: _.defaults({
         run: hasRole([ROLES.SUPERUSER, ROLES.EVALUATOR, ROLES.ADMINISTRATOR]),
         isRunning: isLogged
+    }, defaultAdminPolicy),
+
+    AccessLogController: _.defaults({
+        get: hasRole([ROLES.ADMINISTRATOR]),
+        download: hasRole([ROLES.ADMINISTRATOR])
     }, defaultAdminPolicy),
 };

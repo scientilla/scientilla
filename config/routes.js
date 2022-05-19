@@ -182,6 +182,9 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/logs/tasks']: 'Log.getTasks',
     ['get ' + apiPrfx + '/logs/:taskName/:date?']: 'Log.read',
 
+    ['get ' + apiPrfx + '/access-logs/get/:name?']: 'AccessLog.get',
+    ['post ' + apiPrfx + '/access-logs/download']: 'AccessLog.download',
+
     ['get ' + apiPrfx + '/general-setting/:name']: 'GeneralSettings.getByName',
     ['post ' + apiPrfx + '/general-setting/:name']: 'GeneralSettings.saveByName',
 
