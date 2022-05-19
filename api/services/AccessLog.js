@@ -56,7 +56,7 @@ async function get(name = false) {
         const files = await readdir(baseFolder);
         return {
             type: 'success',
-            files: files
+            files: files.filter(f => f.endsWith('.log'))
         };
     }
 }
