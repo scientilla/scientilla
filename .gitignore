@@ -168,6 +168,9 @@ installer/.env
 installer/uploads/*
 !installer/uploads/.gitkeep
 
+access_logs/*
+!access_logs/.gitkeep
+
 profile
 
 api/services/Tmp.js

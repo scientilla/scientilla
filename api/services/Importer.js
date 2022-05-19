@@ -10,7 +10,6 @@
 module.exports = {
     importSources,
     importSourceMetrics,
-    importDirectorates,
     importProjects,
     importPatents,
 };
@@ -235,76 +234,6 @@ async function importSourceMetrics(filename) {
     await SqlService.refreshMaterializedView('latest_source_metric');
 
     sails.log.info('imported ' + recordsCount + ' records');
-}
-
-async function importDirectorates() {
-
-    const groups = await Group.find();
-    if (groups.length <= 0) {
-        sails.log.info('No groups found...');
-    }
-
-    // Get all the employees from Pentaho.
-    const options = UserImporter.getUserImportRequestOptions('employees');
-    let employees = await UserImporter.getEmployees(options);
-
-    if (!employees) {
-        return;
-    }
-
-    employees = UserImporter.filterEmployees(employees);
-
-    const directorates = [];
-    const updatedDirectorates = [];
-    const createdDirectorates = [];
-
-    for (const employee of employees) {
-        for (let i = 1; i < 7; i++) {
-            if (!_.isEmpty(employee['linea_' + i])) {
-                const code = employee['linea_' + i];
-                const name = employee['nome_linea_' + i];
-                const office = employee['UO_' + i];
-                const directorate = directorates.find(d => d.code === code);
-                const group = groups.find(g => g.code === code && g.type !== 'Directorate');
-
-                if (!directorate && !group) {
-                    directorates.push({
-                        code: code,
-                        name: name,
-                        office: office
-                    });
-                }
-            }
-        }
-    }
-
-    for (const directorate of directorates) {
-        const group = await Group.findOne({
-            code: directorate.code,
-            type: 'Directorate'
-        });
-
-        const groupData = {
-            code: directorate.code,
-            name: directorate.name,
-            type: 'Directorate',
-            description: null,
-            //description: directorate.office, // Cannot because some codes have more offices like ROO001
-            slug: directorate.name.toLowerCase().trim().replace(/\./gi, '-').split('@')[0]
-        };
-
-        if (group) {
-            await Group.update({id: group.id}, groupData);
-            updatedDirectorates.push(group);
-        } else {
-            groupData.active = false;
-            await Group.create(groupData);
-            createdDirectorates.push(groupData);
-        }
-    }
-
-    sails.log.info(`Created ${createdDirectorates.length} & updated ${updatedDirectorates.length} directorates.
-        Please add them to their parent group and check their active state!`);
 }
 
 // import Projects

@@ -1459,7 +1459,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
  */
  function collectGroupCodes(contract) {
     const codes = [];
-    for (let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= 9; i++) {
         if (!_.isEmpty(contract['linea_' + i]) && !_.isEmpty(contract['UO_' + i])) {
             if (contract['UO_' + i] === 'IIT') {
                 codes.push('IIT1.01DS');
@@ -1562,7 +1562,7 @@ function getProfileGroups(allMembershipGroups, activeGroups, contract, defaultPr
     const groups = [];
     const lines = [];
 
-    for (let i = 1; i < 7; i++) {
+    for (let i = 1; i <= 9; i++) {
         if (!_.isEmpty(contract['linea_' + i])) {
             const code = contract['linea_' + i];
             const name = contract['nome_linea_' + i];

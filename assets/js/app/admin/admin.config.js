@@ -49,6 +49,10 @@
                 template: `<scientilla-admin-tools
                     active-tab="group-overview"></scientilla-admin-tools>`
             })
+            .when("/tools/access-log-viewer", {
+                template: `<scientilla-admin-tools
+                    active-tab="access-log-viewer"></scientilla-admin-tools>`
+            })
             .when("/phd-management", {
                 template: '<scientilla-admin-phd-thesis></scientilla-admin-phd-thesis>'
             })
