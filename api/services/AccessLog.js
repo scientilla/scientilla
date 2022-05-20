@@ -3,7 +3,6 @@ const util = require('util');
 const fs = require('fs');
 const path = require('path');
 const readdir = util.promisify(fs.readdir);
-const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const exists = util.promisify(fs.exists);
 const appendFile = util.promisify(fs.appendFile);
