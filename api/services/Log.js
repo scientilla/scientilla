@@ -45,7 +45,7 @@ function getTasks() {
                         tasks[index].dates.push(date);
 
                         tasks[index].dates = _.orderBy(tasks[index].dates, date => {
-                            return new moment(date).format('YYYMMDD');
+                            return new moment(date).format('YYYYMMDD');
                         }, ['desc']);
                     }
                 }

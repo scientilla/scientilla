@@ -58,7 +58,9 @@
                     });
                 }
 
-                vm.dates = _.orderBy(vm.files, 'date', 'desc').map(f => f.date);
+                vm.dates = _.orderBy(vm.files, file => {
+                    return new moment(file.date, 'DD/MM/YYYY');
+                }, ['desc']).map(file => file.date);
                 vm.date = _.head(vm.dates);
             }
 
