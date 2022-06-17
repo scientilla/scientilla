@@ -1,4 +1,5 @@
-CREATE OR REPLACE VIEW person AS
+DROP MATERIALIZED VIEW person CASCADE;
+CREATE MATERIALIZED VIEW person AS
 SELECT u.id                                                                      AS id,
        u.username                                                                AS username,
        u.name                                                                    AS name,

@@ -1,5 +1,7 @@
 "use strict";
 
+const _ = require('lodash');
+
 module.exports = {
     importUsers,
     removeExpiredUsers,
@@ -323,7 +325,7 @@ async function importUsers(email = getDefaultEmail()) {
                     _.has(step, 'data_inizio') &&
                     !moment(step.data_inizio, 'DD/MM/YYYY').isAfter(moment())
                 );
-                steps = steps.sort(function(a, b) {
+                steps = steps.sort(function (a, b) {
                     const dateA = moment(a.data_fine, 'DD/MM/YYYY');
                     const dateB = moment(b.data_fine, 'DD/MM/YYYY');
                     return dateA.isAfter(dateB);
@@ -511,7 +513,7 @@ async function importUsers(email = getDefaultEmail()) {
 
         // Check if a user is active but we expected not active
         const notExpectedActiveUsersCondition = {
-            lastsynch: { '<': startedTime.format() },
+            lastsynch: {'<': startedTime.format()},
             synchronized: true,
             active: true
         };
@@ -538,7 +540,7 @@ async function importUsers(email = getDefaultEmail()) {
         // Check if a user has a contract end date greater than now + 1 year.
         const notActiveUsersWrongContractEndDate = await User.find({
             active: false,
-            contractEndDate: { '>': moment().format() },
+            contractEndDate: {'>': moment().format()},
         });
         if (notActiveUsersWrongContractEndDate.length > 0) {
             await Utils.log(`Found ${notActiveUsersWrongContractEndDate.length} users that has to be checked manually`, logMethod);
@@ -549,6 +551,8 @@ async function importUsers(email = getDefaultEmail()) {
         if (notActiveUsersWrongContractEndDate.length > 0) {
             await Utils.log('....................................', logMethod);
         }
+
+        await SqlService.refreshMaterializedView('document_scopus_citation');
 
         // Reporting
         await Utils.log(disabledMemberships.length + ' memberships disabled!', logMethod);
@@ -829,7 +833,7 @@ function isFormerGuestStudent(employee) {
  *
  * @returns {Object}
  */
- function getUserImportRequestOptions(type, extraParams = {}) {
+function getUserImportRequestOptions(type, extraParams = {}) {
     const options = _.cloneDeep(sails.config.scientilla.userImport);
 
     options.responseEncoding = 'latin1';
@@ -862,7 +866,7 @@ function isFormerGuestStudent(employee) {
  *
  * @returns {Object[]}
  */
- async function getEmployees(options, logMethod = false, print = false) {
+async function getEmployees(options, logMethod = false, print = false) {
     try {
         let xml = await Utils.waitForSuccessfulRequest(options, logMethod, print);
 
@@ -925,7 +929,7 @@ function isFormerGuestStudent(employee) {
  *
  * @returns {Object[]}
  */
- function filterEmployees(employees) {
+function filterEmployees(employees) {
     const ignoredRoles = getIgnoredRoles();
 
     return employees.filter(e => _.has(e, 'desc_sottoarea') &&
@@ -1044,7 +1048,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
  *
  * @returns {Object[]}
  */
- function getValidSteps(steps) {
+function getValidSteps(steps) {
     // Get the date of 5 years ago.
     const fiveYearsAgo = moment().subtract('5', 'years').startOf('day');
 
@@ -1076,7 +1080,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
  *
  * @returns {Object[]}
  */
- function mergeStepsOfContract(contract, groups = []) {
+function mergeStepsOfContract(contract, groups = []) {
 
     const handledSteps = [];
 
@@ -1204,7 +1208,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
  *
  * @returns {Object|false}
  */
- function handleStep(step, groups = []) {
+function handleStep(step, groups = []) {
     if (
         _.has(step, 'linea') &&
         _.has(step, 'stato') &&
@@ -1299,7 +1303,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
  *
  * @returns {Object[]}
  */
- function mergeDuplicateEmployees(employees) {
+function mergeDuplicateEmployees(employees) {
     const uniqueEmployees = [];
 
     for (const employee of employees) {
@@ -1330,7 +1334,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
  *
  * @returns {String[]}
  */
- function getIgnoredRoles() {
+function getIgnoredRoles() {
     return [
         'Altro',
         'Collaboratore',
@@ -1354,7 +1358,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
  *
  * @returns {Object}
  */
- async function createUserObject(ldapUsers = [], user = {}, employee = {}, logMethod = false) {
+async function createUserObject(ldapUsers = [], user = {}, employee = {}, logMethod = false) {
 
     const userObject = {
         cid: employee.cid,
@@ -1457,7 +1461,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
  *
  * @returns {String[]}
  */
- function collectGroupCodes(contract) {
+function collectGroupCodes(contract) {
     const codes = [];
     for (let i = 1; i <= 9; i++) {
         if (!_.isEmpty(contract['linea_' + i]) && !_.isEmpty(contract['UO_' + i])) {
@@ -1481,7 +1485,7 @@ async function getContractualHistoryOfCidCodes(codes, logMethod = false, print =
  *
  * @returns {Object}
  */
- function getProfileObject(researchEntityData, contract, allMembershipGroups, activeGroups) {
+function getProfileObject(researchEntityData, contract, allMembershipGroups, activeGroups) {
     const profile = ResearchEntityData.setupProfile(researchEntityData);
 
     if (!profile) {
@@ -1682,7 +1686,7 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
  */
 async function overrideCIDAssociations(employees = [], email = getDefaultEmail(), logMethod = false) {
     let foundAssociations = false;
-    let cidAssociations = await GeneralSetting.findOne({ name: 'cid-associations' });
+    let cidAssociations = await GeneralSetting.findOne({name: 'cid-associations'});
 
     if (_.has(cidAssociations, 'data')) {
         cidAssociations = cidAssociations.data;
@@ -1748,10 +1752,11 @@ async function getMissingCIDAssociations(employees = [], logMethod = false) {
  * @param {String}        value               value of element.
  * @param {Object}        parentElement       parent element.
  */
-function RemoveJsonTextAttribute(value, parentElement){
+function RemoveJsonTextAttribute(value, parentElement) {
     try {
         const keyNo = Object.keys(parentElement._parent).length;
-        const keyName = Object.keys(parentElement._parent)[keyNo-1];
+        const keyName = Object.keys(parentElement._parent)[keyNo - 1];
         parentElement._parent[keyName] = value;
-    } catch(e) {}
+    } catch (e) {
+    }
 }
