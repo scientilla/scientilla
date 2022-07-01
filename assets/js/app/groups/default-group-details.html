@@ -121,6 +121,17 @@
             >
                 <summary-projects-technology-transfer research-entity="vm.group"></summary-projects-technology-transfer>
             </uib-tab>
+            <uib-tab
+                index="10"
+                heading="Scientific production"
+                nng-if="vm.isScientific()"
+            >
+                <scientific-production
+                    ng-if="vm.group"
+                    group="vm.group"
+                    active="vm.activeTabIndex === 10"
+                ></scientific-production>
+            </uib-tab>
         </uib-tabset>
     </div>
 </scientilla-backend-layout>

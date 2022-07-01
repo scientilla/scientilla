@@ -12,7 +12,7 @@
         overflow: hidden;
 
         &.expand{
-            max-height: none;
+            max-height: none !important;
         }
     }
 
@@ -110,6 +110,14 @@
             .percentage-column{
                 text-align: right;
             }
+
+            a{
+                color: $mine-shaft;
+
+                .fa{
+                    color: $gray-400;
+                }
+            }
         }
     }
 
@@ -183,15 +191,111 @@
             }
         }
     }
+
+    &.legend-with-bar-chart{
+        & > li {
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+
+            & + li {
+                .content{
+                    border-top: .1rem solid $gray-100;
+                }
+            }
+        }
+
+        .bar-chart{
+            margin-right: 2rem;
+            padding-top: 1.1rem;
+            padding-bottom: 1.1rem;
+
+            .chart{
+                position: relative;
+                display: block;
+                line-height: 1;
+                text-align: right;
+
+                &:after{
+                    position: absolute;
+                    top: 50%;
+                    left: 0px;
+                    z-index: -1;
+                    display: block;
+                    width: 100%;
+                    height: 1rem;
+                    margin-top: -.5rem;
+                    content: '';
+                    background: $gray-100;
+                    border-radius: .3rem;
+                }
+
+                span{
+                    display: inline-block;
+                    height: 1.5rem;
+                    vertical-align: middle;
+                    border-radius: .3rem;
+                    transition: width .3s;
+                }
+            }
+        }
+
+        .content{
+            display: flex;
+            min-height: 3.7rem;
+            align-items: center;
+
+            span {
+                display: block;
+            }
+
+            a{
+                color: $mine-shaft;
+
+                .fa{
+                    color: $gray-400;
+                }
+            }
+        }
+    }
 }
 
 @include media-breakpoint-up(sm) {
     .legend{
-
         &.legend-roles{
             .content{
                 display: grid;
                 height: 100%;
+                grid-template-rows: auto;
+                grid-template-columns: 1fr auto auto;
+                align-items: center;
+
+                & > * {
+                    padding-right: 2rem;
+                    padding-left: 2rem;
+
+                    &:first-child{
+                        padding-left: 0px;
+                        padding-right: 0px;
+                    }
+
+                    &:last-child{
+                        padding-right: 0px;
+                    }
+                }
+
+                .percentage-column{
+                    text-align: right;
+                }
+            }
+        }
+
+        &.legend-with-bar-chart{
+            .inner-content{
+                display: grid;
+                height: 100%;
+                width: 100%;
                 grid-template-rows: auto;
                 grid-template-columns: 1fr auto auto;
                 align-items: center;

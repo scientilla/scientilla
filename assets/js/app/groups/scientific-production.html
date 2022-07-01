@@ -1,0 +1,44 @@
+<div class="group-scientific-production-tab">
+    <scientilla-loading is-loading="vm.loading"></scientilla-loading>
+
+    <div
+        class="row"
+        ng-if="!vm.loading"
+    >
+        <div class="col-12 col-xl-6">
+            <scientific-production-chart
+                title="{{vm.charts.documentTotal.title}}"
+                data="vm.charts.documentTotal.data"
+                value-suffix="%"
+            ></scientific-production-chart>
+        </div>
+        <div class="col-12 col-xl-6">
+            <scientific-production-chart
+                title="{{vm.charts.if.title}}"
+                data="vm.charts.if.data"
+                value-suffix="%"
+            ></scientific-production-chart>
+        </div>
+        <div class="col-12 col-xl-6">
+            <scientific-production-chart
+                title="{{vm.charts.patentTotal.title}}"
+                data="vm.charts.patentTotal.data"
+                value-suffix="%"
+            ></scientific-production-chart>
+        </div>
+        <div class="col-12 col-xl-6">
+            <scientific-production-chart
+                title="{{vm.charts.contributionTotalCompetitiveProjects.title}}"
+                data="vm.charts.contributionTotalCompetitiveProjects.data"
+                value-suffix="%"
+            ></scientific-production-chart>
+        </div>
+        <div class="col-12 col-xl-6">
+            <scientific-production-chart
+                title="{{vm.charts.contributionTotalIndustrialProjects.title}}"
+                data="vm.charts.contributionTotalIndustrialProjects.data"
+                value-suffix="%"
+            ></scientific-production-chart>
+        </div>
+    </div>
+</div>

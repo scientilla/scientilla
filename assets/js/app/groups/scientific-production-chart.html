@@ -1,0 +1,94 @@
+<div class="scientific-production-chart">
+    <div class="chart-title-container">
+        <h3 class="chart-title">{{vm.title}}</h3>
+        <div class="btn-group">
+            <button
+                ng-click="vm.select('pie')"
+                ng-class="{selected: vm.selectedChart === 'pie'}"
+                class="btn btn-primary"
+            >
+                <i class="fas fa-chart-pie"></i>
+            </button>
+            <button
+                ng-click="vm.select('list')"
+                ng-class="{selected: vm.selectedChart === 'list'}"
+                class="btn btn-primary"
+            >
+                <i class="fa fa-list"></i>
+            </button>
+        </div>
+    </div>
+
+    <div ng-if="vm.selectedChart === 'pie'">
+        <div class="chart-container">
+            <nvd3
+                options="vm.options"
+                data="vm.data"
+                class="chart chart-full"
+            ></nvd3>
+        </div>
+
+        <div
+            class="legend-container"
+            ng-class="{ 'add-border' : vm.data.length > 8}"
+            expand-legend
+        >
+            <ul class="js-legend legend legend-default">
+                <li
+                    ng-repeat="item in vm.data track by $index"
+                    class="content"
+                >
+                    <span
+                        class="color"
+                        ng-style="{ 'background-color': vm.colors[$index] }"
+                    ></span>
+                    <a href="{{item.link}}" ng-if="item.link">{{ item.label }}<i class="fa fa-eye fa-right"></i></a>
+                    <span ng-if="!item.link">{{ item.label }}</span>
+                    <span class="colorize-text percentage-column">{{ item.value | number:2 }}{{ vm.valueSuffix }}</span>
+                </li>
+            </ul>
+            <button
+                class="js-see-more-less expand-button btn btn-outline-secondary"
+                ng-class="{ 'hidden' : vm.data.length <= 8 }"
+            >
+                <span class="see-more-text">See more</span>
+                <span class="see-less-text">See less</span>
+            </button>
+        </div>
+    </div>
+
+    <div
+        class="legend-container"
+        ng-if="vm.selectedChart === 'list'"
+        ng-class="{ 'add-border' : vm.data.length > 15}"
+        expand-legend
+    >
+        <ul class="js-legend legend legend-with-bar-chart">
+            <li ng-repeat="item in vm.data track by $index">
+                <div class="bar-chart">
+                    <div class="chart">
+                        <span ng-style="{
+                            'width': item.value + '%',
+                            'background-color': vm.colors[$index]
+                        }"></span>
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="inner-content">
+                        <a href="{{item.link}}" ng-if="item.link">{{ item.label }}<i class="fa fa-eye fa-right"></i></a>
+                        <span ng-if="!item.link">{{ item.label }}</span>
+                        <span class="colorize-text percentage-column">{{ item.value | number:2 }}{{ vm.valueSuffix }}</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <button
+            class="js-see-more-less expand-button btn btn-outline-secondary"
+            ng-class="{ 'hidden' : vm.data.length <= 15 }"
+        >
+            <span class="see-more-text">See more</span>
+            <span class="see-less-text">See less</span>
+        </button>
+    </div>
+</div>
