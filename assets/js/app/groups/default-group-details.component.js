@@ -111,7 +111,8 @@
             return [
                 groupTypes.INSTITUTE,
                 groupTypes.CENTER,
-                groupTypes.RESEARCH_LINE
+                groupTypes.RESEARCH_LINE,
+                groupTypes.FACILITY
             ].includes(vm.group.type);
         };
 
