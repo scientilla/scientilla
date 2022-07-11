@@ -1,0 +1,20 @@
+.scientific-production-chart{
+    .chart-title-container{
+        margin-bottom: 2rem;
+
+        .chart-title{
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 1rem;
+        }
+    }
+
+    .show-expired-checkbox-container{
+        margin-bottom: 2rem;
+    }
+
+    .expired-icon{
+        //margin-left: 2rem;
+        color: $gray-400;
+    }
+}

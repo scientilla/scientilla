@@ -56,6 +56,24 @@
                 'totalContributionCompetitiveProjectsByYear',
                 'priorityAndProsecutionPatentsByYear'
             ]
+        }, {
+            name: 'scientificProductionNoSubgroups',
+            keys: [
+                'documentTotalOfGroupMembers',
+                'ifOfGroupMembers',
+                'patentTotalOfGroupMembers',
+                'contributionTotalCompetitiveProjectsOfGroupMembers',
+                'contributionTotalIndustrialProjectsOfGroupMembers'
+            ]
+        }, {
+            name: 'scientificProductionSubgroups',
+            keys: [
+                'documentTotalOfSubgroups',
+                'ifOfSubgroups',
+                'patentTotalOfSubgroups',
+                'contributionTotalCompetitiveProjectsOfSubgroups',
+                'contributionTotalIndustrialProjectsOfSubgroups'
+            ]
         }
     ];
 
@@ -113,7 +131,14 @@
 
         service.getAllChartData = async (researchEntity) => {
             return await getData(researchEntity, 'all');
-        }
+        };
+
+        service.getScientificProductionChartData = async group => {
+            if (_.isEmpty(group.childGroups)) {
+                return await getData(group, 'scientificProductionNoSubgroups')
+            }
+            return await getData(group, 'scientificProductionSubgroups')
+        };
         /* jshint ignore:end */
 
         service.setStyles = (customizations) => {
@@ -1150,10 +1175,10 @@
         // private
         function getDefaultOptions(options, defaults) {
             const newOptions = {};
-            newOptions.chart = Object.assign({}, options.chart, _.cloneDeep(defaults.chart));
-            newOptions.chart.margin = Object.assign({}, options.chart.margin, _.cloneDeep(defaults.chart.margin));
-            newOptions.chart.xAxis = Object.assign({}, options.chart.xAxis, _.cloneDeep(defaults.chart.xAxis));
-            newOptions.chart.yAxis = Object.assign({}, options.chart.yAxis, _.cloneDeep(defaults.chart.yAxis));
+            newOptions.chart = Object.assign({}, _.cloneDeep(defaults.chart), options.chart);
+            newOptions.chart.margin = Object.assign({}, _.cloneDeep(defaults.chart.margin), options.chart.margin);
+            newOptions.chart.xAxis = Object.assign({}, _.cloneDeep(defaults.chart.xAxis), options.chart.xAxis);
+            newOptions.chart.yAxis = Object.assign({}, _.cloneDeep(defaults.chart.yAxis), options.chart.yAxis);
             return newOptions;
         }
 

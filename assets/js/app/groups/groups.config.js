@@ -95,6 +95,14 @@
                     param: getSlugOrId
                 }
             })
+            .when("/groups/:group/scientific-production", {
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="scientific-production"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
+            })
             .when("/:group/info", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details
@@ -181,6 +189,15 @@
                 template: () => `<scientilla-group-details
                     group-param="$resolve.param"
                     active-tab="projects-technology-transfer"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
+            })
+            .when("/:group/scientific-production", {
+                controller: 'requestHandler',
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="scientific-production"></scientilla-group-details>`,
                 resolve: {
                     param: getSlugOrId
                 }

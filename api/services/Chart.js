@@ -282,6 +282,66 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
         fn: query,
         params: [id],
         researchEntityTypes: [ResearchEntityTypes.USER, ResearchEntityTypes.GROUP]
+    }, {
+        key: 'documentTotalOfGroupMembers',
+        queryName: 'documentTotalOfGroupMembers',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
+    }, {
+        key: 'documentTotalOfSubgroups',
+        queryName: 'documentTotalOfSubgroups',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
+    }, {
+        key: 'ifOfGroupMembers',
+        queryName: 'ifOfGroupMembers',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
+    }, {
+        key: 'ifOfSubgroups',
+        queryName: 'ifOfSubgroups',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
+    }, {
+        key: 'patentTotalOfGroupMembers',
+        queryName: 'patentTotalOfGroupMembers',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
+    }, {
+        key: 'patentTotalOfSubgroups',
+        queryName: 'patentTotalOfSubgroups',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
+    }, {
+        key: 'contributionTotalCompetitiveProjectsOfSubgroups',
+        queryName: 'contributionTotalCompetitiveProjectsOfSubgroups',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
+    }, {
+        key: 'contributionTotalIndustrialProjectsOfSubgroups',
+        queryName: 'contributionTotalIndustrialProjectsOfSubgroups',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
+    }, {
+        key: 'contributionTotalCompetitiveProjectsOfGroupMembers',
+        queryName: 'contributionTotalCompetitiveProjectsOfGroupMembers',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
+    }, {
+        key: 'contributionTotalIndustrialProjectsOfGroupMembers',
+        queryName: 'contributionTotalIndustrialProjectsOfGroupMembers',
+        fn: query,
+        params: [id],
+        researchEntityTypes: [ResearchEntityTypes.GROUP]
     }];
 
     let selectedCharts;
@@ -344,7 +404,17 @@ async function getChartsData(id, Model, chartsKeys, refresh, roles) {
             'annualContributionCompetitiveProjectsByYear': 'groupAnnualContributionCompetitiveProjectsByYear',
             'annualContributionIndustrialProjectsByYear': 'groupAnnualContributionIndustrialProjectsByYear',
             'totalContributionIndustrialProjectsByYear': 'groupTotalContributionIndustrialProjectsByYear',
-            'totalContributionCompetitiveProjectsByYear': 'groupTotalContributionCompetitiveProjectsByYear'
+            'totalContributionCompetitiveProjectsByYear': 'groupTotalContributionCompetitiveProjectsByYear',
+            'documentTotalOfSubgroups': 'documentTotalOfSubgroups',
+            'documentTotalOfGroupMembers': 'documentTotalOfGroupMembers',
+            'ifOfSubgroups': 'ifOfSubgroups',
+            'ifOfGroupMembers': 'ifOfGroupMembers',
+            'patentTotalOfSubgroups': 'patentTotalOfSubgroups',
+            'patentTotalOfGroupMembers': 'patentTotalOfGroupMembers',
+            'contributionTotalCompetitiveProjectsOfSubgroups': 'contributionTotalCompetitiveProjectsOfSubgroups',
+            'contributionTotalIndustrialProjectsOfSubgroups': 'contributionTotalIndustrialProjectsOfSubgroups',
+            'contributionTotalCompetitiveProjectsOfGroupMembers': 'contributionTotalCompetitiveProjectsOfGroupMembers',
+            'contributionTotalIndustrialProjectsOfGroupMembers': 'contributionTotalIndustrialProjectsOfGroupMembers'
         };
         const transforms = {};
         transforms[ResearchEntityTypes.USER] = {};
@@ -443,7 +513,17 @@ async function recalculate(groupId) {
         'annualContributionIndustrialProjectsByYear',
         'totalContributionIndustrialProjectsByYear',
         'totalContributionCompetitiveProjectsByYear',
-        'priorityAndProsecutionPatentsByYear'
+        'priorityAndProsecutionPatentsByYear',
+        'documentTotalOfSubgroups',
+        'documentTotalOfGroupMembers',
+        'ifOfSubgroups',
+        'ifOfGroupMembers',
+        'patentTotalOfSubgroups',
+        'patentTotalOfGroupMembers',
+        'contributionTotalCompetitiveProjectsOfSubgroups',
+        'contributionTotalIndustrialProjectsOfSubgroups',
+        'contributionTotalCompetitiveProjectsOfGroupMembers',
+        'contributionTotalIndustrialProjectsOfGroupMembers'
     ]
 
     await getChartsData(groupId, Group, chartKeys, true, []);

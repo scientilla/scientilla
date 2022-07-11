@@ -65,6 +65,10 @@
                 index: 9,
                 slug: 'projects-technology-transfer',
                 tabName: 'summary-projects-technology-transfer'
+            }, {
+                index: 10,
+                slug: 'scientific-production',
+                tabName: 'scientific-production'
             }
         ];
 
