@@ -1,23 +1,36 @@
+WITH group_competitive_projects AS (
+    SELECT
+        v.research_entity AS research_entity,
+        pc.id,
+        pc.members
+    FROM verify v
+        JOIN project_competitive pc ON pc.id = v.research_item
+    WHERE
+        v.research_entity = $1
+)
+
 SELECT
-    u.id as user_id,
-    concat(u.display_name, ' ', u.display_surname) as user_name,
-    sub.total
+    u.id AS user_id,
+    concat(u.display_name, ' ', u.display_surname) AS user_name,
+    m.active AS active_group_member,
+    COALESCE(sub.total, 0) AS total
 FROM "membership" m
     JOIN "user" u ON u.id = m.user
     JOIN "group" mg ON mg.id = m.group
-    JOIN (
+    LEFT JOIN (
         SELECT
             vu.user,
-            sum((sub.members -> 'contributionObtained')::TEXT::float) as total
+            SUM((sub.members -> 'contributionObtained')::TEXT::float) AS total
         FROM verified_user vu
-            JOIN project_competitive pc ON pc.id = vu.research_item
+            JOIN group_competitive_projects gcp ON gcp.id = vu.research_item
             JOIN (
-                SELECT pc.id as project_id, json_array_elements(pc.members) as members
-                FROM project_competitive pc
-            ) sub ON sub.project_id = pc.id
+                SELECT
+                    gcp.id AS project_id,
+                    json_array_elements(gcp.members) AS members
+                FROM group_competitive_projects gcp
+            ) sub ON sub.project_id = gcp.id
         GROUP BY vu.user
     ) sub ON sub.user = u.id
 WHERE mg.id = $1
-    --AND m.active = true
     AND u.active = true
 ORDER BY mg.id

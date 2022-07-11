@@ -124,7 +124,7 @@
             <uib-tab
                 index="10"
                 heading="Scientific production"
-                nng-if="vm.isScientific()"
+                ng-if="vm.showScientificProduction()"
             >
                 <scientific-production
                     ng-if="vm.group"

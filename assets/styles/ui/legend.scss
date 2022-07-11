@@ -80,9 +80,21 @@
 
     &.legend-default{
         & > li{
+            grid-template-columns: auto 1fr auto auto;
+        }
+    }
+
+    &.legend-scientific-production{
+        & > li{
+            grid-template-columns: auto 1fr auto;
+        }
+    }
+
+    &.legend-default,
+    &.legend-scientific-production{
+        & > li{
             display: grid;
             grid-template-rows: auto;
-            grid-template-columns: auto 1fr auto auto;
             align-items: center;
 
             & + li {
@@ -244,6 +256,8 @@
         .content{
             display: flex;
             min-height: 3.7rem;
+            padding-top: .5rem;
+            padding-bottom: .5rem;
             align-items: center;
 
             span {

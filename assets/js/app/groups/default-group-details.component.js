@@ -105,6 +105,16 @@
             ].includes(vm.group.type);
         };
 
+        vm.showScientificProduction = function () {
+            if (!vm.group)
+                return true;
+            return [
+                groupTypes.INSTITUTE,
+                groupTypes.CENTER,
+                groupTypes.RESEARCH_LINE
+            ].includes(vm.group.type);
+        };
+
         function addCollaborator() {
             ModalService.openCollaboratorForm(vm.group)
                 .then(() => {
