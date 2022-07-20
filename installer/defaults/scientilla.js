@@ -161,19 +161,6 @@ module.exports.scientilla = {
                     "params": []
                 }
             ]
-        },
-        {
-            "name": "monitor",
-            "enabled": true,
-            "time": "0 0 * * * *",
-            "jobs": [
-                {
-                    "fn": "GruntTaskRunner.run",
-                    "params": [
-                        "monitor"
-                    ]
-                }
-            ]
         }
     ],
     "registerEnabled": true,

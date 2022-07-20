@@ -141,12 +141,6 @@ SELECT EXISTS(
     FROM information_schema.tables
     WHERE
         table_schema = 'public' AND
-        table_name = 'monitor'
-) as monitor, EXISTS(
-    SELECT *
-    FROM information_schema.tables
-    WHERE
-        table_schema = 'public' AND
         table_name = 'principalinvestigator'
 ) as principalinvestigator, EXISTS(
     SELECT *
