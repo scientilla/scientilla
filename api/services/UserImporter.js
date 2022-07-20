@@ -768,6 +768,7 @@ async function updateUserProfileGroups() {
 
     do {
         researchEntityDataRecords = await ResearchEntityData.find().sort('id ASC').limit(chunk).skip(i * chunk);
+        researchEntityDataRecords = researchEntityDataRecords.filter(r => !_.isNull(r.profile))
         for (const researchEntityDataRecord of researchEntityDataRecords) {
 
             let defaultPrivacy = valuePublicPrivacy;
