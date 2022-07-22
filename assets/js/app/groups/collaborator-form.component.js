@@ -9,7 +9,7 @@
             controller: CollaboratorForm,
             controllerAs: 'vm',
             bindings: {
-                group: "<",
+                groupId: "<",
                 collaborator: "<",
                 checkAndClose: "&",
             }
@@ -50,6 +50,7 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
+            vm.group = await GroupsService.getGroup(vm.groupId);
             await getCollaborators();
 
             if (vm.collaborator) {

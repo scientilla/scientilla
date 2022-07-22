@@ -292,7 +292,7 @@
             return openModal(
                 `<collaborator-form
                     class="collaborator-modal"
-                    group="vm.group"
+                    group-id="vm.group.id"
                     collaborator="vm.collaborator"
                     check-and-close="vm.checkAndClose"
                 ></collaborator-form>`,
