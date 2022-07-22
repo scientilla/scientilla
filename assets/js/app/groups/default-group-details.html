@@ -126,6 +126,7 @@
                 index="10"
                 heading="Scientific production"
                 ng-if="vm.showScientificProduction()"
+                ng-show="vm.loggedUser.isAdmin()"
             >
                 <scientific-production
                     ng-if="vm.group"
