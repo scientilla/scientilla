@@ -31,6 +31,12 @@
         .fa-times{
             color: $apple-blossom;
         }
+
+        button {
+            & + button{
+                margin-left: .4rem !important;
+            }
+        }
     }
 
     .error-message{
