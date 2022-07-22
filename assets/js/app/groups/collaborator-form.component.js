@@ -94,6 +94,8 @@
                     setIsEditing(newValue);
                 }
             });
+
+            vm.isDoingSomething = false;
         };
         /* jshint ignore:end */
 
@@ -154,8 +156,12 @@
 
         /* jshint ignore:start */
         async function remove(membership) {
+            vm.isDoingSomething = true;
+            delete vm.selectedUser;
+            delete vm.selectedCollaborator;
             await GroupsService.removeMembership(membership.id);
             await getCollaborators();
+            vm.isDoingSomething = false;
             Notification.success('Collaborator is been removed!');
         }
         /* jshint ignore:end */
