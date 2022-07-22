@@ -565,7 +565,6 @@ async function importUsers(email = getDefaultEmail()) {
             await Utils.log('....................................', logMethod);
         }
 
-        await SqlService.refreshMaterializedView('document_scopus_citation');
         await SqlService.refreshMaterializedView('person');
 
         // Reporting
