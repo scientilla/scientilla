@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h3>{{ !!vm.collaborator.id ? 'Edit' : 'Add' }} collaborator</h3>
+    <h3>{{ !!vm.collaborator ? 'Edit collaborator' : 'Collaborators' }}</h3>
     <button
         type="button"
         class="close"
@@ -9,6 +9,41 @@
 </div>
 
 <div class="modal-body">
+    <table
+        class="table"
+        ng-if="!vm.collaborator"
+    >
+        <tr>
+            <th>User</th>
+            <th>Active</th>
+            <th>Actions</th>
+        </tr>
+        <tr ng-repeat="membership in vm.collaborators track by $index">
+            <td>{{membership.user.getDisplayName()}}</td>
+            <td>
+                <i class="fa fa-times" ng-if="!membership.active"></i>
+                <i class="fa fa-check" ng-if="membership.active"></i>
+            </td>
+            <td>
+                <button
+                    ng-click="vm.edit(membership)"
+                    type="button"
+                    class="btn btn-inline"
+                >
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button
+                    ng-click="vm.remove(membership)"
+                    type="button"
+                    class="btn btn-inline"
+                >
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    </table>
+
+    <h4 ng-if="!vm.collaborator">{{ !!vm.isAlreadyACollaborator ? 'Edit' : 'Add' }} collaborator</h4>
     <div
         class="dropdown-container add-scroll add-collaborator-field-container"
         ng-if="!vm.collaborator"
@@ -28,6 +63,8 @@
         />
     </div>
 
+    <div ng-if="vm.errorMessage" class="error-message text-warning">{{vm.errorMessage}}</div>
+
     <ul
         class="selected-user"
         ng-show="vm.selectedCollaborator"
@@ -38,8 +75,9 @@
                 <input
                     type="checkbox"
                     ng-model="vm.selectedUserActive"
+                    ng-disabled="vm.userActiveDisabled"
                 />
-                <span>Active collaborator?</span>
+                <span>Active collaborator</span>
             </label>
         </li>
     </ul>

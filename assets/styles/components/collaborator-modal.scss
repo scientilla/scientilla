@@ -2,7 +2,7 @@
     .selected-user {
         @include normalize-listing;
         display: grid;
-        margin: 2rem -1rem 0px -1rem;
+        margin: 0px -1rem;
         grid-template-columns: 1fr auto;
         grid-template-rows: auto;
         align-items: center;
@@ -14,5 +14,26 @@
         .form-checkbox {
             margin: 0px;
         }
+    }
+
+    table{
+        th,
+        td{
+            &:last-child() {
+                text-align: right;
+            }
+        }
+    }
+
+    .fa-check{
+        color: $forrest-green;
+    }
+
+    .fa-times{
+        color: $apple-blossom;
+    }
+
+    .error-message{
+        margin-top: .5rem;
     }
 }

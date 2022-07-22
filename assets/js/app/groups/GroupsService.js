@@ -45,6 +45,8 @@
         service.getTypeTitle = getTypeTitle;
         service.createInstituteStructure = createInstituteStructure;
         service.getGroupTypeLabel = getGroupTypeLabel;
+        service.getCollaborators = getCollaborators;
+        service.removeMembership = removeMembership;
 
         return service;
 
@@ -232,60 +234,79 @@
                 return service.createInstituteStructure(institute, membershipGroups);
             });
         }
-
         /* jshint ignore:end */
 
-        function addCollaborator(group, user, active) {
-            const newMembership = {
-                group: group.id,
-                user: user.id,
-                active: active,
-                synchronized: false
-            };
-            return Restangular
-                .all('memberships')
-                .customPOST(newMembership);
+        /* jshint ignore:start */
+        async function addCollaborator(group, user, active) {
+            try {
+                const newMembership = {
+                    group: group.id,
+                    user: user.id,
+                    active: active,
+                    synchronized: false
+                };
+
+                await Restangular
+                    .all('memberships')
+                    .customPOST(newMembership)
+                    .then(() => {
+                        Notification.success('Collaborator is been added!');
+                    }, error => {
+                        throw error.data;
+                    });
+            } catch (error) {
+               Notification.warning(error);
+            }
         }
+        /* jshint ignore:end */
 
-        function updateCollaborator(group, user, active) {
-            const qs = {where: {group: group.id, user: user.id}};
-            return Restangular.all('memberships').customGET('', qs)
-                .then(res => {
-                    if (res.items.length !== 1) {
-                        throw 'Membership not found!';
-                    }
+        /* jshint ignore:start */
+        async function updateCollaborator(group, user, active) {
+            try {
+                const qs = {where: {group: group.id, user: user.id}};
+                const res = await Restangular.all('memberships').customGET('', qs);
+                if (res.items.length !== 1) {
+                    throw 'Membership not found!';
+                }
+                const membership = res.items[0];
+                membership.synchronized = false;
+                membership.active = active;
 
-                    const membership = res.items[0];
-                    membership.active = active;
-
-                    return Restangular
-                        .one('memberships', membership.id)
-                        .customPOST(membership);
-                })
-                .catch(function (error) {
-                    Notification.warning(error);
-                });
+                await Restangular
+                    .one('memberships', membership.id)
+                    .customPOST(membership)
+                    .then(() => {
+                        Notification.success('Collaborator is been updated!');
+                    }, error => {
+                        throw error.data;
+                    });
+            } catch (error) {
+                Notification.warning(error);
+            }
         }
+        /* jshint ignore:end */
 
-        function removeCollaborator(group, user) {
-            const qs = {where: {group: group.id, user: user.id}};
-            return Restangular.all('memberships').customGET('', qs)
-                .then(res => {
-                    if (res.items.length !== 1) {
-                        throw 'Membership not found!';
-                    }
-
-                    return Restangular
-                        .one('memberships', res.items[0].id)
-                        .remove()
-                        .then(() => {
-                            Notification.success('Membership removed!');
-                        });
-                })
-                .catch(function (error) {
-                    Notification.warning(error);
-                });
+        /* jshint ignore:start */
+        async function removeCollaborator(group, user) {
+            try {
+                const qs = {where: {group: group.id, user: user.id}};
+                let res = await Restangular.all('memberships').customGET('', qs);
+                if (res.items.length !== 1) {
+                    throw 'Membership not found!';
+                }
+                await Restangular
+                    .one('memberships', res.items[0].id)
+                    .remove()
+                    .then(() => {
+                        Notification.success('Membership removed!');
+                    }, error => {
+                        throw error.data;
+                    });
+            } catch (error) {
+                Notification.warning(error);
+            }
         }
+        /* jshint ignore:end */
 
         function addRelative(parent, child) {
             const newMembership = {
@@ -322,6 +343,18 @@
             if (type === groupTypes.PROJECT)
                 return 'Agreement';
             return groupTypeLabels[Object.keys(groupTypes).find(k => groupTypes[k] === type)] || '';
+        }
+
+        function getCollaborators(groupId) {
+            return Restangular
+                .one(`memberships/${groupId}/get-collaborators`)
+                .get();
+        }
+
+        function removeMembership(id) {
+            return Restangular
+                .one('memberships', id)
+                .remove();
         }
     }
 }());

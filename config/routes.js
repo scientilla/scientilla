@@ -97,6 +97,7 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/people/unique-nationalities']: 'Person.getUniqueNationalities',
     ['put ' + apiPrfx + '/users/:userId/aliases']: 'User.saveAliases',
     ['get ' + apiPrfx + '/agreements/unique-partner-institutes']: 'Agreement.getUniquePartnerInstitutes',
+    ['get ' + apiPrfx + '/memberships/:groupId/get-collaborators']: 'Membership.getCollaborators',
 
     //Research item API
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/delete']: 'ResearchEntity.deleteDrafts',
