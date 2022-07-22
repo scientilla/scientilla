@@ -34,6 +34,8 @@ async function importUsers(email = getDefaultEmail()) {
 
     const logMethod = 'importUsers';
     const startedTime = moment();
+    const newMemberships = [];
+    const updatedMemberships = [];
     const disabledMemberships = [];
     const enabledMemberships = [];
     const deactivatedUsers = [];
@@ -358,26 +360,37 @@ async function importUsers(email = getDefaultEmail()) {
                 if (group) {
                     const condition = {
                         user: user.id,
-                        group: group.id,
-                        synchronized: true
+                        group: group.id
                     };
 
                     let membership = await Membership.findOne(condition);
 
                     if (membership) {
-                        await Membership.update(condition, {
-                            lastsynch: moment().format(),
-                            active: step.active
-                        });
+                        if (
+                            (!membership.synchronized && membership.active && !step.active) ||
+                            (membership.synchronized === true && membership.active === step.active)
+                        ) {
+                            await Membership.update(condition, {
+                                lastsynch: moment().format()
+                            });
+                        } else {
+                            const updatedMembership = await Membership.update(condition, {
+                                lastsynch: moment().format(),
+                                active: step.active,
+                                synchronized: true
+                            });
+                            updatedMemberships.push(updatedMembership);
+                        }
                     } else {
                         await Utils.log('Add missing membership', logMethod);
-                        await Membership.create({
+                        const newMembership = await Membership.create({
                             user: user.id,
                             group: group.id,
                             lastsynch: moment().format(),
                             synchronized: true,
                             active: step.active
                         });
+                        newMemberships.push(newMembership);
                     }
                 }
             }
@@ -553,8 +566,17 @@ async function importUsers(email = getDefaultEmail()) {
         }
 
         await SqlService.refreshMaterializedView('document_scopus_citation');
+        await SqlService.refreshMaterializedView('person');
 
         // Reporting
+        await Utils.log(newMemberships.length + ' memberships created!', logMethod);
+        await Utils.log(util.inspect(newMemberships, false, null, true), logMethod, false);
+        await Utils.log('....................................', logMethod);
+
+        await Utils.log(updatedMemberships.length + ' memberships updated!', logMethod);
+        await Utils.log(util.inspect(updatedMemberships, false, null, true), logMethod, false);
+        await Utils.log('....................................', logMethod);
+
         await Utils.log(disabledMemberships.length + ' memberships disabled!', logMethod);
         await Utils.log(util.inspect(disabledMemberships, false, null, true), logMethod, false);
         await Utils.log('....................................', logMethod);
