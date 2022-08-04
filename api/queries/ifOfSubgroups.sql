@@ -2,16 +2,27 @@ WITH document_types AS (
     SELECT dt.id
     FROM documenttype dt
     WHERE dt.key IN ('erratum', 'poster', 'phd_thesis', 'report', 'invited_talk', 'abstract_report')
+), parent_documents AS (
+    SELECT
+        d.id AS id,
+        d.source AS source
+    FROM "document" d
+        JOIN authorshipgroup ag ON ag.document = d.id
+    WHERE d.documenttype <> ALL (SELECT id FROM document_types) AND ag."researchEntity" = $1
 ), research_entity_if AS (
     SELECT
         ag."researchEntity" AS group_id,
-        ROUND(SUM(lsm.value), 2) AS total
+        SUM(lsm.value) AS total
     FROM authorshipgroup ag
-        JOIN document d ON ag.document = d.id
-        JOIN latest_source_metric lsm ON d.source = lsm.source
-    AND lsm.name = 'IF'
-    AND d.documenttype <> ALL (SELECT id FROM document_types)
+        JOIN parent_documents pd ON ag.document = pd.id
+        JOIN latest_source_metric lsm ON pd.source = lsm.source
+    WHERE lsm.name = 'IF'
     GROUP BY ag."researchEntity"
+    ORDER BY total DESC
+), parent_if AS(
+    SELECT SUM(reif.total) AS total
+    FROM research_entity_if reif
+    WHERE reif.group_id = $1
 ), child_groups AS (
     SELECT *
     FROM "group" g
@@ -22,13 +33,13 @@ SELECT
     subquery.group_id,
     subquery.group_name,
     subquery.group_end_date,
-    COALESCE(SUM(subquery.total), 0) AS total
+    ROUND(COALESCE((SUM(subquery.total) / NULLIF((SELECT total FROM parent_if), 0)::FLOAT * 100)::NUMERIC, 0), 2) AS percentage
 FROM (
     SELECT
         mg.parent_group,
         cg.id AS group_id,
         cg."name" AS group_name,
-        (gd.imported_data -> 'matrix' ->> 'endDate')::text AS group_end_date,
+        (gd.imported_data -> 'matrix' ->> 'endDate')::TEXT AS group_end_date,
         reif.total
     FROM "membershipgroup" mg
         JOIN child_groups cg ON cg.id = mg.child_group
@@ -37,7 +48,7 @@ FROM (
     WHERE
         mg.parent_group != 1 AND
         mg.active = true AND
-        (gd.imported_data -> 'matrix' ->> 'public')::text::boolean = true
+        (gd.imported_data -> 'matrix' ->> 'public')::TEXT::BOOLEAN = true
 
     UNION
 
@@ -59,3 +70,4 @@ GROUP BY
     subquery.group_id,
     subquery.group_name,
     subquery.group_end_date
+ORDER BY percentage DESC

@@ -1,10 +1,19 @@
-WITH research_entity_patents AS (
+WITH parent_patents AS (
+    SELECT p.id AS id
+    FROM verify v
+        JOIN patent p ON p.id = v.research_item
+        JOIN "group" g ON g.research_entity = v.research_entity
+    WHERE p.translation = false AND g.id = $1
+), total_parent_patents AS (
+    SELECT COALESCE(COUNT(*), 0) AS total
+    FROM parent_patents pp
+), research_entity_patents AS (
     SELECT
         v.research_entity,
         COALESCE(COUNT(*), 0) AS total
     FROM verify v
         JOIN patent p ON p.id = v.research_item
-    WHERE p.translation = false
+    WHERE p.translation = false AND p.id IN (SELECT pp.id FROM parent_patents pp)
     GROUP BY v.research_entity
 ), child_groups AS (
     SELECT *
@@ -16,7 +25,7 @@ SELECT
     subquery.group_id,
     subquery.group_name,
     subquery.group_end_date,
-    COALESCE(SUM(subquery.total), 0) AS total
+    ROUND(COALESCE(SUM(subquery.total) / NULLIF((SELECT total FROM total_parent_patents), 0)::FLOAT * 100, 0)::NUMERIC, 2) AS percentage
 FROM (
     SELECT
         mg.parent_group AS parent_group,
@@ -55,3 +64,4 @@ GROUP BY
     subquery.group_id,
     subquery.group_name,
     subquery.group_end_date
+ORDER BY percentage DESC
