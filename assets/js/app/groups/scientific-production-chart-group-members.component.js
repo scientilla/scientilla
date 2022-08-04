@@ -8,6 +8,7 @@
             bindings: {
                 title: '@',
                 data: '<',
+                showPieChart: '<?',
                 valueSuffix: '@?'
             }
         });
@@ -26,7 +27,7 @@
             chart: {
                 type: 'pieChart',
                 x: d => d.label,
-                y: d => (d.value / vm.total) * 100,
+                y: d => d.value,
                 color: vm.colors,
                 growOnHover: false,
                 showLegend: false,
@@ -51,7 +52,6 @@
         vm.hasNotActiveGroupMembers = false;
 
         let checkboxWatcher;
-        let filteredDataWatcher;
         let dataWatcher;
 
         vm.select = chart => {
@@ -60,13 +60,12 @@
 
         vm.$onInit = () => {
             checkboxWatcher = $scope.$watch('vm.showNotActiveGroupMembers', showNotActiveGroupMembersChange);
-            filteredDataWatcher = $scope.$watch('vm.filteredData', filteredDataChange);
             dataWatcher = $scope.$watch('vm.filteredData', dataChange);
 
             vm.showNotActiveGroupMembers = true;
 
 
-            if (vm.data && vm.data.length > 15) {
+            if ((vm.data && vm.data.length > 15) || !vm.showPieChart) {
                 vm.selectedChart = 'list';
             }
         };
@@ -78,10 +77,6 @@
 
             if (_.isFunction(checkboxWatcher)) {
                 checkboxWatcher();
-            }
-
-            if (_.isFunction(filteredDataWatcher)) {
-                filteredDataWatcher();
             }
 
             if (_.isFunction(dataWatcher)) {
@@ -111,13 +106,6 @@
             }
 
             vm.hasNotActiveGroupMembers = vm.data.some(line => !line.activeGroupMember);
-        };
-
-        const filteredDataChange = () => {
-            if (!vm.filteredData) {
-                return;
-            }
-            vm.total = vm.filteredData.reduce((previous, current) =>  parseInt(previous) + parseInt(current.value), 0);
         };
     }
 })();
