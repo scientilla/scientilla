@@ -10,13 +10,14 @@
         });
 
     scientillaAdminSource.$inject = [
-        'Restangular'
+        'Restangular',
+        'SourceService'
     ];
 
-    function scientillaAdminSource(Restangular) {
+    function scientillaAdminSource(Restangular, SourceService) {
         const vm = this;
         vm.getSources = getSources;
-        vm.formatSource = formatSource;
+        vm.formatSource = SourceService.formatSource;
         vm.onMetricSearchKey = onMetricSearchKey;
         vm.searchMetrics = searchMetrics;
         vm.selectMetric = selectMetric;
@@ -33,25 +34,21 @@
         vm.$onInit = function () {
         };
 
-        function getSources(searchText) {
-
-            const token = searchText.split(' | ')[0];
-
+        /* jshint ignore:start */
+        async function getSources(searchText) {
+            const token = searchText.toLowerCase().split(' | ')[0];
             const qs = {
                 populate: 'metrics',
                 where: {
                     title: {
                         contains: token
                     }
-                }
+                },
+                limit: 99999
             };
-            return Restangular.all('sources').getList(qs);
+            return await SourceService.searchAndFilter(qs, token);
         }
-
-        function formatSource(source) {
-            if (!source) return '';
-            return source.title + ' | ' + source.issn + ' | ' + source.eissn + ' | ' + source.scopusId;
-        }
+        /* jshint ignore:end */
 
         /* jshint ignore:start */
         function onMetricSearchKey(event) {

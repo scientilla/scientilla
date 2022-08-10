@@ -27,7 +27,8 @@
         'ModalService',
         'documentCategories',
         'languages',
-        'PhdThesisService'
+        'PhdThesisService',
+        'SourceService'
     ];
 
     function scientillaDocumentFormController(
@@ -41,7 +42,8 @@
         ModalService,
         documentCategories,
         languages,
-        PhdThesisService
+        PhdThesisService,
+        SourceService
     ) {
         const vm = this;
 
@@ -73,6 +75,7 @@
         vm.resetErrors = resetErrors;
         vm.checkValidation = checkValidation;
         vm.fieldValueHasChanged = fieldValueHasChanged;
+        vm.formatSource = SourceService.formatSource;
 
         let timeout;
 
@@ -425,10 +428,20 @@
                 vm.checkAndClose()(() => !vm.unsavedData);
         }
 
-        function getSources(searchText) {
-            const qs = {where: {title: {contains: searchText}, type: vm.document.sourceType}};
-            return Restangular.all('sources').getList(qs);
+        /* jshint ignore:start */
+        async function getSources(searchText) {
+            const qs = {
+                where: {
+                    title: {
+                        contains: searchText
+                    },
+                    type: vm.document.sourceType
+                },
+                limit: 99999
+            };
+            return await SourceService.searchAndFilter(qs, searchText);
         }
+        /* jshint ignore:end */
 
         function getItSources(searchText) {
             const sourcesData = {

@@ -144,7 +144,7 @@
                 >
                     <label for="source">{{ vm.sourceLabel }} *</label>
                     <div
-                        class="input-group"
+                        class="input-group add-scroll"
                         ng-class="{'is-invalid' : vm.errors.source}"
                     >
                         <input
@@ -153,7 +153,9 @@
                             type="text"
                             ng-model="vm.document.source"
                             class="form-control"
-                            uib-typeahead="source as source.title for source in vm.getSources($viewValue)"
+                            typeahead-wait-ms="200"
+                            typeahead-min-length="3"
+                            uib-typeahead="source as vm.formatSource(source) for source in vm.getSources($viewValue)"
                             typeahead-loading="searching"
                             typeahead-no-results="noResults"
                             data-ng-required="true"
