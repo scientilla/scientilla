@@ -25,19 +25,23 @@
         'ResearchItemTypesService',
         'context',
         'Restangular',
-        'ModalService'
+        'ModalService',
+        'SourceService'
     ];
 
-    function scientillaAccomplishmentFormController(AccomplishmentService,
-                                                    EventsService,
-                                                    accomplishmentFieldsRules,
-                                                    accomplishmentEventTypes,
-                                                    $scope,
-                                                    $timeout,
-                                                    ResearchItemTypesService,
-                                                    context,
-                                                    Restangular,
-                                                    ModalService) {
+    function scientillaAccomplishmentFormController(
+        AccomplishmentService,
+        EventsService,
+        accomplishmentFieldsRules,
+        accomplishmentEventTypes,
+        $scope,
+        $timeout,
+        ResearchItemTypesService,
+        context,
+        Restangular,
+        ModalService,
+        SourceService
+    ) {
         const vm = this;
 
         vm.saveStatus = saveStatus();
@@ -67,6 +71,7 @@
         vm.resetErrors = resetErrors;
         vm.checkValidation = checkValidation;
         vm.fieldValueHasChanged = fieldValueHasChanged;
+        vm.formatSource = SourceService.formatSource;
 
         let timeout;
 
@@ -205,10 +210,18 @@
             vm.unsavedData = false;
         }
 
-        function getSources(searchText) {
-            const qs = {where: {title: {contains: searchText}}};
-            return Restangular.all('sources').getList(qs);
+        async function getSources(searchText) {
+            const qs = {
+                where: {
+                    title: {
+                        contains: searchText
+                    }
+                },
+                limit: 99999
+            };
+            return await SourceService.searchAndFilter(qs, searchText);
         }
+        /* jshint ignore:end */
 
         function getConferences(searchText) {
             if (vm.accomplishment.eventType === 'scientific_conference') {
@@ -219,6 +232,7 @@
             return false;
         }
 
+        /* jshint ignore:start */
         async function getTitles(searchText) {
             const types = await ResearchItemTypesService.getTypes();
             const type = types.filter(t => t.key === 'organized_event')[0];
@@ -279,12 +293,11 @@
                 }
             }, 200);
         }
+        /* jshint ignore:end */
 
         function close() {
             if (_.isFunction(vm.checkAndClose()))
                 vm.checkAndClose()(() => !vm.unsavedData);
         }
-
-        /* jshint ignore:end */
     }
 })();
