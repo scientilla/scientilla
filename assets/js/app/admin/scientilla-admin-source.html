@@ -3,7 +3,7 @@
     <input
         type="text"
         class="form-control"
-        ng-model="vm.selectedSource"
+        ng-model="vm.selectedSourceWithoutMetrics"
         typeahead-wait-ms="200"
         typeahead-min-length="3"
         uib-typeahead="source as vm.formatSource(source) for source in vm.getSources($viewValue)"
