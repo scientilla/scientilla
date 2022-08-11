@@ -11,10 +11,11 @@
 
     scientillaAdminSource.$inject = [
         'Restangular',
-        'SourceService'
+        'SourceService',
+        '$scope'
     ];
 
-    function scientillaAdminSource(Restangular, SourceService) {
+    function scientillaAdminSource(Restangular, SourceService, $scope) {
         const vm = this;
         vm.getSources = getSources;
         vm.formatSource = SourceService.formatSource;
@@ -31,14 +32,30 @@
         vm.metricsToAdd = [];
         vm.metricsToRemove = [];
 
+        let selectedSourceWithoutMetricsWatcher;
+
         vm.$onInit = function () {
+            selectedSourceWithoutMetricsWatcher = $scope.$watch('vm.selectedSourceWithoutMetrics', getSourceWithMetrics);
+        };
+
+        vm.$onDestroy = () => {
+            if (_.isFunction(selectedSourceWithoutMetricsWatcher)) {
+                selectedSourceWithoutMetricsWatcher();
+            }
         };
 
         /* jshint ignore:start */
+        async function getSourceWithMetrics() {
+            if (vm.selectedSourceWithoutMetrics) {
+                vm.selectedSource = await Restangular.one('sources', vm.selectedSourceWithoutMetrics.id).get({
+                    populate: 'metrics'
+                });
+            }
+        }
+
         async function getSources(searchText) {
             const token = searchText.toLowerCase().split(' | ')[0];
             const qs = {
-                populate: 'metrics',
                 where: {
                     title: {
                         contains: token
