@@ -276,7 +276,7 @@
                 class="col-12 col-sm-12 col-md-6"
                 ng-if="['invited_talk'].includes(vm.document.type) && vm.sourceLabel">
                 <div
-                    class="form-group has-feedback"
+                    class="form-group add-scroll has-feedback"
                     ng-class="{
                         'has-error' : vm.errors.itSource && vm.mode == 'verify',
                         'has-warning' : vm.errors.itSource && vm.mode == 'draft'
@@ -288,6 +288,8 @@
                         name="itSource"
                         type="text"
                         ng-model="vm.document.itSource"
+                        typeahead-wait-ms="200"
+                        typeahead-min-length="3"
                         uib-typeahead="source.title || source.name for source in vm.getItSources($viewValue)"
                         typeahead-loading="searching"
                         typeahead-no-results="noResults"
