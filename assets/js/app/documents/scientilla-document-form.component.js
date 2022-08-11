@@ -441,9 +441,8 @@
             };
             return await SourceService.searchAndFilter(qs, searchText);
         }
-        /* jshint ignore:end */
 
-        function getItSources(searchText) {
+        async function getItSources(searchText) {
             const sourcesData = {
                 'institute': {
                     query: {where: {name: {contains: searchText}}},
@@ -457,8 +456,13 @@
             const sourceData = sourcesData[vm.document.sourceType];
             if (!sourceData)
                 return [];
-            return Restangular.all(sourceData.model).getList(sourceData.query);
+            const results = await Restangular.all(sourceData.model).getList(sourceData.query);
+            const startsWithResults = results.filter(r => r.title.toLowerCase().startsWith(searchText));
+            const containsResults = results.filter(r => !r.title.toLowerCase().startsWith(searchText));
+
+            return _.concat(_.orderBy(startsWithResults, 'title', 'asc'), _.orderBy(containsResults, 'title', 'asc'));
         }
+        /* jshint ignore:end */
 
         function openSourceTypeModal($event) {
 
