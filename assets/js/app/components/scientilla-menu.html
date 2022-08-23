@@ -163,6 +163,31 @@
                 </a> -->
             </div>
         </li>
+        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific()">
+            <label class="label-add-research-item">
+                PhD trainings
+                <scientilla-button-new-research-item
+                    category="phd-training"
+                    class="button-new-research-entity-container"
+                ></scientilla-button-new-research-item>
+            </label>
+            <div class="list-group">
+                <a
+                    ng-href="{{ vm.getUrl('phd-trainings/suggested') }}"
+                    ng-class="{active: vm.isActive('/phd-trainings/suggested', true)}"
+                    class="list-group-item list-group-item-action"
+                >
+                    Suggested
+                </a>
+                <a
+                    ng-href="{{ vm.getUrl('phd-trainings/verified') }}"
+                    ng-class="{active: vm.isActive('/phd-trainings/verified', true)}"
+                    class="list-group-item list-group-item-action"
+                >
+                    Verified
+                </a>
+            </div>
+        </li>
         <li>
             <label>Explore</label>
             <div class="list-group">

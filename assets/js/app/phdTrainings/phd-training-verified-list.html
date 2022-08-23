@@ -1,0 +1,51 @@
+<scientilla-backend-layout>
+    <h1>Verified PhD trainings</h1>
+    <scientilla-filter
+        category="phd-training-verified"
+        on-filter="vm.onFilter"
+        elements="vm.phdTrainings"
+        empty-list-message="No PhD trainings found"
+    >
+        <scientilla-multicheck>
+            <buttons>
+                <scientilla-multicheck-button
+                    ng-disabled="true"
+                    subject="Export as CSV"
+                    on-click="vm.exportDownload"
+                >
+                    <i class="fas fa-download fa-left"></i>Export as CSV
+                </scientilla-multicheck-button>
+            </buttons>
+            <item-list>
+                <scientilla-checkable
+                    ng-repeat="p in vm.phdTrainings"
+                    item="p"
+                    class="scientilla-checkable"
+                >
+                    <phd-training
+                        phd-training="p"
+                        section="vm.phdTrainingListSections.VERIFIED"
+                        class="phd-training-container"
+                    ></scie>
+                    <div
+                        class="phd-training-row-actions"
+                        ng-if="vm.editable"
+                    >
+                        <button
+                            class="btn btn-primary"
+                            ng-click="vm.unverify(vm.researchEntity, p)"
+                            ng-disabled="vm.isUnverifying(p)"
+                            type="button"
+                            uib-tooltip="Unlink the PhD training from your profile"
+                            tooltip-placement="top"
+                            tooltip-class="text-left"
+                        >
+                            <i class="fas fa-times fa-left"></i>
+                            Unverify
+                        </button>
+                    </div>
+                </scientilla-checkable>
+            </item-list>
+        </scientilla-multicheck>
+    </scientilla-filter>
+</scientilla-backend-layout>

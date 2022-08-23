@@ -31,6 +31,7 @@
         'patents',
         'agreements',
         'cookies',
+        'phdTrainings',
         'groups' // Groups module has to be last because of the routes configuration
     ]);
 })();
