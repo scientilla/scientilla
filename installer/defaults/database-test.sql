@@ -3,12 +3,6 @@ SELECT EXISTS(
     FROM information_schema.tables
     WHERE
         table_schema = 'public' AND
-        table_name = 'accesslog'
-) as accesslog, EXISTS(
-    SELECT *
-    FROM information_schema.tables
-    WHERE
-        table_schema = 'public' AND
         table_name = 'affiliation'
 ) as affiliation, EXISTS(
     SELECT *
@@ -106,7 +100,7 @@ SELECT EXISTS(
     WHERE
         table_schema = 'public' AND
         table_name = 'group'
-) as group, EXISTS(
+) as "group", EXISTS(
     SELECT *
     FROM information_schema.tables
     WHERE
