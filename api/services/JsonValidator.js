@@ -26,6 +26,7 @@ const ajv = new Ajv({
         require('../schemas/profilePublic.json'),
         require('../schemas/profile.json'),
         require('../schemas/profileRemoveAdditional.json'),
+        require('../schemas/trainingModule.json'),
     ]
 });
 
@@ -49,8 +50,7 @@ module.exports = {
         return ajv.getSchema('patentFamily');
     },
     getProfileValidator: () => {
-        const schema = ajv.getSchema('profile');
-        return schema;
+        return ajv.getSchema('profile');
     },
     getProfileRemoveAdditionalValidator: () => {
         const value = ajv.opts.removeAdditional;
@@ -58,6 +58,9 @@ module.exports = {
         const schema = ajv.getSchema('profileRemoveAdditional');
         ajv.opts.removeAdditional = value;
         return schema;
+    },
+    getTrainingModuleValidator: () => {
+        return ajv.getSchema('trainingModule');
     },
     getDefaultProfile: () => {
         const profileDefsJSON = JSON.stringify(profileDefs);
@@ -75,12 +78,10 @@ module.exports = {
             updatedProfileDefs.definitions
         );
 
-        const profile = defaults({
+        return defaults({
             type: 'object',
             definitions: updatedRefsProfileDefault.definitions,
             properties: updatedRefsProfileDefault.properties
         });
-
-        return profile;
     }
 };
