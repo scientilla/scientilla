@@ -299,6 +299,16 @@
             }
         };
 
+        const phdTrainingFormStructure = {
+            title: {
+                inputType: 'text',
+                label: 'Title',
+                matchColumn: 'title',
+                matchRule: 'contains',
+                type: 'field',
+            }
+        };
+
         const formStructures = {
             accomplishment: accomplishmentFormStructure,
             'accomplishment-suggested': accomplishmentFormStructure,
@@ -483,7 +493,9 @@
                     type: 'action',
                     valueType: 'boolean'
                 }
-            }
+            },
+            'phd-training-suggested': phdTrainingFormStructure,
+            'phd-training-verified': phdTrainingFormStructure
         };
 
         return service;
@@ -802,6 +814,24 @@
                     });
 
                     structure.nationality.values = nationalities;
+                    break;
+                case constant === 'phd-training-suggested':
+                    structure = Object.assign({},
+                        formStructures[constant],
+                        {
+                            discarded: {
+                                inputType: 'checkbox',
+                                label: 'Show discarded PhD trainings',
+                                defaultValue: false,
+                                matchColumn: 'discarded',
+                                type: 'action',
+                                valueType: 'boolean'
+                            }
+                        }
+                    );
+                    break;
+                case constant === 'phd-training-verified':
+                    structure = formStructures[constant];
                     break;
                 default:
                     break;

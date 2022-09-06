@@ -1,0 +1,79 @@
+<ul
+    class="phd-training"
+    ng-class="{invalid: !vm.isValid(vm.phdTraining)}"
+>
+    <li
+        class="phd-training-info"    >
+        <span class="accomplishment-year">
+            {{ vm.phdTraining.year }}
+        </span>
+        <img
+            ng-src="{{ vm.customizations.logos.institute.src }}"
+            ng-if="vm.customizations.logos.institute.src && vm.hasMainGroupAffiliation()"
+            class="icon-iit"
+        />
+        <span
+            class="icon-iit"
+            ng-if="vm.hasMainGroupAffiliation()"
+        ></span>
+    </li>
+
+    <li>
+        <div>
+            <scientilla-research-item-type research-item-type="vm.phdTraining.type"></scientilla-research-item-type>
+            <scientilla-research-item-authors
+                research-item="vm.phdTraining"
+                collapsed="vm.collapsed"
+                type="preview"
+            ></scientilla-research-item-authors>
+        </div>
+
+        <div class="phd-training-title-container">
+            <h2
+                class="phd-training-title has-action"
+                ng-click="vm.openDetails()"
+                ng-bind-html='vm.phdTraining | title'
+            ></h2>
+        </div>
+
+        <ul class="phd-training-actions">
+            <li
+                ng-if="vm.phdTraining.verified.length"
+                class="phd-training-verified"
+                uib-tooltip-html="vm.getVerifiedNamesHTML()"
+                tooltip-class="text-left"
+            >
+                <i class="fas fa-check"></i> {{vm.phdTraining.verified.length}}
+            </li>
+
+            <li ng-if="vm.showPrivacy">
+                <i
+                    ng-click="vm.changePrivacy()"
+                    ng-if="vm.isPublic()"
+                    class="fas fa-globe-africa has-action"
+                    uib-tooltip-html="'The PhD training is visible to everyone, click to change it'"
+                ></i>
+                <i
+                    ng-click="vm.changePrivacy()"
+                    ng-if="!vm.isPublic()"
+                    class="fas fa-lock has-action"
+                    uib-tooltip-html="'The PhD training is visible only to scientilla users, click to change it'"
+                ></i>
+            </li>
+            <li ng-if="vm.showFavorite">
+                <i
+                    ng-click="vm.changeFavorite()"
+                    ng-if="vm.isFavorite()"
+                    class="fas fa-star has-action"
+                    uib-tooltip-html="'This PhD training is one of your favorite'"
+                ></i>
+                <i
+                    ng-click="vm.changeFavorite()"
+                    ng-if="!vm.isFavorite()"
+                    class="far fa-star has-action"
+                    uib-tooltip-html="'Click here to make it favorite'"
+                ></i>
+            </li>
+        </ul>
+    </li>
+</ul>

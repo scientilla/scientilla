@@ -55,10 +55,14 @@
         service.getMinMaxYears = getMinMaxYears;
         service.getPatents = getPatents;
         service.getPatentFamilies = getPatentFamilies;
+        service.getPhdTrainings = getPhdTrainings;
+        service.getSuggestedPhdTrainings = getSuggestedPhdTrainings;
+        service.getDiscardedPhdTrainings = getDiscardedPhdTrainings;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
         const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
         const patentPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
+        const phdTrainingPopulates = [];
 
         /* jshint ignore:start */
 
@@ -432,6 +436,33 @@
 
         async function getPatentFamilies(researchEntity, query) {
             return await researchEntity.getList('patentFamilies', query);
+        }
+
+        async function getPhdTrainings(researchEntity, query, favorites = false, populates = phdTrainingPopulates) {
+            const populate = {populate: populates};
+            const q = _.merge({}, query, populate);
+            return [];
+            if (favorites) {
+                return researchEntity.getList('favoritePhdTrainings', q);
+            } else {
+                return researchEntity.getList('phdTrainings', q);
+            }
+        }
+
+        async function getSuggestedPhdTrainings(researchEntity, query, populates = phdTrainingPopulates) {
+            const populate = {populate: phdTrainingPopulates};
+            const q = _.defaultsDeep({}, query, populate);
+            return [];
+            return await researchEntity.getList('suggestedPhdTrainings', q);
+        }
+
+        async function getDiscardedPhdTrainings(researchEntity, query, populates = phdTrainingPopulates) {
+            const populate = {populate: phdTrainingPopulates};
+            const q = _.defaultsDeep({}, query, populate);
+            return [];
+            const discarded = await researchEntity.getList('discardedPhdTrainings', q);
+            discarded.forEach(d => ResearchItemService.addLabel(d, researchItemLabels.DISCARDED));
+            return discarded
         }
 
         /* jshint ignore:end */
