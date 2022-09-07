@@ -144,7 +144,7 @@
                 >
                     <label for="source">{{ vm.sourceLabel }} *</label>
                     <div
-                        class="input-group"
+                        class="input-group add-scroll"
                         ng-class="{'is-invalid' : vm.errors.source}"
                     >
                         <input
@@ -153,14 +153,16 @@
                             type="text"
                             ng-model="vm.document.source"
                             class="form-control"
-                            uib-typeahead="source as source.title for source in vm.getSources($viewValue)"
+                            typeahead-wait-ms="200"
+                            typeahead-min-length="3"
+                            uib-typeahead="source as vm.formatSource(source) for source in vm.getSources($viewValue)"
                             typeahead-loading="searching"
                             typeahead-no-results="noResults"
                             data-ng-required="true"
                             placeholder="{{vm.sourceLabel}}"
                             ng-model-options="{ allowInvalid: true }"
                             typeahead-editable="false"
-                            typeahead-select-on-blur="true"
+                            typeahead-select-on-blur="false"
                             ng-blur="vm.checkSource($event)"
                             ng-change="vm.fieldValueHasChanged('source')"
                             ng-class="{'is-invalid' : vm.errors.source}"
@@ -274,7 +276,7 @@
                 class="col-12 col-sm-12 col-md-6"
                 ng-if="['invited_talk'].includes(vm.document.type) && vm.sourceLabel">
                 <div
-                    class="form-group has-feedback"
+                    class="form-group add-scroll has-feedback"
                     ng-class="{
                         'has-error' : vm.errors.itSource && vm.mode == 'verify',
                         'has-warning' : vm.errors.itSource && vm.mode == 'draft'
@@ -286,6 +288,8 @@
                         name="itSource"
                         type="text"
                         ng-model="vm.document.itSource"
+                        typeahead-wait-ms="200"
+                        typeahead-min-length="3"
                         uib-typeahead="source.title || source.name for source in vm.getItSources($viewValue)"
                         typeahead-loading="searching"
                         typeahead-no-results="noResults"

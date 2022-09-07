@@ -95,20 +95,22 @@
                         'has-warning' : vm.errors.source && vm.mode == 'draft'
                      }">
                     <label for="editorship-source">Source*</label>
-                    <div class="input-group"
+                    <div class="input-group add-scroll"
                          ng-class="{'is-invalid' : vm.errors.source}">
                         <input id="editorship-source"
                                name="source"
                                type="text"
                                ng-model="vm.accomplishment.source"
                                class="form-control"
-                               uib-typeahead="source as source.title for source in vm.getSources($viewValue)"
+                               typeahead-wait-ms="200"
+                               typeahead-min-length="3"
+                               uib-typeahead="source as vm.formatSource(source) for source in vm.getSources($viewValue)"
                                typeahead-loading="searching"
                                typeahead-no-results="noResults"
                                data-ng-required="true"
                                ng-model-options="{ allowInvalid: true }"
                                typeahead-editable="false"
-                               typeahead-select-on-blur="true"
+                               typeahead-select-on-blur="false"
                                ng-blur="vm.checkValidation('source')"
                                ng-change="vm.fieldValueHasChanged('source')"
                                ng-class="{'is-invalid' : vm.errors.source}">
@@ -261,7 +263,7 @@
                         'has-error' : vm.errors.title && vm.mode == 'verify',
                         'has-warning' : vm.errors.title && vm.mode == 'draft'
                     }"
-                        class="form-group has-feedback">
+                        class="form-group add-scroll has-feedback">
                     <label for="organized-event-title">Title *</label>
                     <input id="organized-event-title"
                            name="title"
@@ -338,7 +340,7 @@
                         'has-error' : vm.errors.place && vm.mode == 'verify',
                         'has-warning' : vm.errors.place && vm.mode == 'draft'
                      }"
-                     class="form-group has-feedback">
+                     class="form-group add-scroll has-feedback">
                     <label for="organized-event-place">{{vm.eventTypesLabels[vm.accomplishment.eventType].label}}</label>
                     <input id="organized-event-place"
                            name="place"
@@ -353,7 +355,7 @@
                            uib-typeahead="conference.title for conference in vm.getConferences($viewValue)"
                            typeahead-loading="searching"
                            typeahead-no-results="noResults"
-                           typeahead-select-on-blur="true">
+                           typeahead-select-on-blur="false">
                     {{ $viewValue }}
                     <scientilla-error-messages class="error-messages"
                                                errors="vm.errors.place"></scientilla-error-messages>

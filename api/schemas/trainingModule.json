@@ -1,0 +1,47 @@
+{
+  "$id": "trainingModule",
+  "type": "object",
+  "properties": {
+    "authorsStr": {
+      "type": "string"
+    },
+    "referent": {
+      "type": "integer"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "course": {
+      "type": "integer"
+    },
+    "hours": {
+      "type": "integer"
+    },
+    "lectures": {
+      "type": "integer"
+    },
+    "academicYear": {
+      "type": "string"
+    },
+    "researchDomains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "delivery": {
+      "type": "string",
+      "enum": [
+        "On Line",
+        "In Presence",
+        "On Line/In Presence"
+      ]
+    },
+    "location": {
+      "type": "string"
+    }
+  }
+}

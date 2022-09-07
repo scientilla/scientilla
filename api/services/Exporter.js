@@ -15,6 +15,7 @@ module.exports = {
     documentsToCsv,
     documentsToBibtex,
     getBibtex,
+    trainingModulesToCsv,
     accomplishmentsToCsv,
     projectsToCsv,
     patentsToCsv,
@@ -22,7 +23,7 @@ module.exports = {
 };
 
 function formatValue(value) {
-    return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(value);
+    return new Intl.NumberFormat('en-US', {minimumFractionDigits: 2}).format(value);
 }
 
 function bibtexInit() {
@@ -122,6 +123,26 @@ function bibtexInit() {
     };
 }
 
+function trainingModulesToCsv(researchItems) {
+    const rows = [[
+        'Title',
+        'Teachers',
+        'Year',
+        'Description/Abstract',
+    ]].concat(researchItems.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+        row.push(researchItem.title);
+        row.push(researchItem.authorsStr);
+        row.push(researchItem.year);
+        row.push(researchItem.description);
+
+        return row;
+    }));
+
+    return generateCSV(rows);
+}
+
 function accomplishmentsToCsv(researchItems) {
     const rows = [[
         'Title',
@@ -151,14 +172,7 @@ function accomplishmentsToCsv(researchItems) {
         return row;
     }));
 
-    let csv = 'data:text/csv;charset=utf-8,';
-
-    rows.forEach(function (rowArray) {
-        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
-            .join(',') + '\r\n';
-    });
-
-    return csv;
+    return generateCSV(rows);
 }
 
 function agreementsToCsv(researchItems) {
@@ -190,14 +204,7 @@ function agreementsToCsv(researchItems) {
         return row;
     }));
 
-    let csv = 'data:text/csv;charset=utf-8,';
-
-    rows.forEach(function (rowArray) {
-        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
-            .join(',') + '\r\n';
-    });
-
-    return csv;
+    return generateCSV(rows);
 }
 
 function projectsToCsv(researchItems) {
@@ -337,14 +344,7 @@ function patentsToCsv(researchItems) {
         return row;
     }));
 
-    let csv = 'data:text/csv;charset=utf-8,';
-
-    rows.forEach(function (rowArray) {
-        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
-            .join(',') + '\r\n';
-    });
-
-    return csv;
+    return generateCSV(rows);
 }
 
 function documentsToCsv(documents) {
@@ -395,14 +395,7 @@ function documentsToCsv(documents) {
         return doc;
     }));
 
-    let csv = 'data:text/csv;charset=utf-8,';
-
-    rows.forEach(function (rowArray) {
-        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
-            .join(',') + '\r\n';
-    });
-
-    return csv;
+    return generateCSV(rows);
 }
 
 
@@ -478,4 +471,14 @@ function getBibtexAuthors(doc) {
 function formatBibtex(key, fields, entryType) {
     const fieldsArr = Object.keys(fields).map(f => '  ' + f + '={' + lescape(fields[f]) + '}');
     return '@' + entryType + '{' + key + ',\n' + fieldsArr.join(',\n') + '\n}';
+}
+
+
+function generateCSV(rows) {
+    let csv = 'data:text/csv;charset=utf-8,';
+    rows.forEach(function (rowArray) {
+        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
+            .join(',') + '\r\n';
+    });
+    return csv;
 }

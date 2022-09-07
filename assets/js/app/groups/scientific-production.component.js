@@ -13,13 +13,11 @@
 
     controller.$inject = [
         '$element',
-        '$timeout',
         'ChartService'
     ];
 
     function controller(
         $element,
-        $timeout,
         ChartService
     ) {
         const vm = this;
@@ -81,7 +79,7 @@
                 title: 'Documents by group',
                 data: _.orderBy(chartsData.documentTotalOfSubgroups.map(line => ({
                     label: line.group_name,
-                    value: parseInt(line.count),
+                    value: parseFloat(line.percentage),
                     link: `/#/groups/${line.group_id}/documents`,
                     endDate: line.group_end_date
                 })), 'value', 'desc')
@@ -93,7 +91,7 @@
                 title: 'Impact factor by group',
                 data: _.orderBy(chartsData.ifOfSubgroups.map(line => ({
                     label: line.group_name,
-                    value: parseFloat(line.total),
+                    value: parseFloat(line.percentage),
                     link: `/#/groups/${line.group_id}/info`,
                     endDate: line.group_end_date
                 })), 'value', 'desc')
@@ -105,7 +103,7 @@
                 title: 'Patents by group',
                 data: _.orderBy(chartsData.patentTotalOfSubgroups.map(line => ({
                     label: line.group_name,
-                    value: parseInt(line.total),
+                    value: parseFloat(line.percentage),
                     link: `/#/groups/${line.group_id}/patents`,
                     endDate: line.group_end_date
                 })), 'value', 'desc')
@@ -117,7 +115,7 @@
                 title: 'Contribution competitive projects by group',
                 data: _.orderBy(chartsData.contributionTotalCompetitiveProjectsOfSubgroups.map(line => ({
                     label: line.group_name,
-                    value: parseInt(line.total),
+                    value: parseFloat(line.percentage),
                     link: `/#/groups/${line.group_id}/projects?projectType=project_competitive`,
                     endDate: line.group_end_date
                 })), 'value', 'desc')
@@ -129,7 +127,7 @@
                 title: 'Contribution industrial projects by group',
                 data: _.orderBy(chartsData.contributionTotalIndustrialProjectsOfSubgroups.map(line => ({
                     label: line.group_name,
-                    value: parseInt(line.total),
+                    value: parseFloat(line.percentage),
                     link: `/#/groups/${line.group_id}/projects?projectType=project_industrial`,
                     endDate: line.group_end_date
                 })), 'value', 'desc')
@@ -141,7 +139,7 @@
                 title: 'Documents by member',
                 data: _.orderBy(chartsData.documentTotalOfGroupMembers.map(line => ({
                     label: line.user_name,
-                    value: parseInt(line.count),
+                    value: parseFloat(line.percentage),
                     activeGroupMember: line.active_group_member,
                     link: `/#/users/${line.user_id}/documents`
                 })), 'value', 'desc')
@@ -153,7 +151,7 @@
                 title: 'Impact factor by member',
                 data: _.orderBy(chartsData.ifOfGroupMembers.map(line => ({
                     label: line.user_name,
-                    value: parseInt(line.total),
+                    value: parseFloat(line.percentage),
                     activeGroupMember: line.active_group_member,
                     link: `/#/users/${line.user_id}/profile`
                 })), 'value', 'desc')
@@ -165,7 +163,7 @@
                 title: 'Patents by member',
                 data: _.orderBy(chartsData.patentTotalOfGroupMembers.map(line => ({
                     label: line.user_name,
-                    value: parseInt(line.total),
+                    value: parseFloat(line.percentage),
                     activeGroupMember: line.active_group_member,
                     link: `/#/users/${line.user_id}/patents`
                 })), 'value', 'desc')
@@ -177,7 +175,7 @@
                 title: 'Contribution competitive projects by group members',
                 data: _.orderBy(chartsData.contributionTotalCompetitiveProjectsOfGroupMembers.map(line => ({
                     label: line.user_name,
-                    value: parseInt(line.total),
+                    value: parseFloat(line.percentage),
                     activeGroupMember: line.active_group_member,
                     link: `/#/users/${line.user_id}/projects?projectType=project_competitive`
                 })), 'value', 'desc')
@@ -189,7 +187,7 @@
                 title: 'Contribution industrial projects by group members',
                 data: _.orderBy(chartsData.contributionTotalIndustrialProjectsOfGroupMembers.map(line => ({
                     label: line.user_name,
-                    value: parseInt(line.total),
+                    value: parseFloat(line.percentage),
                     activeGroupMember: line.active_group_member,
                     link: `/#/users/${line.user_id}/projects?projectType=project_industrial`
                 })), 'value', 'desc')

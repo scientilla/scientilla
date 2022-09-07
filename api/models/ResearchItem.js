@@ -16,7 +16,8 @@ const needsAuthorsTypes = {
     [ResearchItemTypes.PROJECT_COMPETITIVE]: true,
     [ResearchItemTypes.PROJECT_INDUSTRIAL]: true,
     [ResearchItemTypes.PROJECT_AGREEMENT]: true,
-    [ResearchItemTypes.PATENT]: true
+    [ResearchItemTypes.PATENT]: true,
+    [ResearchItemTypes.TRAINING_MODULE]: true
 };
 const needsAffiliationTypes = {
     [ResearchItemTypes.AWARD_ACHIEVEMENT]: true,
@@ -25,7 +26,8 @@ const needsAffiliationTypes = {
     [ResearchItemTypes.PROJECT_COMPETITIVE]: true,
     [ResearchItemTypes.PROJECT_INDUSTRIAL]: true,
     [ResearchItemTypes.PROJECT_AGREEMENT]: false,
-    [ResearchItemTypes.PATENT]: true
+    [ResearchItemTypes.PATENT]: true,
+    [ResearchItemTypes.TRAINING_MODULE]: true
 };
 
 module.exports = _.merge({}, BaseModel, {

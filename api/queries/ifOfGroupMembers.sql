@@ -8,33 +8,45 @@ WITH document_types AS (
         d.source
     FROM "document" d
     WHERE d.documenttype <> ALL (SELECT id FROM document_types)
-), group_documents AS (
+), parent_documents AS (
     SELECT
-        ag.document,
+        ag.document AS id,
         documents.source
     FROM "authorshipgroup" ag
         LEFT JOIN documents ON documents.id = ag.document
     WHERE ag."researchEntity" = $1
+), research_entity_if AS (
+    SELECT
+        a."researchEntity" AS research_entity,
+        SUM(lsm.value) AS total
+    FROM authorship a
+        JOIN parent_documents pd ON a.document = pd.id
+        JOIN latest_source_metric lsm ON pd.source = lsm.source
+    WHERE lsm.name = 'IF'
+    GROUP BY a."researchEntity"
+    ORDER BY total DESC
+), parent_if AS(
+    SELECT
+        ag."researchEntity" AS research_entity,
+        SUM(lsm.value) AS total
+    FROM authorshipgroup ag
+        JOIN parent_documents pd ON ag.document = pd.id
+        JOIN latest_source_metric lsm ON pd.source = lsm.source
+    WHERE lsm.name = 'IF' AND ag."researchEntity" = $1
+    GROUP BY ag."researchEntity"
 )
 
 SELECT
     u.id AS user_id,
     CONCAT(u.display_name, ' ', u.display_surname) AS user_name,
     m.active AS active_group_member,
-    COALESCE(sub.total, 0) AS total
+    reif.total,
+    (SELECT total FROM parent_if),
+    ROUND(COALESCE(((reif.total / NULLIF((SELECT total FROM parent_if), 0))::FLOAT * 100)::NUMERIC, 0), 2) AS percentage
 FROM "membership" m
     JOIN "user" u ON u.id = m.user
     JOIN "group" mg ON mg.id = m.group
-    LEFT JOIN (
-        SELECT
-            a."researchEntity" AS research_entity,
-            ROUND(SUM(lsm.value), 2) AS total
-        FROM authorship a
-            JOIN group_documents gd ON a.document = gd.document
-            JOIN latest_source_metric lsm ON gd.source = lsm.source
-        AND lsm.name = 'IF'
-        GROUP BY a."researchEntity"
-    ) sub ON sub.research_entity = u.id
+    LEFT JOIN research_entity_if reif ON reif.research_entity = u.id
 WHERE
-    mg.id = $1 AND
-    u.active = true
+    mg.id = $1
+    AND u.active = true

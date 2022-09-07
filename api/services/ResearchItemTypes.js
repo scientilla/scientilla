@@ -1,4 +1,4 @@
-/* global require, ResearchItemTypes, ResearchItemType, Accomplishment, Project, Patent */
+/* global require, ResearchItemTypes, ResearchItemType, Accomplishment, Project, Patent, TrainingModule */
 "use strict";
 
 const _ = require('lodash');
@@ -13,6 +13,7 @@ module.exports = {
     PROJECT_INDUSTRIAL: 'project_industrial',
     PROJECT_AGREEMENT: 'project_agreement',
     PATENT: 'patent',
+    TRAINING_MODULE: 'training_module',
     init: async () => {
         let researchItemTypesArray = await ResearchItemType.find();
         if (!researchItemTypesArray.length < researchItemTypesData.length) {
@@ -35,6 +36,7 @@ module.exports = {
             [this.PROJECT_INDUSTRIAL]: Project,
             [this.PROJECT_AGREEMENT]: Project,
             [this.PATENT]: Patent,
+            [this.TRAINING_MODULE]: TrainingModule,
         };
 
         const researchItemType = ResearchItemTypes.getType(type);

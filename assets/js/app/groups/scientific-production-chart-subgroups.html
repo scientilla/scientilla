@@ -1,7 +1,7 @@
 <div class="scientific-production-chart">
     <div class="chart-title-container">
         <h3 class="chart-title">{{vm.title}}</h3>
-        <div class="btn-group">
+        <div class="btn-group" ng-if="vm.showPieChart">
             <button
                 ng-click="vm.select('pie')"
                 ng-class="{selected: vm.selectedChart === 'pie'}"
@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <div ng-if="vm.selectedChart === 'pie'">
+    <div ng-if="vm.selectedChart === 'pie' && vm.showPieChart">
         <div class="chart-container">
             <nvd3
                 options="vm.options"
@@ -57,7 +57,7 @@
                         <span ng-if="!item.link">{{ item.label }}</span>
                         <i ng-if="vm.isExpired(item)" tooltip-placement="top" uib-tooltip="This group ended on {{ vm.format(item.endDate).toLocaleDateString() }}." class="fas fa-exclamation-triangle expired-icon"></i>
                     </div>
-                    <span class="colorize-text percentage-column">{{ (item.value / vm.total) * 100 | number:2 }}{{ vm.valueSuffix }}</span>
+                    <span class="colorize-text percentage-column">{{ item.value }}{{ vm.valueSuffix }}</span>
                 </li>
             </ul>
             <button
@@ -91,7 +91,7 @@
                 <div class="bar-chart">
                     <div class="chart">
                         <span ng-style="{
-                            'width': (item.value / vm.total) * 100 + '%',
+                            'width': item.value + '%',
                             'background-color': vm.colors[$index]
                         }"></span>
                     </div>
@@ -103,7 +103,7 @@
                             <span ng-if="!item.link">{{ item.label }}</span>
                             <i ng-if="vm.isExpired(item)" tooltip-placement="top" uib-tooltip="This group ended on {{ vm.format(item.endDate).toLocaleDateString() }}." class="fas fa-exclamation-triangle expired-icon"></i>
                         </div>
-                        <span class="colorize-text percentage-column">{{ (item.value / vm.total) * 100 | number:2 }}{{ vm.valueSuffix }}</span>
+                        <span class="colorize-text percentage-column">{{ item.value }}{{ vm.valueSuffix }}</span>
                     </div>
                 </div>
             </li>

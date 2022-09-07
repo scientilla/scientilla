@@ -1,7 +1,8 @@
 /* global require, ResearchItemAward, Validator, Institute */
 'use strict';
 
-const BaseModel = require("../lib/BaseModel.js");
+const _ = require('lodash');
+const BaseModel = require('../lib/BaseModel.js');
 
 const fields = [
     {name: 'title'},

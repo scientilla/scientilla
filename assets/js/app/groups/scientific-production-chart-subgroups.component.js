@@ -8,6 +8,7 @@
             bindings: {
                 title: '@',
                 data: '<',
+                showPieChart: '<?',
                 valueSuffix: '@?'
             }
         });
@@ -29,7 +30,7 @@
             chart: {
                 type: 'pieChart',
                 x: d => d.label,
-                y: d => (d.value / vm.total) * 100,
+                y: d => d.value,
                 color: vm.colors,
                 growOnHover: false,
                 showLegend: false,
@@ -54,7 +55,6 @@
         vm.hasExpiredGroups = false;
 
         let checkboxWatcher;
-        let filteredDataWatcher;
         let dataWatcher;
 
         vm.select = chart => {
@@ -63,12 +63,11 @@
 
         vm.$onInit = () => {
             checkboxWatcher = $scope.$watch('vm.showExpiredGroups', showExpiredGroupsChange);
-            filteredDataWatcher = $scope.$watch('vm.filteredData', filteredDataChange);
             dataWatcher = $scope.$watch('vm.filteredData', dataChange);
 
             vm.showExpiredGroups = true;
 
-            if (vm.data && vm.data.length > 15) {
+            if ((vm.data && vm.data.length > 15) || !vm.showPieChart) {
                 vm.selectedChart = 'list';
             }
         };
@@ -80,10 +79,6 @@
 
             if (_.isFunction(checkboxWatcher)) {
                 checkboxWatcher();
-            }
-
-            if (_.isFunction(filteredDataWatcher)) {
-                filteredDataWatcher();
             }
 
             if (_.isFunction(dataWatcher)) {
@@ -117,13 +112,6 @@
                 return;
             }
             vm.hasExpiredGroups = vm.data.some(line => _.has(line, 'endDate') && line.endDate && moment().diff(moment(line.endDate, 'YYYY-MM-DD')) > 0);
-        };
-
-        const filteredDataChange = () => {
-            if (!vm.filteredData) {
-                return;
-            }
-            vm.total = vm.filteredData.reduce((previous, current) =>  parseInt(previous) + parseInt(current.value), 0);
         };
     }
 })();

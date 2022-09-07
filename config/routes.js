@@ -114,15 +114,16 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-items']: 'ResearchEntity.copyAllToDraft',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/discarded']: 'ResearchEntity.discard',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/discarded']: 'ResearchEntity.multipleDiscard',
+    ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-profile']: 'ResearchEntity.getProfile',
+    ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-edit-profile']: 'ResearchEntity.getEditProfile',
+    ['post ' + apiPrfx + '/researchentities/:researchEntityId/save-profile']: 'ResearchEntity.saveProfile',
+    ['post ' + apiPrfx + '/researchentities/:researchEntityId/profile/export']: 'ResearchEntity.exportProfile',
     ['post ' + apiPrfx + '/accomplishments/export']: 'Accomplishment.export',
     ['post ' + apiPrfx + '/projects/export']: 'Project.export',
     ['put ' + apiPrfx + '/projects/:projectId/group']: 'Project.generateGroup',
     ['post ' + apiPrfx + '/patents/export']: 'Patent.export',
     ['post ' + apiPrfx + '/agreements/export']: 'Agreement.export',
-    ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-profile']: 'ResearchEntity.getProfile',
-    ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-edit-profile']: 'ResearchEntity.getEditProfile',
-    ['post ' + apiPrfx + '/researchentities/:researchEntityId/save-profile']: 'ResearchEntity.saveProfile',
-    ['post ' + apiPrfx + '/researchentities/:researchEntityId/profile/export']: 'ResearchEntity.exportProfile',
+    ['post ' + apiPrfx + '/training-modules/export']: 'TrainingModule.export',
 
 
     //Site API

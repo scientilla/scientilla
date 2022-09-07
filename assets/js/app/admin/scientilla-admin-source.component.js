@@ -10,13 +10,15 @@
         });
 
     scientillaAdminSource.$inject = [
-        'Restangular'
+        'Restangular',
+        'SourceService',
+        '$scope'
     ];
 
-    function scientillaAdminSource(Restangular) {
+    function scientillaAdminSource(Restangular, SourceService, $scope) {
         const vm = this;
         vm.getSources = getSources;
-        vm.formatSource = formatSource;
+        vm.formatSource = SourceService.formatSource;
         vm.onMetricSearchKey = onMetricSearchKey;
         vm.searchMetrics = searchMetrics;
         vm.selectMetric = selectMetric;
@@ -30,28 +32,40 @@
         vm.metricsToAdd = [];
         vm.metricsToRemove = [];
 
+        let selectedSourceWithoutMetricsWatcher;
+
         vm.$onInit = function () {
+            selectedSourceWithoutMetricsWatcher = $scope.$watch('vm.selectedSourceWithoutMetrics', getSourceWithMetrics);
         };
 
-        function getSources(searchText) {
+        vm.$onDestroy = () => {
+            if (_.isFunction(selectedSourceWithoutMetricsWatcher)) {
+                selectedSourceWithoutMetricsWatcher();
+            }
+        };
 
-            const token = searchText.split(' | ')[0];
+        /* jshint ignore:start */
+        async function getSourceWithMetrics() {
+            if (vm.selectedSourceWithoutMetrics) {
+                vm.selectedSource = await Restangular.one('sources', vm.selectedSourceWithoutMetrics.id).get({
+                    populate: 'metrics'
+                });
+            }
+        }
 
+        async function getSources(searchText) {
+            const token = searchText.toLowerCase().split(' | ')[0];
             const qs = {
-                populate: 'metrics',
                 where: {
                     title: {
                         contains: token
                     }
-                }
+                },
+                limit: 99999
             };
-            return Restangular.all('sources').getList(qs);
+            return await SourceService.searchAndFilter(qs, token);
         }
-
-        function formatSource(source) {
-            if (!source) return '';
-            return source.title + ' | ' + source.issn + ' | ' + source.eissn + ' | ' + source.scopusId;
-        }
+        /* jshint ignore:end */
 
         /* jshint ignore:start */
         function onMetricSearchKey(event) {
