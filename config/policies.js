@@ -209,6 +209,10 @@ module.exports.policies = {
         export: isLogged,
     }, defaultPolicy),
 
+    TrainingModuleController: _.defaults({
+        export: isLogged,
+    }, defaultPolicy),
+
     BackupController: _.defaults({
         getDumps: hasRole([ROLES.ADMINISTRATOR]),
         make: hasRole([ROLES.ADMINISTRATOR]),
