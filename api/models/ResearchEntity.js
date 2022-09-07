@@ -84,7 +84,7 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'trainingmodule',
             via: 'draftCreator'
         },
-        discardedTrainingModule: {
+        discardedTrainingModules: {
             collection: 'trainingmodule',
             through: 'discardedtrainingmodule'
         },
