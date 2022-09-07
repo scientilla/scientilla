@@ -5,25 +5,21 @@ const _ = require('lodash');
 const BaseModel = require("../lib/BaseModel.js");
 
 const fields = [
-    'kind',
     'type',
-    'draftCreator',
-    'code',
-    'acronym',
+    'kind',
+    'authorsStr',
+    'referent',
+    'otherCourse',
+    'institute',
+    'phdCourse',
     'title',
-    'abstract',
-    'startDate',
-    'endDate',
-    'projectType',
-    'category',
-    'payment',
-    'role',
-    'status',
-    'url',
-    'members',
-    'researchLines',
-    'logos',
-    'projectData'
+    'year',
+    'description',
+    'hours',
+    'lectures',
+    'researchDomains',
+    'location',
+    'delivery',
 ];
 
 module.exports = _.merge({}, BaseModel, {
@@ -52,6 +48,10 @@ module.exports = _.merge({}, BaseModel, {
         referent: {
             model: 'user'
         },
+        otherCourse: {
+            type: 'BOOLEAN',
+            columnName: 'other_course'
+        },
         institute: {
             model: 'institute'
         },
@@ -61,7 +61,6 @@ module.exports = _.merge({}, BaseModel, {
         },
         title: 'STRING',
         year: 'STRING',
-        issuer: 'STRING',
         description: 'STRING',
         hours: 'INTEGER',
         lectures: 'INTEGER',
@@ -71,6 +70,14 @@ module.exports = _.merge({}, BaseModel, {
         },
         location: 'STRING',
         delivery: 'STRING',
+        verifiedUsers: {
+            collection: 'user',
+            through: 'trainingmoduleverifieduser'
+        },
+        verifiedGroups: {
+            collection: 'group',
+            through: 'trainingmoduleverifiedgroup'
+        },
         async isValid() {
             const ResearchItemModel = TrainingModule.getResearchItemModel(this.type);
             const ri = await ResearchItemModel.findOne({researchItem: this.id});
@@ -83,13 +90,6 @@ module.exports = _.merge({}, BaseModel, {
     async createResearchItem(itemData) {
         const ResearchItemModel = this.getResearchItemModel(itemData.type);
         const selectedData = await ResearchItemModel.selectData(itemData);
-        if (!ResearchItemModel.validateData(selectedData))
-            throw {
-                researchItem: selectedData,
-                success: false,
-                message: 'Data not valid',
-                errors: JSON.stringify(ResearchItemModel.validationErrors())
-            };
         const preparedData = ResearchItemModel.prepare(selectedData);
         return ResearchItemModel.create(preparedData);
 
@@ -104,13 +104,6 @@ module.exports = _.merge({}, BaseModel, {
                 message: 'Project update: research item not found'
             };
         const selectedData = await ResearchItemModel.selectData(itemData);
-        if (!ResearchItemModel.validateData(selectedData))
-            throw {
-                researchItem: selectedData,
-                success: false,
-                message: 'Data not valid',
-                errors: ResearchItemModel.validationErrors()
-            };
         const preparedData = ResearchItemModel.prepare(selectedData);
         return ResearchItemModel.update({id: current.id}, preparedData);
     },

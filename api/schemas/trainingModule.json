@@ -3,10 +3,13 @@
   "type": "object",
   "properties": {
     "authorsStr": {
-      "type": "string"
+      "$ref": "defs#/definitions/authorsStr"
     },
     "referent": {
       "type": "integer"
+    },
+    "year": {
+      "$ref": "defs#/definitions/year"
     },
     "title": {
       "type": "string"
@@ -14,7 +17,13 @@
     "description": {
       "type": "string"
     },
-    "course": {
+    "otherCourse": {
+      "type": "boolean"
+    },
+    "institute": {
+      "type": "integer"
+    },
+    "phdCourse": {
       "type": "integer"
     },
     "hours": {
@@ -23,14 +32,14 @@
     "lectures": {
       "type": "integer"
     },
-    "academicYear": {
-      "type": "string"
-    },
     "researchDomains": {
       "type": "array",
       "items": {
         "type": "string"
       }
+    },
+    "location": {
+      "type": "string"
     },
     "delivery": {
       "type": "string",
@@ -39,9 +48,19 @@
         "In Presence",
         "On Line/In Presence"
       ]
-    },
-    "location": {
-      "type": "string"
     }
-  }
+  },
+  "required": [
+    "authorsStr",
+    "referent",
+    "year",
+    "title",
+    "description",
+    "otherCourse",
+    "hours",
+    "lectures",
+    "researchDomains",
+    "location",
+    "delivery"
+  ]
 }
