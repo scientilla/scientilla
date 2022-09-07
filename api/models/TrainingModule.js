@@ -71,6 +71,14 @@ module.exports = _.merge({}, BaseModel, {
         },
         location: 'STRING',
         delivery: 'STRING',
+        verifiedUsers: {
+            collection: 'user',
+            through: 'trainingmoduleverifieduser'
+        },
+        verifiedGroups: {
+            collection: 'group',
+            through: 'trainingmoduleverifiedgroup'
+        },
         async isValid() {
             const ResearchItemModel = TrainingModule.getResearchItemModel(this.type);
             const ri = await ResearchItemModel.findOne({researchItem: this.id});
