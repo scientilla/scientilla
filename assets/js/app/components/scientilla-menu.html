@@ -186,6 +186,13 @@
                 >
                     Verified
                 </a>
+                <a
+                    ng-href="{{ vm.getUrl('phd-trainings/drafts') }}"
+                    ng-class="{active: vm.isActive('/phd-trainings/drafts', true)}"
+                    class="list-group-item list-group-item-action"
+                >
+                    Drafts
+                </a>
             </div>
         </li>
         <li>

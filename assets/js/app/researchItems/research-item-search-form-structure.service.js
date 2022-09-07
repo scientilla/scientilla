@@ -306,6 +306,20 @@
                 matchColumn: 'title',
                 matchRule: 'contains',
                 type: 'field',
+            },
+            authorStr: {
+                inputType: 'text',
+                label: 'Teachers',
+                matchColumn: 'authorsStr',
+                matchRule: 'contains',
+                type: 'field',
+            },
+            year: {
+                inputType: 'text',
+                label: 'Year',
+                matchColumn: 'year',
+                matchRule: 'contains',
+                type: 'field',
             }
         };
 
@@ -495,7 +509,8 @@
                 }
             },
             'phd-training-suggested': phdTrainingFormStructure,
-            'phd-training-verified': phdTrainingFormStructure
+            'phd-training-verified': phdTrainingFormStructure,
+            'phd-training-draft': phdTrainingFormStructure,
         };
 
         return service;
@@ -831,6 +846,9 @@
                     );
                     break;
                 case constant === 'phd-training-verified':
+                    structure = formStructures[constant];
+                    break;
+                case constant === 'phd-training-draft':
                     structure = formStructures[constant];
                     break;
                 default:

@@ -3,7 +3,7 @@
     "use strict";
 
     angular
-        .module('app')
+        .module('phdTrainings')
         .component('scientillaPhdTrainingForm', {
             templateUrl: 'partials/scientilla-phd-training-form.html',
             controller: controller,
@@ -21,7 +21,13 @@
         'context',
         'FormStatus',
         'ValidateService',
-        'EventsService'
+        'EventsService',
+        'PhdTrainingService',
+        'phdTrainingType',
+        'phdTrainingRequiredFields',
+        'phdTrainingFieldsRules',
+        'GroupsService',
+        'UsersService'
     ];
 
     function controller(
@@ -35,7 +41,13 @@
         // agreementFields,
         FormStatus,
         ValidateService,
-        EventsService
+        EventsService,
+        PhdTrainingService,
+        phdTrainingType,
+        phdTrainingRequiredFields,
+        phdTrainingFieldsRules,
+        GroupsService,
+        UsersService
     ) {
         const vm = this;
 
@@ -50,6 +62,10 @@
         vm.save = save;
         vm.checkValidation = checkValidation;
         vm.fieldValueHasChanged = fieldValueHasChanged;
+        vm.getCourses = getCourses;
+        vm.getUsers = getUsers;
+        vm.phdTraining.type = phdTrainingType;
+        vm.researchDomains = [];
 
         let fieldTimeout;
         const fieldDelay = 500;
@@ -59,6 +75,11 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             vm.researchEntity = await context.getResearchEntity();
+            const researchDomains = await GroupsService.getGroups({type: 'Research Domain'});
+            vm.researchDomains = [];
+            for (const researchDomain of researchDomains) {
+                vm.researchDomains.push(researchDomain.name);
+            }
 
             // Listen to the form reset to trigger $setPristine
             const resetFormInteractionWatcher = $scope.$watch('vm.formStatus.resetFormInteraction', function () {
@@ -72,8 +93,19 @@
 
             const formPristineWatcher = $scope.$watch('form.$pristine', formUntouched => vm.unsavedData = !formUntouched);
 
+            const selectedReferentWatcher = $scope.$watch('vm.selectedReferent', (newValue, oldValue) => {
+                if (newValue) {
+                    vm.phdTraining.referent = newValue.id;
+                }
+            });
+
+            if (vm.phdTraining.referent) {
+                vm.selectedReferent = await UsersService.getUser(vm.phdTraining.referent);
+            }
+
             watchers.push(resetFormInteractionWatcher);
             watchers.push(formPristineWatcher);
+            watchers.push(selectedReferentWatcher);
         };
         /* jshint ignore:end */
 
@@ -86,15 +118,15 @@
         };
 
         function checkValidation(field = false) {
-            // if (field) {
-            //     vm.errors[field] = ValidateService.validate(vm.agreementData, field, agreementRequiredFields, agreementFieldRules);
+            if (field) {
+                vm.errors[field] = ValidateService.validate(vm.phdTraining, field, phdTrainingRequiredFields, phdTrainingFieldsRules);
 
-            //     if (!vm.errors[field]) {
-            //         delete vm.errors[field];
-            //     }
-            // } else {
-            //     vm.errors = ValidateService.validate(vm.agreementData, false, agreementRequiredFields, agreementFieldRules);
-            // }
+                if (!vm.errors[field]) {
+                    delete vm.errors[field];
+                }
+            } else {
+                vm.errors = ValidateService.validate(vm.phdTraining, false, phdTrainingRequiredFields, phdTrainingFieldsRules);
+            }
 
             vm.errorText = !_.isEmpty(vm.errors) ? 'Please fix the warnings before verifying!' : '';
         }
@@ -111,6 +143,16 @@
             return processSave(true);
         }
 
+        function getUsers(searchText) {
+            const qs = {where: {or: [
+                {name: {contains: searchText}},
+                {surname: {contains: searchText}},
+                {displayName: {contains: searchText}},
+                {displaySurname: {contains: searchText}}
+            ]}};
+            return UsersService.getUsers(qs);
+        }
+
         /* jshint ignore:start */
         async function processSave(updateState = false) {
             if (updateState) {
@@ -118,27 +160,20 @@
             }
 
             vm.errorText = '';
-            //vm.errors = ValidateService.validate(vm.agreementData, false, agreementRequiredFields, agreementFieldRules);
-
-            //setAgreement();
+            vm.errors = PhdTrainingService.validate(vm.phdTraining);
 
             if (!_.isEmpty(vm.errors)) {
                 vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
             }
 
-            // const filteredAgreement = ProjectService.filterFields(vm.agreement, agreementFields);
+            const filteredPhdTraining = PhdTrainingService.filterFields(vm.phdTraining);
 
-            // if (vm.agreement.id) {
-            //     filteredAgreement.id = vm.agreement.id;
-            //     await ProjectService.update(vm.researchEntity, filteredAgreement);
-            //     EventsService.publish(EventsService.DRAFT_UPDATED, vm.agreement);
-            // } else {
-            //     const draft = await ProjectService.create(vm.researchEntity, filteredAgreement);
-            //     if (draft && draft.researchItem && draft.researchItem.id) {
-            //         vm.agreement.id = draft.researchItem.id;
-            //     }
-            //     EventsService.publish(EventsService.DRAFT_CREATED, vm.agreement);
-            // }
+            if (filteredPhdTraining.id) {
+                await PhdTrainingService.update(vm.researchEntity, filteredPhdTraining);
+            } else {
+                const draft = await PhdTrainingService.create(vm.researchEntity, filteredPhdTraining);
+                vm.phdTraining.id = draft.researchItem.id;
+            }
 
             if (updateState) {
                 vm.formStatus.setSaveStatus('saved');
@@ -154,16 +189,14 @@
             vm.formStatus.setVerifyStatus('verifying');
 
             $timeout(async function () {
-                //vm.errors = await ValidateService.validate(vm.agreementData, false, agreementRequiredFields, agreementFieldRules);
-
-                setAgreement();
+                vm.errors = PhdTrainingService.validate(vm.phdTraining);
 
                 if (_.isEmpty(vm.errors)) {
                     // Is valid
                     await processSave();
                     vm.formStatus.setVerifyStatus('verified');
                     await vm.closeFn()();
-                    //ProjectService.verify(vm.researchEntity, vm.agreement);
+                    await PhdTrainingService.verify(vm.researchEntity, vm.phdTraining);
                 } else {
                     // Is not valid
                     vm.formStatus.setVerifyStatus('failed');
@@ -177,12 +210,10 @@
         }
         /* jshint ignore:end */
 
-        function setAgreement() {
-            // vm.agreement.authorsStr = vm.agreementData.authorsStr;
-            // vm.agreement.startYear = vm.agreementData.startDate ? vm.agreementData.startDate.getFullYear() : null;
-            // vm.agreement.endYear = vm.agreementData.endDate ? vm.agreementData.endDate.getFullYear() : null;
-            // vm.agreement.type = 'project_agreement';
-            // vm.agreement.projectData = angular.copy(vm.agreementData);
+        function getCourses(searchText) {
+            const qs = {where: {title: {contains: searchText}}};
+            return [];
+            //return Restangular.all('courses').getList(qs);
         }
 
         function close() {

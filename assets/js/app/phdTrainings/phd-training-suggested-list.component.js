@@ -73,7 +73,6 @@
             const isDiscarded = q.where.discarded;
             const cq = _.cloneDeep(q);
             delete cq.where.discarded;
-            console.log(isDiscarded);
             if (isDiscarded)
                 vm.phdTrainings = await PhdTrainingService.getDiscarded(vm.researchEntity, cq);
             else
