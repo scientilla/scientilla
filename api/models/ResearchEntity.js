@@ -76,6 +76,18 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'trainingmodule',
             through: 'trainingmoduleverify'
         },
+        suggestedTrainingModules: {
+            collection: 'trainingmodule',
+            through: 'trainingmodulesuggestion'
+        },
+        trainingModuleDrafts: {
+            collection: 'trainingmodule',
+            via: 'draftCreator'
+        },
+        discardedTrainingModule: {
+            collection: 'trainingmodule',
+            through: 'discardtrainingmodule'
+        },
         isGroup() {
             return this.type === 'group';
         }

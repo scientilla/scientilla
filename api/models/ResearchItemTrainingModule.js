@@ -3,7 +3,6 @@
 
 const _ = require('lodash');
 const BaseModel = require('../lib/BaseModel.js');
-const validate = JsonValidator.getTrainingModuleValidator();
 
 module.exports = _.merge({}, BaseModel, {
     tableName: 'research_item_training_module',
@@ -20,6 +19,10 @@ module.exports = _.merge({}, BaseModel, {
         referent: {
             model: 'user'
         },
+        otherCourse: {
+            type: 'BOOLEAN',
+            columnName: 'other_course'
+        },
         institute: {
             model: 'institute'
         },
@@ -29,7 +32,6 @@ module.exports = _.merge({}, BaseModel, {
         },
         title: 'STRING',
         year: 'STRING',
-        issuer: 'STRING',
         description: 'STRING',
         hours: 'INTEGER',
         lectures: 'INTEGER',
@@ -39,28 +41,23 @@ module.exports = _.merge({}, BaseModel, {
         },
         location: 'STRING',
         delivery: 'STRING',
-        isValid() {
-            const requiredFields = [
-                'title',
-                'authorsStr',
-                'year',
-                'researchItem'
-            ];
-
-            validate(this)
-            return _.every(requiredFields, v => this[v]) && Validator.hasValidAuthorsStr(this) && Validator.hasValidYear(this);
-        },
+        async isValid() {
+            const validate = JsonValidator.getTrainingModuleValidator();
+            const res = validate(this);
+            if (!res) this.validationErrors = validate.errors;
+            return res;
+        }
     },
     getFields() {
         return [
             'researchItem',
             'authorsStr',
             'referent',
+            'otherCourse',
             'institute',
             'phdCourse',
             'title',
             'year',
-            'issuer',
             'description',
             'hours',
             'lectures',
@@ -69,19 +66,10 @@ module.exports = _.merge({}, BaseModel, {
             'delivery'
         ];
     },
-    validateData(researchItem) {
-        if (!researchItem)
-            return false;
-
-        return validate(researchItem);
-    },
-    validationErrors() {
-        return validate.errors;
-    },
     prepare(data) {
         const preparedData = _.cloneDeep(data);
         preparedData.researchDomains = JSON.stringify(preparedData.researchDomains);
-        if(!preparedData.researchDomains )
+        if (!preparedData.researchDomains)
             delete preparedData.researchDomains
         return preparedData;
     },

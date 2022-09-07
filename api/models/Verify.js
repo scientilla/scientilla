@@ -3,13 +3,7 @@
 
 
 const BaseModel = require("../lib/BaseModel.js");
-
-const fields = [
-    {name: 'public'},
-    {name: 'favorite'},
-    {name: 'researchItem'},
-    {name: 'researchEntity'},
-];
+const _ = require("lodash");
 
 module.exports = _.merge({}, BaseModel, {
     tableName: 'verify',
@@ -42,7 +36,7 @@ module.exports = _.merge({}, BaseModel, {
 
         researchItem = await ResearchItem.findOne({id: researchItemId});
         if (!researchItem)
-            throw {researchItem: researchItemId, success: false, message: 'Item not found'};
+            throw {researchItem: researchItemId, success: false, message: 'Item not found', errors: researchItem.validationErrors};
 
         if (!(await researchItem.isVerificable()))
             throw {researchItem: researchItem, success: false, message: 'Item not valid'};
