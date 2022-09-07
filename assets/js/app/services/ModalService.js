@@ -593,6 +593,7 @@
 
             return openModal(
                 `<scientilla-${category}-form
+                    class="${category}-form"
                     ${category}="vm.researchItem"
                     research-entity="vm.researchEntity"
                     on-failure="vm.onFailure"
@@ -663,7 +664,7 @@
                             <div class="modal-body">
                                 <scientilla-${category}-details
                                     research-item="vm.researchItem"
-                                    class="document-details"></scientilla-${category}-details>
+                                    class="${category}-details"></scientilla-${category}-details>
                             </div>`, scopeVars, {size: 'lg'});
         };
 

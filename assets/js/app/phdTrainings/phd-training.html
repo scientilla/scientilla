@@ -2,20 +2,10 @@
     class="phd-training"
     ng-class="{invalid: !vm.isValid(vm.phdTraining)}"
 >
-    <li
-        class="phd-training-info"    >
-        <span class="accomplishment-year">
+    <li class="phd-training-info">
+        <span class="phd-training-year">
             {{ vm.phdTraining.year }}
         </span>
-        <img
-            ng-src="{{ vm.customizations.logos.institute.src }}"
-            ng-if="vm.customizations.logos.institute.src && vm.hasMainGroupAffiliation()"
-            class="icon-iit"
-        />
-        <span
-            class="icon-iit"
-            ng-if="vm.hasMainGroupAffiliation()"
-        ></span>
     </li>
 
     <li>

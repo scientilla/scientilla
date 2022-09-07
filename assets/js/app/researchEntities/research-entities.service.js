@@ -55,14 +55,16 @@
         service.getMinMaxYears = getMinMaxYears;
         service.getPatents = getPatents;
         service.getPatentFamilies = getPatentFamilies;
+        service.getPhdTraining = getPhdTraining;
         service.getPhdTrainings = getPhdTrainings;
         service.getSuggestedPhdTrainings = getSuggestedPhdTrainings;
         service.getDiscardedPhdTrainings = getDiscardedPhdTrainings;
+        service.getPhdTrainingDrafts = getPhdTrainingDrafts;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
         const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
         const patentPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
-        const phdTrainingPopulates = [];
+        const phdTrainingPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
 
         /* jshint ignore:start */
 
@@ -438,31 +440,32 @@
             return await researchEntity.getList('patentFamilies', query);
         }
 
-        async function getPhdTrainings(researchEntity, query, favorites = false, populates = phdTrainingPopulates) {
+        async function getPhdTraining(id, populates = phdTrainingPopulates) {
+            return await Restangular.one('trainingModules', id).get({populate: populates});
+        }
+
+        async function getPhdTrainings(researchEntity, query, populates = phdTrainingPopulates) {
             const populate = {populate: populates};
             const q = _.merge({}, query, populate);
-            return [];
-            if (favorites) {
-                return researchEntity.getList('favoritePhdTrainings', q);
-            } else {
-                return researchEntity.getList('phdTrainings', q);
-            }
+            return researchEntity.getList('trainingModules', q);
         }
 
         async function getSuggestedPhdTrainings(researchEntity, query, populates = phdTrainingPopulates) {
-            const populate = {populate: phdTrainingPopulates};
+            const populate = {populate: populates};
             const q = _.defaultsDeep({}, query, populate);
-            return [];
-            return await researchEntity.getList('suggestedPhdTrainings', q);
+            return await researchEntity.getList('suggestedTrainingModules', q);
         }
 
         async function getDiscardedPhdTrainings(researchEntity, query, populates = phdTrainingPopulates) {
-            const populate = {populate: phdTrainingPopulates};
+            const populate = {populate: populates};
             const q = _.defaultsDeep({}, query, populate);
-            return [];
-            const discarded = await researchEntity.getList('discardedPhdTrainings', q);
+            const discarded = await researchEntity.getList('discardedTrainingModules', q);
             discarded.forEach(d => ResearchItemService.addLabel(d, researchItemLabels.DISCARDED));
             return discarded
+        }
+
+        async function getPhdTrainingDrafts(researchEntity, query, populates = phdTrainingPopulates) {
+            return getResearchItemDrafts(researchEntity, 'trainingModuleDrafts', query, populates);
         }
 
         /* jshint ignore:end */

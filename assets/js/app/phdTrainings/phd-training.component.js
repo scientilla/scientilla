@@ -33,7 +33,6 @@
         const vm = this;
         vm.isValid = PhdTrainingService.isValid;
         vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
-        vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
         vm.openDetails = openDetails;
         vm.isPublic = isPublic;
         vm.isFavorite = isFavorite;
@@ -62,7 +61,7 @@
 
         /* jshint ignore:end */
         function openDetails() {
-            ModalService.openScientillaResearchItemDetails(vm.phdTraining, 'phdTraining');
+            ModalService.openScientillaResearchItemDetails(vm.phdTraining, 'phd-training');
         }
 
         function getVerifiedNamesHTML() {
@@ -71,10 +70,6 @@
                 return 'Nobody has verified this PhD Training yet';
 
             return '<p>This PhD training is verified by:</p><p>' + verifiedNames.join('<br>') + '</p>';
-        }
-
-        function hasMainGroupAffiliation() {
-            return vm.phdTraining.institutes.find(i => i.id === 1);
         }
 
         function getVerfiedNames() {

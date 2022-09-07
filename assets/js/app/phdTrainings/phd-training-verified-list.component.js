@@ -64,10 +64,6 @@
 
         /* jshint ignore:start */
         async function onFilter(q) {
-            var favorites = q.where.favorites;
-            delete q.where.favorites;
-            // Todo favorites
-
             query = q;
 
             if (query && query.where && query.where.type) {
@@ -76,7 +72,7 @@
                 query.where.type = type.id;
             }
 
-            vm.phdTrainings = await PhdTrainingService.get(vm.researchEntity, query, favorites);
+            vm.phdTrainings = await PhdTrainingService.get(vm.researchEntity, query);
         }
         /* jshint ignore:end */
     }

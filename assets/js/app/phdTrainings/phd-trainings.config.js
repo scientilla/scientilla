@@ -7,6 +7,10 @@
 
     function configure($routeProvider) {
         $routeProvider
+            .when("/:group?/phd-trainings/drafts", {
+                controller: 'requestHandler',
+                template: () => '<phd-training-draft-list></phd-training-draft-list>'
+            })
             .when("/:group?/phd-trainings/suggested", {
                 controller: 'requestHandler',
                 template: () => '<phd-training-suggested-list></phd-training-suggested-list>'
