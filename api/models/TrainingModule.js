@@ -24,7 +24,7 @@ const fields = [
 
 module.exports = _.merge({}, BaseModel, {
     DEFAULT_SORTING: {
-        start_year: 'desc',
+        year: 'desc',
         title: 'asc',
         id: 'desc'
     },
