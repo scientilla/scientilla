@@ -1,7 +1,7 @@
 <scientilla-backend-layout>
-    <h1>Draft PhD trainings</h1>
+    <h1>Draft training modules</h1>
     <scientilla-filter
-        category="phd-training-draft"
+        category="training-module-draft"
         on-filter="vm.onFilter"
         elements="vm.drafts"
         empty-list-message="No drafts found"
@@ -28,13 +28,13 @@
                     class="scientilla-checkable"
                 >
 
-                    <phd-training
-                        phd-training="d"
-                        section="vm.phdTrainingListSections.DRAFT"
-                        class="phd-training-container"
-                    ></phd-training>
+                    <training-module
+                        training-module="d"
+                        section="vm.trainingModuleListSections.DRAFT"
+                        class="training-module-container"
+                    ></training-module>
 
-                    <div class="phd-training-row-actions">
+                    <div class="training-module-row-actions">
                         <div
                             class="btn-group"
                             uib-dropdown

@@ -650,9 +650,18 @@
 
         service.openScientillaResearchItemDetails = function (researchItem, category) {
             const scopeVars = {researchItem};
+            let title = category;
+
+            switch (category) {
+                case 'training-module':
+                    title = 'training module';
+                    break;
+                default:
+                    break;
+            }
 
             return openModal(`<div class="modal-header">
-                                <h3 class="text-capitalize">${category} details</h3>
+                                <h3 class="text-capitalize">${title} details</h3>
                                 <button
                                     type="button"
                                     class="close"

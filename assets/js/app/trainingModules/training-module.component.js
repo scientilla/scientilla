@@ -2,13 +2,13 @@
 (function () {
     'use strict';
 
-    angular.module('phdTrainings')
-        .component('phdTraining', {
-            templateUrl: 'partials/phd-training.html',
+    angular.module('trainingModules')
+        .component('trainingModule', {
+            templateUrl: 'partials/training-module.html',
             controller,
             controllerAs: 'vm',
             bindings: {
-                phdTraining: '<',
+                trainingModule: '<',
                 section: '<'
             }
         });
@@ -16,8 +16,8 @@
     controller.$inject = [
         'context',
         'ResearchEntitiesService',
-        'PhdTrainingService',
-        'phdTrainingListSections',
+        'trainingModuleService',
+        'trainingModuleListSections',
         'ModalService',
         'CustomizeService'
     ];
@@ -25,13 +25,13 @@
     function controller(
         context,
         ResearchEntitiesService,
-        PhdTrainingService,
-        phdTrainingListSections,
+        trainingModuleService,
+        trainingModuleListSections,
         ModalService,
         CustomizeService
     ) {
         const vm = this;
-        vm.isValid = PhdTrainingService.isValid;
+        vm.isValid = trainingModuleService.isValid;
         vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
         vm.openDetails = openDetails;
         vm.isPublic = isPublic;
@@ -44,11 +44,11 @@
         let researchEntity;
 
         vm.showPrivacy = [
-            phdTrainingListSections.VERIFIED
+            trainingModuleListSections.VERIFIED
         ].includes(vm.section);
 
         vm.showFavorite = [
-            phdTrainingListSections.VERIFIED
+            trainingModuleListSections.VERIFIED
         ].includes(vm.section);
 
         vm.collapsed = true;
@@ -61,7 +61,7 @@
 
         /* jshint ignore:end */
         function openDetails() {
-            ModalService.openScientillaResearchItemDetails(vm.phdTraining, 'phd-training');
+            ModalService.openScientillaResearchItemDetails(vm.trainingModule, 'training-module');
         }
 
         function getVerifiedNamesHTML() {
@@ -73,8 +73,8 @@
         }
 
         function getVerfiedNames() {
-            return vm.phdTraining.verifiedGroups.map(g => '- <b>' + g.name + '</b>')
-                .concat(vm.phdTraining.verifiedUsers.map(p => '- ' + p.getDisplayName()));
+            return vm.trainingModule.verifiedGroups.map(g => '- <b>' + g.name + '</b>')
+                .concat(vm.trainingModule.verifiedUsers.map(p => '- ' + p.getDisplayName()));
         }
 
         function changePrivacy() {
@@ -83,7 +83,7 @@
                 return ModalService.alert('PhD training visibility error', 'A favorite PhD training cannot be set to private.');
 
             verify.public = !verify.public;
-            return ResearchEntitiesService.setVerifyPrivacy(researchEntity, vm.phdTraining, verify);
+            return ResearchEntitiesService.setVerifyPrivacy(researchEntity, vm.trainingModule, verify);
         }
 
         function changeFavorite() {
@@ -92,7 +92,7 @@
                 return ModalService.alert('Favorite error', 'A private PhD training cannot be set to favorite.');
 
             verify.favorite = !verify.favorite;
-            return ResearchEntitiesService.setVerifyFavorite(researchEntity, vm.phdTraining, verify);
+            return ResearchEntitiesService.setVerifyFavorite(researchEntity, vm.trainingModule, verify);
         }
 
         function isPrivacyToShow() {
@@ -118,7 +118,7 @@
         function getVerify() {
             if (!researchEntity)
                 return;
-            return vm.phdTraining.verified.find(v => v.researchEntity === researchEntity.id);
+            return vm.trainingModule.verified.find(v => v.researchEntity === researchEntity.id);
         }
     }
 })();

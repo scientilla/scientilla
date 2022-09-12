@@ -1,39 +1,39 @@
 <ul
-    class="phd-training"
-    ng-class="{invalid: !vm.isValid(vm.phdTraining)}"
+    class="training-module"
+    ng-class="{invalid: !vm.isValid(vm.trainingModule)}"
 >
-    <li class="phd-training-info">
-        <span class="phd-training-year">
-            {{ vm.phdTraining.year }}
+    <li class="training-module-info">
+        <span class="training-module-year">
+            {{ vm.trainingModule.year }}
         </span>
     </li>
 
     <li>
         <div>
-            <scientilla-research-item-type research-item-type="vm.phdTraining.type"></scientilla-research-item-type>
+            <scientilla-research-item-type research-item-type="vm.trainingModule.type"></scientilla-research-item-type>
             <scientilla-research-item-authors
-                research-item="vm.phdTraining"
+                research-item="vm.trainingModule"
                 collapsed="vm.collapsed"
                 type="preview"
             ></scientilla-research-item-authors>
         </div>
 
-        <div class="phd-training-title-container">
+        <div class="training-module-title-container">
             <h2
-                class="phd-training-title has-action"
+                class="training-module-title has-action"
                 ng-click="vm.openDetails()"
-                ng-bind-html='vm.phdTraining | title'
+                ng-bind-html='vm.trainingModule | title'
             ></h2>
         </div>
 
-        <ul class="phd-training-actions">
+        <ul class="training-module-actions">
             <li
-                ng-if="vm.phdTraining.verified.length"
-                class="phd-training-verified"
+                ng-if="vm.trainingModule.verified.length"
+                class="training-module-verified"
                 uib-tooltip-html="vm.getVerifiedNamesHTML()"
                 tooltip-class="text-left"
             >
-                <i class="fas fa-check"></i> {{vm.phdTraining.verified.length}}
+                <i class="fas fa-check"></i> {{vm.trainingModule.verified.length}}
             </li>
 
             <li ng-if="vm.showPrivacy">

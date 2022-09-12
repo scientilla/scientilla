@@ -165,30 +165,30 @@
         </li>
         <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific()">
             <label class="label-add-research-item">
-                PhD trainings
+                Training modules
                 <scientilla-button-new-research-item
-                    category="phd-training"
+                    category="training-module"
                     class="button-new-research-entity-container"
                 ></scientilla-button-new-research-item>
             </label>
             <div class="list-group">
                 <a
-                    ng-href="{{ vm.getUrl('phd-trainings/suggested') }}"
-                    ng-class="{active: vm.isActive('/phd-trainings/suggested', true)}"
+                    ng-href="{{ vm.getUrl('training-modules/suggested') }}"
+                    ng-class="{active: vm.isActive('/training-modules/suggested', true)}"
                     class="list-group-item list-group-item-action"
                 >
                     Suggested
                 </a>
                 <a
-                    ng-href="{{ vm.getUrl('phd-trainings/verified') }}"
-                    ng-class="{active: vm.isActive('/phd-trainings/verified', true)}"
+                    ng-href="{{ vm.getUrl('training-modules/verified') }}"
+                    ng-class="{active: vm.isActive('/training-modules/verified', true)}"
                     class="list-group-item list-group-item-action"
                 >
                     Verified
                 </a>
                 <a
-                    ng-href="{{ vm.getUrl('phd-trainings/drafts') }}"
-                    ng-class="{active: vm.isActive('/phd-trainings/drafts', true)}"
+                    ng-href="{{ vm.getUrl('training-modules/drafts') }}"
+                    ng-class="{active: vm.isActive('/training-modules/drafts', true)}"
                     class="list-group-item list-group-item-action"
                 >
                     Drafts

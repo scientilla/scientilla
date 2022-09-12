@@ -3,13 +3,13 @@
     "use strict";
 
     angular
-        .module('phdTrainings')
-        .component('scientillaPhdTrainingForm', {
-            templateUrl: 'partials/scientilla-phd-training-form.html',
+        .module('trainingModules')
+        .component('scientillaTrainingModuleForm', {
+            templateUrl: 'partials/scientilla-training-module-form.html',
             controller: controller,
             controllerAs: 'vm',
             bindings: {
-                phdTraining: "<",
+                trainingModule: "<",
                 closeFn: "&",
                 checkAndClose: "&"
             }
@@ -22,10 +22,10 @@
         'FormStatus',
         'ValidateService',
         'EventsService',
-        'PhdTrainingService',
-        'phdTrainingType',
-        'phdTrainingRequiredFields',
-        'phdTrainingFieldsRules',
+        'trainingModuleService',
+        'trainingModuleType',
+        'trainingModuleRequiredFields',
+        'trainingModuleFieldsRules',
         'GroupsService',
         'UsersService'
     ];
@@ -42,10 +42,10 @@
         FormStatus,
         ValidateService,
         EventsService,
-        PhdTrainingService,
-        phdTrainingType,
-        phdTrainingRequiredFields,
-        phdTrainingFieldsRules,
+        trainingModuleService,
+        trainingModuleType,
+        trainingModuleRequiredFields,
+        trainingModuleFieldsRules,
         GroupsService,
         UsersService
     ) {
@@ -64,7 +64,7 @@
         vm.fieldValueHasChanged = fieldValueHasChanged;
         vm.getCourses = getCourses;
         vm.getUsers = getUsers;
-        vm.phdTraining.type = phdTrainingType;
+        vm.trainingModule.type = trainingModuleType;
         vm.researchDomains = [];
 
         let fieldTimeout;
@@ -95,12 +95,12 @@
 
             const selectedReferentWatcher = $scope.$watch('vm.selectedReferent', (newValue, oldValue) => {
                 if (newValue) {
-                    vm.phdTraining.referent = newValue.id;
+                    vm.trainingModule.referent = newValue.id;
                 }
             });
 
-            if (vm.phdTraining.referent) {
-                vm.selectedReferent = await UsersService.getUser(vm.phdTraining.referent);
+            if (vm.trainingModule.referent) {
+                vm.selectedReferent = await UsersService.getUser(vm.trainingModule.referent);
             }
 
             watchers.push(resetFormInteractionWatcher);
@@ -119,13 +119,13 @@
 
         function checkValidation(field = false) {
             if (field) {
-                vm.errors[field] = ValidateService.validate(vm.phdTraining, field, phdTrainingRequiredFields, phdTrainingFieldsRules);
+                vm.errors[field] = ValidateService.validate(vm.trainingModule, field, trainingModuleRequiredFields, trainingModuleFieldsRules);
 
                 if (!vm.errors[field]) {
                     delete vm.errors[field];
                 }
             } else {
-                vm.errors = ValidateService.validate(vm.phdTraining, false, phdTrainingRequiredFields, phdTrainingFieldsRules);
+                vm.errors = ValidateService.validate(vm.trainingModule, false, trainingModuleRequiredFields, trainingModuleFieldsRules);
             }
 
             vm.errorText = !_.isEmpty(vm.errors) ? 'Please fix the warnings before verifying!' : '';
@@ -160,19 +160,19 @@
             }
 
             vm.errorText = '';
-            vm.errors = PhdTrainingService.validate(vm.phdTraining);
+            vm.errors = trainingModuleService.validate(vm.trainingModule);
 
             if (!_.isEmpty(vm.errors)) {
                 vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
             }
 
-            const filteredPhdTraining = PhdTrainingService.filterFields(vm.phdTraining);
+            const filteredtrainingModule = trainingModuleService.filterFields(vm.trainingModule);
 
-            if (filteredPhdTraining.id) {
-                await PhdTrainingService.update(vm.researchEntity, filteredPhdTraining);
+            if (filteredtrainingModule.id) {
+                await trainingModuleService.update(vm.researchEntity, filteredtrainingModule);
             } else {
-                const draft = await PhdTrainingService.create(vm.researchEntity, filteredPhdTraining);
-                vm.phdTraining.id = draft.researchItem.id;
+                const draft = await trainingModuleService.create(vm.researchEntity, filteredtrainingModule);
+                vm.trainingModule.id = draft.researchItem.id;
             }
 
             if (updateState) {
@@ -189,14 +189,14 @@
             vm.formStatus.setVerifyStatus('verifying');
 
             $timeout(async function () {
-                vm.errors = PhdTrainingService.validate(vm.phdTraining);
+                vm.errors = trainingModuleService.validate(vm.trainingModule);
 
                 if (_.isEmpty(vm.errors)) {
                     // Is valid
                     await processSave();
                     vm.formStatus.setVerifyStatus('verified');
                     await vm.closeFn()();
-                    await PhdTrainingService.verify(vm.researchEntity, vm.phdTraining);
+                    await trainingModuleService.verify(vm.researchEntity, vm.trainingModule);
                 } else {
                     // Is not valid
                     vm.formStatus.setVerifyStatus('failed');

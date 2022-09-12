@@ -1,9 +1,9 @@
 <scientilla-backend-layout>
-    <h1>Verified PhD trainings</h1>
+    <h1>Verified training modules</h1>
     <scientilla-filter
-        category="phd-training-verified"
+        category="training-module-verified"
         on-filter="vm.onFilter"
-        elements="vm.phdTrainings"
+        elements="vm.trainingModule"
         empty-list-message="No PhD trainings found"
     >
         <scientilla-multicheck>
@@ -18,17 +18,17 @@
             </buttons>
             <item-list>
                 <scientilla-checkable
-                    ng-repeat="p in vm.phdTrainings"
+                    ng-repeat="p in vm.trainingModules"
                     item="p"
                     class="scientilla-checkable"
                 >
-                    <phd-training
-                        phd-training="p"
-                        section="vm.phdTrainingListSections.VERIFIED"
-                        class="phd-training-container"
+                    <training-module
+                        training-module="p"
+                        section="vm.trainingModuleListSections.VERIFIED"
+                        class="training-module-container"
                     ></scie>
                     <div
-                        class="phd-training-row-actions"
+                        class="training-module-row-actions"
                         ng-if="vm.editable"
                     >
                         <button

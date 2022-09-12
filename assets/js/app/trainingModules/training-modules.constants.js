@@ -1,13 +1,13 @@
 /* global angular */
 
-const phdTrainingListSections = {
-    SUGGESTED: 'suggested-phd-trainings',
-    VERIFIED: 'verified-phd-trainings',
-    GROUP: 'group-verified-phd-trainings',
-    USER: 'user-verified-phd-trainings'
+const trainingModuleListSections = {
+    SUGGESTED: 'suggested-training-modules',
+    VERIFIED: 'verified-training-modules',
+    GROUP: 'group-verified-training-modules',
+    USER: 'user-verified-training-modules'
 };
 
-const phdTrainingFieldsRules = {
+const trainingModuleFieldsRules = {
     authorsStr: {
         allowNull: false,
         regex: /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)*$/,
@@ -20,7 +20,7 @@ const phdTrainingFieldsRules = {
     }
 };
 
-const phdTrainingRequiredFields = [
+const trainingModuleRequiredFields = [
     'authorsStr',
     'referent',
     'institute',
@@ -37,10 +37,10 @@ const phdTrainingRequiredFields = [
     'type'
 ];
 
-const phdTrainingType = 'training_module';
+const trainingModuleType = 'training_module';
 
-angular.module('phdTrainings')
-    .constant('phdTrainingListSections', phdTrainingListSections)
-    .constant('phdTrainingFieldsRules', phdTrainingFieldsRules)
-    .constant('phdTrainingRequiredFields', phdTrainingRequiredFields)
-    .constant('phdTrainingType', phdTrainingType);
+angular.module('trainingModules')
+    .constant('trainingModuleListSections', trainingModuleListSections)
+    .constant('trainingModuleFieldsRules', trainingModuleFieldsRules)
+    .constant('trainingModuleRequiredFields', trainingModuleRequiredFields)
+    .constant('trainingModuleType', trainingModuleType);

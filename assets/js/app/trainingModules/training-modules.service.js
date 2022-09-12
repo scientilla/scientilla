@@ -1,20 +1,20 @@
 /* global angular */
 (function () {
-    angular.module("phdTrainings").factory("PhdTrainingService", controller);
+    angular.module("trainingModules").factory("trainingModuleService", controller);
 
     controller.$inject = [
         'ResearchEntitiesService',
         '$http',
-        'phdTrainingRequiredFields',
-        'phdTrainingFieldsRules',
+        'trainingModuleRequiredFields',
+        'trainingModuleFieldsRules',
         'ValidateService'
     ];
 
     function controller(
         ResearchEntitiesService,
         $http,
-        phdTrainingRequiredFields,
-        phdTrainingFieldsRules,
+        trainingModuleRequiredFields,
+        trainingModuleFieldsRules,
         ValidateService
     ) {
         const fields = [
@@ -36,13 +36,13 @@
         ];
 
         return {
-            edit: (researchEntity, draft) => ResearchEntitiesService.editDraft(researchEntity, draft, 'phd-training'),
+            edit: (researchEntity, draft) => ResearchEntitiesService.editDraft(researchEntity, draft, 'training-module'),
             create: ResearchEntitiesService.createDraft,
             update: ResearchEntitiesService.updateDraft,
-            get: ResearchEntitiesService.getPhdTrainings,
-            getDrafts: ResearchEntitiesService.getPhdTrainingDrafts,
-            getSuggested: ResearchEntitiesService.getSuggestedPhdTrainings,
-            getDiscarded: ResearchEntitiesService.getDiscardedPhdTrainings,
+            get: ResearchEntitiesService.getTrainingModules,
+            getDrafts: ResearchEntitiesService.getTrainingModuleDrafts,
+            getSuggested: ResearchEntitiesService.getSuggestedTrainingModules,
+            getDiscarded: ResearchEntitiesService.getDiscardedTrainingModules,
             exportDownload,
             filterFields,
             validate,
@@ -51,7 +51,7 @@
 
         function exportDownload(patents, format = 'csv') {
             const filename = 'Phd_Trainings_Export.csv';
-            $http.post('/api/v1/phd-trainings/export', {
+            $http.post('/api/v1/training-modules/export', {
                 format: format,
                 patentIds: patents.map(d => d.id)
             }).then((res) => {
@@ -68,19 +68,19 @@
             });
         }
 
-        function filterFields(phdTraining) {
-            const filteredPhdTraining = {};
-            fields.forEach(key => filteredPhdTraining[key] = phdTraining[key] ? phdTraining[key] : null);
-            return filteredPhdTraining;
+        function filterFields(trainingModule) {
+            const filteredtrainingModule = {};
+            fields.forEach(key => filteredtrainingModule[key] = trainingModule[key] ? trainingModule[key] : null);
+            return filteredtrainingModule;
         }
 
-        function validate(phdTraining, field = false) {
-            return ValidateService.validate(phdTraining, field, phdTrainingRequiredFields, phdTrainingFieldsRules);
+        function validate(trainingModule, field = false) {
+            return ValidateService.validate(trainingModule, field, trainingModuleRequiredFields, trainingModuleFieldsRules);
         }
 
         /* jshint ignore:start */
         async function verify(researchEntity, researchItem) {
-            const completeResearchItem = await ResearchEntitiesService.getPhdTraining(researchItem.id);
+            const completeResearchItem = await ResearchEntitiesService.getTrainingModule(researchItem.id);
             await ResearchEntitiesService.verify('trainingModule', researchEntity, completeResearchItem);
 
             if (researchEntity.type === 'user') {

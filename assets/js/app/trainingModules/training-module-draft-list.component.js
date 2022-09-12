@@ -2,9 +2,9 @@
 (function () {
     'use strict';
 
-    angular.module('phdTrainings')
-        .component('phdTrainingDraftList', {
-            templateUrl: 'partials/phd-training-draft-list.html',
+    angular.module('trainingModules')
+        .component('trainingModuleDraftList', {
+            templateUrl: 'partials/training-module-draft-list.html',
             controller,
             controllerAs: 'vm',
             bindings: {
@@ -13,25 +13,25 @@
 
     controller.$inject = [
         'context',
-        'PhdTrainingService',
-        'phdTrainingListSections',
+        'trainingModuleService',
+        'trainingModuleListSections',
         'EventsService',
         'ModalService'
     ];
 
-    function controller(context, PhdTrainingService, phdTrainingListSections, EventsService, ModalService) {
+    function controller(context, trainingModuleService, trainingModuleListSections, EventsService, ModalService) {
         const vm = this;
 
         vm.onFilter = onFilter;
-        vm.isValid = PhdTrainingService.isValid;
+        vm.isValid = trainingModuleService.isValid;
 
-        vm.deleteDraft = PhdTrainingService.delete;
-        vm.edit = (draft) => PhdTrainingService.edit(vm.researchEntity, draft);
-        vm.verify = (draft) => PhdTrainingService.verify(vm.researchEntity, draft);
-        vm.deleteDrafts = (drafts) => PhdTrainingService.multipleDelete(vm.researchEntity, drafts);
-        vm.verifyDrafts = (drafts) => PhdTrainingService.multipleVerify(vm.researchEntity, drafts);
-        vm.editAffiliations = (draft) => PhdTrainingService.editAffiliations(vm.researchEntity, draft);
-        vm.phdTrainingListSections = phdTrainingListSections;
+        vm.deleteDraft = trainingModuleService.delete;
+        vm.edit = (draft) => trainingModuleService.edit(vm.researchEntity, draft);
+        vm.verify = (draft) => trainingModuleService.verify(vm.researchEntity, draft);
+        vm.deleteDrafts = (drafts) => trainingModuleService.multipleDelete(vm.researchEntity, drafts);
+        vm.verifyDrafts = (drafts) => trainingModuleService.multipleVerify(vm.researchEntity, drafts);
+        vm.editAffiliations = (draft) => trainingModuleService.editAffiliations(vm.researchEntity, draft);
+        vm.trainingModuleListSections = trainingModuleListSections;
 
         let query = {};
 
@@ -62,7 +62,7 @@
         async function onFilter(q) {
             query = q;
 
-            vm.drafts = await PhdTrainingService.getDrafts(vm.researchEntity, q);
+            vm.drafts = await trainingModuleService.getDrafts(vm.researchEntity, q);
         }
         /* jshint ignore:end */
     }

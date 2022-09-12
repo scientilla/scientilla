@@ -1,9 +1,9 @@
 (function () {
         'use strict';
 
-        angular.module('phdTrainings')
-            .component('scientillaPhdTrainingDetails', {
-                templateUrl: 'partials/scientilla-phd-training-details.html',
+        angular.module('trainingModules')
+            .component('scientillatrainingModuleDetails', {
+                templateUrl: 'partials/scientilla-training-module-details.html',
                 controller,
                 controllerAs: 'vm',
                 bindings: {

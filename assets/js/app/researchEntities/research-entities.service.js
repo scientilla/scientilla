@@ -55,16 +55,16 @@
         service.getMinMaxYears = getMinMaxYears;
         service.getPatents = getPatents;
         service.getPatentFamilies = getPatentFamilies;
-        service.getPhdTraining = getPhdTraining;
-        service.getPhdTrainings = getPhdTrainings;
-        service.getSuggestedPhdTrainings = getSuggestedPhdTrainings;
-        service.getDiscardedPhdTrainings = getDiscardedPhdTrainings;
-        service.getPhdTrainingDrafts = getPhdTrainingDrafts;
+        service.getTrainingModule = getTrainingModule;
+        service.getTrainingModules = getTrainingModules;
+        service.getSuggestedTrainingModules = getSuggestedTrainingModules;
+        service.getDiscardedTrainingModules = getDiscardedTrainingModules;
+        service.getTrainingModuleDrafts = getTrainingModuleDrafts;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
         const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
         const patentPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
-        const phdTrainingPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
+        const trainingModulePopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
 
         /* jshint ignore:start */
 
@@ -440,23 +440,23 @@
             return await researchEntity.getList('patentFamilies', query);
         }
 
-        async function getPhdTraining(id, populates = phdTrainingPopulates) {
+        async function getTrainingModule(id, populates = trainingModulePopulates) {
             return await Restangular.one('trainingModules', id).get({populate: populates});
         }
 
-        async function getPhdTrainings(researchEntity, query, populates = phdTrainingPopulates) {
+        async function getTrainingModules(researchEntity, query, populates = trainingModulePopulates) {
             const populate = {populate: populates};
             const q = _.merge({}, query, populate);
             return researchEntity.getList('trainingModules', q);
         }
 
-        async function getSuggestedPhdTrainings(researchEntity, query, populates = phdTrainingPopulates) {
+        async function getSuggestedTrainingModules(researchEntity, query, populates = trainingModulePopulates) {
             const populate = {populate: populates};
             const q = _.defaultsDeep({}, query, populate);
             return await researchEntity.getList('suggestedTrainingModules', q);
         }
 
-        async function getDiscardedPhdTrainings(researchEntity, query, populates = phdTrainingPopulates) {
+        async function getDiscardedTrainingModules(researchEntity, query, populates = trainingModulePopulates) {
             const populate = {populate: populates};
             const q = _.defaultsDeep({}, query, populate);
             const discarded = await researchEntity.getList('discardedTrainingModules', q);
@@ -464,7 +464,7 @@
             return discarded
         }
 
-        async function getPhdTrainingDrafts(researchEntity, query, populates = phdTrainingPopulates) {
+        async function getTrainingModuleDrafts(researchEntity, query, populates = trainingModulePopulates) {
             return getResearchItemDrafts(researchEntity, 'trainingModuleDrafts', query, populates);
         }
 

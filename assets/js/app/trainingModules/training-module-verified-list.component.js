@@ -2,9 +2,9 @@
 (function () {
     'use strict';
 
-    angular.module('phdTrainings')
-        .component('phdTrainingVerifiedList', {
-            templateUrl: 'partials/phd-training-verified-list.html',
+    angular.module('trainingModules')
+        .component('trainingModuleVerifiedList', {
+            templateUrl: 'partials/training-module-verified-list.html',
             controller,
             controllerAs: 'vm',
             bindings: {
@@ -13,9 +13,9 @@
 
     controller.$inject = [
         'context',
-        'PhdTrainingService',
+        'trainingModuleService',
         'EventsService',
-        'phdTrainingListSections',
+        'trainingModuleListSections',
         'AuthService',
         'ResearchItemService',
         'ResearchItemTypesService'
@@ -23,21 +23,21 @@
 
     function controller(
         context,
-        PhdTrainingService,
+        trainingModuleService,
         EventsService,
-        phdTrainingListSections,
+        trainingModuleListSections,
         AuthService,
         ResearchItemService,
         ResearchItemTypesService
     ) {
         const vm = this;
 
-        vm.phdTrainingListSections = phdTrainingListSections;
-        vm.phdTrainings = [];
-        vm.unverify = PhdTrainingService.unverify;
+        vm.trainingModuleListSections = trainingModuleListSections;
+        vm.trainingModules = [];
+        vm.unverify = trainingModuleService.unverify;
         vm.isUnverifying = ResearchItemService.isUnverifying;
         vm.onFilter = onFilter;
-        vm.exportDownload = phdTrainings => PhdTrainingService.exportDownload(phdTrainings, 'csv');
+        vm.exportDownload = trainingModules => trainingModuleService.exportDownload(trainingModules, 'csv');
 
         let query = {};
 
@@ -72,7 +72,7 @@
                 query.where.type = type.id;
             }
 
-            vm.phdTrainings = await PhdTrainingService.get(vm.researchEntity, query);
+            vm.trainingModules = await trainingModuleService.get(vm.researchEntity, query);
         }
         /* jshint ignore:end */
     }

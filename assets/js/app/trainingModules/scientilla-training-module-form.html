@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h3>{{ !!vm.phdTraining.id ? 'Edit' : 'New' }} PhD training</h3>
+    <h3>{{ !!vm.trainingModule.id ? 'Edit' : 'New' }} training module</h3>
     <button
         type="button"
         class="close"
@@ -31,7 +31,7 @@
                 name="authors"
                 class="form-control"
                 placeholder="Teachers"
-                ng-model="vm.phdTraining.authorsStr"
+                ng-model="vm.trainingModule.authorsStr"
                 ng-pattern="vm.fieldsRules.authorsStr.regex"
                 data-ng-required="true"
                 ng-model-options="{ allowInvalid: true }"
@@ -80,7 +80,7 @@
                 name="title"
                 placeholder="Title"
                 class="form-control"
-                ng-model="vm.phdTraining.title"
+                ng-model="vm.trainingModule.title"
                 ng-class="{'is-invalid' : vm.errors.title}"
                 ng-blur="vm.checkValidation('title')"
                 ng-change="vm.fieldValueHasChanged('title')"
@@ -98,7 +98,7 @@
                 rows="6"
                 class="form-control"
                 placeholder="Description"
-                ng-model="vm.phdTraining.description"
+                ng-model="vm.trainingModule.description"
             ></textarea>
         </div>
 
@@ -116,7 +116,7 @@
                         id="phdCourse"
                         name="phdCourse"
                         type="text"
-                        ng-model="vm.phdTraining.phdCourse"
+                        ng-model="vm.trainingModule.phdCourse"
                         class="form-control"
                         uib-typeahead="course as course.title for course in vm.getCourses($viewValue)"
                         typeahead-loading="searching"
@@ -141,7 +141,7 @@
             <li>
                 <div class="form-group">
                     <label class="form-checkbox inline-block">
-                        <input type="checkbox" ng-model="vm.phdTraining.otherCourse" />
+                        <input type="checkbox" ng-model="vm.trainingModule.otherCourse" />
                         <span></span>Other
                     </label>
                 </div>
@@ -159,7 +159,7 @@
                         min="0"
                         placeholder="Number of hours"
                         class="form-control"
-                        ng-model="vm.phdTraining.hours"
+                        ng-model="vm.trainingModule.hours"
                         ng-class="{'is-invalid' : vm.errors.hours}"
                         ng-blur="vm.checkValidation('hours')"
                         ng-change="vm.fieldValueHasChanged('hours')"
@@ -181,7 +181,7 @@
                         min="0"
                         placeholder="Number of lectures"
                         class="form-control"
-                        ng-model="vm.phdTraining.lectures"
+                        ng-model="vm.trainingModule.lectures"
                         ng-class="{'is-invalid' : vm.errors.lectures}"
                         ng-blur="vm.checkValidation('lectures')"
                         ng-change="vm.fieldValueHasChanged('lectures')"
@@ -208,7 +208,7 @@
                         name="year"
                         class="form-control"
                         placeholder="Year"
-                        ng-model="vm.phdTraining.year"
+                        ng-model="vm.trainingModule.year"
                         data-ng-required="true"
                         ng-pattern="/^(19|20)\d{2}$/"
                         ng-model-options="{ allowInvalid: true }"
@@ -254,8 +254,8 @@
                             id="location"
                             class="form-control"
                             ng-class="{'is-invalid' : vm.errors.location}"
-                            ng-model="vm.phdTraining.location"
-                            ng-init="vm.phdTraining.location = vm.phdTraining.location || vm.eventTypes[0].key"
+                            ng-model="vm.trainingModule.location"
+                            ng-init="vm.trainingModule.location = vm.trainingModule.location || vm.eventTypes[0].key"
                             ng-options="option.key as option.label for option in vm.centers"
                             ng-blur="vm.checkValidation('location')"
                             ng-change="vm.fieldValueHasChanged('location')"
