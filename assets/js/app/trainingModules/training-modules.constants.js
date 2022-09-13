@@ -45,9 +45,12 @@ const trainingModuleDeliveryOptions = {
     ON_LINE_IN_PRESENCE: "On Line/In Presence"
 };
 
+const trainingModuleSoftSkillsResearchDomain = 'Soft Skills';
+
 angular.module('trainingModules')
     .constant('trainingModuleListSections', trainingModuleListSections)
     .constant('trainingModuleFieldsRules', trainingModuleFieldsRules)
     .constant('trainingModuleRequiredFields', trainingModuleRequiredFields)
     .constant('trainingModuleType', trainingModuleType)
-    .constant('trainingModuleDeliveryOptions', trainingModuleDeliveryOptions);
+    .constant('trainingModuleDeliveryOptions', trainingModuleDeliveryOptions)
+    .constant('trainingModuleSoftSkillsResearchDomain', trainingModuleSoftSkillsResearchDomain);

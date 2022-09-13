@@ -26,6 +26,7 @@
         'trainingModuleType',
         'trainingModuleRequiredFields',
         'trainingModuleFieldsRules',
+        'trainingModuleSoftSkillsResearchDomain',
         'GroupsService',
         'UsersService'
     ];
@@ -46,6 +47,7 @@
         trainingModuleType,
         trainingModuleRequiredFields,
         trainingModuleFieldsRules,
+        trainingModuleSoftSkillsResearchDomain,
         GroupsService,
         UsersService
     ) {
@@ -66,6 +68,8 @@
         vm.getUsers = getUsers;
         vm.trainingModule.type = trainingModuleType;
         vm.researchDomains = [];
+        vm.trainingModuleResearchDomains = [];
+        vm.softSkillsCheckbox = false;
 
         let fieldTimeout;
         const fieldDelay = 500;
@@ -75,11 +79,7 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             vm.researchEntity = await context.getResearchEntity();
-            const researchDomains = await GroupsService.getGroups({type: 'Research Domain'});
-            vm.researchDomains = [];
-            for (const researchDomain of researchDomains) {
-                vm.researchDomains.push(researchDomain.name);
-            }
+            vm.researchDomains = await GroupsService.getGroups({type: 'Research Domain'});
 
             // Listen to the form reset to trigger $setPristine
             const resetFormInteractionWatcher = $scope.$watch('vm.formStatus.resetFormInteraction', function () {
@@ -107,6 +107,7 @@
             }
 
             setDeliveryCheckboxes();
+            setResearchDomainCheckboxes();
 
             watchers.push(resetFormInteractionWatcher);
             watchers.push(formPristineWatcher);
@@ -194,6 +195,35 @@
                     break;
             }
         }
+
+        function setResearchDomainCheckboxes() {
+            // Skip if is no array
+            if (!_.isArray(vm.trainingModule.researchDomains)) {
+                return;
+            }
+
+            for (const researchDomain of vm.researchDomains) {
+                vm.trainingModuleResearchDomains[researchDomain.name] = vm.trainingModule.researchDomains.includes(researchDomain.name);
+            }
+
+            vm.softSkillsCheckbox = vm.trainingModule.researchDomains.includes(trainingModuleSoftSkillsResearchDomain);
+        }
+
+        vm.onChangeResearchDomain = () => {
+            const trainingModuleResearchDomains = [];
+
+            for (const researchDomain of vm.researchDomains) {
+                if (vm.trainingModuleResearchDomains[researchDomain.name]) {
+                    trainingModuleResearchDomains.push(researchDomain.name);
+                }
+            }
+
+            if (vm.softSkillsCheckbox) {
+                trainingModuleResearchDomains.push(trainingModuleSoftSkillsResearchDomain);
+            }
+
+            vm.trainingModule.researchDomains = trainingModuleResearchDomains;
+        };
 
         /* jshint ignore:start */
         async function processSave(updateState = false) {

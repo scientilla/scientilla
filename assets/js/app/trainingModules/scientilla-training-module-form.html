@@ -226,12 +226,12 @@
 
         <div class="form-group">
             <label>Research domains *</label>
-            <label class="form-checkbox inline-block" ng-repeat="researchDomain in vm.researchDomains">
-                <input type="checkbox" ng-value="researchDomain" />
-                <span></span>{{ researchDomain }}
+            <label class="form-checkbox inline-block" ng-repeat="researchDomain in vm.researchDomains track by $index">
+                <input type="checkbox" ng-model="vm.trainingModuleResearchDomains[researchDomain.name]" ng-change="vm.onChangeResearchDomain()" />
+                <span></span>{{ researchDomain.name }}
             </label>
             <label class="form-checkbox inline-block">
-                <input type="checkbox" value="Soft skills" />
+                <input type="checkbox" ng-model="vm.softSkillsCheckbox" ng-change="vm.onChangeResearchDomain()"/>
                 <span></span>Soft skills
             </label>
         </div>
