@@ -28,7 +28,8 @@
         'trainingModuleFieldsRules',
         'trainingModuleSoftSkillsResearchDomain',
         'GroupsService',
-        'UsersService'
+        'UsersService',
+        'groupTypes'
     ];
 
     function controller(
@@ -49,7 +50,8 @@
         trainingModuleFieldsRules,
         trainingModuleSoftSkillsResearchDomain,
         GroupsService,
-        UsersService
+        UsersService,
+        groupTypes
     ) {
         const vm = this;
 
@@ -70,6 +72,7 @@
         vm.researchDomains = [];
         vm.trainingModuleResearchDomains = [];
         vm.softSkillsCheckbox = false;
+        const otherOption = 'Other';
 
         let fieldTimeout;
         const fieldDelay = 500;
@@ -79,7 +82,11 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             vm.researchEntity = await context.getResearchEntity();
-            vm.researchDomains = await GroupsService.getGroups({type: 'Research Domain'});
+            vm.researchDomains = await GroupsService.getGroups({type: groupTypes.RESEARCH_DOMAIN, active: true});
+            vm.centers = await GroupsService.getGroups({type: groupTypes.CENTER, active: true});
+            vm.centers.push({name: otherOption});
+            vm.centers = _.orderBy(vm.centers, 'name');
+            vm.otherOption = otherOption;
 
             // Listen to the form reset to trigger $setPristine
             const resetFormInteractionWatcher = $scope.$watch('vm.formStatus.resetFormInteraction', function () {
@@ -106,6 +113,15 @@
                 vm.selectedReferent = await UsersService.getUser(vm.trainingModule.referent);
             }
 
+            if (_.has(vm.trainingModule, 'location')) {
+                if (vm.centers.find(c => c.name === vm.trainingModule.location)) {
+                    vm.location = vm.trainingModule.location;
+                } else {
+                    vm.location = otherOption;
+                    vm.otherLocation = vm.trainingModule.location;
+                }
+            }
+
             setDeliveryCheckboxes();
             setResearchDomainCheckboxes();
 
@@ -123,6 +139,10 @@
                     watcher();
                 }
             }
+        };
+
+        vm.isLocationSelectDisabled = () => {
+            return !_.isUndefined(vm.location) && vm.location !== otherOption;
         };
 
         function checkValidation(field = false) {
@@ -223,6 +243,21 @@
             }
 
             vm.trainingModule.researchDomains = trainingModuleResearchDomains;
+        };
+
+        vm.onChangeOtherLocation = () => {
+            vm.location = otherOption;
+            vm.trainingModule.location = vm.otherLocation;
+            vm.fieldValueHasChanged('location');
+        };
+
+        vm.onChangeLocation = () => {
+            if (vm.location === otherOption) {
+                vm.trainingModule.location = vm.otherLocation;
+            } else {
+                vm.trainingModule.location = vm.location;
+            }
+            vm.fieldValueHasChanged('location');
         };
 
         /* jshint ignore:start */

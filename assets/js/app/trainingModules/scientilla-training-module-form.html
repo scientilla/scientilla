@@ -253,16 +253,17 @@
                         <select
                             id="location"
                             class="form-control"
-                            ng-class="{'is-invalid' : vm.errors.location}"
-                            ng-model="vm.trainingModule.location"
-                            ng-init="vm.trainingModule.location = vm.trainingModule.location || vm.eventTypes[0].key"
-                            ng-options="option.key as option.label for option in vm.centers"
+                            ng-class="{'is-invalid' : vm.location !== vm.otherOption && vm.errors.location}"
+                            ng-model="vm.location"
+                            ng-options="center.name as center.name for center in vm.centers"
                             ng-blur="vm.checkValidation('location')"
-                            ng-change="vm.fieldValueHasChanged('location')"
+                            ng-change="vm.onChangeLocation()"
                         >
+                            <option value="" disabled>Please select a location</option>
                         </select>
                     </div>
                     <scientilla-error-messages
+                        ng-if="vm.location !== vm.otherOption"
                         class="error-messages"
                         errors="vm.errors.location"
                     ></scientilla-error-messages>
@@ -279,14 +280,17 @@
                         name="otherLocation"
                         placeholder="Other location"
                         class="form-control"
+                        ng-disabled="vm.isLocationSelectDisabled()"
                         ng-model="vm.otherLocation"
-                        ng-class="{'is-invalid' : vm.errors.otherLocation}"
-                        ng-blur="vm.checkValidation('otherLocation')"
-                        ng-change="vm.fieldValueHasChanged('otherLocation')"
+                        ng-class="{'is-invalid' : vm.location === vm.otherOption && vm.errors.location}"
+                        ng-blur="vm.checkValidation('location')"
+                        ng-change="vm.onChangeOtherLocation()"
                     >
+                    <em>Please select the option "Other" to manually type a location.</em>
                     <scientilla-error-messages
+                        ng-if="vm.location === vm.otherOption"
                         class="error-messages"
-                        errors="vm.errors.otherLocation"
+                        errors="vm.errors.location"
                     ></scientilla-error-messages>
                 </div>
             </li>
