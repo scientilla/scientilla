@@ -39,8 +39,15 @@ const trainingModuleRequiredFields = [
 
 const trainingModuleType = 'training_module';
 
+const trainingModuleDeliveryOptions = {
+    ON_LINE: "On Line",
+    IN_PRESENCE: "In Presence",
+    ON_LINE_IN_PRESENCE: "On Line/In Presence"
+};
+
 angular.module('trainingModules')
     .constant('trainingModuleListSections', trainingModuleListSections)
     .constant('trainingModuleFieldsRules', trainingModuleFieldsRules)
     .constant('trainingModuleRequiredFields', trainingModuleRequiredFields)
-    .constant('trainingModuleType', trainingModuleType);
+    .constant('trainingModuleType', trainingModuleType)
+    .constant('trainingModuleDeliveryOptions', trainingModuleDeliveryOptions);

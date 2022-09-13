@@ -99,13 +99,20 @@
                 }
             });
 
+            const deliveryOnLineWatcher = $scope.$watch('vm.deliveryOnLine', setTrainingModuleDelivery);
+            const deliveryInPresenceWatcher = $scope.$watch('vm.deliveryInPresence', setTrainingModuleDelivery);
+
             if (vm.trainingModule.referent) {
                 vm.selectedReferent = await UsersService.getUser(vm.trainingModule.referent);
             }
 
+            setDeliveryCheckboxes();
+
             watchers.push(resetFormInteractionWatcher);
             watchers.push(formPristineWatcher);
             watchers.push(selectedReferentWatcher);
+            watchers.push(deliveryOnLineWatcher);
+            watchers.push(deliveryInPresenceWatcher);
         };
         /* jshint ignore:end */
 
@@ -153,6 +160,41 @@
             return UsersService.getUsers(qs);
         }
 
+        function setTrainingModuleDelivery() {
+            switch (true) {
+                case vm.deliveryOnLine && vm.deliveryInPresence:
+                    vm.trainingModule.delivery = trainingModuleDeliveryOptions.ON_LINE_IN_PRESENCE;
+                    break;
+                case vm.deliveryOnLine && !vm.deliveryInPresence:
+                    vm.trainingModule.delivery = trainingModuleDeliveryOptions.ON_LINE;
+                    break;
+                case !vm.deliveryOnLine && vm.deliveryInPresence:
+                    vm.trainingModule.delivery = trainingModuleDeliveryOptions.IN_PRESENCE;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        function setDeliveryCheckboxes() {
+            switch (vm.trainingModule.delivery) {
+                case trainingModuleDeliveryOptions.ON_LINE_IN_PRESENCE:
+                    vm.deliveryOnLine = true;
+                    vm.deliveryInPresence = true;
+                    break;
+                case trainingModuleDeliveryOptions.ON_LINE:
+                    vm.deliveryOnLine = true;
+                    vm.deliveryInPresence = false;
+                    break;
+                case trainingModuleDeliveryOptions.IN_PRESENCE:
+                    vm.deliveryOnLine = false;
+                    vm.deliveryInPresence = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         /* jshint ignore:start */
         async function processSave(updateState = false) {
             if (updateState) {
@@ -166,12 +208,12 @@
                 vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
             }
 
-            const filteredtrainingModule = trainingModuleService.filterFields(vm.trainingModule);
+            const filteredTrainingModule = trainingModuleService.filterFields(vm.trainingModule);
 
-            if (filteredtrainingModule.id) {
-                await trainingModuleService.update(vm.researchEntity, filteredtrainingModule);
+            if (filteredTrainingModule.id) {
+                await trainingModuleService.update(vm.researchEntity, filteredTrainingModule);
             } else {
-                const draft = await trainingModuleService.create(vm.researchEntity, filteredtrainingModule);
+                const draft = await trainingModuleService.create(vm.researchEntity, filteredTrainingModule);
                 vm.trainingModule.id = draft.researchItem.id;
             }
 
