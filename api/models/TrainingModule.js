@@ -148,7 +148,11 @@ module.exports = _.merge({}, BaseModel, {
         return false;
     },
     async export(trainingModulesIds, format) {
-        let trainingModules = await TrainingModule.find({id: trainingModulesIds});
+        let trainingModules = await TrainingModule.find({id: trainingModulesIds}).populate([
+            'referent',
+            'institute',
+            'phdCourse'
+        ]);
 
         trainingModules = _.orderBy(trainingModules, ['year', 'title'], ['desc', 'asc']);
 

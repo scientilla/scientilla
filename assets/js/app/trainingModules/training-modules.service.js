@@ -59,11 +59,11 @@
             isValid
         };
 
-        function exportDownload(patents, format = 'csv') {
-            const filename = 'Phd_Trainings_Export.csv';
+        function exportDownload(trainingModules, format = 'csv') {
+            const filename = 'Training_Modules_Export.csv';
             $http.post('/api/v1/training-modules/export', {
                 format: format,
-                patentIds: patents.map(d => d.id)
+                trainingModuleIds: trainingModules.map(d => d.id)
             }).then((res) => {
                 const element = document.createElement('a');
                 element.setAttribute('href', encodeURI(res.data));
