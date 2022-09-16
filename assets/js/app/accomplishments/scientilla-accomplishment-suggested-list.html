@@ -56,8 +56,11 @@
                                     <i class="far fa-copy fa-left"></i>Copy to draft
                                 </button>
 
-                                <button ng-click="vm.discard(a)"
-                                        class="dropdown-item">
+                                <button
+                                    ng-if="!a.isDiscarded()"
+                                    ng-click="vm.discard(a)"
+                                    class="dropdown-item"
+                                >
                                     <i class="fas fa-ban fa-left"></i>Discard
                                 </button>
                             </div>
