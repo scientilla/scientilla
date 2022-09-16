@@ -1,4 +1,15 @@
 .ui-notification{
+    width: 220px;
+    border-radius: .25rem;
+    box-shadow: none;
+    pointer-events: none;
+
+    .message{
+        &::first-letter{
+            text-transform: capitalize;
+        }
+    }
+
     &.warning {
         color: color-yiq($warning-color);
         background: $warning-color;
