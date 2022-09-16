@@ -16,12 +16,11 @@
         });
 
     controller.$inject = [
+        'Restangular',
         '$scope',
         '$timeout',
         'context',
         'FormStatus',
-        'ValidateService',
-        'EventsService',
         'trainingModuleService',
         'trainingModuleType',
         'trainingModuleRequiredFields',
@@ -29,10 +28,12 @@
         'trainingModuleSoftSkillsResearchDomain',
         'GroupsService',
         'UsersService',
-        'groupTypes'
+        'groupTypes',
+        'PhdThesisService'
     ];
 
     function controller(
+        Restangular,
         $scope,
         $timeout,
         context,
@@ -42,8 +43,6 @@
         // agreementFieldRules,
         // agreementFields,
         FormStatus,
-        ValidateService,
-        EventsService,
         trainingModuleService,
         trainingModuleType,
         trainingModuleRequiredFields,
@@ -51,7 +50,8 @@
         trainingModuleSoftSkillsResearchDomain,
         GroupsService,
         UsersService,
-        groupTypes
+        groupTypes,
+        PhdThesisService
     ) {
         const vm = this;
 
@@ -60,6 +60,7 @@
         vm.unsavedData = false;
         vm.errors = {};
         vm.errorText = '';
+        vm.mode = 'draft';
 
         vm.cancel = close;
         vm.verify = verify;
@@ -87,6 +88,7 @@
             vm.centers.push({name: otherOption});
             vm.centers = _.orderBy(vm.centers, 'name');
             vm.otherOption = otherOption;
+            vm.institutes = await PhdThesisService.getInstitutes();
 
             // Listen to the form reset to trigger $setPristine
             const resetFormInteractionWatcher = $scope.$watch('vm.formStatus.resetFormInteraction', function () {
@@ -106,11 +108,23 @@
                 }
             });
 
+            setDeliveryCheckboxes();
+            setResearchDomainCheckboxes();
+
             const deliveryOnLineWatcher = $scope.$watch('vm.deliveryOnLine', setTrainingModuleDelivery);
             const deliveryInPresenceWatcher = $scope.$watch('vm.deliveryInPresence', setTrainingModuleDelivery);
+            const instituteWatcher = $scope.$watch('vm.trainingModule.institute', async () => {
+                vm.courses = await PhdThesisService.getCourses({id: vm.trainingModule.institute.id});
+            });
+            const otherCourseWatcher = $scope.$watch('vm.trainingModule.otherCourse', newValue => {
+                if (newValue) {
+                    vm.trainingModule.institute = null;
+                    vm.trainingModule.phdCourse = null;
+                }
+            });
 
             if (vm.trainingModule.referent) {
-                vm.selectedReferent = await UsersService.getUser(vm.trainingModule.referent);
+                vm.selectedReferent = await UsersService.getUser(vm.trainingModule.referent.id);
             }
 
             if (_.has(vm.trainingModule, 'location')) {
@@ -122,14 +136,17 @@
                 }
             }
 
-            setDeliveryCheckboxes();
-            setResearchDomainCheckboxes();
+            if (_.isNil(vm.trainingModule.otherCourse)) {
+                vm.trainingModule.otherCourse = false;
+            }
 
             watchers.push(resetFormInteractionWatcher);
             watchers.push(formPristineWatcher);
             watchers.push(selectedReferentWatcher);
             watchers.push(deliveryOnLineWatcher);
             watchers.push(deliveryInPresenceWatcher);
+            watchers.push(instituteWatcher);
+            watchers.push(otherCourseWatcher);
         };
         /* jshint ignore:end */
 
@@ -147,13 +164,13 @@
 
         function checkValidation(field = false) {
             if (field) {
-                vm.errors[field] = ValidateService.validate(vm.trainingModule, field, trainingModuleRequiredFields, trainingModuleFieldsRules);
+                vm.errors[field] = trainingModuleService.validate(vm.trainingModule, field);
 
                 if (!vm.errors[field]) {
                     delete vm.errors[field];
                 }
             } else {
-                vm.errors = ValidateService.validate(vm.trainingModule, false, trainingModuleRequiredFields, trainingModuleFieldsRules);
+                vm.errors = trainingModuleService.validate(vm.trainingModule);
             }
 
             vm.errorText = !_.isEmpty(vm.errors) ? 'Please fix the warnings before verifying!' : '';
@@ -168,6 +185,7 @@
         function save() {
             vm.errors = {};
             vm.errorText = '';
+            vm.mode = 'draft';
             return processSave(true);
         }
 
@@ -193,8 +211,10 @@
                     vm.trainingModule.delivery = trainingModuleDeliveryOptions.IN_PRESENCE;
                     break;
                 default:
+                    vm.trainingModule.delivery = null;
                     break;
             }
+            vm.checkValidation('delivery');
         }
 
         function setDeliveryCheckboxes() {
@@ -212,6 +232,8 @@
                     vm.deliveryInPresence = true;
                     break;
                 default:
+                    vm.deliveryOnLine = false;
+                    vm.deliveryInPresence = false;
                     break;
             }
         }
@@ -243,6 +265,7 @@
             }
 
             vm.trainingModule.researchDomains = trainingModuleResearchDomains;
+            vm.checkValidation('researchDomains');
         };
 
         vm.onChangeOtherLocation = () => {
@@ -293,6 +316,7 @@
         async function verify() {
             vm.errorText = '';
             vm.errors = {};
+            vm.mode = 'verify';
             vm.formStatus.setVerifyStatus('verifying');
 
             $timeout(async function () {
@@ -319,8 +343,7 @@
 
         function getCourses(searchText) {
             const qs = {where: {title: {contains: searchText}}};
-            return [];
-            //return Restangular.all('courses').getList(qs);
+            return Restangular.all('courses').getList(qs);
         }
 
         function close() {
