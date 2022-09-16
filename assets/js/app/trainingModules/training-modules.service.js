@@ -43,10 +43,12 @@
             getDrafts: ResearchEntitiesService.getTrainingModuleDrafts,
             getSuggested: ResearchEntitiesService.getSuggestedTrainingModules,
             getDiscarded: ResearchEntitiesService.getDiscardedTrainingModules,
+            editAffiliations: ResearchEntitiesService.editAffiliations,
             exportDownload,
             filterFields,
             validate,
-            verify
+            verify,
+            isValid
         };
 
         function exportDownload(patents, format = 'csv') {
@@ -70,23 +72,43 @@
 
         function filterFields(trainingModule) {
             const filteredtrainingModule = {};
-            fields.forEach(key => filteredtrainingModule[key] = trainingModule[key] ? trainingModule[key] : null);
+            fields.forEach(key => {
+                if (typeof trainingModule[key] === 'boolean') {
+                    filteredtrainingModule[key] = trainingModule[key] ? trainingModule[key] : false;
+                } else {
+                    filteredtrainingModule[key] = trainingModule[key] ? trainingModule[key] : null;
+                }
+            });
             return filteredtrainingModule;
         }
 
         function validate(trainingModule, field = false) {
-            return ValidateService.validate(trainingModule, field, trainingModuleRequiredFields, trainingModuleFieldsRules);
+            const requiredFields = getRequiredFields(trainingModule);
+            return ValidateService.validate(trainingModule, field, requiredFields, trainingModuleFieldsRules);
+        }
+
+        function getRequiredFields(trainingModule) {
+            const requiredFields = _.cloneDeep(trainingModuleRequiredFields);
+            if (!_.has(trainingModule, 'otherCourse') || !trainingModule.otherCourse) {
+                requiredFields.push('institute');
+                requiredFields.push('phdCourse');
+            }
+            return requiredFields;
         }
 
         /* jshint ignore:start */
         async function verify(researchEntity, researchItem) {
             const completeResearchItem = await ResearchEntitiesService.getTrainingModule(researchItem.id);
-            await ResearchEntitiesService.verify('trainingModule', researchEntity, completeResearchItem);
+            await ResearchEntitiesService.verify('training-module', researchEntity, completeResearchItem);
 
             if (researchEntity.type === 'user') {
                 await context.refreshSubResearchEntity();
             }
         }
         /* jshint ignore:end */
+
+        function isValid(trainingModule) {
+            return _.isEmpty(validate(trainingModule));
+        }
     }
 })();
