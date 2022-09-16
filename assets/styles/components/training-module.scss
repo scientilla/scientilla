@@ -24,6 +24,18 @@
         margin: 1rem 0px;
     }
 
+    .training-module-labels{
+        @include normalize-listing;
+        float: left;
+        margin: 0px 0px 0px -.5rem;
+
+        & > li{
+            display: block;
+            padding: 0px .5rem;
+            float: left;
+        }
+    }
+
     .training-module-title{
         display: block;
         margin: 0px;
