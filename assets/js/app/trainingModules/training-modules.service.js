@@ -5,6 +5,7 @@
     controller.$inject = [
         'ResearchEntitiesService',
         '$http',
+        'context',
         'trainingModuleRequiredFields',
         'trainingModuleFieldsRules',
         'ValidateService'
@@ -13,6 +14,7 @@
     function controller(
         ResearchEntitiesService,
         $http,
+        context,
         trainingModuleRequiredFields,
         trainingModuleFieldsRules,
         ValidateService
@@ -39,11 +41,17 @@
             edit: (researchEntity, draft) => ResearchEntitiesService.editDraft(researchEntity, draft, 'training-module'),
             create: ResearchEntitiesService.createDraft,
             update: ResearchEntitiesService.updateDraft,
+            delete: ResearchEntitiesService.deleteDraft,
             get: ResearchEntitiesService.getTrainingModules,
             getDrafts: ResearchEntitiesService.getTrainingModuleDrafts,
             getSuggested: ResearchEntitiesService.getSuggestedTrainingModules,
             getDiscarded: ResearchEntitiesService.getDiscardedTrainingModules,
             editAffiliations: ResearchEntitiesService.editAffiliations,
+            unverify: ResearchEntitiesService.unverify,
+            discard: ResearchEntitiesService.discard,
+            multipleDiscard: ResearchEntitiesService.multipleDiscard,
+            multipleVerify: ResearchEntitiesService.multipleVerify,
+            multipleDelete: ResearchEntitiesService.deleteDrafts,
             exportDownload,
             filterFields,
             validate,
