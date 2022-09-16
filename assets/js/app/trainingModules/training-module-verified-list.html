@@ -3,8 +3,8 @@
     <scientilla-filter
         category="training-module-verified"
         on-filter="vm.onFilter"
-        elements="vm.trainingModule"
-        empty-list-message="No PhD trainings found"
+        elements="vm.trainingModules"
+        empty-list-message="No training modules found"
     >
         <scientilla-multicheck>
             <buttons>
@@ -18,25 +18,25 @@
             </buttons>
             <item-list>
                 <scientilla-checkable
-                    ng-repeat="p in vm.trainingModules"
-                    item="p"
+                    ng-repeat="trainingModule in vm.trainingModules"
+                    item="trainingModule"
                     class="scientilla-checkable"
                 >
                     <training-module
-                        training-module="p"
+                        training-module="trainingModule"
                         section="vm.trainingModuleListSections.VERIFIED"
                         class="training-module-container"
-                    ></scie>
+                    ></training-module>
                     <div
                         class="training-module-row-actions"
                         ng-if="vm.editable"
                     >
                         <button
                             class="btn btn-primary"
-                            ng-click="vm.unverify(vm.researchEntity, p)"
-                            ng-disabled="vm.isUnverifying(p)"
+                            ng-click="vm.unverify(vm.researchEntity, trainingModule)"
+                            ng-disabled="vm.isUnverifying(trainingModule)"
                             type="button"
-                            uib-tooltip="Unlink the PhD training from your profile"
+                            uib-tooltip="Unlink the training module from your profile"
                             tooltip-placement="top"
                             tooltip-class="text-left"
                         >

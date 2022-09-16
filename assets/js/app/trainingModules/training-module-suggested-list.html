@@ -9,19 +9,19 @@
         <scientilla-multicheck>
             <buttons>
                 <scientilla-multicheck-button
-                    subject="Verify PhD trainings"
+                    subject="Verify training modules"
                     on-click="vm.multipleVerify"
                 >
                     <i class="fas fa-check fa-left"></i>Verify
                 </scientilla-multicheck-button>
                 <scientilla-multicheck-button
-                    subject="Discard PhD trainings"
+                    subject="Discard training modules"
                     on-click="vm.multipleCopy"
                 >
                     <i class="fas fa-copy fa-left"></i>Copy to draft
                 </scientilla-multicheck-button>
                 <scientilla-multicheck-button
-                    subject="Discard PhD trainings"
+                    subject="Discard training modules"
                     on-click="vm.multipleDiscard"
                 >
                     <i class="fas fa-ban fa-left"></i>Discard
@@ -29,13 +29,13 @@
             </buttons>
             <item-list>
                 <scientilla-checkable
-                    ng-repeat="p in vm.trainingModules"
-                    item="p"
+                    ng-repeat="trainingModule in vm.trainingModules"
+                    item="trainingModule"
                     class="scientilla-checkable"
                 >
 
                     <training-module
-                        training-module="p"
+                        training-module="trainingModule"
                         section="vm.trainingModuleListSections.SUGGESTED"
                         class="training-module-container"
                     ></training-module>
@@ -46,11 +46,11 @@
                             uib-dropdown
                         >
                             <button
-                                ng-click="vm.verify(p)"
-                                ng-disabled="!vm.isValid(p)"
+                                ng-click="vm.verify(trainingModule)"
+                                ng-disabled="!vm.isValid(trainingModule)"
                                 type="button"
                                 class="btn btn-primary"
-                                title="Verify the suggested PhD training"
+                                title="Verify the suggested training module"
                             >
                                 <i class="fas fa-check fa-left"></i>Verify
                             </button>
@@ -66,16 +66,16 @@
                                 uib-dropdown-menu
                                 class="dropdown-menu"
                             >
-
                                 <button
-                                    ng-click="vm.copy(p)"
+                                    ng-click="vm.copy(trainingModule)"
                                     class="dropdown-item"
                                 >
                                     <i class="far fa-copy fa-left"></i>Copy to draft
                                 </button>
 
                                 <button
-                                    ng-click="vm.discard(p)"
+                                    ng-click="vm.discard(trainingModule)"
+                                    ng-if="!trainingModule.isDiscarded()"
                                     class="dropdown-item"
                                 >
                                     <i class="fas fa-ban fa-left"></i>Discard
