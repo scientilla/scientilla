@@ -64,7 +64,7 @@
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
         const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
         const patentPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
-        const trainingModulePopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
+        const trainingModulePopulates = ['type', 'authors', 'affiliations', 'institutes', 'referent', 'institute', 'phdCourse', 'verified', 'verifiedUsers', 'verifiedGroups'];
 
         /* jshint ignore:start */
 
