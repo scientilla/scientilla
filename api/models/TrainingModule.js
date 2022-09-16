@@ -53,7 +53,7 @@ module.exports = _.merge({}, BaseModel, {
             columnName: 'other_course'
         },
         institute: {
-            model: 'institute'
+            model: 'phdinstitute'
         },
         phdCourse: {
             model: 'phdcourse',
@@ -70,6 +70,10 @@ module.exports = _.merge({}, BaseModel, {
         },
         location: 'STRING',
         delivery: 'STRING',
+        verified: {
+            collection: 'trainingmoduleverify',
+            via: 'trainingModule'
+        },
         verifiedUsers: {
             collection: 'user',
             through: 'trainingmoduleverifieduser'
@@ -77,6 +81,24 @@ module.exports = _.merge({}, BaseModel, {
         verifiedGroups: {
             collection: 'group',
             through: 'trainingmoduleverifiedgroup'
+        },
+        authors: {
+            collection: 'trainingmoduleauthor',
+            via: 'trainingModule'
+        },
+        affiliations: {
+            collection: 'trainingmoduleaffiliation',
+            via: 'trainingModule',
+        },
+        institutes: {
+            collection: 'institute',
+            via: 'trainingModule',
+            through: 'trainingmoduleaffiliation'
+        },
+        suggestions: {
+            collection: 'researchentity',
+            via: 'suggestedtrainingmodules',
+            through: 'trainingmodulesuggestion'
         },
         async isValid() {
             const ResearchItemModel = TrainingModule.getResearchItemModel(this.type);
@@ -112,6 +134,7 @@ module.exports = _.merge({}, BaseModel, {
         const riData = {};
         fields.forEach(f => riData[f] = ri[f]);
         delete riData.draftCreator;
+        riData.researchDomains = JSON.stringify(riData.researchDomains);
         riData.kind = ResearchItemKinds.VERIFIED;
 
         const copies = await TrainingModule.find(riData);
