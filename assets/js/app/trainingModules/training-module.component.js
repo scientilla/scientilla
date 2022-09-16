@@ -67,9 +67,9 @@
         function getVerifiedNamesHTML() {
             const verifiedNames = getVerfiedNames();
             if (!verifiedNames.length)
-                return 'Nobody has verified this PhD Training yet';
+                return 'Nobody has verified this training module yet';
 
-            return '<p>This PhD training is verified by:</p><p>' + verifiedNames.join('<br>') + '</p>';
+            return '<p>This training module is verified by:</p><p>' + verifiedNames.join('<br>') + '</p>';
         }
 
         function getVerfiedNames() {
@@ -80,7 +80,7 @@
         function changePrivacy() {
             const verify = getVerify();
             if (verify.favorite)
-                return ModalService.alert('PhD training visibility error', 'A favorite PhD training cannot be set to private.');
+                return ModalService.alert('Training module visibility error', 'A favorite training module cannot be set to private.');
 
             verify.public = !verify.public;
             return ResearchEntitiesService.setVerifyPrivacy(researchEntity, vm.trainingModule, verify);
@@ -89,7 +89,7 @@
         function changeFavorite() {
             const verify = getVerify();
             if (!verify.public)
-                return ModalService.alert('Favorite error', 'A private PhD training cannot be set to favorite.');
+                return ModalService.alert('Favorite error', 'A private training module cannot be set to favorite.');
 
             verify.favorite = !verify.favorite;
             return ResearchEntitiesService.setVerifyFavorite(researchEntity, vm.trainingModule, verify);
