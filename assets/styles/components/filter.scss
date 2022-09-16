@@ -338,6 +338,12 @@
                     grid-template-columns: 4fr 4fr 3fr 3fr 2fr 2fr;
                 }
             }
+
+            &.training-module-draft{
+                &.fields-3{
+                    grid-template-columns: 1fr 1fr 16rem;
+                }
+            }
         }
 
         .filter-connector-listing{
