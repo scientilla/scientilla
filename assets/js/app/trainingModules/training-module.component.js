@@ -15,18 +15,14 @@
 
     controller.$inject = [
         'context',
-        'ResearchEntitiesService',
         'trainingModuleService',
-        'trainingModuleListSections',
         'ModalService',
         'CustomizeService'
     ];
 
     function controller(
         context,
-        ResearchEntitiesService,
         trainingModuleService,
-        trainingModuleListSections,
         ModalService,
         CustomizeService
     ) {
@@ -34,23 +30,8 @@
         vm.isValid = trainingModuleService.isValid;
         vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
         vm.openDetails = openDetails;
-        vm.isPublic = isPublic;
-        vm.isFavorite = isFavorite;
-        vm.changePrivacy = changePrivacy;
-        vm.changeFavorite = changeFavorite;
-        vm.isPrivacyToShow = isPrivacyToShow;
-        vm.isFavoriteToShow = isFavoriteToShow;
 
         let researchEntity;
-
-        vm.showPrivacy = [
-            trainingModuleListSections.VERIFIED
-        ].includes(vm.section);
-
-        vm.showFavorite = [
-            trainingModuleListSections.VERIFIED
-        ].includes(vm.section);
-
         vm.collapsed = true;
 
         /* jshint ignore:start */
@@ -75,50 +56,6 @@
         function getVerfiedNames() {
             return vm.trainingModule.verifiedGroups.map(g => '- <b>' + g.name + '</b>')
                 .concat(vm.trainingModule.verifiedUsers.map(p => '- ' + p.getDisplayName()));
-        }
-
-        function changePrivacy() {
-            const verify = getVerify();
-            if (verify.favorite)
-                return ModalService.alert('Training module visibility error', 'A favorite training module cannot be set to private.');
-
-            verify.public = !verify.public;
-            return ResearchEntitiesService.setVerifyPrivacy(researchEntity, vm.trainingModule, verify);
-        }
-
-        function changeFavorite() {
-            const verify = getVerify();
-            if (!verify.public)
-                return ModalService.alert('Favorite error', 'A private training module cannot be set to favorite.');
-
-            verify.favorite = !verify.favorite;
-            return ResearchEntitiesService.setVerifyFavorite(researchEntity, vm.trainingModule, verify);
-        }
-
-        function isPrivacyToShow() {
-            return vm.showPrivacy && getVerify();
-        }
-
-        function isFavoriteToShow() {
-            return vm.showFavorite && getVerify();
-        }
-
-        function isPublic() {
-            const verify = getVerify();
-            if (!verify) return false;
-            return verify.public;
-        }
-
-        function isFavorite() {
-            const verify = getVerify();
-            if (!verify) return false;
-            return verify.favorite;
-        }
-
-        function getVerify() {
-            if (!researchEntity)
-                return;
-            return vm.trainingModule.verified.find(v => v.researchEntity === researchEntity.id);
         }
     }
 })();

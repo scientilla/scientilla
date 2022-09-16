@@ -19,6 +19,14 @@
         </div>
 
         <div class="training-module-title-container">
+            <ul
+                ng-if="vm.trainingModule.labels"
+                class="training-module-labels"
+            >
+                <li ng-repeat="label in vm.trainingModule.labels">
+                    <badge label="label"></badge>
+                </li>
+            </ul>
             <h2
                 class="training-module-title has-action"
                 ng-click="vm.openDetails()"
@@ -34,35 +42,6 @@
                 tooltip-class="text-left"
             >
                 <i class="fas fa-check"></i> {{vm.trainingModule.verified.length}}
-            </li>
-
-            <li ng-if="vm.showPrivacy">
-                <i
-                    ng-click="vm.changePrivacy()"
-                    ng-if="vm.isPublic()"
-                    class="fas fa-globe-africa has-action"
-                    uib-tooltip-html="'The training module is visible to everyone, click to change it'"
-                ></i>
-                <i
-                    ng-click="vm.changePrivacy()"
-                    ng-if="!vm.isPublic()"
-                    class="fas fa-lock has-action"
-                    uib-tooltip-html="'The training moduleule is visible only to scientilla users, click to change it'"
-                ></i>
-            </li>
-            <li ng-if="vm.showFavorite">
-                <i
-                    ng-click="vm.changeFavorite()"
-                    ng-if="vm.isFavorite()"
-                    class="fas fa-star has-action"
-                    uib-tooltip-html="'This training module is one of your favorite'"
-                ></i>
-                <i
-                    ng-click="vm.changeFavorite()"
-                    ng-if="!vm.isFavorite()"
-                    class="far fa-star has-action"
-                    uib-tooltip-html="'Click here to make it favorite'"
-                ></i>
             </li>
         </ul>
     </li>
