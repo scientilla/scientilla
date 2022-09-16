@@ -240,3 +240,9 @@ blockquote{
     line-height: 1.6rem;
     border-left: .3rem solid $primary;
 }
+
+.capitalize-first-letter{
+    &:first-letter {
+        text-transform: uppercase;
+    }
+}

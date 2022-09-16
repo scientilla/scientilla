@@ -661,7 +661,7 @@
             }
 
             return openModal(`<div class="modal-header">
-                                <h3 class="text-capitalize">${title} details</h3>
+                                <h3 class="capitalize-first-letter">${title} details</h3>
                                 <button
                                     type="button"
                                     class="close"
