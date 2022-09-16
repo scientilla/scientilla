@@ -431,7 +431,7 @@
 
         async function getProjectDrafts(researchEntity, query, populates = projectPopulates) {
             await setProjectType(query);
-            return getResearchItemDrafts(researchEntity, 'projectDrafts', query, populates);
+            return await getResearchItemDrafts(researchEntity, 'projectDrafts', query, populates);
         }
 
         async function setProjectType(query) {
@@ -468,7 +468,7 @@
         async function getTrainingModules(researchEntity, query, populates = trainingModulePopulates) {
             const populate = {populate: populates};
             const q = _.merge({}, query, populate);
-            return researchEntity.getList('trainingModules', q);
+            return await researchEntity.getList('trainingModules', q);
         }
 
         async function getSuggestedTrainingModules(researchEntity, query, populates = trainingModulePopulates) {
@@ -486,7 +486,7 @@
         }
 
         async function getTrainingModuleDrafts(researchEntity, query, populates = trainingModulePopulates) {
-            return getResearchItemDrafts(researchEntity, 'trainingModuleDrafts', query, populates);
+            return await getResearchItemDrafts(researchEntity, 'trainingModuleDrafts', query, populates);
         }
 
         /* jshint ignore:end */
