@@ -23,12 +23,9 @@ const trainingModuleFieldsRules = {
 const trainingModuleRequiredFields = [
     'authorsStr',
     'referent',
-    'institute',
-    'phdCourse',
     'title',
     'year',
     'description',
-    'otherCourse',
     'hours',
     'lectures',
     'researchDomains',
