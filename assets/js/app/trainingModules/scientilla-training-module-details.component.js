@@ -2,7 +2,7 @@
         'use strict';
 
         angular.module('trainingModules')
-            .component('scientillatrainingModuleDetails', {
+            .component('scientillaTrainingModuleDetails', {
                 templateUrl: 'partials/scientilla-training-module-details.html',
                 controller,
                 controllerAs: 'vm',
@@ -17,9 +17,9 @@
         function controller() {
             const vm = this;
 
-            vm.$onInit = function () {
+            vm.collapsed = true;
 
-            };
+            vm.$onInit = function () {};
         }
     }
 )();
