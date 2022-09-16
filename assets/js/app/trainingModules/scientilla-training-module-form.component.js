@@ -114,7 +114,7 @@
             const deliveryOnLineWatcher = $scope.$watch('vm.deliveryOnLine', setTrainingModuleDelivery);
             const deliveryInPresenceWatcher = $scope.$watch('vm.deliveryInPresence', setTrainingModuleDelivery);
             const instituteWatcher = $scope.$watch('vm.trainingModule.institute', async () => {
-                vm.courses = await PhdThesisService.getCourses({id: vm.trainingModule.institute.id});
+                vm.courses = await PhdThesisService.getCourses({id: vm.trainingModule.institute});
             });
             const otherCourseWatcher = $scope.$watch('vm.trainingModule.otherCourse', newValue => {
                 if (newValue) {
@@ -123,7 +123,7 @@
                 }
             });
 
-            if (vm.trainingModule.referent) {
+            if (_.has(vm.trainingModule.referent, 'id')) {
                 vm.selectedReferent = await UsersService.getUser(vm.trainingModule.referent.id);
             }
 
