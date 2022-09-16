@@ -23,8 +23,6 @@
         'FormStatus',
         'trainingModuleService',
         'trainingModuleType',
-        'trainingModuleRequiredFields',
-        'trainingModuleFieldsRules',
         'trainingModuleSoftSkillsResearchDomain',
         'GroupsService',
         'UsersService',
@@ -37,16 +35,9 @@
         $scope,
         $timeout,
         context,
-        // ProjectService,
-        // agreementTypes,
-        // agreementRequiredFields,
-        // agreementFieldRules,
-        // agreementFields,
         FormStatus,
         trainingModuleService,
         trainingModuleType,
-        trainingModuleRequiredFields,
-        trainingModuleFieldsRules,
         trainingModuleSoftSkillsResearchDomain,
         GroupsService,
         UsersService,
@@ -89,6 +80,15 @@
             vm.centers = _.orderBy(vm.centers, 'name');
             vm.otherOption = otherOption;
             vm.institutes = await PhdThesisService.getInstitutes();
+            vm.trainingModule = _.cloneDeep(vm.trainingModule);
+
+            if (_.has(vm.trainingModule.institute, 'id')) {
+                vm.trainingModule.institute = vm.trainingModule.institute.id;
+            }
+
+            if (_.has(vm.trainingModule.phdCourse, 'id')) {
+                vm.trainingModule.phdCourse = vm.trainingModule.phdCourse.id;
+            }
 
             // Listen to the form reset to trigger $setPristine
             const resetFormInteractionWatcher = $scope.$watch('vm.formStatus.resetFormInteraction', function () {
