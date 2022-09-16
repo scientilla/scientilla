@@ -541,7 +541,7 @@
         const accomplishmentPrototype = {
             labels: [],
             getAuthorLimit: function () {
-                return 1;
+                return 10;
             },
             hasLabel: function (label) {
                 return this.labels.includes(label);
@@ -554,7 +554,7 @@
         const trainingModulePrototype = {
             labels: [],
             getAuthorLimit: function () {
-                return 1;
+                return 10;
             },
             hasLabel: function (label) {
                 return this.labels.includes(label);
