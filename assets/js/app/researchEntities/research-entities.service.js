@@ -224,19 +224,32 @@
         }
 
         async function discard(researchEntity, researchItem) {
+            const option = await ModalService.multipleChoiceConfirm(
+                'Discard',
+                'This action will discard this document from the suggested documents. Do you want to proceed?',
+                {proceed: 'Proceed'},
+                'Cancel',
+                true
+            );
             try {
-                const res = await researchEntity.one('researchitems', researchItem.id)
-                    .customPUT({}, 'discarded');
-
-                if (!res.success)
-                    return Notification.warning(res.message);
-
-                EventsService.publish(EventsService.RESEARCH_ITEM_DISCARDED, res);
-
+                switch(option) {
+                    case 'cancel':
+                        const notificationMsg = 'The operation is been canceled.';
+                        Notification.warning(notificationMsg);
+                        break;
+                    case 'proceed':
+                        const res =  await researchEntity.one('researchitems', researchItem.id).customPUT({}, 'discarded');
+                        if (!res.success) {
+                            return Notification.warning(res.message);
+                        }
+                        Notification.success('Item is been discarded!');
+                        EventsService.publish(EventsService.RESEARCH_ITEM_DISCARDED, res);
+                        break;
+                }
             } catch (error) {
-                if (error.data)
+                if (error.data) {
                     Notification.warning(error.data.message);
-                console.error(error);
+                }
             }
         }
 
@@ -244,6 +257,7 @@
             try {
                 const itemIds = researchItems.map(ri => ri.id);
                 const res = await researchEntity.all('researchitems').customPUT({itemIds}, 'discarded');
+                Notification.success(researchItems.length > 1 ? 'Items are been discarded!' : 'Item is been discarded!');
                 EventsService.publish(EventsService.RESEARCH_ITEM_DISCARDED, res);
             } catch (error) {
                 if (error.data)
@@ -303,7 +317,14 @@
         }
 
         async function editAffiliations(researchEntity, researchItem) {
-            return ModalService.openScientillaResearchItemAffiliationForm(researchEntity, researchItem);
+            return ModalService
+                .openScientillaResearchItemAffiliationForm(researchEntity, researchItem)
+                .then(i => {
+                    if (i === 1) {
+                        EventsService.publish(EventsService.DRAFT_UPDATED, researchItem);
+                        Notification.success("Affiliations are been updated");
+                    }
+                });
         }
 
         async function verifyResearchItem(researchEntity, researchItem, verificationData, notifications) {
