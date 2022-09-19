@@ -299,7 +299,7 @@
             }
         };
 
-        const phdTrainingFormStructure = {
+        const trainingModuleFormStructure = {
             title: {
                 inputType: 'text',
                 label: 'Title',
@@ -508,9 +508,9 @@
                     valueType: 'boolean'
                 }
             },
-            'phd-training-suggested': phdTrainingFormStructure,
-            'phd-training-verified': phdTrainingFormStructure,
-            'phd-training-draft': phdTrainingFormStructure,
+            'training-module-suggested': trainingModuleFormStructure,
+            'training-module-verified': trainingModuleFormStructure,
+            'training-module-draft': trainingModuleFormStructure,
         };
 
         return service;
@@ -830,13 +830,13 @@
 
                     structure.nationality.values = nationalities;
                     break;
-                case constant === 'phd-training-suggested':
+                case constant === 'training-module-suggested':
                     structure = Object.assign({},
                         formStructures[constant],
                         {
                             discarded: {
                                 inputType: 'checkbox',
-                                label: 'Show discarded PhD trainings',
+                                label: 'Show discarded training modules',
                                 defaultValue: false,
                                 matchColumn: 'discarded',
                                 type: 'action',
@@ -845,10 +845,10 @@
                         }
                     );
                     break;
-                case constant === 'phd-training-verified':
+                case constant === 'training-module-verified':
                     structure = formStructures[constant];
                     break;
-                case constant === 'phd-training-draft':
+                case constant === 'training-module-draft':
                     structure = formStructures[constant];
                     break;
                 default:

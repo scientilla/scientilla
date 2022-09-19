@@ -56,13 +56,6 @@
     padding: 1rem 1px 0px 1px !important;
 }
 
-.ui-notification{
-    width: 220px;
-    border-radius: .25rem;
-    box-shadow: none;
-    pointer-events: none;
-}
-
 .uib-typeahead-match{
     &.active{
         background: $primary-color;

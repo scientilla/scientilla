@@ -1,0 +1,65 @@
+<scientilla-research-item-authors
+    research-item="vm.researchItem"
+    collapsed="vm.collapsed"
+    type="default"
+></scientilla-research-item-authors>
+
+<h3
+    class="training-module-title"
+    ng-bind-html='vm.researchItem | title'
+></h3>
+
+<scientilla-research-item-affiliations
+    research-item="vm.researchItem"
+    collapsed="vm.collapsed"
+></scientilla-research-item-affiliations>
+
+<hr />
+
+<div
+    ng-if="vm.researchItem.description"
+    class="description-container"
+>
+    <div class="description-title">Description/Abstract:</div>
+    <div>
+        {{ vm.researchItem.description }}
+    </div>
+</div>
+
+<div>
+    <div ng-if="vm.researchItem.referent">
+        <label class="inline-block">Referent:</label> {{vm.researchItem.referent.getDisplayName()}}
+    </div>
+    <div ng-if="vm.researchItem.institute">
+        <label class="inline-block">Institute:</label> {{vm.researchItem.institute.name}}
+    </div>
+    <div ng-if="vm.researchItem.phdCourse">
+        <label class="inline-block">PhD course:</label> {{vm.researchItem.phdCourse.name}}
+    </div>
+    <div ng-if="vm.researchItem.otherCourse">
+        <label class="inline-block">Other course:</label> <i class="fas fa-check"></i>
+    </div>
+    <div ng-if="vm.researchItem.hours">
+        <label class="inline-block">Hours:</label> {{vm.researchItem.hours}}
+    </div>
+    <div ng-if="vm.researchItem.lectures">
+        <label class="inline-block">Lectures:</label> {{vm.researchItem.lectures}}
+    </div>
+    <div ng-if="vm.researchItem.year">
+        <label class="inline-block">Year:</label> {{vm.researchItem.year}}
+    </div>
+    <div ng-if="vm.researchItem.researchDomains && vm.researchItem.researchDomains.length > 0">
+        <label class="inline-block">Research domain{{vm.researchItem.researchDomains.length > 1 ? 's' : ''}}:</label>
+        <ul class="research-domain-listing">
+            <li ng-repeat="researchDomain in vm.researchItem.researchDomains">
+                {{researchDomain}}
+            </li>
+        </ul>
+    </div>
+    <div ng-if="vm.researchItem.location">
+        <label class="inline-block">Location:</label> {{vm.researchItem.location}}
+    </div>
+    <div ng-if="vm.researchItem.delivery">
+        <label class="inline-block">Delivery:</label> {{vm.researchItem.delivery}}
+    </div>
+</div>

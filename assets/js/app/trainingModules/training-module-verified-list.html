@@ -1,10 +1,10 @@
 <scientilla-backend-layout>
-    <h1>Verified PhD trainings</h1>
+    <h1>Verified training modules</h1>
     <scientilla-filter
-        category="phd-training-verified"
+        category="training-module-verified"
         on-filter="vm.onFilter"
-        elements="vm.phdTrainings"
-        empty-list-message="No PhD trainings found"
+        elements="vm.trainingModules"
+        empty-list-message="No training modules found"
     >
         <scientilla-multicheck>
             <buttons>
@@ -18,25 +18,25 @@
             </buttons>
             <item-list>
                 <scientilla-checkable
-                    ng-repeat="p in vm.phdTrainings"
-                    item="p"
+                    ng-repeat="trainingModule in vm.trainingModules"
+                    item="trainingModule"
                     class="scientilla-checkable"
                 >
-                    <phd-training
-                        phd-training="p"
-                        section="vm.phdTrainingListSections.VERIFIED"
-                        class="phd-training-container"
-                    ></scie>
+                    <training-module
+                        training-module="trainingModule"
+                        section="vm.trainingModuleListSections.VERIFIED"
+                        class="training-module-container"
+                    ></training-module>
                     <div
-                        class="phd-training-row-actions"
+                        class="training-module-row-actions"
                         ng-if="vm.editable"
                     >
                         <button
                             class="btn btn-primary"
-                            ng-click="vm.unverify(vm.researchEntity, p)"
-                            ng-disabled="vm.isUnverifying(p)"
+                            ng-click="vm.unverify(vm.researchEntity, trainingModule)"
+                            ng-disabled="vm.isUnverifying(trainingModule)"
                             type="button"
-                            uib-tooltip="Unlink the PhD training from your profile"
+                            uib-tooltip="Unlink the training module from your profile"
                             tooltip-placement="top"
                             tooltip-class="text-left"
                         >

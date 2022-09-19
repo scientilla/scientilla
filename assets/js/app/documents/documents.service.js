@@ -326,7 +326,7 @@
                         .then(i => {
                             if (i === 1) {
                                 EventsService.publish(EventsService.DRAFT_UPDATED, draft);
-                                Notification.success("Affiliations has been updated");
+                                Notification.success("Affiliations are been updated");
                             }
                         });
                 }
@@ -337,7 +337,7 @@
                         .then(i => {
                             if (i === 1) {
                                 EventsService.publish(EventsService.DRAFT_UPDATED, draft);
-                                Notification.success("Authors has been updated");
+                                Notification.success("Authors are been updated");
                             }
                         });
                 }

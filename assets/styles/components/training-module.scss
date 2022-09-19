@@ -1,4 +1,4 @@
-.phd-training{
+.training-module{
     @include normalize-listing;
     font-size: 1.2rem;
     border-left: 2px solid $primary-color;
@@ -11,7 +11,7 @@
         border-left: 2px solid $error-color;
     }
 
-    .phd-training-info{
+    .training-module-info{
         position: relative;
 
         &.add-year-postfix{
@@ -19,12 +19,24 @@
         }
     }
 
-    .phd-training-title-container{
+    .training-module-title-container{
         @include clearfix;
         margin: 1rem 0px;
     }
 
-    .phd-training-title{
+    .training-module-labels{
+        @include normalize-listing;
+        float: left;
+        margin: 0px 0px 0px -.5rem;
+
+        & > li{
+            display: block;
+            padding: 0px .5rem;
+            float: left;
+        }
+    }
+
+    .training-module-title{
         display: block;
         margin: 0px;
         font-size: 2rem;
@@ -32,7 +44,7 @@
         vertical-align: top;
     }
 
-    .phd-training-actions{
+    .training-module-actions{
         @include normalize-listing;
         @include clearfix;
         margin: 1rem -.5rem 0px -.5rem;
@@ -45,23 +57,23 @@
         }
     }
 
-    .phd-training-verified{
+    .training-module-verified{
         display: inline-block;
         vertical-align: top;
     }
 }
 
 @include media-breakpoint-up(lg) {
-    .phd-training{
+    .training-module{
         display: grid;
         grid-template-rows: auto;
         grid-template-columns: auto 1fr;
         border-left: 0px;
 
-        .phd-training-info{
+        .training-module-info{
             border-right: 2px solid $primary-color;
 
-            .phd-training-year{
+            .training-module-year{
                 position: absolute;
                 top: -16px;
                 right: 2px;
@@ -81,7 +93,7 @@
         &.invalid{
             border-left: 0px;
 
-            .phd-training-info{
+            .training-module-info{
                 border-right: 2px solid $error-color;
             }
         }

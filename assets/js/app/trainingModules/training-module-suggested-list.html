@@ -1,57 +1,63 @@
 <scientilla-backend-layout>
-    <h1>Draft PhD trainings</h1>
+    <h1>Suggested training modules</h1>
     <scientilla-filter
-        category="phd-training-draft"
+        category="training-module-suggested"
         on-filter="vm.onFilter"
-        elements="vm.drafts"
+        elements="vm.trainingModules"
         empty-list-message="No drafts found"
     >
         <scientilla-multicheck>
             <buttons>
                 <scientilla-multicheck-button
-                    subject="Verify draft"
-                    on-click="vm.verifyDrafts"
+                    subject="Verify training modules"
+                    on-click="vm.multipleVerify"
                 >
                     <i class="fas fa-check fa-left"></i>Verify
                 </scientilla-multicheck-button>
                 <scientilla-multicheck-button
-                    subject="Delete draft"
-                    on-click="vm.deleteDrafts"
+                    subject="Discard training modules"
+                    on-click="vm.multipleCopy"
                 >
-                    <i class="far fa-trash-alt fa-left"></i>Delete
+                    <i class="fas fa-copy fa-left"></i>Copy to draft
+                </scientilla-multicheck-button>
+                <scientilla-multicheck-button
+                    subject="Discard training modules"
+                    on-click="vm.multipleDiscard"
+                >
+                    <i class="fas fa-ban fa-left"></i>Discard
                 </scientilla-multicheck-button>
             </buttons>
             <item-list>
                 <scientilla-checkable
-                    ng-repeat="d in vm.drafts"
-                    item="d"
+                    ng-repeat="trainingModule in vm.trainingModules"
+                    item="trainingModule"
                     class="scientilla-checkable"
                 >
 
-                    <phd-training
-                        phd-training="d"
-                        section="vm.phdTrainingListSections.DRAFT"
-                        class="phd-training-container"
-                    ></phd-training>
+                    <training-module
+                        training-module="trainingModule"
+                        section="vm.trainingModuleListSections.SUGGESTED"
+                        class="training-module-container"
+                    ></training-module>
 
-                    <div class="phd-training-row-actions">
+                    <div class="training-module-row-actions">
                         <div
                             class="btn-group"
                             uib-dropdown
                         >
                             <button
-                                ng-click="vm.edit(d)"
+                                ng-click="vm.verify(trainingModule)"
+                                ng-disabled="!vm.isValid(trainingModule)"
                                 type="button"
                                 class="btn btn-primary"
-                                title="Let you edit the PhD training"
+                                title="Verify the suggested training module"
                             >
-                                <i class="fas fa-edit fa-left"></i>Edit
+                                <i class="fas fa-check fa-left"></i>Verify
                             </button>
 
                             <button
                                 type="button"
-                                class="btn dropdown-toggle only-icon"
-                                ng-class="{'btn-warning': d.isComparable, 'btn-primary': !d.isComparable}"
+                                class="btn btn-primary dropdown-toggle only-icon"
                                 uib-dropdown-toggle
                             >
                             </button>
@@ -60,28 +66,19 @@
                                 uib-dropdown-menu
                                 class="dropdown-menu"
                             >
-
                                 <button
-                                    ng-click="vm.verify(d)"
-                                    ng-disabled="!vm.isValid(d)"
+                                    ng-click="vm.copy(trainingModule)"
                                     class="dropdown-item"
                                 >
-                                    <i class="fas fa-check fa-left"></i>Verify
+                                    <i class="far fa-copy fa-left"></i>Copy to draft
                                 </button>
 
                                 <button
-                                    ng-click="vm.editAffiliations(d)"
-                                    ng-disabled="!d.authors.length"
+                                    ng-click="vm.discard(trainingModule)"
+                                    ng-if="!trainingModule.isDiscarded()"
                                     class="dropdown-item"
                                 >
-                                    <i class="fas fa-university fa-left"></i>Edit affiliations
-                                </button>
-
-                                <button
-                                    ng-click="vm.deleteDraft(vm.researchEntity, d)"
-                                    class="dropdown-item"
-                                >
-                                    <i class="fas fa-trash-alt fa-left"></i>Delete
+                                    <i class="fas fa-ban fa-left"></i>Discard
                                 </button>
                             </div>
                         </div>
@@ -89,6 +86,5 @@
                 </scientilla-checkable>
             </item-list>
         </scientilla-multicheck>
-
     </scientilla-filter>
 </scientilla-backend-layout>

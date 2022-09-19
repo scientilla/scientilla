@@ -26,7 +26,7 @@ module.exports = {
             model: 'trainingmodule'
         },
         verify: {
-            model: 'trainingmoduleVerify'
+            model: 'trainingmoduleverify'
         },
         affiliations: {
             collection: 'Institute',

@@ -1,17 +1,17 @@
 (function () {
     'use strict';
 
-    angular.module('accomplishments')
-            .component('scientillaAccomplishmentLabel', {
-                templateUrl: 'partials/scientilla-accomplishment-label.html',
-                controller: scientillaAccomplishmentLabel,
+    angular.module('components')
+            .component('badge', {
+                templateUrl: 'partials/badge.html',
+                controller: controller,
                 controllerAs: 'vm',
                 bindings: {
                     label: "<"
                 }
             });
 
-    function scientillaAccomplishmentLabel() {
+    function controller() {
         var vm = this;
 
         vm.badges = [];

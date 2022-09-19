@@ -129,6 +129,8 @@
         Restangular.extendModel('projects', Prototyper.toProjectModel);
         Restangular.extendModel('projectDrafts', Prototyper.toProjectModel);
         Restangular.extendModel('patents', Prototyper.toPatentModel);
+        Restangular.extendModel('trainingModules', Prototyper.toTrainingModuleModel);
+        Restangular.extendModel('trainingModuleDrafts', Prototyper.toTrainingModuleModel);
         //Restangular.extendModel('agreements', Prototyper.toAgreementModel);
         Restangular.extendCollection('documents', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('externalDocuments', Prototyper.toDocumentsCollection);
@@ -138,7 +140,14 @@
         Restangular.extendCollection('projects', Prototyper.toProjectsCollection);
         Restangular.extendCollection('favoriteProjects', Prototyper.toProjectsCollection);
         Restangular.extendCollection('accomplishments', Prototyper.toAccomplishmentsCollection);
+        Restangular.extendCollection('suggestedAccomplishments', Prototyper.toAccomplishmentsCollection);
+        Restangular.extendCollection('discardedAccomplishments', Prototyper.toAccomplishmentsCollection);
         Restangular.extendCollection('favoriteAccomplishments', Prototyper.toAccomplishmentsCollection);
+        Restangular.extendCollection('accomplishmentDrafts', Prototyper.toAccomplishmentsCollection);
+        Restangular.extendCollection('trainingModules', Prototyper.toTrainingModulesCollection);
+        Restangular.extendCollection('trainingModuleDrafts', Prototyper.toTrainingModulesCollection);
+        Restangular.extendCollection('suggestedTrainingModules', Prototyper.toTrainingModulesCollection);
+        Restangular.extendCollection('discardedTrainingModules', Prototyper.toTrainingModulesCollection);
         //Restangular.extendCollection('agreements', Prototyper.toAgreementsCollection);
         //Restangular.extendCollection('favoriteAgreements', Prototyper.toAgreementsCollection);
         Restangular.extendCollection('patents', Prototyper.toPatentsCollection);

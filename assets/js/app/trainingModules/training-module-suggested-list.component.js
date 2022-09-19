@@ -2,9 +2,9 @@
 (function () {
     'use strict';
 
-    angular.module('phdTrainings')
-        .component('phdTrainingSuggestedList', {
-            templateUrl: 'partials/phd-training-suggested-list.html',
+    angular.module('trainingModules')
+        .component('trainingModuleSuggestedList', {
+            templateUrl: 'partials/training-module-suggested-list.html',
             controller,
             controllerAs: 'vm',
             bindings: {
@@ -13,25 +13,25 @@
 
     controller.$inject = [
         'context',
-        'PhdTrainingService',
-        'phdTrainingListSections',
+        'trainingModuleService',
+        'trainingModuleListSections',
         'EventsService',
         'ModalService'
     ];
 
-    function controller(context, PhdTrainingService, phdTrainingListSections, EventsService, ModalService) {
+    function controller(context, trainingModuleService, trainingModuleListSections, EventsService, ModalService) {
         const vm = this;
 
         vm.onFilter = onFilter;
-        vm.isValid = PhdTrainingService.isValid;
+        vm.isValid = trainingModuleService.isValid;
 
-        vm.verify = (phdTraining) => PhdTrainingService.verify(vm.researchEntity, phdTraining);
-        vm.discard = (phdTraining) => PhdTrainingService.discard(vm.researchEntity, phdTraining);
-        vm.copy = (phdTraining) => PhdTrainingService.copy(vm.researchEntity, phdTraining);
-        vm.multipleVerify = (phdTrainings) => PhdTrainingService.multipleVerify(vm.researchEntity, phdTrainings);
-        vm.multipleDiscard = (phdTrainings) => PhdTrainingService.multipleDiscard(vm.researchEntity, phdTrainings);
-        vm.multipleCopy = (phdTrainings) => PhdTrainingService.multipleCopy(vm.researchEntity, phdTrainings);
-        vm.phdTrainingListSections = phdTrainingListSections;
+        vm.verify = (trainingModule) => trainingModuleService.verify(vm.researchEntity, trainingModule);
+        vm.discard = (trainingModule) => trainingModuleService.discard(vm.researchEntity, trainingModule);
+        vm.copy = (trainingModule) => trainingModuleService.copy(vm.researchEntity, trainingModule);
+        vm.multipleVerify = (trainingModules) => trainingModuleService.multipleVerify(vm.researchEntity, trainingModules);
+        vm.multipleDiscard = (trainingModules) => trainingModuleService.multipleDiscard(vm.researchEntity, trainingModules);
+        vm.multipleCopy = (trainingModules) => trainingModuleService.multipleCopy(vm.researchEntity, trainingModules);
+        vm.trainingModuleListSections = trainingModuleListSections;
 
         let query = {};
 
@@ -74,9 +74,9 @@
             const cq = _.cloneDeep(q);
             delete cq.where.discarded;
             if (isDiscarded)
-                vm.phdTrainings = await PhdTrainingService.getDiscarded(vm.researchEntity, cq);
+                vm.trainingModules = await trainingModuleService.getDiscarded(vm.researchEntity, cq);
             else
-                vm.phdTrainings = await PhdTrainingService.getSuggested(vm.researchEntity, cq);
+                vm.trainingModules = await trainingModuleService.getSuggested(vm.researchEntity, cq);
 
         }
 

@@ -10,7 +10,8 @@
         'DocumentKinds',
         'documentFieldsRules',
         'documentOrigins',
-        'ValidateService'
+        'ValidateService',
+        'researchItemLabels'
     ];
 
     function Prototyper(
@@ -19,7 +20,8 @@
         DocumentKinds,
         documentFieldsRules,
         documentOrigins,
-        ValidateService
+        ValidateService,
+        researchItemLabels
     ) {
         const service = {
             toUserModel: toUserModel,
@@ -47,7 +49,9 @@
             toAgreementModel: toAgreementModel,
             toAgreementsCollection: applyToAll(toAgreementModel),
             toAgreementGroupModel: toAgreementGroupModel,
-            toAgreementGroupsCollection: applyToAll(toAgreementGroupModel)
+            toAgreementGroupsCollection: applyToAll(toAgreementGroupModel),
+            toTrainingModuleModel: toTrainingModuleModel,
+            toTrainingModulesCollection: applyToAll(toTrainingModuleModel)
         };
         const userPrototype = {
             getAliases: function () {
@@ -534,6 +538,36 @@
 
         const agreementGroupPrototype = {};
 
+        const accomplishmentPrototype = {
+            labels: [],
+            getAuthorLimit: function () {
+                return 10;
+            },
+            hasLabel: function (label) {
+                return this.labels.includes(label);
+            },
+            isDiscarded: function () {
+                return this.hasLabel(researchItemLabels.DISCARDED);
+            },
+        };
+
+        const trainingModulePrototype = {
+            labels: [],
+            getAuthorLimit: function () {
+                return 10;
+            },
+            hasLabel: function (label) {
+                return this.labels.includes(label);
+            },
+            isDiscarded: function () {
+                return this.hasLabel(researchItemLabels.DISCARDED);
+            },
+        };
+
+        const referentPrototype = {
+            getDisplayName: userPrototype.getDisplayName
+        };
+
         function initializeAffiliations(document) {
             _.forEach(document.authorships, a => {
                 if (a.affiliations)
@@ -584,6 +618,7 @@
         }
 
         function toAccomplishmentModel(accomplishment) {
+            _.defaultsDeep(accomplishment, accomplishmentPrototype);
             service.toUsersCollection(accomplishment.verifiedUsers);
             service.toGroupsCollection(accomplishment.verifiedGroups);
             return accomplishment;
@@ -615,6 +650,15 @@
             _.defaultsDeep(group, agreementGroupPrototype);
             service.toUsersCollection(group.administrators);
             return group;
+        }
+
+        function toTrainingModuleModel(trainingModule) {
+            initializeAffiliations(trainingModule);
+            _.defaultsDeep(trainingModule, trainingModulePrototype);
+            trainingModule.referent = _.defaultsDeep(trainingModule.referent, referentPrototype);
+            service.toUsersCollection(trainingModule.verifiedUsers);
+            service.toGroupsCollection(trainingModule.verifiedGroups);
+            return trainingModule;
         }
 
         function checkDuplicates(document) {

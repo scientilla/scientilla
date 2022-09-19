@@ -55,16 +55,16 @@
         service.getMinMaxYears = getMinMaxYears;
         service.getPatents = getPatents;
         service.getPatentFamilies = getPatentFamilies;
-        service.getPhdTraining = getPhdTraining;
-        service.getPhdTrainings = getPhdTrainings;
-        service.getSuggestedPhdTrainings = getSuggestedPhdTrainings;
-        service.getDiscardedPhdTrainings = getDiscardedPhdTrainings;
-        service.getPhdTrainingDrafts = getPhdTrainingDrafts;
+        service.getTrainingModule = getTrainingModule;
+        service.getTrainingModules = getTrainingModules;
+        service.getSuggestedTrainingModules = getSuggestedTrainingModules;
+        service.getDiscardedTrainingModules = getDiscardedTrainingModules;
+        service.getTrainingModuleDrafts = getTrainingModuleDrafts;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
         const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
         const patentPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
-        const phdTrainingPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
+        const trainingModulePopulates = ['type', 'authors', 'affiliations', 'institutes', 'referent', 'institute', 'phdCourse', 'verified', 'verifiedUsers', 'verifiedGroups'];
 
         /* jshint ignore:start */
 
@@ -224,19 +224,32 @@
         }
 
         async function discard(researchEntity, researchItem) {
+            const option = await ModalService.multipleChoiceConfirm(
+                'Discard',
+                'This action will discard this document from the suggested documents. Do you want to proceed?',
+                {proceed: 'Proceed'},
+                'Cancel',
+                true
+            );
             try {
-                const res = await researchEntity.one('researchitems', researchItem.id)
-                    .customPUT({}, 'discarded');
-
-                if (!res.success)
-                    return Notification.warning(res.message);
-
-                EventsService.publish(EventsService.RESEARCH_ITEM_DISCARDED, res);
-
+                switch(option) {
+                    case 'cancel':
+                        const notificationMsg = 'The operation is been canceled.';
+                        Notification.warning(notificationMsg);
+                        break;
+                    case 'proceed':
+                        const res =  await researchEntity.one('researchitems', researchItem.id).customPUT({}, 'discarded');
+                        if (!res.success) {
+                            return Notification.warning(res.message);
+                        }
+                        Notification.success('Item is been discarded!');
+                        EventsService.publish(EventsService.RESEARCH_ITEM_DISCARDED, res);
+                        break;
+                }
             } catch (error) {
-                if (error.data)
+                if (error.data) {
                     Notification.warning(error.data.message);
-                console.error(error);
+                }
             }
         }
 
@@ -244,6 +257,7 @@
             try {
                 const itemIds = researchItems.map(ri => ri.id);
                 const res = await researchEntity.all('researchitems').customPUT({itemIds}, 'discarded');
+                Notification.success(researchItems.length > 1 ? 'Items are been discarded!' : 'Item is been discarded!');
                 EventsService.publish(EventsService.RESEARCH_ITEM_DISCARDED, res);
             } catch (error) {
                 if (error.data)
@@ -303,7 +317,14 @@
         }
 
         async function editAffiliations(researchEntity, researchItem) {
-            return ModalService.openScientillaResearchItemAffiliationForm(researchEntity, researchItem);
+            return ModalService
+                .openScientillaResearchItemAffiliationForm(researchEntity, researchItem)
+                .then(i => {
+                    if (i === 1) {
+                        EventsService.publish(EventsService.DRAFT_UPDATED, researchItem);
+                        Notification.success("Affiliations are been updated");
+                    }
+                });
         }
 
         async function verifyResearchItem(researchEntity, researchItem, verificationData, notifications) {
@@ -410,7 +431,7 @@
 
         async function getProjectDrafts(researchEntity, query, populates = projectPopulates) {
             await setProjectType(query);
-            return getResearchItemDrafts(researchEntity, 'projectDrafts', query, populates);
+            return await getResearchItemDrafts(researchEntity, 'projectDrafts', query, populates);
         }
 
         async function setProjectType(query) {
@@ -440,23 +461,23 @@
             return await researchEntity.getList('patentFamilies', query);
         }
 
-        async function getPhdTraining(id, populates = phdTrainingPopulates) {
+        async function getTrainingModule(id, populates = trainingModulePopulates) {
             return await Restangular.one('trainingModules', id).get({populate: populates});
         }
 
-        async function getPhdTrainings(researchEntity, query, populates = phdTrainingPopulates) {
+        async function getTrainingModules(researchEntity, query, populates = trainingModulePopulates) {
             const populate = {populate: populates};
             const q = _.merge({}, query, populate);
-            return researchEntity.getList('trainingModules', q);
+            return await researchEntity.getList('trainingModules', q);
         }
 
-        async function getSuggestedPhdTrainings(researchEntity, query, populates = phdTrainingPopulates) {
+        async function getSuggestedTrainingModules(researchEntity, query, populates = trainingModulePopulates) {
             const populate = {populate: populates};
             const q = _.defaultsDeep({}, query, populate);
             return await researchEntity.getList('suggestedTrainingModules', q);
         }
 
-        async function getDiscardedPhdTrainings(researchEntity, query, populates = phdTrainingPopulates) {
+        async function getDiscardedTrainingModules(researchEntity, query, populates = trainingModulePopulates) {
             const populate = {populate: populates};
             const q = _.defaultsDeep({}, query, populate);
             const discarded = await researchEntity.getList('discardedTrainingModules', q);
@@ -464,8 +485,8 @@
             return discarded
         }
 
-        async function getPhdTrainingDrafts(researchEntity, query, populates = phdTrainingPopulates) {
-            return getResearchItemDrafts(researchEntity, 'trainingModuleDrafts', query, populates);
+        async function getTrainingModuleDrafts(researchEntity, query, populates = trainingModulePopulates) {
+            return await getResearchItemDrafts(researchEntity, 'trainingModuleDrafts', query, populates);
         }
 
         /* jshint ignore:end */

@@ -1,9 +1,9 @@
 (function () {
         'use strict';
 
-        angular.module('phdTrainings')
-            .component('scientillaPhdTrainingDetails', {
-                templateUrl: 'partials/scientilla-phd-training-details.html',
+        angular.module('trainingModules')
+            .component('scientillaTrainingModuleDetails', {
+                templateUrl: 'partials/scientilla-training-module-details.html',
                 controller,
                 controllerAs: 'vm',
                 bindings: {
@@ -17,9 +17,9 @@
         function controller() {
             const vm = this;
 
-            vm.$onInit = function () {
+            vm.collapsed = true;
 
-            };
+            vm.$onInit = function () {};
         }
     }
 )();

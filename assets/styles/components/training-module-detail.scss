@@ -1,0 +1,30 @@
+.training-module-details{
+    .description-container{
+        margin-bottom: 2rem;
+    }
+
+    .description-title{
+        font-weight: bold;
+    }
+
+    .research-domain-listing{
+        @include normalize-listing;
+        display: inline-block;
+
+        & > li{
+            display: inline-block;
+
+            &:after {
+                margin-left: -.3rem;
+                margin-right: .4rem;
+                content: ',';
+            }
+
+            &:last-child{
+                &:after{
+                    display: none;
+                }
+            }
+        }
+    }
+}

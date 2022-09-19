@@ -9,7 +9,7 @@ module.exports = {
         institute: {
             model: 'Institute'
         },
-        accomplishment: {
+        trainingModule: {
             columnName: 'research_item',
             model: 'trainingmodule'
         }

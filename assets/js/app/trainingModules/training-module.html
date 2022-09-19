@@ -1,0 +1,48 @@
+<ul
+    class="training-module"
+    ng-class="{invalid: !vm.isValid(vm.trainingModule)}"
+>
+    <li class="training-module-info">
+        <span class="training-module-year">
+            {{ vm.trainingModule.year }}
+        </span>
+    </li>
+
+    <li>
+        <div>
+            <scientilla-research-item-type research-item-type="vm.trainingModule.type"></scientilla-research-item-type>
+            <scientilla-research-item-authors
+                research-item="vm.trainingModule"
+                collapsed="vm.collapsed"
+                type="preview"
+            ></scientilla-research-item-authors>
+        </div>
+
+        <div class="training-module-title-container">
+            <ul
+                ng-if="vm.trainingModule.labels"
+                class="training-module-labels"
+            >
+                <li ng-repeat="label in vm.trainingModule.labels">
+                    <badge label="label"></badge>
+                </li>
+            </ul>
+            <h2
+                class="training-module-title has-action"
+                ng-click="vm.openDetails()"
+                ng-bind-html='vm.trainingModule | title'
+            ></h2>
+        </div>
+
+        <ul class="training-module-actions">
+            <li
+                ng-if="vm.trainingModule.verified.length"
+                class="training-module-verified"
+                uib-tooltip-html="vm.getVerifiedNamesHTML()"
+                tooltip-class="text-left"
+            >
+                <i class="fas fa-check"></i> {{vm.trainingModule.verified.length}}
+            </li>
+        </ul>
+    </li>
+</ul>

@@ -26,6 +26,37 @@ function formatValue(value) {
     return new Intl.NumberFormat('en-US', {minimumFractionDigits: 2}).format(value);
 }
 
+function getDisplayName(user) {
+    let name = '',
+        surname = '';
+
+    switch (true) {
+        case _.has(user, 'displayName') && !_.isEmpty(user.displayName):
+            name = user.displayName;
+            break;
+        case _.has(user, 'name') && !_.isEmpty(user.name):
+            name = user.name;
+            break;
+        default:
+            name = '';
+            break;
+    }
+
+    switch (true) {
+        case _.has(user, 'displaySurname') && !_.isEmpty(user.displaySurname):
+            surname = user.displaySurname;
+            break;
+        case _.has(user, 'surname') && !_.isEmpty(user.surname):
+            surname = user.surname;
+            break;
+        default:
+            surname = '';
+            break;
+    }
+
+    return _.trim(name + ' ' + surname);
+}
+
 function bibtexInit() {
     if (!_.isEmpty(bibtexDocumentTypes))
         return;
@@ -129,6 +160,14 @@ function trainingModulesToCsv(researchItems) {
         'Teachers',
         'Year',
         'Description/Abstract',
+        'Referent',
+        'Institute',
+        'PhD course',
+        'Hours',
+        'Lectures',
+        'Research domains',
+        'Location',
+        'Delivery'
     ]].concat(researchItems.map(ri => {
         const researchItem = ri.toJSON();
         const row = [];
@@ -136,6 +175,14 @@ function trainingModulesToCsv(researchItems) {
         row.push(researchItem.authorsStr);
         row.push(researchItem.year);
         row.push(researchItem.description);
+        row.push(getDisplayName(researchItem.referent));
+        row.push(researchItem.institute.name);
+        row.push(researchItem.phdCourse.name);
+        row.push(researchItem.hours);
+        row.push(researchItem.lectures);
+        row.push(researchItem.researchDomains.join(','));
+        row.push(researchItem.location);
+        row.push(researchItem.delivery);
 
         return row;
     }));
