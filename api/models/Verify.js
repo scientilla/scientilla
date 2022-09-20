@@ -1,4 +1,4 @@
-/* global require, Verify, ResearchEntity, ResearchItem, ResearchItemKinds, ResearchItemType, Author, Discarded */
+/* global require, sails, Verify, ResearchEntity, ResearchItem, ResearchItemKinds, ResearchItemType, Author, Discarded */
 'use strict';
 
 
@@ -36,10 +36,15 @@ module.exports = _.merge({}, BaseModel, {
 
         researchItem = await ResearchItem.findOne({id: researchItemId});
         if (!researchItem)
-            throw {researchItem: researchItemId, success: false, message: 'Item not found', errors: researchItem.validationErrors};
+            throw {researchItem: researchItemId, success: false, message: 'Item not found'};
 
         if (!(await researchItem.isVerificable()))
-            throw {researchItem: researchItem, success: false, message: 'Item not valid'};
+            throw {
+                researchItem: researchItem,
+                success: false,
+                message: 'Item not valid',
+                error: researchItem.getValidationErrors()
+            };
 
         if (researchItem.kind === ResearchItemKinds.EXTERNAL) {
             const res = await ResearchItem.copyToDraft(researchItemId, researchEntityId);
