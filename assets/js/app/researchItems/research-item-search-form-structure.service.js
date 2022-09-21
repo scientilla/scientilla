@@ -316,7 +316,7 @@
             },
             year: {
                 inputType: 'text',
-                label: 'Year',
+                label: 'Academic year (YYYY format)',
                 matchColumn: 'year',
                 matchRule: 'contains',
                 type: 'field',

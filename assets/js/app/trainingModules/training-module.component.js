@@ -30,6 +30,7 @@
         vm.isValid = trainingModuleService.isValid;
         vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
         vm.openDetails = openDetails;
+        vm.getNextYear = trainingModuleService.getNextYear;
 
         let researchEntity;
         vm.collapsed = true;
