@@ -46,7 +46,7 @@
         <label class="inline-block">Lectures:</label> {{vm.researchItem.lectures}}
     </div>
     <div ng-if="vm.researchItem.year">
-        <label class="inline-block">Year:</label> {{vm.researchItem.year}}
+        <label class="inline-block">Academic year:</label> {{vm.researchItem.year}}/{{vm.getNextYear(vm.researchItem.year)}}
     </div>
     <div ng-if="vm.researchItem.researchDomains && vm.researchItem.researchDomains.length > 0">
         <label class="inline-block">Research domain{{vm.researchItem.researchDomains.length > 1 ? 's' : ''}}:</label>

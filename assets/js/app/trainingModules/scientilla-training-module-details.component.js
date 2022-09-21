@@ -12,12 +12,14 @@
             });
 
         controller.$inject = [
+            'trainingModuleService'
         ];
 
-        function controller() {
+        function controller(trainingModuleService) {
             const vm = this;
 
             vm.collapsed = true;
+            vm.getNextYear = trainingModuleService.getNextYear;
 
             vm.$onInit = function () {};
         }
