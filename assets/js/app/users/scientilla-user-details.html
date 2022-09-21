@@ -68,18 +68,28 @@
             </uib-tab>
             <uib-tab
                 index="6"
+                heading="Training modules"
+                ng-if="vm.user.isScientific()">
+                <training-modules-list
+                    ng-if="vm.researchEntity"
+                    research-entity="vm.researchEntity"
+                    section="vm.trainingModuleListSections.USER"
+                    active="vm.activeTabIndex === 6"></training-modules-list>
+            </uib-tab>
+            <uib-tab
+                index="7"
                 heading="Documents Overview"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.user.isScientific()">
                 <summary-overview research-entity="vm.user"></summary-overview>
             </uib-tab>
             <uib-tab
-                index="7"
+                index="8"
                 heading="Bibliometric Charts"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.user.isScientific()">
                 <summary-metrics research-entity="vm.user"></summary-metrics>
             </uib-tab>
             <uib-tab
-                index="8"
+                index="9"
                 heading="Projects and Technology Transfer"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.user.isScientific()"
             >

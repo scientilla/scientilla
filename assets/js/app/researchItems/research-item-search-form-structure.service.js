@@ -512,6 +512,7 @@
             'training-module-suggested': trainingModuleFormStructure,
             'training-module-verified': trainingModuleFormStructure,
             'training-module-draft': trainingModuleFormStructure,
+            'training-module': trainingModuleFormStructure,
         };
 
         return service;
@@ -831,6 +832,9 @@
 
                     structure.nationality.values = nationalities;
                     break;
+                case constant === 'training-module':
+                    structure = formStructures[constant];
+                    break;
                 case constant === 'training-module-suggested':
                     structure = Object.assign({},
                         formStructures[constant],
@@ -850,6 +854,9 @@
                     structure = formStructures[constant];
                     break;
                 case constant === 'training-module-draft':
+                    structure = formStructures[constant];
+                    break;
+                case constant === 'training-module-group':
                     structure = formStructures[constant];
                     break;
                 default:
