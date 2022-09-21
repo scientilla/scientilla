@@ -309,14 +309,15 @@
             },
             authorStr: {
                 inputType: 'text',
-                label: 'Teachers',
+                label: 'Lecture(s)',
                 matchColumn: 'authorsStr',
                 matchRule: 'contains',
                 type: 'field',
             },
             year: {
                 inputType: 'text',
-                label: 'Academic year (YYYY format)',
+                label: 'Academic year',
+                subLabel: '(start year with format YYYY)',
                 matchColumn: 'year',
                 matchRule: 'contains',
                 type: 'field',
