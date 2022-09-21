@@ -30,7 +30,7 @@
                 type="text"
                 name="authors"
                 class="form-control"
-                placeholder="Teachers"
+                placeholder="Lecture(s)"
                 ng-model="vm.trainingModule.authorsStr"
                 ng-pattern="vm.fieldsRules.authorsStr.regex"
                 data-ng-required="true"
@@ -43,6 +43,7 @@
                 class="error-messages"
                 errors="vm.errors.authorsStr"
             ></scientilla-error-messages>
+            <em>IIT lecturers will see this info among their suggested modules.</em>
         </div>
 
         <div
@@ -76,7 +77,6 @@
                 class="error-messages"
                 errors="vm.errors.referent"
             ></scientilla-error-messages>
-            <em>IIT lecturers will see this info among their suggested modules.</em>
         </div>
 
         <div

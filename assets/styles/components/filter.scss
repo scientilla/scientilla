@@ -54,6 +54,7 @@
         vertical-align: top;
         font-size: 1rem;
         line-height: 1.8rem;
+        font-weight: normal;
     }
 
     .filter-action-listing{
@@ -343,7 +344,7 @@
             &.training-module-verified,
             &.training-module-suggested{
                 &.fields-3{
-                    grid-template-columns: 1fr 1fr 20rem;
+                    grid-template-columns: 1fr 1fr 30rem;
                 }
             }
         }
