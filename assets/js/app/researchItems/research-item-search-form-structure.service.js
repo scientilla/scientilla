@@ -309,7 +309,7 @@
             },
             authorStr: {
                 inputType: 'text',
-                label: 'Lecture(s)',
+                label: 'Lecturer(s)',
                 matchColumn: 'authorsStr',
                 matchRule: 'contains',
                 type: 'field',
