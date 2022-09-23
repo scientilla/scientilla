@@ -16,6 +16,7 @@
         'UsersService',
         'documentListSections',
         'accomplishmentListSections',
+        'trainingModuleListSections',
         'AuthService',
         '$scope',
         '$controller',
@@ -27,6 +28,7 @@
         UsersService,
         documentListSections,
         accomplishmentListSections,
+        trainingModuleListSections,
         AuthService,
         $scope,
         $controller,
@@ -37,6 +39,7 @@
 
         vm.documentListSections = documentListSections;
         vm.accomplishmentListSections = accomplishmentListSections;
+        vm.trainingModuleListSections = trainingModuleListSections;
         vm.loggedUser = AuthService.user;
 
         vm.activeTabIndex = 0;
@@ -64,14 +67,17 @@
                 slug: 'patents'
             }, {
                 index: 6,
+                slug: 'training-modules'
+            }, {
+                index: 7,
                 slug: 'documents-overview',
                 tabName: 'summary-overview'
             }, {
-                index: 7,
+                index: 8,
                 slug: 'bibliometric-charts',
                 tabName: 'summary-metrics'
             }, {
-                index: 8,
+                index: 9,
                 slug: 'projects-technology-transfer',
                 tabName: 'summary-projects-technology-transfer'
             }

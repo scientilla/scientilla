@@ -56,7 +56,8 @@
             filterFields,
             validate,
             verify,
-            isValid
+            isValid,
+            getNextYear
         };
 
         function exportDownload(trainingModules, format = 'csv') {
@@ -117,6 +118,14 @@
 
         function isValid(trainingModule) {
             return _.isEmpty(validate(trainingModule));
+        }
+
+        function getNextYear(year) {
+            const momentYear = moment(parseInt(year), 'YYYY');
+            if (momentYear.isValid()) {
+                return momentYear.add(1, 'y').format('YY');
+            }
+            return 'xx';
         }
     }
 })();

@@ -23,14 +23,14 @@
             class="form-group has-feedback"
         >
             <label for="authorsStr">
-                Teachers (must be in the form "Doe J., Smith Simpson J. V.") *
+                Lecturer(s) (must be in the form "Doe J., Smith Simpson J. V.") *
             </label>
             <input
                 id="authorsStr"
                 type="text"
                 name="authors"
                 class="form-control"
-                placeholder="Teachers"
+                placeholder="Lecturer(s)"
                 ng-model="vm.trainingModule.authorsStr"
                 ng-pattern="vm.fieldsRules.authorsStr.regex"
                 data-ng-required="true"
@@ -43,6 +43,7 @@
                 class="error-messages"
                 errors="vm.errors.authorsStr"
             ></scientilla-error-messages>
+            <em>IIT lecturers will see this info among their suggested modules.</em>
         </div>
 
         <div
@@ -52,12 +53,12 @@
                 'has-warning' : vm.errors.referent && vm.mode == 'draft'
             }"
         >
-            <label for="referent">Referent *</label>
+            <label for="referent">IIT contact person *</label>
             <input
                 type="text"
                 id="referent"
                 name="referent"
-                placeholder="Referent"
+                placeholder="Start typing to search"
                 class="form-control"
                 uib-typeahead="user as user.getDisplayName() for user in vm.getUsers($viewValue)"
                 typeahead-loading="searching"
@@ -210,13 +211,13 @@
                         'has-warning' : vm.errors.hours && vm.mode == 'draft'
                     }"
                 >
-                    <label for="hours">Number of hours *</label>
+                    <label for="hours">Total duration (hours) *</label>
                     <input
                         type="number"
                         id="hours"
                         name="hours"
                         min="0"
-                        placeholder="Number of hours"
+                        placeholder="Total duration (hours)"
                         class="form-control"
                         ng-model="vm.trainingModule.hours"
                         ng-class="{'is-invalid' : vm.errors.hours}"
@@ -267,20 +268,26 @@
                     class="form-group has-feedback"
                 >
                     <label for="year">Academic year (YYYY format) *</label>
-                    <input
-                        id="year"
-                        type="text"
-                        name="year"
-                        class="form-control"
-                        placeholder="Year"
-                        ng-model="vm.trainingModule.year"
-                        data-ng-required="true"
-                        ng-pattern="/^(19|20)\d{2}$/"
-                        ng-model-options="{ allowInvalid: true }"
-                        ng-class="{'is-invalid' : vm.errors.year}"
-                        ng-blur="vm.checkValidation('year')"
-                        ng-change="vm.fieldValueHasChanged('year')"
-                    >
+                    <div class="input-group">
+                        <input
+                            id="year"
+                            type="number"
+                            min="0"
+                            name="year"
+                            class="form-control"
+                            placeholder="Year"
+                            ng-model="vm.trainingModule.year"
+                            data-ng-required="true"
+                            ng-pattern="/^(19|20)\d{2}$/"
+                            ng-model-options="{ allowInvalid: true }"
+                            ng-class="{'is-invalid' : vm.errors.year}"
+                            ng-blur="vm.checkValidation('year')"
+                            ng-change="vm.fieldValueHasChanged('year')"
+                        >
+                        <div class="input-group-append">
+                            <span class="input-group-text">/{{ vm.getNextYear(vm.trainingModule.year) }}</span>
+                        </div>
+                    </div>
                     <scientilla-error-messages
                         class="error-messages"
                         errors="vm.errors.year"
@@ -314,6 +321,34 @@
             <scientilla-error-messages
                 class="error-messages"
                 errors="vm.errors.researchDomains"
+            ></scientilla-error-messages>
+        </div>
+
+        <div
+            class="form-group"
+            ng-class="{
+                'has-error' : vm.errors.delivery && vm.mode == 'verify',
+                'has-warning' : vm.errors.delivery && vm.mode == 'draft'
+            }"
+        >
+            <label>Delivery *</label>
+            <ul class="delivery-listing">
+                <li>
+                    <label class="form-checkbox inline-block">
+                        <input type="checkbox" ng-model="vm.deliveryOnLine" />
+                        <span></span>Online
+                    </label>
+                </li>
+                <li>
+                    <label class="form-checkbox inline-block">
+                        <input type="checkbox" ng-model="vm.deliveryInPresence" />
+                        <span></span>In presence
+                    </label>
+                </li>
+            </ul>
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.delivery"
             ></scientilla-error-messages>
         </div>
 
@@ -382,34 +417,6 @@
                 </div>
             </li>
         </ul>
-
-        <div
-            class="form-group"
-            ng-class="{
-                'has-error' : vm.errors.delivery && vm.mode == 'verify',
-                'has-warning' : vm.errors.delivery && vm.mode == 'draft'
-            }"
-        >
-            <label>Delivery *</label>
-            <ul class="delivery-listing">
-                <li>
-                    <label class="form-checkbox inline-block">
-                        <input type="checkbox" ng-model="vm.deliveryOnLine" />
-                        <span></span>Online
-                    </label>
-                </li>
-                <li>
-                    <label class="form-checkbox inline-block">
-                        <input type="checkbox" ng-model="vm.deliveryInPresence" />
-                        <span></span>In presence
-                    </label>
-                </li>
-            </ul>
-            <scientilla-error-messages
-                class="error-messages"
-                errors="vm.errors.delivery"
-            ></scientilla-error-messages>
-        </div>
 
         <ul class="modal-buttons">
             <li>

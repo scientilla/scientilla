@@ -309,14 +309,15 @@
             },
             authorStr: {
                 inputType: 'text',
-                label: 'Teachers',
+                label: 'Lecturer(s)',
                 matchColumn: 'authorsStr',
                 matchRule: 'contains',
                 type: 'field',
             },
             year: {
                 inputType: 'text',
-                label: 'Year',
+                label: 'Academic year',
+                subLabel: '(start year with format YYYY)',
                 matchColumn: 'year',
                 matchRule: 'contains',
                 type: 'field',
@@ -511,6 +512,7 @@
             'training-module-suggested': trainingModuleFormStructure,
             'training-module-verified': trainingModuleFormStructure,
             'training-module-draft': trainingModuleFormStructure,
+            'training-module': trainingModuleFormStructure,
         };
 
         return service;
@@ -830,6 +832,9 @@
 
                     structure.nationality.values = nationalities;
                     break;
+                case constant === 'training-module':
+                    structure = formStructures[constant];
+                    break;
                 case constant === 'training-module-suggested':
                     structure = Object.assign({},
                         formStructures[constant],
@@ -849,6 +854,9 @@
                     structure = formStructures[constant];
                     break;
                 case constant === 'training-module-draft':
+                    structure = formStructures[constant];
+                    break;
+                case constant === 'training-module-group':
                     structure = formStructures[constant];
                     break;
                 default:

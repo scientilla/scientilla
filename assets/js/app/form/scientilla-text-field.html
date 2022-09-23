@@ -1,6 +1,11 @@
 <label>
     <span ng-bind-html="vm.structure.label"></span>
     <span ng-if="vm.structure.required">*</span>
+    <span
+        class="sub-label"
+        ng-if="vm.structure.subLabel"
+        ng-bind-html="vm.structure.subLabel"
+    ></span>
 </label>
 <input
     type="text"

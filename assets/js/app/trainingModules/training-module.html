@@ -3,8 +3,11 @@
     ng-class="{invalid: !vm.isValid(vm.trainingModule)}"
 >
     <li class="training-module-info">
-        <span class="training-module-year">
-            {{ vm.trainingModule.year }}
+        <span
+            ng-if="vm.trainingModule.year"
+            class="training-module-year"
+        >
+            {{ vm.trainingModule.year }}/{{vm.getNextYear(vm.trainingModule.year)}}
         </span>
     </li>
 

@@ -27,7 +27,8 @@
         'GroupsService',
         'UsersService',
         'groupTypes',
-        'PhdThesisService'
+        'PhdThesisService',
+        'userConstants'
     ];
 
     function controller(
@@ -42,7 +43,8 @@
         GroupsService,
         UsersService,
         groupTypes,
-        PhdThesisService
+        PhdThesisService,
+        userConstants
     ) {
         const vm = this;
 
@@ -61,9 +63,11 @@
         vm.getCourses = getCourses;
         vm.getUsers = getUsers;
         vm.trainingModule.type = trainingModuleType;
+        vm.getNextYear = trainingModuleService.getNextYear;
         vm.researchDomains = [];
         vm.trainingModuleResearchDomains = [];
         vm.softSkillsCheckbox = false;
+        vm.deliveryIsBeenSet = false;
         const otherOption = 'Other';
 
         let fieldTimeout;
@@ -73,6 +77,10 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
+            vm.trainingModule = _.cloneDeep(vm.trainingModule);
+            if (!_.isNil(vm.trainingModule.year)) {
+                vm.trainingModule.year = parseInt(vm.trainingModule.year);
+            }
             vm.researchEntity = await context.getResearchEntity();
             vm.researchDomains = await GroupsService.getGroups({type: groupTypes.RESEARCH_DOMAIN, active: true});
             vm.centers = await GroupsService.getGroups({type: groupTypes.CENTER, active: true});
@@ -80,7 +88,6 @@
             vm.centers = _.orderBy(vm.centers, 'name');
             vm.otherOption = otherOption;
             vm.institutes = await PhdThesisService.getInstitutes();
-            vm.trainingModule = _.cloneDeep(vm.trainingModule);
 
             if (_.has(vm.trainingModule.institute, 'id')) {
                 vm.trainingModule.institute = vm.trainingModule.institute.id;
@@ -189,32 +196,45 @@
             return processSave(true);
         }
 
-        function getUsers(searchText) {
+        /* jshint ignore:start */
+        async function getUsers(searchText) {
             const qs = {where: {or: [
                 {name: {contains: searchText}},
                 {surname: {contains: searchText}},
                 {displayName: {contains: searchText}},
                 {displaySurname: {contains: searchText}}
             ]}};
-            return UsersService.getUsers(qs);
+            const users = await UsersService.getUsers(qs);
+            return users.filter(user => [
+                userConstants.role.USER,
+                userConstants.role.SUPERUSER,
+                userConstants.role.ADMINISTRATOR
+            ].includes(user.role));
         }
+        /* jshint ignore:end */
 
         function setTrainingModuleDelivery() {
             switch (true) {
                 case vm.deliveryOnLine && vm.deliveryInPresence:
                     vm.trainingModule.delivery = trainingModuleDeliveryOptions.ON_LINE_IN_PRESENCE;
+                    vm.deliveryIsBeenSet = true;
                     break;
                 case vm.deliveryOnLine && !vm.deliveryInPresence:
                     vm.trainingModule.delivery = trainingModuleDeliveryOptions.ON_LINE;
+                    vm.deliveryIsBeenSet = true;
                     break;
                 case !vm.deliveryOnLine && vm.deliveryInPresence:
                     vm.trainingModule.delivery = trainingModuleDeliveryOptions.IN_PRESENCE;
+                    vm.deliveryIsBeenSet = true;
                     break;
                 default:
                     vm.trainingModule.delivery = null;
                     break;
             }
-            vm.checkValidation('delivery');
+
+            if (vm.deliveryIsBeenSet) {
+                vm.checkValidation('delivery');
+            }
         }
 
         function setDeliveryCheckboxes() {

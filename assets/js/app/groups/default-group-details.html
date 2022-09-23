@@ -103,27 +103,39 @@
             </uib-tab>
             <uib-tab
                 index="7"
+                ng-if="vm.isScientific()"
+                heading="Training modules"
+            >
+                <training-modules-list
+                    ng-if="vm.researchEntity"
+                    research-entity="vm.researchEntity"
+                    section="vm.trainingModuleListSections.GROUP"
+                    active="vm.activeTabIndex === 7"
+                ></training-modules-list>
+            </uib-tab>
+            <uib-tab
+                index="8"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.isScientific()"
                 heading="Documents Charts"
             >
                 <summary-overview research-entity="vm.group"></summary-overview>
             </uib-tab>
             <uib-tab
-                index="8"
+                index="9"
                 heading="Bibliometric Charts"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.isScientific()"
             >
                 <summary-metrics research-entity="vm.group"></summary-metrics>
             </uib-tab>
             <uib-tab
-                index="9"
+                index="10"
                 heading="Projects and Technology Transfer"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.isScientific()"
             >
                 <summary-projects-technology-transfer research-entity="vm.group"></summary-projects-technology-transfer>
             </uib-tab>
             <uib-tab
-                index="10"
+                index="11"
                 heading="Scientific production"
                 ng-if="vm.showScientificProduction()"
                 ng-show="vm.loggedUser.isAdmin()"
@@ -131,7 +143,7 @@
                 <scientific-production
                     ng-if="vm.group"
                     group="vm.group"
-                    active="vm.activeTabIndex === 10"
+                    active="vm.activeTabIndex === 11"
                 ></scientific-production>
             </uib-tab>
         </uib-tabset>

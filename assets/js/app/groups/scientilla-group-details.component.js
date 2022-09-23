@@ -55,18 +55,21 @@
                 slug: 'patents'
             }, {
                 index: 7,
+                slug: 'training-modules'
+            }, {
+                index: 8,
                 slug: 'document-charts',
                 tabName: 'summary-overview'
             }, {
-                index: 8,
+                index: 9,
                 slug: 'metric-charts',
                 tabName: 'summary-metrics'
             }, {
-                index: 9,
+                index: 10,
                 slug: 'projects-technology-transfer',
                 tabName: 'summary-projects-technology-transfer'
             }, {
-                index: 10,
+                index: 11,
                 slug: 'scientific-production',
                 tabName: 'scientific-production'
             }
