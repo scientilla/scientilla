@@ -1,0 +1,50 @@
+<scientilla-filter
+    category="training-module"
+    on-filter="vm.onFilter"
+    elements="vm.trainingModules"
+    empty-list-message="No training modules found"
+    filter-on-init="vm.loadTrainingModules"
+>
+    <scientilla-multicheck>
+        <buttons>
+            <scientilla-multicheck-button
+                ng-disabled="true"
+                subject="Export as CSV"
+                on-click="vm.exportDownload"
+            >
+                <i class="fas fa-download fa-left"></i>Export as CSV
+            </scientilla-multicheck-button>
+        </buttons>
+        <item-list>
+            <scientilla-checkable
+                ng-repeat="trainingModule in vm.trainingModules"
+                item="trainingModule"
+                class="scientilla-checkable"
+            >
+                <training-module
+                    training-module="trainingModule"
+                    section="vm.section"
+                    class="training-module-container"
+                ></training-module>
+                <div
+                    class="training-module-row-actions"
+                    ng-if="vm.editable"
+                >
+                    <button
+                        class="btn btn-primary"
+                        ng-click="vm.unverify(vm.researchEntity, trainingModule)"
+                        ng-disabled="vm.isUnverifying(trainingModule)"
+                        type="button"
+                        uib-tooltip="Unlink the training module from your profile"
+                        tooltip-placement="top"
+                        tooltip-class="text-left"
+                    >
+                        <i class="fas fa-times fa-left"></i>
+                        Unverify
+                    </button>
+                </div>
+            </scientilla-checkable>
+        </item-list>
+    </scientilla-multicheck>
+
+</scientilla-filter>

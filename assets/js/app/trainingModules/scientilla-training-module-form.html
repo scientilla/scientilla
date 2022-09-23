@@ -23,14 +23,14 @@
             class="form-group has-feedback"
         >
             <label for="authorsStr">
-                Lecture(s) (must be in the form "Doe J., Smith Simpson J. V.") *
+                Lecturer(s) (must be in the form "Doe J., Smith Simpson J. V.") *
             </label>
             <input
                 id="authorsStr"
                 type="text"
                 name="authors"
                 class="form-control"
-                placeholder="Lecture(s)"
+                placeholder="Lecturer(s)"
                 ng-model="vm.trainingModule.authorsStr"
                 ng-pattern="vm.fieldsRules.authorsStr.regex"
                 data-ng-required="true"

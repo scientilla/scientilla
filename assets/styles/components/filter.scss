@@ -342,7 +342,8 @@
 
             &.training-module-draft,
             &.training-module-verified,
-            &.training-module-suggested{
+            &.training-module-suggested,
+            &.training-module{
                 &.fields-3{
                     grid-template-columns: 1fr 1fr 30rem;
                 }

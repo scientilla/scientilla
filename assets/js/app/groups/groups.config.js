@@ -71,6 +71,14 @@
                     param: getSlugOrId
                 }
             })
+            .when("/groups/:group/training-modules", {
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="training-modules"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
+            })
             .when("/groups/:group/document-charts", {
                 template: () => `<scientilla-group-details
                     group-param="$resolve.param"
