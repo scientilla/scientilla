@@ -31,6 +31,7 @@
         vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
         vm.openDetails = openDetails;
         vm.getNextYear = trainingModuleService.getNextYear;
+        vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
 
         let researchEntity;
         vm.collapsed = true;
@@ -57,6 +58,10 @@
         function getVerfiedNames() {
             return vm.trainingModule.verifiedGroups.map(g => '- <b>' + g.name + '</b>')
                 .concat(vm.trainingModule.verifiedUsers.map(p => '- ' + p.getDisplayName()));
+        }
+
+        function hasMainGroupAffiliation() {
+            return vm.trainingModule.institutes.find(i => i.id === 1);
         }
     }
 })();
