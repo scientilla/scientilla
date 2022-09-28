@@ -41,11 +41,14 @@ module.exports = _.merge({}, BaseModel, {
         },
         location: 'STRING',
         delivery: 'STRING',
-        async isValid() {
+        isValid() {
             const validate = JsonValidator.getTrainingModuleValidator();
             const res = validate(this);
             if (!res) this.validationErrors = validate.errors;
             return res;
+        },
+        getValidationErrors() {
+            return this.validationErrors;
         }
     },
     getFields() {

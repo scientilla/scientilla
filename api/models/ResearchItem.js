@@ -69,7 +69,13 @@ module.exports = _.merge({}, BaseModel, {
         async isVerificable() {
             const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(this.type);
             const childResearchItem = await ResearchItemChildModel.findOne({id: this.id});
-            return childResearchItem.isValid();
+            const res = await childResearchItem.isValid();
+            if (!res && _.isFunction(childResearchItem.getValidationErrors))
+                this.validationErrors = childResearchItem.getValidationErrors();
+            return res;
+        },
+        getValidationErrors() {
+            return this.validationErrors;
         },
         needsAuthors() {
             return needsAuthorsTypes[this.getType().key];

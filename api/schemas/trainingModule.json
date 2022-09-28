@@ -20,12 +20,6 @@
     "otherCourse": {
       "type": "boolean"
     },
-    "institute": {
-      "type": "integer"
-    },
-    "phdCourse": {
-      "type": "integer"
-    },
     "hours": {
       "type": "integer"
     },
@@ -48,6 +42,33 @@
         "In Presence",
         "On Line/In Presence"
       ]
+    }
+  },
+  "if": {
+    "properties": {
+      "otherCourse": {
+        "const": true
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "institute": {
+        "const": null
+      },
+      "phdCourse": {
+        "const": null
+      }
+    }
+  },
+  "else": {
+    "properties": {
+      "institute": {
+        "type": "integer"
+      },
+      "phdCourse": {
+        "type": "integer"
+      }
     }
   },
   "required": [

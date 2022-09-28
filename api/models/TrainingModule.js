@@ -103,7 +103,12 @@ module.exports = _.merge({}, BaseModel, {
         async isValid() {
             const ResearchItemModel = TrainingModule.getResearchItemModel(this.type);
             const ri = await ResearchItemModel.findOne({researchItem: this.id});
-            return ri.isValid();
+            const res = ri.isValid();
+            if (!res) this.validationErrors = ri.getValidationErrors();
+            return res;
+        },
+        getValidationErrors() {
+            return this.validationErrors;
         }
     },
     getResearchItemModel(_) {
