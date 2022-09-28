@@ -9,6 +9,11 @@
         >
             {{ vm.trainingModule.year }}/{{vm.getNextYear(vm.trainingModule.year)}}
         </span>
+        <img
+            ng-src="{{ vm.customizations.logos.institute.src }}"
+            ng-if="vm.customizations.logos.institute.src && vm.hasMainGroupAffiliation()"
+            class="icon-iit"/>
+        <span class="icon-iit" ng-if="vm.hasMainGroupAffiliation()"></span>
     </li>
 
     <li>
