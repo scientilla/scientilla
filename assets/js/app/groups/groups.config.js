@@ -174,6 +174,15 @@
                     param: getSlugOrId
                 }
             })
+            .when("/:group/training-modules", {
+                controller: 'requestHandler',
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="training-modules"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
+            })
             .when("/:group/document-charts", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details

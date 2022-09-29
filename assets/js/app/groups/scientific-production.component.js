@@ -29,6 +29,7 @@
         let includeSubgroupsWatcher;
 
         vm.charts = {};
+        vm.loading = false;
 
         vm.$onInit = () => {
             const registerTab = requireParentMethod($element, 'registerTab');
@@ -52,7 +53,10 @@
 
         /* jshint ignore:start */
         vm.getData = async () => {
-            return await ChartService.getScientificProductionChartData(vm.group);
+            vm.loading = true;
+            const data = await ChartService.getScientificProductionChartData(vm.group);
+            vm.loading = false;
+            return data;
         }
         /* jshint ignore:end */
 

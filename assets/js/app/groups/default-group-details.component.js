@@ -85,17 +85,17 @@
 
         /* jshint ignore:end */
 
-        vm.isAdmin = function () {
-            return vm.loggedUser && vm.loggedUser.isAdmin();
+        vm.isSuperUser = function () {
+            return vm.loggedUser && vm.loggedUser.isSuperUser();
         };
 
         vm.isGroupAdmin = function () {
-            return AuthService.isAdmin;
+            return GroupsService.isGroupAdmin(vm.group, vm.loggedUser);
         };
 
         vm.isScientific = function () {
             if (!vm.group)
-                return true;
+                return false;
             return [
                 groupTypes.INSTITUTE,
                 groupTypes.CENTER,
@@ -107,7 +107,7 @@
 
         vm.showScientificProduction = function () {
             if (!vm.group)
-                return true;
+                return false;
             return [
                 groupTypes.INSTITUTE,
                 groupTypes.CENTER,

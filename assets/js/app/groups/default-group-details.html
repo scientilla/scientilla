@@ -44,7 +44,7 @@
             </uib-tab>
             <uib-tab
                 index="2"
-                ng-show="vm.loggedUser.isAdmin()"
+                ng-show="vm.loggedUser.isAdmin() || vm.isGroupAdmin()"
                 heading="Groups"
             >
                 <scientilla-group-groups
@@ -137,8 +137,7 @@
             <uib-tab
                 index="11"
                 heading="Scientific production"
-                ng-if="vm.showScientificProduction()"
-                ng-show="vm.loggedUser.isAdmin()"
+                ng-if="vm.showScientificProduction() && (vm.isGroupAdmin() || vm.isSuperUser() || vm.loggedUser.isAdmin())"
             >
                 <scientific-production
                     ng-if="vm.group"
