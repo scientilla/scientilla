@@ -62,42 +62,6 @@
             height: fit-content;
         }
 
-        .group-scientific-production-tab,
-        .group-info-tab{
-            .chart-container {
-                max-width: 30rem;
-                margin-right: auto;
-                margin-bottom: 2rem;
-                margin-left: auto;
-
-                .chart {
-                    position: relative;
-                    display: block;
-                    padding-bottom: 50%;
-
-                    &.chart-full {
-                        padding-bottom: 100%;
-                    }
-                }
-
-                svg {
-                    position: absolute;
-                    top: 0px;
-                    left: 0px;
-                    width: 100% !important;
-                    height: 100% !important;
-                }
-
-                .nvd3.nv-pie path {
-                    fill-opacity: 1;
-                }
-            }
-
-            .chart-title {
-                margin-bottom: 1rem;
-            }
-        }
-
         .group-info-tab {
             .group-card {
                 margin-bottom: 2rem;
@@ -200,46 +164,6 @@
                         @include top-line;
                     }
                 }
-            }
-        }
-
-        .group-scientific-production-tab{
-            overflow: hidden;
-
-            .legend-with-bar-chart{
-                max-height: 55rem;
-            }
-
-            .row{
-                margin-left: -6rem;
-                margin-right: -6rem;
-
-                & > div{
-                    padding-left: 6rem;
-                    padding-right: 6rem;
-
-                    &:nth-child(odd){
-                        border-right: .1rem solid $gray-100;
-                    }
-
-                    &:last-child{
-                        border-right: none;
-
-                        .scientific-production-chart{
-                            min-height: auto;
-                            margin-bottom: 0;
-                            padding-bottom: 0;
-                            border-bottom: none;
-                        }
-                    }
-                }
-            }
-
-            .scientific-production-chart{
-                min-height: calc(100% - 6rem);
-                margin-bottom: 6rem;
-                padding-bottom: 6rem;
-                border-bottom: .1rem solid $gray-100;
             }
         }
 
@@ -422,16 +346,88 @@
     }
 }
 
+.group-scientific-production-tab,
+.group-info-tab{
+    .chart-container {
+        max-width: 30rem;
+        margin-right: auto;
+        margin-bottom: 2rem;
+        margin-left: auto;
+
+        .chart {
+            position: relative;
+            display: block;
+            padding-bottom: 50%;
+
+            &.chart-full {
+                padding-bottom: 100%;
+            }
+        }
+
+        svg {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .nvd3.nv-pie path {
+            fill-opacity: 1;
+        }
+    }
+
+    .chart-title {
+        margin-bottom: 1rem;
+    }
+}
+
+.group-scientific-production-tab{
+    overflow: hidden;
+
+    .legend-with-bar-chart{
+        max-height: 55rem;
+    }
+
+    .row{
+        margin-left: -6rem;
+        margin-right: -6rem;
+
+        & > div{
+            padding-left: 6rem;
+            padding-right: 6rem;
+
+            &:nth-child(odd){
+                border-right: .1rem solid $gray-100;
+            }
+
+            &:last-child{
+                border-right: none;
+
+                .scientific-production-chart{
+                    min-height: auto;
+                    margin-bottom: 0;
+                    padding-bottom: 0;
+                    border-bottom: none;
+                }
+            }
+        }
+    }
+
+    .scientific-production-chart{
+        min-height: calc(100% - 6rem);
+        margin-bottom: 6rem;
+        padding-bottom: 6rem;
+        border-bottom: .1rem solid $gray-100;
+    }
+}
+
 @include media-breakpoint-down(xl) {
-    .groups{
-        &.group-detail{
-            .group-scientific-production-tab{
-                .row{
-                    & > div{
-                        &:nth-child(odd){
-                            border-right: none;
-                        }
-                    }
+    .group-scientific-production-tab{
+        .row{
+            & > div{
+                &:nth-child(odd){
+                    border-right: none;
                 }
             }
         }
@@ -451,7 +447,6 @@
         }
 
         &.group-detail {
-
             .selected-group {
                 display: grid;
                 margin: 2rem -1rem 0px -1rem;

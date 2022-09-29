@@ -53,7 +53,7 @@
         /* jshint ignore:end */
 
         vm.isGroupAdmin = function () {
-            return AuthService.isAdmin;
+            return GroupsService.isGroupAdmin(vm.group, vm.loggedUser);
         };
 
         function addCollaborator() {

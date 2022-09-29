@@ -45,6 +45,7 @@
         vm.shouldBeReloaded = true;
 
         vm.user = AuthService.user;
+        vm.loggedUser = AuthService.loggedUser;
         vm.documentListSections = documentListSections;
         vm.removeCollaborator = removeCollaborator;
         vm.editCollaborator = editCollaborator;
@@ -325,7 +326,7 @@
         }
 
         function isGroupAdmin() {
-            return AuthService.isAdmin;
+            return GroupsService.isGroupAdmin(vm.group, vm.loggedUser);
         }
 
         function isAdmin() {

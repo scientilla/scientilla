@@ -47,6 +47,7 @@
         service.getGroupTypeLabel = getGroupTypeLabel;
         service.getCollaborators = getCollaborators;
         service.removeMembership = removeMembership;
+        service.isGroupAdmin = isGroupAdmin;
 
         return service;
 
@@ -355,6 +356,13 @@
             return Restangular
                 .one('memberships', id)
                 .remove();
+        }
+
+        function isGroupAdmin (group, user) {
+            if (!group || !_.has(group, 'administrators') || !user) {
+                return false;
+            }
+            return group.administrators.some(administrator => administrator.id === user.id);
         }
     }
 }());
