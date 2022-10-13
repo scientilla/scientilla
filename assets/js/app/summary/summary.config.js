@@ -45,6 +45,11 @@
                 controller: 'requestHandler',
                 template: () => `<summary-dashboard
                     active-tab="projects-and-technology-transfer"></summary-dashboard>`
+            })
+            .when("/:group/dashboard/scientific-production", {
+                controller: 'requestHandler',
+                template: () => `<summary-dashboard
+                    active-tab="scientific-production"></summary-dashboard>`
             });
     }
 })();

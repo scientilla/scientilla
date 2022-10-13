@@ -19,6 +19,17 @@
             >
                 <summary-projects-technology-transfer research-entity="vm.subResearchEntity"></summary-projects-technology-transfer>
             </uib-tab>
+            <uib-tab
+                index="3"
+                heading="Scientific production"
+                ng-if="vm.showScientificProduction() && (vm.isGroupAdmin() || vm.isSuperUser())"
+            >
+                <scientific-production
+                    ng-if="vm.group"
+                    group="vm.group"
+                    active="vm.activeTabIndex === 3"
+                ></scientific-production>
+            </uib-tab>
         </uib-tabset>
     </div>
 </scientilla-backend-layout>
