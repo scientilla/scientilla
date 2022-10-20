@@ -414,7 +414,6 @@
                     inputType: 'select',
                     label: 'Role category',
                     matchColumn: 'roleCategory',
-                    matchRule: 'contains',
                     type: 'field'
                 },
                 gender: {
@@ -477,7 +476,6 @@
                     inputType: 'select',
                     label: 'Role category',
                     matchColumn: 'roleCategory',
-                    matchRule: 'contains',
                     type: 'field'
                 },
                 gender: {
