@@ -540,6 +540,14 @@ async function importProjects() {
             }
 
             const paymentLabel = _.camelCase(p.project_payment);
+            if (!p.proposer) {
+                errors.push({
+                    project: p.codice_progetto,
+                    message: 'empty proposer'
+                });
+                continue;
+            }
+
             const email = p.proposer.toLocaleLowerCase();
 
             let user = users.find(u => u.legacyEmail === email);
