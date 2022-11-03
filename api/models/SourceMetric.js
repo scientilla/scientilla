@@ -121,6 +121,7 @@ module.exports = _.merge({}, BaseModel, {
             }
 
         }
+        await SqlService.refreshMaterializedView('latest_source_metric');
         sails.log.info('assigned ' + assignedCount + ' sources');
         sails.log.info(notSourceFoundCount + ' metrics without sources');
         sails.log.info(multipleSourceFound + ' multiple sources found');
