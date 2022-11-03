@@ -17,7 +17,6 @@ module.exports = {
 const xlsx = require('xlsx');
 const _ = require('lodash');
 const fs = require('fs');
-const request = require('request-promise');
 
 const moment = require('moment');
 moment.locale('en');
@@ -230,8 +229,6 @@ async function importSourceMetrics(filename) {
     } else {
         sails.log.info('Source metrics import stopped: File not found!');
     }
-
-    await SqlService.refreshMaterializedView('latest_source_metric');
 
     sails.log.info('imported ' + recordsCount + ' records');
 }
