@@ -182,7 +182,6 @@
             }
         };
 
-        let charts = [];
         const groupChartAllRoles = [
             'groupMembersTotal',
             'groupMembersByRole',
@@ -302,7 +301,7 @@
                 return _.round((parseInt(numberOfMembers) / total) * 100, 2);
             }
 
-            if (_.isEmpty(charts)) {
+            if (_.isEmpty(charts) || forced) {
 
                 let options = {};
 
@@ -348,7 +347,7 @@
                             break;
                     }
                 }
-
+                vm.charts = [];
                 vm.charts.push({
                     roles: vm.selectedRoles,
                     includeSubgroups: vm.includeSubgroups,
