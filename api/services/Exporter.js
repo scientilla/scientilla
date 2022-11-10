@@ -501,6 +501,10 @@ function getBibtexKey(doc) {
 }
 
 function getBibtexAuthors(doc) {
+    if (!doc.authorsStr) {
+        return;
+    }
+
     const authors = doc.authorsStr.split(', ');
 
     return authors.map(a => {
