@@ -540,6 +540,9 @@ async function importProjects() {
             }
 
             const paymentLabel = _.camelCase(p.project_payment);
+            if (!p.proposer) {
+                continue;
+            }
             const email = p.proposer.toLocaleLowerCase();
 
             let user = users.find(u => u.legacyEmail === email);
