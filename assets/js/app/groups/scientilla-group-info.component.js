@@ -21,7 +21,8 @@
         'Prototyper',
         'AuthService',
         'DateService',
-        'groupTypes'
+        'groupTypes',
+        'EventsService'
     ];
 
     function controller(
@@ -34,7 +35,8 @@
         Prototyper,
         AuthService,
         DateService,
-        groupTypes
+        groupTypes,
+        EventsService
     ) {
         const vm = this;
 
@@ -107,6 +109,12 @@
             vm.centers = vm.group.getCenterHistory();
 
             initCharts();
+
+            EventsService.subscribeAll(vm, [
+                EventsService.GROUP_UPDATED
+            ], () => {
+                vm.charts = [];
+            });
         };
         /* jshint ignore:end */
 
@@ -121,6 +129,8 @@
             if (_.isFunction(activeWatcher)) {
                 activeWatcher();
             }
+
+            EventsService.unsubscribeAll(vm);
         };
 
         /* jshint ignore:start */
@@ -347,7 +357,6 @@
                             break;
                     }
                 }
-                vm.charts = [];
                 vm.charts.push({
                     roles: vm.selectedRoles,
                     includeSubgroups: vm.includeSubgroups,

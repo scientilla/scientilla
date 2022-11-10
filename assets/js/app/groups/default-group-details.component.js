@@ -23,7 +23,8 @@
         '$timeout',
         'ModalService',
         'groupTypes',
-        'DateService'
+        'DateService',
+        'EventsService'
     ];
 
     function DefaultGroupDetailsController(
@@ -36,7 +37,8 @@
         $timeout,
         ModalService,
         groupTypes,
-        DateService
+        DateService,
+        EventsService
     ) {
         const vm = this;
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
@@ -70,11 +72,19 @@
             vm.descriptions = vm.group.getDescriptionHistory();
 
             vm.initializeTabs(vm.tabs);
+
+            EventsService.subscribeAll(vm, [
+                EventsService.GROUP_UPDATED
+            ], () => {
+                refreshGroup();
+            });
         };
         /* jshint ignore:end */
 
         vm.$onDestroy = function () {
             activeTabWatcher();
+
+            EventsService.unsubscribeAll(vm);
         };
 
         /* jshint ignore:start */
