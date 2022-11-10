@@ -212,8 +212,7 @@ async function run() {
         // Find the group membership of the center and the institute
         let membershipGroup = await MembershipGroup.findOne({
             parent_group: 1,
-            child_group: group.id,
-            synchronized: true
+            child_group: group.id
         });
 
         // If the group membership is found
@@ -221,6 +220,7 @@ async function run() {
             // Update the lastsynch date
             await MembershipGroup.update({id: membershipGroup.id}, {
                 lastsynch: moment().format(ISO8601Format),
+                synchronized: true,
                 active: true
             });
             membershipGroup = await MembershipGroup.find({id: membershipGroup.id});
@@ -656,7 +656,8 @@ async function run() {
                 // Remove the other memberships
                 const removedMemberships = membershipIds.length > 0 && await MembershipGroup.destroy({
                     id: {'!': membershipIds},
-                    child_group: group.id
+                    child_group: group.id,
+                    synchronized: true
                 }) || [];
 
                 // Loop over the removed memberships

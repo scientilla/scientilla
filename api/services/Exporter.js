@@ -176,8 +176,13 @@ function trainingModulesToCsv(researchItems) {
         row.push(researchItem.year);
         row.push(researchItem.description);
         row.push(getDisplayName(researchItem.referent));
-        row.push(researchItem.institute.name);
-        row.push(researchItem.phdCourse.name);
+        if (researchItem.otherCourse) {
+            row.push('/');
+            row.push('Other');
+        } else {
+            row.push(researchItem.institute.name);
+            row.push(researchItem.phdCourse.name);
+        }
         row.push(researchItem.hours);
         row.push(researchItem.lectures);
         row.push(researchItem.researchDomains.join(','));
@@ -496,6 +501,10 @@ function getBibtexKey(doc) {
 }
 
 function getBibtexAuthors(doc) {
+    if (!doc.authorsStr) {
+        return;
+    }
+
     const authors = doc.authorsStr.split(', ');
 
     return authors.map(a => {
