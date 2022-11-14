@@ -286,6 +286,7 @@
         FACILITY: 'Facility',
         DIRECTORATE: 'Directorate',
         PROJECT: 'Project',
+        INITIATIVE: 'Initiative',
         OTHER: 'Other'
     };
 
@@ -297,6 +298,7 @@
         FACILITY: 'Facility',
         DIRECTORATE: 'Directorate',
         PROJECT: 'Project',
+        INITIATIVE: 'Initiative',
         OTHER: 'Other'
     };
 
@@ -308,6 +310,7 @@
         FACILITY: 'Facilities',
         DIRECTORATE: 'Directorates',
         PROJECT: 'Projects',
+        INITIATIVE: 'Initiatives',
         OTHER: 'Others'
     };
 
