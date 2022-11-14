@@ -111,7 +111,8 @@
                 groupTypes.CENTER,
                 groupTypes.RESEARCH_LINE,
                 groupTypes.RESEARCH_DOMAIN,
-                groupTypes.FACILITY
+                groupTypes.FACILITY,
+                groupTypes.INITIATIVE
             ].includes(vm.group.type);
         };
 
