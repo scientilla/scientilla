@@ -271,15 +271,16 @@
                 grid-template-columns: 3fr 3fr 100px 100px 2fr;
             }
 
-            &.fields-6{
-                grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
-            }
+            // &.fields-6{
+            //     grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
+            // }
 
-            &.fields-7{
-                grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr 2fr;
-            }
+            // &.fields-7{
+            //     grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr 2fr;
+            // }
 
             &.project,
+            &.project-suggested,
             &.verified-project{
                 &.fields-3{
                     grid-template-columns: 180px 1fr 160px;
@@ -293,6 +294,84 @@
                     grid-template-columns: 180px 5fr 3fr 2fr 160px;
                 }
 
+                // &.fields-6{
+                //     grid-template-columns: 180px 5fr 3fr 2fr 160px 200px;
+                // }
+
+                // &.fields-7{
+                //     grid-template-columns: 180px 5fr 3fr 160px 200px 200px 200px;
+                // }
+
+                // &.fields-8{
+                //     grid-template-columns: 180px 5fr 3fr 2fr 160px 130px 180px 220px;
+                // }
+            }
+
+            &.agreement,
+            &.verified-agreement{
+                &.fields-5{
+                    grid-template-columns: 4fr 4fr 2fr 4fr 160px;
+                }
+            }
+
+            // &.patent,
+            // &.patent-suggested,
+            // &.verified-patent{
+            //     &.fields-6{
+            //         grid-template-columns: 3fr 1fr 1fr 1fr 1fr 160px;
+            //     }
+            // }
+
+            // &.user{
+            //     &.fields-6{
+            //         grid-template-columns: 4fr 4fr 3fr 3fr 3fr 2fr;
+            //     }
+
+            //     &.fields-7{
+            //         grid-template-columns: 4fr 4fr 3fr 3fr 3fr 2fr 2fr;
+            //     }
+            // }
+
+            &.group-member{
+                &.fields-5{
+                    grid-template-columns: 4fr 4fr 3fr 3fr 2fr;
+                }
+
+                // &.fields-6{
+                //     grid-template-columns: 4fr 4fr 3fr 3fr 2fr 2fr;
+                // }
+            }
+
+            &.training-module-draft,
+            &.training-module-verified,
+            &.training-module-suggested,
+            &.training-module{
+                &.fields-3{
+                    grid-template-columns: 1fr 1fr 30rem;
+                }
+            }
+        }
+
+        .filter-connector-listing{
+            grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
+        }
+    }
+}
+
+@include media-breakpoint-up(xxl) {
+    .filter-form-container{
+        .filter-field-listing{
+            &.fields-6{
+                grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
+            }
+
+            &.fields-7{
+                grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr 2fr;
+            }
+
+            &.project,
+            &.project-suggested,
+            &.verified-project{
                 &.fields-6{
                     grid-template-columns: 180px 5fr 3fr 2fr 160px 200px;
                 }
@@ -313,8 +392,9 @@
                 }
             }
 
-            &.verified-patent,
-            &.patent{
+            &.patent,
+            &.patent-suggested,
+            &.verified-patent{
                 &.fields-6{
                     grid-template-columns: 3fr 1fr 1fr 1fr 1fr 160px;
                 }
@@ -331,27 +411,10 @@
             }
 
             &.group-member{
-                &.fields-5{
-                    grid-template-columns: 4fr 4fr 3fr 3fr 2fr;
-                }
-
                 &.fields-6{
                     grid-template-columns: 4fr 4fr 3fr 3fr 2fr 2fr;
                 }
             }
-
-            &.training-module-draft,
-            &.training-module-verified,
-            &.training-module-suggested,
-            &.training-module{
-                &.fields-3{
-                    grid-template-columns: 1fr 1fr 30rem;
-                }
-            }
-        }
-
-        .filter-connector-listing{
-            grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
         }
     }
 }

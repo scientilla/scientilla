@@ -43,6 +43,7 @@
         return {
             getAgreementOfGroup,
             get: ResearchEntitiesService.getProjects,
+            getDiscarded: ResearchEntitiesService.getDiscardedProjects,
             getDrafts: ResearchEntitiesService.getProjectDrafts,
             create: ResearchEntitiesService.createDraft,
             update: ResearchEntitiesService.updateDraft,
@@ -53,6 +54,9 @@
             verify,
             multipleVerify: ResearchEntitiesService.multipleVerify,
             unverify: ResearchEntitiesService.unverify,
+            getSuggested: ResearchEntitiesService.getSuggestedProjects,
+            discard: ResearchEntitiesService.discard,
+            multipleDiscard: ResearchEntitiesService.multipleDiscard,
             filterFields,
             generateGroup,
             exportDownload,

@@ -329,8 +329,10 @@
             'accomplishment-suggested': accomplishmentFormStructure,
             'verified-accomplishment': accomplishmentFormStructure,
             project: projectFormStructure,
+            'project-suggested': projectFormStructure,
             'verified-project': projectFormStructure,
             patent: patentFormStructure,
+            'patent-suggested': patentFormStructure,
             'verified-patent': patentFormStructure,
             'patent-family': patentFamilyFormStructure,
             'verified-patent-family': patentFamilyFormStructure,
@@ -517,7 +519,7 @@
 
         /* jshint ignore:start */
 
-        async function setupProjectStructure(constant, researchEntity) {
+        async function setupProjectStructure(constant, researchEntity, section = 'verified') {
             const projectTypes = _.concat(
                 [{value: allProjectTypes.value, label: allProjectTypes.label}],
                 await getResearchItemTypes('project', true)
@@ -530,7 +532,7 @@
             formStructures[constant].category.values = getProjectCategories();
             formStructures[constant].funding.values = getProjectFundings();
             formStructures[constant].action.values = getProjectActions();
-            const minMaxYears = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'project');
+            const minMaxYears = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'project', section);
 
             // Default values of range all patent types
             formStructures[constant].year.minMaxYears = [];
@@ -575,17 +577,25 @@
             formStructures[constant].year.ceil = parseInt(yearValue.max);
         }
 
-        async function setupPatentStructure(constant, researchEntity) {
-            const minMaxYears = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'patent');
+        async function setupPatentStructure(constant, researchEntity, section) {
+            const minMaxYears = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'patent', section);
 
             // Default values of range all patent types
             formStructures[constant].year.minMaxYears = [];
-            formStructures[constant].year.minMaxYears.push({ key: allPatentTypes.value, values: minMaxYears.find(m => m.item_key === 'all')});
-            formStructures[constant].year.minMaxYears.push({ key: 'all_translations', values: minMaxYears.find(m => m.item_key === 'all_translations')});
-            formStructures[constant].year.minMaxYears.push({ key: patentTypePriorities, values: minMaxYears.find(m => m.item_key === 'priorities')});
-            formStructures[constant].year.minMaxYears.push({ key: patentTypeProsecutions, values: minMaxYears.find(m => m.item_key === 'prosecutions')});
+            formStructures[constant].year.minMaxYears.push({ section: section, key: allPatentTypes.value, values: minMaxYears.find(m => m.item_key === 'all')});
+            formStructures[constant].year.minMaxYears.push({ section: section, key: 'all_translations', values: minMaxYears.find(m => m.item_key === 'all_translations')});
+            formStructures[constant].year.minMaxYears.push({ section: section, key: patentTypePriorities, values: minMaxYears.find(m => m.item_key === 'priorities')});
+            formStructures[constant].year.minMaxYears.push({ section: section, key: patentTypeProsecutions, values: minMaxYears.find(m => m.item_key === 'prosecutions')});
 
-            const defaultValues = formStructures[constant].year.minMaxYears.find(v => v.key === allPatentTypes.value);
+            if (section === 'suggested') {
+                const minMaxYearsDiscarded = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'patent', 'discarded');
+                formStructures[constant].year.minMaxYears.push({ section: 'discarded', key: allPatentTypes.value, values: minMaxYearsDiscarded.find(m => m.item_key === 'all')});
+                formStructures[constant].year.minMaxYears.push({ section: 'discarded', key: 'all_translations', values: minMaxYearsDiscarded.find(m => m.item_key === 'all_translations')});
+                formStructures[constant].year.minMaxYears.push({ section: 'discarded', key: patentTypePriorities, values: minMaxYearsDiscarded.find(m => m.item_key === 'priorities')});
+                formStructures[constant].year.minMaxYears.push({ section: 'discarded', key: patentTypeProsecutions, values: minMaxYearsDiscarded.find(m => m.item_key === 'prosecutions')});
+            }
+
+            const defaultValues = formStructures[constant].year.minMaxYears.find(v => v.key === allPatentTypes.value && v.section === section);
 
             if (_.isNil(defaultValues) || _.isNil(defaultValues.values)) {
                 formStructures[constant].year.defaultValues = {
@@ -650,7 +660,7 @@
                         });
                     break;
                 case constant === 'verified-project':
-                    await setupProjectStructure(constant, researchEntity);
+                    await setupProjectStructure(constant, researchEntity, 'verified');
                     structure = Object.assign(
                         {},
                         formStructures[constant],
@@ -667,11 +677,26 @@
                     );
                     break;
                 case constant === 'project':
-                    await setupProjectStructure(constant, researchEntity);
+                    await setupProjectStructure(constant, researchEntity, 'verified');
                     structure = formStructures[constant];
                     break;
+                case constant === 'project-suggested':
+                    await setupProjectStructure(constant, researchEntity, 'suggested');
+                    structure = Object.assign({},
+                        formStructures[constant],
+                        {
+                            discarded: {
+                                inputType: 'checkbox',
+                                label: 'Show discarded projects',
+                                defaultValue: false,
+                                matchColumn: 'discarded',
+                                type: 'action',
+                                valueType: 'boolean'
+                            }
+                        });
+                    break;
                 case constant === 'verified-patent':
-                    await setupPatentStructure(constant, researchEntity);
+                    await setupPatentStructure(constant, researchEntity, 'verified');
                     structure = Object.assign(
                         {},
                         formStructures[constant],
@@ -688,8 +713,23 @@
                     );
                     break;
                 case constant === 'patent':
-                    await setupPatentStructure(constant, researchEntity);
+                    await setupPatentStructure(constant, researchEntity, 'verified');
                     structure = formStructures[constant];
+                    break;
+                case constant === 'patent-suggested':
+                    await setupPatentStructure(constant, researchEntity, 'suggested');
+                    structure = Object.assign({},
+                        formStructures[constant],
+                        {
+                            discarded: {
+                                inputType: 'checkbox',
+                                label: 'Show discarded patents',
+                                defaultValue: false,
+                                matchColumn: 'discarded',
+                                type: 'action',
+                                valueType: 'boolean'
+                            }
+                        });
                     break;
                 case constant === 'verified-patent-family':
                     structure = formStructures[constant];

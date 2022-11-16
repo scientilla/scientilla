@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    angular.module('app')
+    angular.module('patents')
         .component('scientillaPatentsList', {
             templateUrl: 'partials/scientilla-patents-list.html',
             controller: scientillaPatentsList,
@@ -39,6 +39,7 @@
         let activeWatcher;
 
         vm.loadPatents = true;
+        vm.section = 'verified';
 
         vm.$onInit = () => {
             const registerTab = requireParentMethod($element, 'registerTab');
@@ -86,7 +87,7 @@
         /* jshint ignore:end */
 
         function onChange(structure, values, key) {
-            PatentService.onChange(structure, values, key);
+            PatentService.onChange(structure, values, key, vm.section);
         }
     }
 

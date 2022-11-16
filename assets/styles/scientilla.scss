@@ -56,7 +56,6 @@
 @import 'components/sidebar';
 @import 'components/document-comparison-listing';
 @import 'components/document-institutes';
-@import 'components/document-row';
 @import 'components/document-row-actions';
 @import 'components/author-legend';
 @import 'components/wizard-container';
@@ -68,9 +67,11 @@
 @import 'components/loading-container';
 @import 'components/accomplishment';
 @import 'components/project';
+@import 'components/project-row-actions';
 @import 'components/project-member';
 @import 'components/project-details';
 @import 'components/patent';
+@import 'components/patent-row-actions';
 @import 'components/patent-family';
 @import 'components/agreement';
 @import 'components/agreement-details';

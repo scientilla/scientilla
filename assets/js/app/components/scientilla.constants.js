@@ -375,11 +375,6 @@
         NO_CATEGORY: 'No category selected'
     };
 
-    const researchItemTypes = {
-        ACCOMPLISHMENT: 'accomplishment',
-        DOCUMENT: 'document'
-    };
-
     const pathProfileImages = '/profile/images';
 
     const genders = {
@@ -404,7 +399,6 @@
         .constant('documentListSections', documentListSections)
         .constant('documentCategories', documentCategories)
         .constant('documentActions', documentActions)
-        .constant('researchItemTypes', researchItemTypes)
         .constant('pathProfileImages', pathProfileImages)
         .constant('genders', genders);
 })();

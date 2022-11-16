@@ -53,7 +53,7 @@ FROM (
               'all_translations' as item_key,
               CAST(LEAST(p.filing_year, p.issue_year) AS text) AS min,
               CAST(GREATEST(p.filing_year, p.issue_year) AS text) AS max
-	FROM verify v
+       FROM verify v
               JOIN patent p on v.research_item = p.id
               JOIN research_item_type rit ON p.type = rit.id
        WHERE v.research_entity = $1

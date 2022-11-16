@@ -138,6 +138,8 @@
         Restangular.extendCollection('discardedDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('favoriteDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('projects', Prototyper.toProjectsCollection);
+        Restangular.extendCollection('suggestedProjects', Prototyper.toProjectsCollection);
+        Restangular.extendCollection('discardedProjects', Prototyper.toProjectsCollection);
         Restangular.extendCollection('favoriteProjects', Prototyper.toProjectsCollection);
         Restangular.extendCollection('accomplishments', Prototyper.toAccomplishmentsCollection);
         Restangular.extendCollection('suggestedAccomplishments', Prototyper.toAccomplishmentsCollection);
@@ -151,6 +153,8 @@
         //Restangular.extendCollection('agreements', Prototyper.toAgreementsCollection);
         //Restangular.extendCollection('favoriteAgreements', Prototyper.toAgreementsCollection);
         Restangular.extendCollection('patents', Prototyper.toPatentsCollection);
+        Restangular.extendCollection('suggestedPatents', Prototyper.toPatentsCollection);
+        Restangular.extendCollection('discardedPatents', Prototyper.toPatentsCollection);
         Restangular.extendCollection('favoritePatents', Prototyper.toPatentsCollection);
         Restangular.extendCollection('drafts', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('authorships', Prototyper.toAuthorshipsCollection);

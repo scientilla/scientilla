@@ -3,12 +3,35 @@
 
 "use strict";
 
-const sqlQueries = {
-    'accomplishment': 'api/queries/minMaxYearsAccomplishments.sql',
-    'project': 'api/queries/minMaxYearsProjects.sql',
-    'agreement': 'api/queries/minMaxYearsAgreements.sql',
-    'patent': 'api/queries/minMaxYearsPatents.sql',
-};
+const sqlQueries = [{
+    type: 'accomplishment',
+    section: 'verified',
+    file: 'api/queries/minMaxYearsAccomplishments.sql'
+}, {
+    type: 'project',
+    section: 'suggested',
+    file: 'api/queries/minMaxYearsSuggestedProjects.sql'
+}, {
+    type: 'project',
+    section: 'verified',
+    file: 'api/queries/minMaxYearsVerifiedProjects.sql'
+}, {
+    type: 'agreement',
+    section: 'verified',
+    file: 'api/queries/minMaxYearsAgreements.sql'
+}, {
+    type: 'patent',
+    section: 'suggested',
+    file: 'api/queries/minMaxYearsSuggestedPatents.sql'
+}, {
+    type: 'patent',
+    section: 'discarded',
+    file: 'api/queries/minMaxYearsDiscardedPatents.sql'
+}, {
+    type: 'patent',
+    section: 'verified',
+    file: 'api/queries/minMaxYearsVerifiedPatents.sql'
+}];
 
 module.exports = {
     get
@@ -17,9 +40,11 @@ module.exports = {
 async function get(req) {
     const researchEntityId = parseInt(req.params.researchEntityId, 10);
     const type = req.params.type;
+    const section = req.params.section || 'verified';
+    const query = sqlQueries.find(query => query.type === type && query.section === section);
 
-    if (type && sqlQueries[type]) {
-        const sql = await SqlService.readQueryFromFs(sqlQueries[type]);
+    if (query) {
+        const sql = await SqlService.readQueryFromFs(query.file);
         return await SqlService.query(sql, [researchEntityId]);
     }
 

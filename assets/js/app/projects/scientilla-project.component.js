@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    angular.module('app')
+    angular.module('projects')
         .component('scientillaProject', {
             templateUrl: 'partials/scientilla-project.html',
             controller,

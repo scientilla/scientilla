@@ -7,6 +7,18 @@
         padding: 0px 1rem;
     }
 
+    .project-labels{
+        @include normalize-listing;
+        float: left;
+        margin: 0px 0px 0px -.5rem;
+
+        & > li{
+            display: block;
+            padding: 0px .5rem;
+            float: left;
+        }
+    }
+
     .project-title{
         margin: 1rem 0px;
         font-size: 2rem;

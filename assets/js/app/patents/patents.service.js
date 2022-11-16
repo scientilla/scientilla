@@ -1,18 +1,44 @@
 /* global angular */
 (function () {
-    angular.module("app").factory("PatentService", controller);
+    angular.module("patents").factory("PatentService", controller);
 
-    controller.$inject = ['ResearchEntitiesService', '$http'];
+    controller.$inject = [
+        'ResearchEntitiesService',
+        '$http',
+        'context'
+    ];
 
-    function controller(ResearchEntitiesService, $http) {
+    function controller(
+        ResearchEntitiesService,
+        $http,
+        context
+    ) {
 
         return {
             get: ResearchEntitiesService.getPatents,
             getFamilies: ResearchEntitiesService.getPatentFamilies,
+            getSuggested: ResearchEntitiesService.getSuggestedPatents,
+            getDiscarded: ResearchEntitiesService.getDiscardedPatents,
+            discard: ResearchEntitiesService.discard,
+            multipleDiscard: ResearchEntitiesService.multipleDiscard,
+            verify,
+            multipleVerify: ResearchEntitiesService.multipleVerify,
+            unverify: ResearchEntitiesService.unverify,
             exportDownload,
             onChange,
             handleQuery
         };
+
+        /* jshint ignore:start */
+        async function verify(researchEntity, researchItem) {
+            const completeResearchItem = await ResearchEntitiesService.getPatent(researchItem.id);
+            await ResearchEntitiesService.verify('patent', researchEntity, completeResearchItem);
+
+            if (researchEntity.type === 'user') {
+                await context.refreshSubResearchEntity();
+            }
+        }
+        /* jshint ignore:end */
 
         function exportDownload(patents, format = 'csv') {
             const filename = 'Patents_Export.csv';
@@ -47,20 +73,19 @@
             }
         }
 
-        function setMinMaxYears(structure, values) {
-
+        function setMinMaxYears(structure, values, section) {
             if (values.translation) {
-                setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === 'all_translations').values);
+                setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === 'all_translations' && v.section === section).values);
             } else {
                 switch (values.type) {
                     case allPatentTypes.value:
-                        setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === allPatentTypes.value).values);
+                        setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === allPatentTypes.value && v.section === section).values);
                         break;
                     case patentTypePriorities:
-                        setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === patentTypePriorities).values);
+                        setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === patentTypePriorities && v.section === section).values);
                         break;
                     case patentTypeProsecutions:
-                        setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === patentTypeProsecutions).values);
+                        setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === patentTypeProsecutions && v.section === section).values);
                         break;
                     default:
                         break;
@@ -68,30 +93,33 @@
             }
         }
 
-        function onChange(structure, values, key) {
+        function onChange(structure, values, key, section) {
             switch (key) {
                 case 'type':
-                    switch (values[key]) {
+                    switch (values['type']) {
                         case allPatentTypes.value:
                             structure.translation.disabled = false;
-                            setMinMaxYears(structure, values);
+                            setMinMaxYears(structure, values, section);
                             break;
                         case patentTypePriorities:
                             structure.translation.disabled = true;
                             values.translation = false;
-                            setMinMaxYears(structure, values);
+                            setMinMaxYears(structure, values, section);
                             break;
                         case patentTypeProsecutions:
                             structure.translation.disabled = true;
                             values.translation = false;
-                            setMinMaxYears(structure, values);
+                            setMinMaxYears(structure, values, section);
                             break;
                         default:
                             break;
                     }
                     break;
                 case 'translation':
-                    setMinMaxYears(structure, values);
+                    setMinMaxYears(structure, values, section);
+                    break;
+                case 'discarded':
+                    setMinMaxYears(structure, values, section);
                     break;
                 default:
                     break;
