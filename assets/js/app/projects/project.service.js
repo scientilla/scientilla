@@ -94,7 +94,7 @@
             }).then((res) => {
                 if (_.has(res.data, projectTypeCompetitive)) {
                     const element = document.createElement('a');
-                    element.setAttribute('href', encodeURI(res.data[projectTypeCompetitive]));
+                    element.setAttribute('href', 'data:text/csv;charset=UTF-8,' + encodeURIComponent(res.data[projectTypeCompetitive]));
                     element.setAttribute('download', competitiveProjectDownloadFileName);
 
                     element.style.display = 'none';
@@ -107,7 +107,7 @@
 
                 if (_.has(res.data, projectTypeIndustrial)) {
                     const element = document.createElement('a');
-                    element.setAttribute('href', encodeURI(res.data[projectTypeIndustrial]));
+                    element.setAttribute('href', 'data:text/csv;charset=UTF-8,' + encodeURIComponent(res.data[projectTypeIndustrial]));
                     element.setAttribute('download', industrialProjectDownloadFileName);
 
                     element.style.display = 'none';
