@@ -49,15 +49,15 @@
             }
 
             if (vm.project.type.key === projectTypeCompetitive) {
-                vm.annualContributionYears = [].concat.apply([], vm.project.researchLines.map(r => r.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
-                vm.annualFundingPIYears = [].concat.apply([], vm.PIMembers.map(m => m.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+                vm.annualContributionYears = [].concat.apply([], vm.project.researchLines.map(r => r.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index).sort();
+                vm.annualFundingPIYears = [].concat.apply([], vm.PIMembers.map(m => m.annualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index).sort();
             }
 
             if (vm.project.type.key === projectTypeIndustrial) {
-                vm.inCashAnnualContributionYears = [].concat.apply([], vm.project.researchLines.filter(r => _.has(r, 'inCashAnnualContribution')).map(r => r.inCashAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
-                vm.inCashAnnualFundingMembersYears = [].concat.apply([], vm.project.members.filter(m => _.has(m, 'inCashAnnualContribution')).map(m => m.inCashAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
-                vm.inKindAnnualContributionYears = [].concat.apply([], vm.project.researchLines.filter(r => _.has(r, 'inKindAnnualContribution')).map(r => r.inKindAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
-                vm.inKindAnnualFundingMembersYears = [].concat.apply([], vm.project.members.filter(m => _.has(m, 'inKindAnnualContribution')).map(m => m.inKindAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index);
+                vm.inCashAnnualContributionYears = [].concat.apply([], vm.project.researchLines.filter(r => _.has(r, 'inCashAnnualContribution')).map(r => r.inCashAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index).sort();
+                vm.inCashAnnualFundingMembersYears = [].concat.apply([], vm.project.members.filter(m => _.has(m, 'inCashAnnualContribution')).map(m => m.inCashAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index).sort();
+                vm.inKindAnnualContributionYears = [].concat.apply([], vm.project.researchLines.filter(r => _.has(r, 'inKindAnnualContribution')).map(r => r.inKindAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index).sort();
+                vm.inKindAnnualFundingMembersYears = [].concat.apply([], vm.project.members.filter(m => _.has(m, 'inKindAnnualContribution')).map(m => m.inKindAnnualContribution.map(a => a.year))).filter((value, index, self) => self.indexOf(value) === index).sort();
             }
 
             vm.industrialProjectPayments = industrialProjectPayments;
