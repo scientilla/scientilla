@@ -5,7 +5,6 @@
     empty-list-message="No patents found"
     filter-on-init="vm.loadPatents"
     research-entity="vm.researchEntity"
-    on-change="vm.onChange"
 >
 
     <scientilla-multicheck>
@@ -21,7 +20,6 @@
             <scientilla-checkable ng-repeat="p in vm.patents" item="p" class="scientilla-checkable">
                 <scientilla-patent
                     patent="p"
-                    section="vm.section"
                     class="patent-container"></scientilla-patent>
             </scientilla-checkable>
         </item-list>

@@ -48,6 +48,14 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'project',
             via: 'draftCreator'
         },
+        suggestedProjects: {
+            collection: 'project',
+            through: 'projectsuggestion'
+        },
+        discardedProjects: {
+            collection: 'project',
+            through: 'discardedproject'
+        },
         publicCompetitiveProjects: {
             collection: 'publiccompetitiveproject',
             through: 'publiccompetitiveprojectverify'
@@ -63,6 +71,14 @@ module.exports = _.merge({}, BaseModel, {
         patents: {
             collection: 'patent',
             through: 'patentverify'
+        },
+        suggestedPatents: {
+            collection: 'patent',
+            through: 'patentsuggestion'
+        },
+        discardedPatents: {
+            collection: 'patent',
+            through: 'discardedpatent'
         },
         patentFamilies: {
             collection: 'patentfamily',

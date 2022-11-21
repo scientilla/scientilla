@@ -17,16 +17,39 @@
                 <scientilla-multicheck-button
                     ng-disabled="true"
                     subject="Export as CSV"
-                    on-click="vm.exportDownload">
+                    on-click="vm.exportDownload"
+                >
                     <i class="fas fa-download fa-left"></i>Export as CSV
                 </scientilla-multicheck-button>
             </buttons>
             <item-list>
-                <scientilla-checkable ng-repeat="project in vm.projects" item="project" class="scientilla-checkable">
+                <scientilla-checkable
+                    ng-repeat="project in vm.projects"
+                    item="project"
+                    class="scientilla-checkable"
+                >
                     <scientilla-project
                         project="project"
                         section="vm.projectListSections.VERIFIED"
-                        class="project-container"></scientilla-project>
+                        class="project-container"
+                    ></scientilla-project>
+                    <div
+                        class="project-row-actions"
+                        ng-if="vm.showActions()"
+                    >
+                        <button
+                            class="btn btn-primary"
+                            ng-click="vm.unverify(vm.researchEntity, project)"
+                            ng-disabled="vm.isUnverifying(project)"
+                            type="button"
+                            uib-tooltip="Unlink the project from your profile"
+                            tooltip-placement="top"
+                            tooltip-class="text-left"
+                        >
+                            <i class="fas fa-times fa-left"></i>
+                            Unverify
+                        </button>
+                    </div>
                 </scientilla-checkable>
             </item-list>
         </scientilla-multicheck>

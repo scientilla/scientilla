@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    angular.module('app')
+    angular.module('patents')
         .component('scientillaPatentsList', {
             templateUrl: 'partials/scientilla-patents-list.html',
             controller: scientillaPatentsList,
@@ -33,12 +33,12 @@
         vm.patents = [];
         vm.onFilter = onFilter;
         vm.exportDownload = patents => PatentService.exportDownload(patents, 'csv');
-        vm.onChange = onChange;
 
         let query = {};
         let activeWatcher;
 
         vm.loadPatents = true;
+        vm.section = 'verified';
 
         vm.$onInit = () => {
             const registerTab = requireParentMethod($element, 'registerTab');
@@ -84,10 +84,6 @@
             vm.patents = await PatentService.get(vm.researchEntity, query, favorites);
         }
         /* jshint ignore:end */
-
-        function onChange(structure, values, key) {
-            PatentService.onChange(structure, values, key);
-        }
     }
 
 })();

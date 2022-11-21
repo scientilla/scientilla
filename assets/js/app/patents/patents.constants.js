@@ -1,6 +1,7 @@
 /* global angular */
 
 const patentListSections = {
+    SUGGESTED: 'suggested-patents',
     VERIFIED: 'verified-patents',
     GROUP: 'group-verified-patents',
     USER: 'user-verified-patents'

@@ -5,3 +5,10 @@
     padding: 3rem 0px;
     border-bottom: 1px solid $gray-300;
 }
+@include media-breakpoint-up(md) {
+    .checkable-inner-row{
+        display: grid;
+        grid-template-rows: auto;
+        grid-template-columns: 1fr auto;
+    }
+}

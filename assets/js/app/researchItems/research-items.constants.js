@@ -15,10 +15,18 @@ const researchItemKinds = {
     IGNORED: 'i'
 };
 
+const researchItemTypes = {
+    ACCOMPLISHMENT: 'accomplishment',
+    DOCUMENT: 'document',
+    PATENT: 'patent',
+    PROJECT: 'project'
+};
+
 const authorLimit = 10;
 
 angular.module('app')
     .constant('researchItemKinds', researchItemKinds)
     .constant('researchItemLabels', researchItemLabels)
+    .constant('researchItemTypes', researchItemTypes)
     .constant('authorLimit', authorLimit);
 

@@ -1,6 +1,7 @@
 /* global angular */
 
 const projectListSections = {
+    SUGGESTED: 'suggested-projects',
     VERIFIED: 'verified-projects',
     GROUP: 'group-verified-projects',
     USER: 'user-verified-projects'

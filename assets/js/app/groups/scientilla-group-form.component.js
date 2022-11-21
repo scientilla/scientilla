@@ -106,7 +106,7 @@
             type: {
                 inputType: 'select',
                 label: 'Group Type',
-                defaultValue: vm.group.type || groupTypes.RESEARCH_LINE,
+                defaultValue: vm.group.type || groupTypes.OTHER,
                 values: Object.keys(types).map(k => ({label: groupTypeLabels[k], value: types[k]})),
                 disabled: isDisabled(vm.group),
                 ngIf: isAdmin,
@@ -164,7 +164,6 @@
                 delete newGroupTypes.DIRECTORATE;
                 delete newGroupTypes.PROJECT;
                 vm.formStructure.type.values = Object.keys(newGroupTypes).map(k => ({label: groupTypeLabels[k], value: newGroupTypes[k]}));
-                vm.formStructure.type.defaultValue = newGroupTypes.OTHER;
             }
 
             delete vm.group.members;

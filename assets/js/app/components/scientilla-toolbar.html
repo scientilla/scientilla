@@ -93,10 +93,10 @@
                                 Login
                             </a>
                         </li>
-                        <li ng-if="vm.isLogged">
+                        <li ng-if="vm.researchEntityIsUser() && vm.isLogged">
                             <div uib-dropdown class="dropdown">
                                 <button
-                                    ng-if="vm.researchEntityIsUser() && !vm.user.isViewOnly()"
+                                    ng-if="!vm.user.isViewOnly()"
                                     class="btn btn-link"
                                     uib-dropdown-toggle>
                                     <i class="fas fa-question-circle" aria-hidden="true"></i>
