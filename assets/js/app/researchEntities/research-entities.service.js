@@ -54,7 +54,6 @@
         service.getProject = getProject;
         service.getProjects = getProjects;
         service.getProjectDrafts = getProjectDrafts;
-        service.getMinMaxYears = getMinMaxYears;
         service.getSuggestedPatents = getSuggestedPatents;
         service.getDiscardedPatents = getDiscardedPatents;
         service.getPatent = getPatent;
@@ -436,10 +435,6 @@
                 console.error(e);
                 Notification.warning('Failed to update affiliations');
             }
-        }
-
-        async function getMinMaxYears(researchEntity, type, section = 'verified') {
-            return await researchEntity.one('min-max-years', type).one(section).get();
         }
 
         async function getSuggestedProjects(researchEntity, query) {

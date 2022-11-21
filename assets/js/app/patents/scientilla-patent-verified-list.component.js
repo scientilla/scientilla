@@ -35,7 +35,6 @@
         vm.isUnverifying = ResearchItemService.isUnverifying;
         vm.onFilter = onFilter;
         vm.exportDownload = patents => PatentService.exportDownload(patents, 'csv');
-        vm.onChange = onChange;
         vm.showActions = showActions;
 
         let query = {
@@ -43,7 +42,6 @@
         };
 
         vm.subResearchEntity = context.getSubResearchEntity();
-        vm.section = 'verified';
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
@@ -76,10 +74,6 @@
             vm.patents = await PatentService.get(vm.researchEntity, query, favorites);
         }
         /* jshint ignore:end */
-
-        function onChange(structure, values, key) {
-            PatentService.onChange(structure, values, key, vm.section);
-        }
 
         function showActions() {
             return vm.subResearchEntity.getType() === 'group' && vm.subResearchEntity.type === groupTypes.INITIATIVE;

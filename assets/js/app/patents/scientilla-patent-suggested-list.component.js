@@ -30,8 +30,6 @@
         vm.multipleVerify = (patents) => PatentService.multipleVerify(vm.researchEntity, patents);
         vm.multipleDiscard = (patents) => PatentService.multipleDiscard(vm.researchEntity, patents);
         vm.patentListSections = patentListSections;
-        vm.onChange = onChange;
-        vm.section = 'suggested';
 
         let query = {
             where: {}
@@ -80,17 +78,11 @@
 
             if (isDiscarded) {
                 vm.patents = await PatentService.getDiscarded(vm.researchEntity, tmpQuery);
-                vm.section = 'discarded';
             } else {
                 vm.patents = await PatentService.getSuggested(vm.researchEntity, tmpQuery);
-                vm.section = 'suggested';
             }
         }
         /* jshint ignore:end */
-
-        function onChange(structure, values, key) {
-            PatentService.onChange(structure, values, key, vm.section);
-        }
     }
 
 })();

@@ -25,7 +25,6 @@
             multipleVerify: ResearchEntitiesService.multipleVerify,
             unverify: ResearchEntitiesService.unverify,
             exportDownload,
-            onChange,
             handleQuery
         };
 
@@ -57,73 +56,6 @@
 
                 document.body.removeChild(element);
             });
-        }
-
-        function setStructureYear(structure, minMaxYear) {
-            if (minMaxYear && minMaxYear.min) {
-                structure.year.floor = parseInt(minMaxYear.min);
-            } else {
-                structure.year.floor = parseInt(new Date().getFullYear());
-            }
-
-            if (minMaxYear && minMaxYear.max) {
-                structure.year.ceil = parseInt(minMaxYear.max);
-            } else {
-                structure.year.ceil = parseInt(new Date().getFullYear());
-            }
-        }
-
-        function setMinMaxYears(structure, values, section) {
-            if (values.translation) {
-                setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === 'all_translations' && v.section === section).values);
-            } else {
-                switch (values.type) {
-                    case allPatentTypes.value:
-                        setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === allPatentTypes.value && v.section === section).values);
-                        break;
-                    case patentTypePriorities:
-                        setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === patentTypePriorities && v.section === section).values);
-                        break;
-                    case patentTypeProsecutions:
-                        setStructureYear(structure, structure.year.minMaxYears.find(v => v.key === patentTypeProsecutions && v.section === section).values);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        function onChange(structure, values, key, section) {
-            switch (key) {
-                case 'type':
-                    switch (values['type']) {
-                        case allPatentTypes.value:
-                            structure.translation.disabled = false;
-                            setMinMaxYears(structure, values, section);
-                            break;
-                        case patentTypePriorities:
-                            structure.translation.disabled = true;
-                            values.translation = false;
-                            setMinMaxYears(structure, values, section);
-                            break;
-                        case patentTypeProsecutions:
-                            structure.translation.disabled = true;
-                            values.translation = false;
-                            setMinMaxYears(structure, values, section);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case 'translation':
-                    setMinMaxYears(structure, values, section);
-                    break;
-                case 'discarded':
-                    setMinMaxYears(structure, values, section);
-                    break;
-                default:
-                    break;
-            }
         }
 
         function handleQuery(query) {

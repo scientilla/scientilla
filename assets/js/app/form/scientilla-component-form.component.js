@@ -128,7 +128,6 @@
             _.forEach(vm.structure, function (struct, key) {
 
                 onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, (newOption, oldOption) => {
-
                     if (_.isFunction(vm.onChange())) {
                         vm.onChange()()(vm.structure, vm.values, key);
                     }
@@ -162,10 +161,6 @@
 
                         for (const fieldName in vm.fields) {
                             const field = vm.fields[fieldName];
-                            if (_.has(field, 'inputType') && field.inputType === "range") {
-                                refresh = true;
-                                break;
-                            }
                         }
 
                         if (refresh) {

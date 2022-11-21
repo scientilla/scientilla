@@ -92,7 +92,6 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/users/:researchEntityId/remove-verify']: 'User.removeVerify',
     ['post ' + apiPrfx + '/groups/:researchEntityId/replace']: 'Group.replace',
     ['post ' + apiPrfx + '/users/:researchEntityId/replace']: 'User.replace',
-    ['get ' + apiPrfx + '/researchentities/:researchEntityId/min-max-years/:type/:section?']: 'ResearchEntity.minMaxYears',
     ['get ' + apiPrfx + '/people/unique-role-categories']: 'Person.getUniqueRoleCategories',
     ['get ' + apiPrfx + '/people/unique-nationalities']: 'Person.getUniqueNationalities',
     ['put ' + apiPrfx + '/users/:userId/aliases']: 'User.saveAliases',
