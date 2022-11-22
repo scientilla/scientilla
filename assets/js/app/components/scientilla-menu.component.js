@@ -138,11 +138,17 @@
         }
 
         function showSuggestedPatents() {
-            return isGroup() && vm.subResearchEntity.type === groupTypes.INITIATIVE;
+            return isGroup() && (
+                vm.subResearchEntity.type === groupTypes.INITIATIVE ||
+                vm.subResearchEntity.type === groupTypes.PROJECT
+            );
         }
 
         function showSuggestedProjects() {
-            return isGroup() && vm.subResearchEntity.type === groupTypes.INITIATIVE;
+            return isGroup() && (
+                vm.subResearchEntity.type === groupTypes.INITIATIVE ||
+                vm.subResearchEntity.type === groupTypes.PROJECT
+            );
         }
     }
 
