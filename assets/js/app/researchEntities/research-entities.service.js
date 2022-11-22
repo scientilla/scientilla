@@ -440,12 +440,14 @@
         async function getSuggestedProjects(researchEntity, query) {
             const populate = {populate: projectPopulates};
             const q = _.defaultsDeep({}, query, populate);
+            await setProjectType(q);
             return await researchEntity.getList('suggestedProjects', q);
         }
 
         async function getDiscardedProjects(researchEntity, query) {
             const populate = {populate: projectPopulates};
             const q = _.defaultsDeep({}, query, populate);
+            await setProjectType(q);
             const discarded = await researchEntity.getList('discardedProjects', q);
             discarded.forEach(d => ResearchItemService.addLabel(d, researchItemLabels.DISCARDED));
             return discarded

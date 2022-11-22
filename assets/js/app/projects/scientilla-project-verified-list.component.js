@@ -79,7 +79,10 @@
         }
 
         function showActions() {
-            return vm.subResearchEntity.getType() === 'group' && vm.subResearchEntity.type === groupTypes.INITIATIVE;
+            return vm.subResearchEntity.getType() === 'group' && (
+                vm.subResearchEntity.type === groupTypes.INITIATIVE ||
+                vm.subResearchEntity.type === groupTypes.PROJECT
+            );
         }
     }
 

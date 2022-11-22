@@ -44,8 +44,6 @@
 
         vm.activeTabIndex = 0;
 
-        let activeTabWatcher = null;
-
         const tabIdentifiers = [
             {
                 index: 0,
@@ -90,10 +88,6 @@
             vm.initializeTabs(tabIdentifiers);
         };
         /* jshint ignore:end */
-
-        vm.$onDestroy = function () {
-            activeTabWatcher();
-        };
 
         vm.isAdmin = function () {
             return vm.loggedUser && vm.loggedUser.isAdmin();

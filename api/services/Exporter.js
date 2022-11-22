@@ -292,7 +292,7 @@ function projectsToCsv(researchItems) {
         return row;
     }));
 
-    let csvIndustrial = 'data:text/csv;charset=utf-8,';
+    let csvIndustrial = '';
 
     rowsIndustrial.forEach(function (rowArray) {
         csvIndustrial += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
@@ -337,7 +337,7 @@ function projectsToCsv(researchItems) {
         return row;
     }));
 
-    let csvCompetitive = 'data:text/csv;charset=utf-8,';
+    let csvCompetitive = '';
 
     rowsCompetitive.forEach(function (rowArray) {
         csvCompetitive += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
@@ -531,7 +531,7 @@ function formatBibtex(key, fields, entryType) {
 
 
 function generateCSV(rows) {
-    let csv = 'data:text/csv;charset=utf-8,';
+    let csv = '';
     rows.forEach(function (rowArray) {
         csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
             .join(',') + '\r\n';

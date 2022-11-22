@@ -67,7 +67,7 @@
                 trainingModuleIds: trainingModules.map(d => d.id)
             }).then((res) => {
                 const element = document.createElement('a');
-                element.setAttribute('href', encodeURI(res.data));
+                element.setAttribute('href', 'data:text/csv;charset=UTF-8,' + encodeURIComponent(res.data));
                 element.setAttribute('download', filename);
 
                 element.style.display = 'none';
