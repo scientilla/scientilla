@@ -58,15 +58,6 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
-
-            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
-                if (vm.activeTabIndex === 5) {
-                    $timeout(function () {
-                        $scope.$broadcast('rzSliderForceRender');
-                    });
-                }
-            });
-
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
 
             vm.descriptions = vm.group.getDescriptionHistory();
