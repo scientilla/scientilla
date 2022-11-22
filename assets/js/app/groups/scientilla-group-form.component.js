@@ -149,7 +149,8 @@
                 vm.group.type === groupTypes.RESEARCH_DOMAIN ||
                 vm.group.type === groupTypes.RESEARCH_LINE ||
                 vm.group.type === groupTypes.FACILITY ||
-                vm.group.type === groupTypes.DIRECTORATE
+                vm.group.type === groupTypes.DIRECTORATE ||
+                vm.group.type === groupTypes.PROJECT
             )) {
                 const type = Object.keys(groupTypes).find(key => groupTypes[key] === vm.group.type);
                 vm.formStructure.type.values = [{label: groupTypeLabels[type], value: groupTypes[type]}];
