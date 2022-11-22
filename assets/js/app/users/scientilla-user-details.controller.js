@@ -85,15 +85,6 @@
 
         /* jshint ignore:start */
         vm.$onInit = async () => {
-
-            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
-                if (vm.activeTabIndex === 4) {
-                    $timeout(function() {
-                        $scope.$broadcast('rzSliderForceRender');
-                    });
-                }
-            });
-
             await loadUser();
 
             vm.initializeTabs(tabIdentifiers);
