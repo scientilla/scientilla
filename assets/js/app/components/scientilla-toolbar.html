@@ -132,15 +132,15 @@
                                 <ul
                                     uib-dropdown-menu
                                     class="dropdown-menu dropdown-menu-right">
-                                    <li>
+                                    <li ng-if="vm.profile && vm.profile.name && vm.profile.surname && vm.researchEntityIsUser()">
                                         <button
                                             class="dropdown-item"
                                             ng-click="vm.editUserProfile()"
-                                            ng-if="vm.profile && vm.profile.name && vm.profile.surname && vm.researchEntityIsUser()">
+                                        >
                                             My profile
                                         </button>
                                     </li>
-                                    <li>
+                                    <li ng-if="vm.researchEntityIsUser()">
                                         <button
                                             ng-click="vm.openSuggestedWizard()"
                                             class="dropdown-item">
