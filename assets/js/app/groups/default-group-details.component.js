@@ -48,8 +48,6 @@
         vm.addCollaborator = addCollaborator;
         vm.format = DateService.format;
 
-        let activeTabWatcher = null;
-
         vm.getDescriptionsTooltipHTML = descriptions => {
             return `<ul class="tooltip-listing">${descriptions.map(description => `<li>
                 <strong>${description.description}</strong> (${vm.format(description.startDate).toLocaleDateString()} - ${description.endDate ? vm.format(description.endDate).toLocaleDateString() : 'now'})
@@ -73,8 +71,6 @@
         /* jshint ignore:end */
 
         vm.$onDestroy = function () {
-            activeTabWatcher();
-
             EventsService.unsubscribeAll(vm);
         };
 
