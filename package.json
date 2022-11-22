@@ -77,7 +77,6 @@
     "xlsx": "^0.8.0"
   },
   "devDependencies": {
-    "angularjs-slider": "^7.0.0",
     "babel-preset-es2015": "^6.22.0",
     "grunt-babel": "^6.0.0",
     "grunt-contrib-jshint": "^1.1.0",

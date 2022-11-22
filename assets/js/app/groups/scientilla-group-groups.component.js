@@ -6,18 +6,23 @@
             templateUrl: 'partials/scientilla-group-groups.html',
             controllerAs: 'vm',
             bindings: {
-                group: '<',
-                refreshGroup: '&'
+                group: '<'
             }
         });
 
     controller.$inject = [
         "GroupsService",
         "AuthService",
-        "ModalService"
+        "ModalService",
+        'EventsService'
     ];
 
-    function controller(GroupsService, AuthService, ModalService) {
+    function controller(
+        GroupsService,
+        AuthService,
+        ModalService,
+        EventsService
+    ) {
         const vm = this;
         vm.addChild = addChild;
         vm.removeChild = removeChild;
@@ -37,7 +42,7 @@
             GroupsService.addRelative(vm.group, vm.selectedGroup)
                 .then(() => {
                     delete vm.selectedGroup;
-                    return vm.refreshGroup()();
+                    EventsService.publish(EventsService.GROUP_UPDATED, vm.group);
                 });
         }
 
@@ -49,7 +54,7 @@
                 .then(function (buttonIndex) {
                     if (buttonIndex === 'proceed')
                         return GroupsService.removeChild(vm.group, child)
-                            .then(() => vm.refreshGroup()());
+                            .then(() => EventsService.publish(EventsService.GROUP_UPDATED, vm.group));
 
                 });
         }

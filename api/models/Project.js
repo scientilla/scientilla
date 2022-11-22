@@ -131,6 +131,11 @@ module.exports = _.merge({}, BaseModel, {
             via: 'project',
             through: 'projectaffiliation'
         },
+        suggestions: {
+            collection: 'researchentity',
+            via: 'suggestedprojects',
+            through: 'projectsuggestion'
+        },
         favorites: {
             collection: 'researchentity',
             via: 'favoriteprojects',

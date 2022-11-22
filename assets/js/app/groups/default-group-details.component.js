@@ -23,7 +23,8 @@
         '$timeout',
         'ModalService',
         'groupTypes',
-        'DateService'
+        'DateService',
+        'EventsService'
     ];
 
     function DefaultGroupDetailsController(
@@ -36,7 +37,8 @@
         $timeout,
         ModalService,
         groupTypes,
-        DateService
+        DateService,
+        EventsService
     ) {
         const vm = this;
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
@@ -46,8 +48,6 @@
         vm.addCollaborator = addCollaborator;
         vm.format = DateService.format;
 
-        let activeTabWatcher = null;
-
         vm.getDescriptionsTooltipHTML = descriptions => {
             return `<ul class="tooltip-listing">${descriptions.map(description => `<li>
                 <strong>${description.description}</strong> (${vm.format(description.startDate).toLocaleDateString()} - ${description.endDate ? vm.format(description.endDate).toLocaleDateString() : 'now'})
@@ -56,25 +56,22 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
-
-            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
-                if (vm.activeTabIndex === 5) {
-                    $timeout(function () {
-                        $scope.$broadcast('rzSliderForceRender');
-                    });
-                }
-            });
-
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
 
             vm.descriptions = vm.group.getDescriptionHistory();
 
             vm.initializeTabs(vm.tabs);
+
+            EventsService.subscribeAll(vm, [
+                EventsService.GROUP_UPDATED
+            ], () => {
+                refreshGroup();
+            });
         };
         /* jshint ignore:end */
 
         vm.$onDestroy = function () {
-            activeTabWatcher();
+            EventsService.unsubscribeAll(vm);
         };
 
         /* jshint ignore:start */
@@ -101,7 +98,8 @@
                 groupTypes.CENTER,
                 groupTypes.RESEARCH_LINE,
                 groupTypes.RESEARCH_DOMAIN,
-                groupTypes.FACILITY
+                groupTypes.FACILITY,
+                groupTypes.INITIATIVE
             ].includes(vm.group.type);
         };
 

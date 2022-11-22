@@ -1,31 +1,51 @@
 <scientilla-backend-layout>
     <h1>Verified patents</h1>
     <div class="page-info">
-        <em>The patents data cannot be edited. For any question, please contact <a href="mailto:Technology.Transfer@iit.it">Patents office</a>.</em>
+        <em>The patents data cannot be edited. For any question, please contact <a
+                href="mailto:Technology.Transfer@iit.it"
+            >Patents office</a>.</em>
     </div>
     <scientilla-filter
         category="verified-patent"
         on-filter="vm.onFilter"
         elements="vm.patents"
         empty-list-message="No patents found"
-        on-change="vm.onChange"
     >
         <scientilla-multicheck>
             <buttons>
                 <scientilla-multicheck-button
                     ng-disabled="true"
                     subject="Export as CSV"
-                    on-click="vm.exportDownload">
+                    on-click="vm.exportDownload"
+                >
                     <i class="fas fa-download fa-left"></i>Export as CSV
                 </scientilla-multicheck-button>
             </buttons>
             <item-list>
-                <scientilla-checkable ng-repeat="patent in vm.patents" item="patent" class="scientilla-checkable">
+                <scientilla-checkable
+                    ng-repeat="patent in vm.patents"
+                    item="patent"
+                    class="scientilla-checkable"
+                >
                     <scientilla-patent
                         research-entity="vm.researchEntity"
                         patent="patent"
                         section="vm.patentListSections.VERIFIED"
-                        class="project-container"></scientilla-patent>
+                        class="project-container"
+                    ></scientilla-patent>
+                    <div class="patent-row-actions" ng-if="vm.showActions()">
+                        <button
+                            class="btn btn-primary"
+                            ng-click="vm.unverify(vm.researchEntity, patent)"
+                            ng-disabled="vm.isUnverifying(patent)"
+                            type="button"
+                            uib-tooltip="Unlink the patent from your profile"
+                            tooltip-placement="top"
+                            tooltip-class="text-left">
+                            <i class="fas fa-times fa-left"></i>
+                            Unverify
+                        </button>
+                    </div>
                 </scientilla-checkable>
             </item-list>
         </scientilla-multicheck>

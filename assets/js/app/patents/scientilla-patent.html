@@ -15,7 +15,14 @@
             research-item="vm.patent"
             collapsed="vm.collapsed"
             type="preview"></scientilla-research-item-authors>
-
+        <ul
+            ng-if="vm.patent.labels"
+            class="patent-labels"
+        >
+            <li ng-repeat="l in vm.patent.labels">
+                <badge label="l"></badge>
+            </li>
+        </ul>
         <h2
             class="patent-title has-action"
             ng-click="vm.openDetails()"

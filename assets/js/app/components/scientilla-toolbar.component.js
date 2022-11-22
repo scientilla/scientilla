@@ -47,6 +47,8 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
+            vm.subResearchEntity = context.getSubResearchEntity();
+
             EventsService.subscribeAll(vm, [
                 EventsService.USER_PROFILE_CHANGED,
             ], (evt, profile) => {

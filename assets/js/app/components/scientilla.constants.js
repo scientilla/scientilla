@@ -286,6 +286,7 @@
         FACILITY: 'Facility',
         DIRECTORATE: 'Directorate',
         PROJECT: 'Project',
+        INITIATIVE: 'Initiative',
         OTHER: 'Other'
     };
 
@@ -297,6 +298,7 @@
         FACILITY: 'Facility',
         DIRECTORATE: 'Directorate',
         PROJECT: 'Project',
+        INITIATIVE: 'Initiative',
         OTHER: 'Other'
     };
 
@@ -308,6 +310,7 @@
         FACILITY: 'Facilities',
         DIRECTORATE: 'Directorates',
         PROJECT: 'Projects',
+        INITIATIVE: 'Initiatives',
         OTHER: 'Others'
     };
 
@@ -372,11 +375,6 @@
         NO_CATEGORY: 'No category selected'
     };
 
-    const researchItemTypes = {
-        ACCOMPLISHMENT: 'accomplishment',
-        DOCUMENT: 'document'
-    };
-
     const pathProfileImages = '/profile/images';
 
     const genders = {
@@ -401,7 +399,6 @@
         .constant('documentListSections', documentListSections)
         .constant('documentCategories', documentCategories)
         .constant('documentActions', documentActions)
-        .constant('researchItemTypes', researchItemTypes)
         .constant('pathProfileImages', pathProfileImages)
         .constant('genders', genders);
 })();

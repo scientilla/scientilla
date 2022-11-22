@@ -29,6 +29,8 @@
         vm.isGroup = isGroup;
         vm.hasActiveExternalConnectors = false;
         vm.isProject = isProject;
+        vm.showSuggestedPatents = showSuggestedPatents;
+        vm.showSuggestedProjects = showSuggestedProjects;
 
         const prefix = '#/';
         vm.subResearchEntity = context.getSubResearchEntity();
@@ -133,6 +135,20 @@
             }
 
             return false;
+        }
+
+        function showSuggestedPatents() {
+            return isGroup() && (
+                vm.subResearchEntity.type === groupTypes.INITIATIVE ||
+                vm.subResearchEntity.type === groupTypes.PROJECT
+            );
+        }
+
+        function showSuggestedProjects() {
+            return isGroup() && (
+                vm.subResearchEntity.type === groupTypes.INITIATIVE ||
+                vm.subResearchEntity.type === groupTypes.PROJECT
+            );
         }
     }
 

@@ -15,7 +15,14 @@
                 type="preview"
             ></scientilla-research-item-authors>
         </div>
-
+        <ul
+            ng-if="vm.project.labels"
+            class="project-labels"
+        >
+            <li ng-repeat="l in vm.project.labels">
+                <badge label="l"></badge>
+            </li>
+        </ul>
         <h2
             class="project-title has-action"
             ng-click="vm.openDetails()"

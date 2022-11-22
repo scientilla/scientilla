@@ -7,7 +7,6 @@
             controllerAs: 'vm',
             bindings: {
                 group: '<',
-                refreshGroup: '&',
                 active: '<?'
             }
         });
@@ -18,12 +17,12 @@
         'GroupsService',
         'AuthService',
         'ModalService',
-        'researchEntityService',
         'PeopleService',
         '$element',
         'userConstants',
         '$scope',
-        '$location'
+        '$location',
+        'EventsService'
     ];
 
     function controller(
@@ -32,12 +31,12 @@
         GroupsService,
         AuthService,
         ModalService,
-        researchEntityService,
         PeopleService,
         $element,
         userConstants,
         $scope,
-        $location
+        $location,
+        EventsService
     ) {
         const vm = this;
 
@@ -322,7 +321,6 @@
 
         function refreshList() {
             onFilter(query, true);
-            vm.refreshGroup()();
         }
 
         function isGroupAdmin() {
@@ -370,7 +368,10 @@
         function openUserForm(user) {
             ModalService
                 .openScientillaUserForm(!user ? UsersService.getNewUser() : user.clone())
-                .then(refreshList);
+                .then(() => {
+                    refreshList();
+                    EventsService.publish(EventsService.GROUP_UPDATED, vm.group);
+                });
         }
 
         function socialClass(social) {

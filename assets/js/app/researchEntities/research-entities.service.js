@@ -49,10 +49,14 @@
         service.getAccomplishments = getAccomplishments;
         service.setVerifyPrivacy = setVerifyPrivacy;
         service.setVerifyFavorite = setVerifyFavorite;
+        service.getSuggestedProjects = getSuggestedProjects;
+        service.getDiscardedProjects = getDiscardedProjects;
         service.getProject = getProject;
         service.getProjects = getProjects;
         service.getProjectDrafts = getProjectDrafts;
-        service.getMinMaxYears = getMinMaxYears;
+        service.getSuggestedPatents = getSuggestedPatents;
+        service.getDiscardedPatents = getDiscardedPatents;
+        service.getPatent = getPatent;
         service.getPatents = getPatents;
         service.getPatentFamilies = getPatentFamilies;
         service.getTrainingModule = getTrainingModule;
@@ -191,24 +195,48 @@
         async function unverify(researchEntity, researchItem) {
             ResearchItemService.addLabel(researchItem, researchItemLabels.UVERIFYING);
 
-            const buttonKey = await ModalService.multipleChoiceConfirm('Unverifying',
-                'Unverifying an item removes it from your profile, you can choose:\n\n' +
-                'Move to drafts: to move the item in your drafts.\n' +
-                'Remove: to remove it completely from your profile.',
-                {move: 'Move to drafts', remove: 'Remove'},
-                'Cancel',
-                true);
             try {
-                switch (buttonKey) {
-                    case 'cancel':
-                        ResearchItemService.removeLabel(researchItem, researchItemLabels.UVERIFYING);
-                        return;
-                    case 'move':
-                        await copyResearchItem(researchEntity, researchItem.id);
-                        EventsService.publish(EventsService.RESEARCH_ITEM_DRAFT_CREATED, {});
-                        break;
-                    case 'remove':
-                        break;
+                if (
+                    researchItem.type.type === researchItemTypes.PROJECT ||
+                    researchItem.type.type === researchItemTypes.PATENT
+                ) {
+                    const buttonKey = await ModalService.multipleChoiceConfirm(
+                        'Unverifying',
+                        'Unverifying an item removes it from your profile.',
+                        {remove: 'Remove'},
+                        'Cancel',
+                        true
+                    );
+
+                    switch (buttonKey) {
+                        case 'cancel':
+                            ResearchItemService.removeLabel(researchItem, researchItemLabels.UVERIFYING);
+                            return;
+                        case 'remove':
+                            break;
+                    }
+                } else {
+                    const buttonKey = await ModalService.multipleChoiceConfirm(
+                        'Unverifying',
+                        'Unverifying an item removes it from your profile, you can choose:\n\n' +
+                        'Move to drafts: to move the item in your drafts.\n' +
+                        'Remove: to remove it completely from your profile.',
+                        {move: 'Move to drafts', remove: 'Remove'},
+                        'Cancel',
+                        true
+                    );
+
+                    switch (buttonKey) {
+                        case 'cancel':
+                            ResearchItemService.removeLabel(researchItem, researchItemLabels.UVERIFYING);
+                            return;
+                        case 'move':
+                            await copyResearchItem(researchEntity, researchItem.id);
+                            EventsService.publish(EventsService.RESEARCH_ITEM_DRAFT_CREATED, {});
+                            break;
+                        case 'remove':
+                            break;
+                    }
                 }
 
                 try {
@@ -224,9 +252,10 @@
         }
 
         async function discard(researchEntity, researchItem) {
+            const type = _.lowerCase(researchItem.type.type);
             const option = await ModalService.multipleChoiceConfirm(
                 'Discard',
-                'This action will discard this document from the suggested documents. Do you want to proceed?',
+                `This action will discard this ${type} from the suggested ${type}s. Do you want to proceed?`,
                 {proceed: 'Proceed'},
                 'Cancel',
                 true
@@ -408,8 +437,20 @@
             }
         }
 
-        async function getMinMaxYears(researchEntity, type) {
-            return await researchEntity.one('min-max-years', type).get();
+        async function getSuggestedProjects(researchEntity, query) {
+            const populate = {populate: projectPopulates};
+            const q = _.defaultsDeep({}, query, populate);
+            await setProjectType(q);
+            return await researchEntity.getList('suggestedProjects', q);
+        }
+
+        async function getDiscardedProjects(researchEntity, query) {
+            const populate = {populate: projectPopulates};
+            const q = _.defaultsDeep({}, query, populate);
+            await setProjectType(q);
+            const discarded = await researchEntity.getList('discardedProjects', q);
+            discarded.forEach(d => ResearchItemService.addLabel(d, researchItemLabels.DISCARDED));
+            return discarded
         }
 
         async function getProjects(researchEntity, query, favorites = false, populates = projectPopulates) {
@@ -444,6 +485,24 @@
                     query.where.type = type.id;
                 }
             }
+        }
+
+        async function getSuggestedPatents(researchEntity, query) {
+            const populate = {populate: patentPopulates};
+            const q = _.defaultsDeep({}, query, populate);
+            return await researchEntity.getList('suggestedPatents', q);
+        }
+
+        async function getDiscardedPatents(researchEntity, query) {
+            const populate = {populate: patentPopulates};
+            const q = _.defaultsDeep({}, query, populate);
+            const discarded = await researchEntity.getList('discardedPatents', q);
+            discarded.forEach(d => ResearchItemService.addLabel(d, researchItemLabels.DISCARDED));
+            return discarded
+        }
+
+        async function getPatent(id, populates = patentPopulates) {
+            return await Restangular.one('patents', id).get({populate: populates});
         }
 
         async function getPatents(researchEntity, query, favorites = false, populates = patentPopulates) {

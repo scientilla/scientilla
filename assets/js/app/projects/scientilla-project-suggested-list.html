@@ -1,0 +1,93 @@
+<scientilla-backend-layout>
+    <h1>Suggested projects</h1>
+    <scientilla-filter
+        category="project-suggested"
+        on-filter="vm.onFilter"
+        elements="vm.projects"
+        empty-list-message="No suggested projects found"
+        on-change="vm.onChange"
+    >
+
+        <scientilla-multicheck>
+            <buttons>
+                <scientilla-multicheck-button
+                    subject="Verify projects"
+                    on-click="vm.multipleVerify"
+                >
+                    <i class="fas fa-check fa-left"></i>Verify
+                </scientilla-multicheck-button>
+                <scientilla-multicheck-button
+                    subject="Discard projects"
+                    on-click="vm.multipleDiscard"
+                >
+                    <i class="fas fa-ban fa-left"></i>Discard
+                </scientilla-multicheck-button>
+            </buttons>
+            <item-list>
+                <scientilla-checkable
+                    ng-repeat="p in vm.projects"
+                    item="p"
+                    class="scientilla-checkable"
+                >
+
+                    <scientilla-project
+                        project="p"
+                        section="vm.projectListSections.SUGGESTED"
+                        class="project-container"
+                    >
+                        </scientilla-project>
+
+                        <div class="project-row-actions">
+
+                            <button
+                                ng-click="vm.verify(p)"
+                                ng-disabled="!vm.isValid(p)"
+                                type="button"
+                                class="btn btn-primary"
+                                title="Verify the suggested project"
+                                ng-if="p.isDiscarded()"
+                            >
+                                <i class="fas fa-check fa-left"></i>Verify
+                            </button>
+
+                            <div
+                                class="btn-group"
+                                uib-dropdown
+                                ng-if="!p.isDiscarded()"
+                            >
+                                <button
+                                    ng-click="vm.verify(p)"
+                                    ng-disabled="!vm.isValid(p)"
+                                    type="button"
+                                    class="btn btn-primary"
+                                    title="Verify the suggested project"
+                                >
+                                    <i class="fas fa-check fa-left"></i>Verify
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-primary dropdown-toggle only-icon"
+                                    uib-dropdown-toggle
+                                >
+                                </button>
+
+                                <div
+                                    uib-dropdown-menu
+                                    class="dropdown-menu"
+                                >
+                                    <button
+                                        ng-click="vm.discard(p)"
+                                        class="dropdown-item"
+                                    >
+                                        <i class="fas fa-ban fa-left"></i>Discard
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                </scientilla-checkable>
+            </item-list>
+        </scientilla-multicheck>
+
+    </scientilla-filter>
+</scientilla-backend-layout>

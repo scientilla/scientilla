@@ -106,7 +106,7 @@
             type: {
                 inputType: 'select',
                 label: 'Group Type',
-                defaultValue: vm.group.type || groupTypes.RESEARCH_LINE,
+                defaultValue: vm.group.type || groupTypes.OTHER,
                 values: Object.keys(types).map(k => ({label: groupTypeLabels[k], value: types[k]})),
                 disabled: isDisabled(vm.group),
                 ngIf: isAdmin,
@@ -149,7 +149,8 @@
                 vm.group.type === groupTypes.RESEARCH_DOMAIN ||
                 vm.group.type === groupTypes.RESEARCH_LINE ||
                 vm.group.type === groupTypes.FACILITY ||
-                vm.group.type === groupTypes.DIRECTORATE
+                vm.group.type === groupTypes.DIRECTORATE ||
+                vm.group.type === groupTypes.PROJECT
             )) {
                 const type = Object.keys(groupTypes).find(key => groupTypes[key] === vm.group.type);
                 vm.formStructure.type.values = [{label: groupTypeLabels[type], value: groupTypes[type]}];
@@ -164,7 +165,6 @@
                 delete newGroupTypes.DIRECTORATE;
                 delete newGroupTypes.PROJECT;
                 vm.formStructure.type.values = Object.keys(newGroupTypes).map(k => ({label: groupTypeLabels[k], value: newGroupTypes[k]}));
-                vm.formStructure.type.defaultValue = newGroupTypes.OTHER;
             }
 
             delete vm.group.members;

@@ -114,9 +114,15 @@
                 >Drafts</a>
             </div>
         </li>
-        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && !vm.isProject()">
+        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific()">
             <label>Projects</label>
             <div class="list-group">
+                <a
+                    ng-href="{{ vm.getUrl('projects/suggested') }}"
+                    ng-class="{active: vm.isActive('/projects/suggested', true)}"
+                    class="list-group-item list-group-item-action"
+                    ng-if="vm.showSuggestedProjects()"
+                >Suggested</a>
                 <a
                     ng-href="{{ vm.getUrl('projects/verified') }}"
                     ng-class="{active: vm.isActive('/projects/verified', true)}"
@@ -148,6 +154,12 @@
         <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific()">
             <label>Patents</label>
             <div class="list-group">
+                <a
+                    ng-href="{{ vm.getUrl('patents/suggested') }}"
+                    ng-class="{active: vm.isActive('/patents/suggested', true)}"
+                    class="list-group-item list-group-item-action"
+                    ng-if="vm.showSuggestedPatents()"
+                >Suggested</a>
                 <a
                     ng-href="{{ vm.getUrl('patents/verified') }}"
                     ng-class="{active: vm.isActive('/patents/verified', true)}"

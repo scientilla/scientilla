@@ -519,14 +519,28 @@
         };
 
         const projectPrototype = {
+            labels: [],
             getPILimit: function () {
                 return 10;
+            },
+            hasLabel: function (label) {
+                return this.labels.includes(label);
+            },
+            isDiscarded: function () {
+                return this.hasLabel(researchItemLabels.DISCARDED);
             },
         };
 
         const patentPrototype = {
+            labels: [],
             getAuthorLimit: function () {
                 return 10;
+            },
+            hasLabel: function (label) {
+                return this.labels.includes(label);
+            },
+            isDiscarded: function () {
+                return this.hasLabel(researchItemLabels.DISCARDED);
             },
         };
 

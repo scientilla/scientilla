@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    angular.module('app')
+    angular.module('patents')
         .component('scientillaPatentFamilyVerifiedList', {
             templateUrl: 'partials/scientilla-patent-family-verified-list.html',
             controller,

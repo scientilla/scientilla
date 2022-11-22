@@ -176,8 +176,13 @@ function trainingModulesToCsv(researchItems) {
         row.push(researchItem.year);
         row.push(researchItem.description);
         row.push(getDisplayName(researchItem.referent));
-        row.push(researchItem.institute.name);
-        row.push(researchItem.phdCourse.name);
+        if (researchItem.otherCourse) {
+            row.push('/');
+            row.push('Other');
+        } else {
+            row.push(researchItem.institute.name);
+            row.push(researchItem.phdCourse.name);
+        }
         row.push(researchItem.hours);
         row.push(researchItem.lectures);
         row.push(researchItem.researchDomains.join(','));
@@ -287,7 +292,7 @@ function projectsToCsv(researchItems) {
         return row;
     }));
 
-    let csvIndustrial = 'data:text/csv;charset=utf-8,';
+    let csvIndustrial = '';
 
     rowsIndustrial.forEach(function (rowArray) {
         csvIndustrial += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
@@ -332,7 +337,7 @@ function projectsToCsv(researchItems) {
         return row;
     }));
 
-    let csvCompetitive = 'data:text/csv;charset=utf-8,';
+    let csvCompetitive = '';
 
     rowsCompetitive.forEach(function (rowArray) {
         csvCompetitive += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
@@ -496,6 +501,10 @@ function getBibtexKey(doc) {
 }
 
 function getBibtexAuthors(doc) {
+    if (!doc.authorsStr) {
+        return;
+    }
+
     const authors = doc.authorsStr.split(', ');
 
     return authors.map(a => {
@@ -522,7 +531,7 @@ function formatBibtex(key, fields, entryType) {
 
 
 function generateCSV(rows) {
-    let csv = 'data:text/csv;charset=utf-8,';
+    let csv = '';
     rows.forEach(function (rowArray) {
         csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
             .join(',') + '\r\n';

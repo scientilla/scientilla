@@ -93,8 +93,4 @@ module.exports = {
         res.set('Content-Type', 'application/octet-stream');
         res.send(string);
     },
-    async minMaxYears(req, res) {
-        const result = await MinMaxYears.get(req);
-        res.halt(Promise.resolve(result));
-    },
 };

@@ -128,18 +128,11 @@
             _.forEach(vm.structure, function (struct, key) {
 
                 onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, (newOption, oldOption) => {
-
                     if (_.isFunction(vm.onChange())) {
                         vm.onChange()()(vm.structure, vm.values, key);
                     }
 
                     const changedStruct = vm.structure[key];
-
-                    if (changedStruct && changedStruct.inputType === 'select') {
-                        $timeout(function() {
-                            $scope.$broadcast('rzSliderForceRender');
-                        });
-                    }
 
                     if (changedStruct && changedStruct.type === 'option' && newOption !== vm.option) {
                         let refresh = false;
@@ -162,16 +155,6 @@
 
                         for (const fieldName in vm.fields) {
                             const field = vm.fields[fieldName];
-                            if (_.has(field, 'inputType') && field.inputType === "range") {
-                                refresh = true;
-                                break;
-                            }
-                        }
-
-                        if (refresh) {
-                            $timeout(function() {
-                                $scope.$broadcast('rzSliderForceRender');
-                            });
                         }
                     }
                 }));
