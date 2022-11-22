@@ -491,7 +491,7 @@
                                     type="button"
                                     class="close"
                                     ng-if="vm.closeable"
-                                    ng-click="vm.cancel()">
+                                    ng-click="vm.onSubmit('cancel')">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
