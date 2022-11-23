@@ -19,9 +19,9 @@ module.exports = {
     },
     deleteDrafts(req, res, next) {
         const draftIds = req.param('draftIds');
-        res.halt(ResearchItem.blukAction(ResearchItem.deleteDraft, draftIds));
+        res.halt(ResearchItem.blukAction(ResearchItem, 'deleteDraft', draftIds));
     },
-    setResearchItemAuthors(req, res, next){
+    setResearchItemAuthors(req, res, next) {
         const draftId = +req.params.itemId;
         const authorsData = req.body;
         res.halt(ResearchItem.setResearchItemAuthors(draftId, authorsData));
@@ -35,7 +35,7 @@ module.exports = {
     multipleVerify(req, res, next) {
         const researchEntityId = +req.params.researchEntityId;
         const itemIds = req.param('itemIds');
-        res.halt(ResearchItem.blukAction(Verify.verify, itemIds, [researchEntityId]));
+        res.halt(ResearchItem.blukAction(Verify, 'verify', itemIds, [researchEntityId]));
     },
     unverify(req, res, next) {
         const researchEntityId = +req.params.researchEntityId;
@@ -50,7 +50,7 @@ module.exports = {
     multipleDiscard(req, res, next) {
         const researchEntityId = +req.params.researchEntityId;
         const itemIds = req.param('itemIds');
-        res.halt(ResearchEntity.blukAction(ResearchEntity.discardResearchItem, itemIds, [researchEntityId]));
+        res.halt(ResearchEntity.blukAction(ResearchEntity, 'discardResearchItem', itemIds, [researchEntityId]));
     },
     setPublic(req, res, next) {
         const researchEntityId = +req.params.researchEntityId;
@@ -72,7 +72,7 @@ module.exports = {
     copyAllToDraft(req, res, next) {
         const researchEntityId = req.params.researchEntityId;
         const researchItemIds = req.param('itemIds');
-        res.halt(ResearchItem.blukAction(ResearchItem.copyToDraft, researchItemIds, [researchEntityId]));
+        res.halt(ResearchItem.blukAction(ResearchItem, 'copyToDraft', researchItemIds, [researchEntityId]));
     },
     getProfile(req, res, next) {
         const researchEntityId = req.params.researchEntityId;
