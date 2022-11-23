@@ -44,12 +44,11 @@ module.exports = {
 
         return await checkCollection(collection);
     },
-    async blukAction(method, elements, params) {
-
+    async blukAction(model, method, elements, params) {
         const results = [];
         for (const element of elements) {
             try {
-                const res = await method(...[element, params]);
+                const res = await model[method].bind(model)(...[element, params]);
                 results.push(res);
             } catch (e) {
                 results.push(e);
