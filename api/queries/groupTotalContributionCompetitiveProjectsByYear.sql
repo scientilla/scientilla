@@ -96,7 +96,7 @@ FULL JOIN (
     JOIN (
         SELECT
             substring(research_lines ->> 'startDate' from 1 for 4) :: NUMERIC as YEAR,
-            (research_lines ->> 'contribution') :: NUMERIC as in_cash_contribution
+            SUM((research_lines ->> 'contribution') :: NUMERIC) as in_cash_contribution
         FROM "research_item_project_competitive" ripc
             JOIN verify v ON ripc.research_item = v.research_item
             JOIN "group" g ON v.research_entity = g.research_entity
@@ -139,7 +139,7 @@ FULL JOIN (
     JOIN (
         SELECT
             substring(research_lines ->> 'startDate' from 1 for 4) :: NUMERIC as YEAR,
-            (research_lines ->> 'contribution') :: NUMERIC as in_kind_contribution
+            SUM((research_lines ->> 'contribution') :: NUMERIC) as in_kind_contribution
         FROM "research_item_project_competitive" ripc
             JOIN verify v ON ripc.research_item = v.research_item
             JOIN "group" g ON v.research_entity = g.research_entity
