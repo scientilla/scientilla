@@ -104,14 +104,20 @@
         };
 
         vm.showScientificProduction = function () {
-            if (!vm.group)
+            if (!vm.group) {
                 return false;
-            return [
-                groupTypes.INSTITUTE,
-                groupTypes.CENTER,
-                groupTypes.RESEARCH_LINE,
-                groupTypes.FACILITY
-            ].includes(vm.group.type);
+            }
+
+            switch (vm.group.type) {
+                case groupTypes.INSTITUTE:
+                case groupTypes.CENTER:
+                    return vm.isGroupAdmin() || vm.isSuperUser() || vm.loggedUser.isAdmin();
+                case groupTypes.RESEARCH_LINE:
+                case groupTypes.FACILITY:
+                    return vm.loggedUser.isAdmin();
+                default:
+                    return false;
+            }
         };
 
         function addCollaborator() {
