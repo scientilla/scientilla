@@ -12,7 +12,7 @@
                 ></i>
             </h1>
             <button
-                ng-if="vm.group && vm.activeTabIndex === 1 && vm.isGroupAdmin()"
+                ng-if="vm.group && vm.activeTabIndex === 1 && (vm.loggedUser.isAdmin() || vm.isGroupAdmin())"
                 ng-click="vm.addCollaborator()"
                 class="btn btn-primary btn-add-collaborator"
             >

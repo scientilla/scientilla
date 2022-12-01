@@ -24,6 +24,7 @@ const isGroupOwner = ['isGroupOwner'];
 const isResearchEntityOwner = ['isResearchEntityOwner'];
 const hasValidAPIKey = ['hasValidAPIKey'];
 const hasRole = require('../api/policies/hasRole.js');
+const canChangeCollaborator = ['canChangeCollaborator'];
 
 const ROLES = {
     USER: 'user',
@@ -116,7 +117,11 @@ module.exports.policies = {
 
     InstituteController: defaultPolicy,
 
-    MembershipController: defaultPolicy,
+    MembershipController: _.defaults({
+        destroy: canChangeCollaborator,
+        create: canChangeCollaborator,
+        update: canChangeCollaborator
+    }, defaultPolicy),
 
     MembershipGroupController: defaultPolicy,
 
