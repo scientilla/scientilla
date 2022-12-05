@@ -72,6 +72,7 @@
                 ng-class="{'is-invalid' : vm.errors.referent}"
                 ng-blur="vm.checkValidation('referent')"
                 ng-change="vm.fieldValueHasChanged('referent')"
+                typeahead-wait-ms="200"
             >
             <scientilla-error-messages
                 class="error-messages"

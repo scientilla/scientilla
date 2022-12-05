@@ -70,6 +70,10 @@
             PHD_CYCLE_CREATED: 'phdCycle.created',
             PHD_CYCLE_UPDATED: 'phdCycle.updated',
             PHD_CYCLE_DELETED: 'phdCycle.deleted',
+
+            COLLABORATOR_CREATED: 'collaborator.created',
+            COLLABORATOR_UPDATED: 'collaborator.updated',
+            COLLABORATOR_DELETED: 'collaborator.deleted',
         };
 
         service.publish = function (event, args) {

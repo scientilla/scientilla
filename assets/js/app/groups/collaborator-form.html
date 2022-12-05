@@ -62,6 +62,7 @@
             ng-model-options="{ allowInvalid: true }"
             typeahead-editable="false"
             typeahead-select-on-blur="false"
+            typeahead-wait-ms="200"
             ng-disabled="vm.isDoingSomething"
         />
     </div>
@@ -91,10 +92,21 @@
                 type="button"
                 class="btn btn-primary"
                 ng-disabled="!vm.selectedCollaborator || vm.isDoingSomething"
-                ng-click="vm.addCollaborator(vm.group, vm.selectedCollaborator, vm.selectedUserActive)"
+                ng-click="vm.addCollaborator(vm.group, vm.selectedCollaborator, vm.selectedUserActive, true)"
+                title="Save & close"
+            >
+                <i class="fas fa-save fa-left"></i>Save & close
+            </button>
+        </li>
+        <li>
+            <button
+                type="button"
+                class="btn btn-primary"
+                ng-disabled="!vm.selectedCollaborator || vm.isDoingSomething"
+                ng-click="vm.addCollaborator(vm.group, vm.selectedCollaborator, vm.selectedUserActive, false)"
                 title="Save"
             >
-                Save
+                <i class="fas fa-save fa-left"></i>Save
             </button>
         </li>
         <li>

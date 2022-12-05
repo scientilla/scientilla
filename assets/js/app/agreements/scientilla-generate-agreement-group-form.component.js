@@ -18,7 +18,7 @@
     scientillaGenerateAgreementGroupFormController.$inject = [
         'ProjectService',
         'UsersService',
-        'EventsService'
+        'EventsService',
     ];
 
     function scientillaGenerateAgreementGroupFormController(ProjectService, UsersService, EventsService) {
@@ -38,19 +38,8 @@
                 vm.checkAndClose()(() => !vm.unsavedData);
         }
 
-        function getUsersQuery(searchText) {
-            const qs = {
-                where: {
-                    or: [
-                        {name: {contains: searchText}},
-                        {surname: {contains: searchText}},
-                        {displayName: {contains: searchText}},
-                        {displaySurname: {contains: searchText}},
-                    ]
-                }
-            };
-            const model = 'users';
-            return {model: model, qs: qs};
+        function getUsersQuery(term) {
+            return {model: 'users', qs: UsersService.getSearchQuery(term)};
         }
 
         async function generateGroup() {

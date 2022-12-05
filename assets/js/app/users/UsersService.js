@@ -170,7 +170,45 @@
         service.delete = async (user) => {
             return await service.one(user.id).remove();
         };
+
+        service.search = async term => {
+            return await service.getUsers(service.getSearchQuery(term));
+        };
         /* jshint ignore:end */
+
+        service.getSearchQuery = term => {
+            const or = [];
+            const termArray = term.split(' ').filter(item => item.length);
+            for (let i = 1; i <= termArray.length; i++) {
+                const firstName = termArray.slice(0, i);
+                const lastName = termArray.slice(i, termArray.length);
+                const and1 = {};
+                const and2 = {};
+                const and3 = {};
+                const and4 = {};
+
+                if (firstName.length > 0) {
+                    and1.name = {contains: firstName.join (' ')};
+                    and2.displayName = {contains: firstName.join (' ')};
+                    and3.surname = {contains: firstName.join (' ')};
+                    and4.displaySurname = {contains: firstName.join (' ')};
+                }
+
+                if (lastName.length > 0) {
+                    and1.surname = {contains: lastName.join (' ')};
+                    and2.displaySurname = {contains: lastName.join (' ')};
+                    and3.name = {contains: lastName.join (' ')};
+                    and4.displayName = {contains: lastName.join (' ')};
+                }
+
+                or.push(and1);
+                or.push(and2);
+                or.push(and3);
+                or.push(and4);
+            }
+
+            return {where: {or: or}};
+        };
 
         return service;
     }

@@ -20,7 +20,8 @@
         'GroupsService',
         'Notification',
         '$scope',
-        'Prototyper'
+        'Prototyper',
+        'EventsService'
     ];
 
     function CollaboratorForm(
@@ -28,7 +29,8 @@
         GroupsService,
         Notification,
         $scope,
-        Prototyper
+        Prototyper,
+        EventsService
     ) {
         const vm = this;
 
@@ -112,24 +114,20 @@
             vm.isAlreadyACollaborator = vm.collaborators.find(c => _.has(c, 'user') && c.user.id === user.id);
         }
 
-        function getUsers(searchText) {
-            const qs = {where: {or: [
-                {name: {contains: searchText}},
-                {surname: {contains: searchText}},
-                {displayName: {contains: searchText}},
-                {displaySurname: {contains: searchText}}
-            ]}};
-            return UsersService.getUsers(qs);
+        function getUsers(term) {
+            return UsersService.search(term);
         }
 
         /* jshint ignore:start */
-        async function addCollaborator(group, user, active) {
+        async function addCollaborator(group, user, active, close) {
             try {
                 const membership =  group.memberships.find(m => m.user === user.id);
                 if (membership) {
                     await GroupsService.updateCollaborator(group, user, active);
+                    EventsService.publish(EventsService.COLLABORATOR_UPDATED, membership);
                 } else {
                     await GroupsService.addCollaborator(group, user, active);
+                    EventsService.publish(EventsService.COLLABORATOR_CREATED, {group, user, active});
                 }
             } catch (e) {
                 Notification.warning('There already is a membership for this user and group!');
@@ -139,8 +137,10 @@
             delete vm.selectedUser;
             delete vm.selectedCollaborator;
 
-            if (_.isFunction(vm.checkAndClose())) {
+            if (close && _.isFunction(vm.checkAndClose())) {
                 vm.checkAndClose()(() => true);
+            } else {
+                await refreshData();
             }
         }
         /* jshint ignore:end */
@@ -160,22 +160,19 @@
             delete vm.selectedUser;
             delete vm.selectedCollaborator;
             await GroupsService.removeMembership(membership.id);
-            await getCollaborators();
             vm.isDoingSomething = false;
             Notification.success('Collaborator is been removed!');
+            EventsService.publish(EventsService.COLLABORATOR_DELETED, membership);
+            await refreshData();
         }
-        /* jshint ignore:end */
 
-        /* jshint ignore:start */
         async function edit(membership) {
             vm.selectedCollaborator = Prototyper.toUserModel(_.cloneDeep(membership.user));
             vm.selectedCollaborator.membership = membership;
             vm.selectedUserActive = membership.active;
             setIsEditing(membership.user);
         }
-        /* jshint ignore:end */
 
-        /* jshint ignore:start */
         async function getCollaborators() {
             vm.collaborators = await GroupsService.getCollaborators(vm.group.id);
             vm.collaborators = vm.collaborators.map(c => {
@@ -184,7 +181,11 @@
             });
             return Promise.resolve(vm.collaborators);
         }
-        /* jshint ignore:end */
 
+        async function refreshData() {
+            vm.group = await GroupsService.getGroup(vm.groupId);
+            await getCollaborators();
+        }
+        /* jshint ignore:end */
     }
 })();

@@ -63,7 +63,10 @@
             vm.initializeTabs(vm.tabs);
 
             EventsService.subscribeAll(vm, [
-                EventsService.GROUP_UPDATED
+                EventsService.GROUP_UPDATED,
+                EventsService.COLLABORATOR_CREATED,
+                EventsService.COLLABORATOR_UPDATED,
+                EventsService.COLLABORATOR_DELETED
             ], () => {
                 refreshGroup();
             });
@@ -78,8 +81,11 @@
         async function refreshGroup() {
             vm.group = await GroupsService.getGroup(vm.group.id);
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
-        }
 
+            if (vm.activeTabIndex === 1) {
+                $scope.$broadcast('refreshList');
+            }
+        }
         /* jshint ignore:end */
 
         vm.isSuperUser = function () {
@@ -121,12 +127,7 @@
         };
 
         function addCollaborator() {
-            ModalService.openCollaboratorForm(vm.group)
-                .then(() => {
-                    if (vm.activeTabIndex === 1) {
-                        $scope.$broadcast('refreshList');
-                    }
-                });
+            ModalService.openCollaboratorForm(vm.group);
         }
     }
 })();

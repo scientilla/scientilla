@@ -117,19 +117,8 @@
         }
         /* jshint ignore:end */
 
-        function getUsers(searchText) {
-            const qs = { where: { or: []}};
-            const search = searchText.split(' ');
-
-            search.forEach(text => {
-                qs.where.or.push({ name: { contains: text } });
-                qs.where.or.push({ surname: { contains: text } });
-                qs.where.or.push({ display_name: { contains: text } });
-                qs.where.or.push({ display_surname: { contains: text } });
-                qs.where.or.push({ username: { contains: text } });
-            });
-
-            return UsersService.getUsers(qs);
+        function getUsers(term) {
+            return UsersService.search(term);
         }
 
         function getReferrerUsers() {

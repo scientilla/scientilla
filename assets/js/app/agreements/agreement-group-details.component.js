@@ -20,7 +20,8 @@
         '$scope',
         '$controller',
         'ResearchEntitiesService',
-        'ModalService'
+        'ModalService',
+        'EventsService'
     ];
 
     function AgreementGroupDetailsController(
@@ -30,7 +31,8 @@
         $scope,
         $controller,
         ResearchEntitiesService,
-        ModalService
+        ModalService,
+        EventsService
     ) {
         const vm = this;
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
@@ -44,11 +46,27 @@
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
 
             vm.initializeTabs(vm.tabs);
+
+            EventsService.subscribeAll(vm, [
+                EventsService.COLLABORATOR_CREATED,
+                EventsService.COLLABORATOR_UPDATED,
+                EventsService.COLLABORATOR_DELETED
+            ], () => {
+                refreshGroup();
+            });
+        };
+
+        vm.$onDestroy = function () {
+            EventsService.unsubscribeAll(vm);
         };
 
         async function refreshGroup() {
             vm.group = await GroupsService.getGroup(vm.group.id);
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
+
+            if (vm.activeTabIndex === 1) {
+                $scope.$broadcast('refreshList');
+            }
         }
         /* jshint ignore:end */
 
@@ -57,12 +75,7 @@
         };
 
         function addCollaborator() {
-            ModalService.openCollaboratorForm(vm.group)
-                .then(() => {
-                    if (vm.activeTabIndex === 1) {
-                        $scope.$broadcast('refreshList');
-                    }
-                });
+            ModalService.openCollaboratorForm(vm.group);
         }
     }
 })();

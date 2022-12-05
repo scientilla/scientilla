@@ -197,14 +197,8 @@
         }
 
         /* jshint ignore:start */
-        async function getUsers(searchText) {
-            const qs = {where: {or: [
-                {name: {contains: searchText}},
-                {surname: {contains: searchText}},
-                {displayName: {contains: searchText}},
-                {displaySurname: {contains: searchText}}
-            ]}};
-            const users = await UsersService.getUsers(qs);
+        async function getUsers(term) {
+            const users = await UsersService.search(term);
             return users.filter(user => [
                 userConstants.role.USER,
                 userConstants.role.SUPERUSER,
