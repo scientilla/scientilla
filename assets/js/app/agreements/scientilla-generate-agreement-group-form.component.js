@@ -19,9 +19,10 @@
         'ProjectService',
         'UsersService',
         'EventsService',
+        'userConstants'
     ];
 
-    function scientillaGenerateAgreementGroupFormController(ProjectService, UsersService, EventsService) {
+    function scientillaGenerateAgreementGroupFormController(ProjectService, UsersService, EventsService, userConstants) {
         const vm = this;
 
         vm.cancel = close;

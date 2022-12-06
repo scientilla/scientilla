@@ -20,14 +20,16 @@
         'GroupsService',
         'Notification',
         'EventsService',
-        'UsersService'
+        'UsersService',
+        'userConstants'
     ];
 
     function AgreementAdminFormController(
         GroupsService,
         Notification,
         EventsService,
-        UsersService
+        UsersService,
+        userConstants
     ) {
         const vm = this;
         vm.getUsersQuery = getUsersQuery;

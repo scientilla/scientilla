@@ -21,7 +21,8 @@
         'Notification',
         '$scope',
         'Prototyper',
-        'EventsService'
+        'EventsService',
+        'userConstants'
     ];
 
     function CollaboratorForm(
@@ -30,7 +31,8 @@
         Notification,
         $scope,
         Prototyper,
-        EventsService
+        EventsService,
+        userConstants
     ) {
         const vm = this;
 

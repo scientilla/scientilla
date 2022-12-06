@@ -16,9 +16,9 @@
             }
         });
 
-        agreementReferrerEditor.$inject = ['UsersService', 'Prototyper', '$scope'];
+        agreementReferrerEditor.$inject = ['UsersService', 'Prototyper', '$scope', 'userConstants'];
 
-    function agreementReferrerEditor(UsersService, Prototyper, $scope) {
+    function agreementReferrerEditor(UsersService, Prototyper, $scope, userConstants) {
         const vm = this;
 
         vm.addReferrer = addReferrer;
