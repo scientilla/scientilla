@@ -115,11 +115,15 @@
             vm.checkValidation({field: 'pis'});
             vm.unsavedData = true;
         }
-        /* jshint ignore:end */
 
-        function getUsers(term) {
-            return UsersService.search(term);
+        async function getUsers(term) {
+            return await UsersService.search(term, [
+                userConstants.role.USER,
+                userConstants.role.SUPERUSER,
+                userConstants.role.ADMINISTRATOR
+            ]);
         }
+        /* jshint ignore:end */
 
         function getReferrerUsers() {
             const qs = { where: { username: vm.referrers.map(r => r.email) } };

@@ -26,7 +26,8 @@
         'ValidateService',
         '$timeout',
         'EventsService',
-        'UsersService'
+        'UsersService',
+        'userConstants'
     ];
 
     function GroupFormController(
@@ -39,7 +40,8 @@
         ValidateService,
         $timeout,
         EventsService,
-        UsersService
+        UsersService,
+        userConstants
     ) {
         const vm = this;
         vm.getUsersQuery = getUsersQuery;
@@ -281,7 +283,11 @@
         }
 
         function getUsersQuery(term) {
-            return {model: 'users', qs: UsersService.getSearchQuery(term)};
+            return {model: 'users', qs: UsersService.getSearchQuery(term, [
+                userConstants.role.USER,
+                userConstants.role.SUPERUSER,
+                userConstants.role.ADMINISTRATOR
+            ])};
         }
 
         function cancel() {

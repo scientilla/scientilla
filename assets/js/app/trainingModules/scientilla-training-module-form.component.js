@@ -198,12 +198,11 @@
 
         /* jshint ignore:start */
         async function getUsers(term) {
-            const users = await UsersService.search(term);
-            return users.filter(user => [
+            return await UsersService.search(term, [
                 userConstants.role.USER,
                 userConstants.role.SUPERUSER,
                 userConstants.role.ADMINISTRATOR
-            ].includes(user.role));
+            ]);
         }
         /* jshint ignore:end */
 

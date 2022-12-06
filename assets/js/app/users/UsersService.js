@@ -171,12 +171,12 @@
             return await service.one(user.id).remove();
         };
 
-        service.search = async term => {
-            return await service.getUsers(service.getSearchQuery(term));
+        service.search = async (term, roles = []) => {
+            return await service.getUsers(service.getSearchQuery(term, roles));
         };
         /* jshint ignore:end */
 
-        service.getSearchQuery = term => {
+        service.getSearchQuery = (term, roles = []) => {
             const or = [];
             const termArray = term.split(' ').filter(item => item.length);
             for (let i = 1; i <= termArray.length; i++) {
@@ -199,6 +199,13 @@
                     and2.displaySurname = {contains: lastName.join (' ')};
                     and3.name = {contains: lastName.join (' ')};
                     and4.displayName = {contains: lastName.join (' ')};
+                }
+
+                if (roles.length) {
+                    and1.role = roles;
+                    and2.role = roles;
+                    and3.role = roles;
+                    and4.role = roles;
                 }
 
                 or.push(and1);

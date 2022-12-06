@@ -114,11 +114,15 @@
             vm.isAlreadyACollaborator = vm.collaborators.find(c => _.has(c, 'user') && c.user.id === user.id);
         }
 
-        function getUsers(term) {
-            return UsersService.search(term);
+        /* jshint ignore:start */
+        async function getUsers(term) {
+            return await UsersService.search(term, [
+                userConstants.role.USER,
+                userConstants.role.SUPERUSER,
+                userConstants.role.ADMINISTRATOR
+            ]);
         }
 
-        /* jshint ignore:start */
         async function addCollaborator(group, user, active, close) {
             try {
                 const membership =  group.memberships.find(m => m.user === user.id);
