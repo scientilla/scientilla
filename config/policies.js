@@ -118,7 +118,6 @@ module.exports.policies = {
         addCollaborator: canChangeCollaborator,
         updateCollaborator: canChangeCollaborator,
         removeCollaborator: canChangeCollaborator,
-        getChildGroups: true,
         getParentGroups: true,
         addChildGroup: isGroupOwner,
         removeChildGroup: isGroupOwner

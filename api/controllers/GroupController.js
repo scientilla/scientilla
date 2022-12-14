@@ -97,9 +97,6 @@ module.exports = _.merge({}, SubResearchEntityController, {
             res.halt(Promise.reject('Something went wrong!'));
         }
     },
-    getChildGroups: function (req, res) {
-        res.halt(Promise.resolve('getChildGroups'));
-    },
     getParentGroups: async function (req, res) {
         const groupId = req.params.groupId;
         const childGroup = await Group.findOne({ id: groupId });

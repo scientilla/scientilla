@@ -100,7 +100,6 @@ module.exports.routes = {
     ['put ' + apiPrfx + '/groups/:groupId/add-collaborator']: 'Group.addCollaborator',
     ['put ' + apiPrfx + '/groups/:groupId/update-collaborator/:userId']: 'Group.updateCollaborator',
     ['delete ' + apiPrfx + '/groups/:groupId/remove-collaborator/:userId']: 'Group.removeCollaborator',
-    ['get ' + apiPrfx + '/groups/:groupId/get-child-groups']: 'Group.getChildGroups',
     ['get ' + apiPrfx + '/groups/:groupId/get-parent-groups']: 'Group.getParentGroups',
     ['put ' + apiPrfx + '/groups/:groupId/add-child-group']: 'Group.addChildGroup',
     ['delete ' + apiPrfx + '/groups/:groupId/remove-child-group/:childGroupId']: 'Group.removeChildGroup',
