@@ -7,33 +7,16 @@ module.exports = function (req, res, next) {
         }
 
         const u = await User.findOneById(user.id).populate('administratedGroups');
-        let groupId;
-        // For updating and destroying an existing membership take the id from the parameters
-        if (_.has(req, 'params.id')) {
-            const membership = await Membership.findOneById(req.params.id);
-
-            if (!membership) {
-                return res.serverError('Missing membership!');
-            }
-
-            groupId = membership.group;
-
-            // Check the synchronized flag
-            if (_.has(req, 'body.synchronized') && req.body.synchronized) {
-                return res.serverError('You can only edit collaborators!');
-            }
-        } else {
-            // Check the synchronized flag
-            if (_.has(req, 'body.synchronized') && req.body.synchronized) {
-                return res.serverError('You can only add collaborators!');
-            }
+        if (!u) {
+            return res.serverError('User not found!');
         }
 
-        if (_.has(req, 'body.group')) {
-            groupId = req.body.group;
+        if (!_.has(req, 'params.groupId')) {
+            return res.serverError('Missing group ID!');
         }
-
+        const groupId = parseInt(req.params.groupId);
         const administratedGroupIds = u.administratedGroups.map(g => g.id);
+
         if (!administratedGroupIds.includes(groupId) && user.role != 'administrator') {
             return res.serverError('You are not an administrator of this group or system!');
         }

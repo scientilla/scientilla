@@ -96,7 +96,14 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/people/unique-nationalities']: 'Person.getUniqueNationalities',
     ['put ' + apiPrfx + '/users/:userId/aliases']: 'User.saveAliases',
     ['get ' + apiPrfx + '/agreements/unique-partner-institutes']: 'Agreement.getUniquePartnerInstitutes',
-    ['get ' + apiPrfx + '/memberships/:groupId/get-collaborators']: 'Membership.getCollaborators',
+    ['get ' + apiPrfx + '/groups/:groupId/get-collaborators']: 'Group.getCollaborators',
+    ['put ' + apiPrfx + '/groups/:groupId/add-collaborator']: 'Group.addCollaborator',
+    ['put ' + apiPrfx + '/groups/:groupId/update-collaborator/:userId']: 'Group.updateCollaborator',
+    ['delete ' + apiPrfx + '/groups/:groupId/remove-collaborator/:userId']: 'Group.removeCollaborator',
+    ['get ' + apiPrfx + '/groups/:groupId/get-child-groups']: 'Group.getChildGroups',
+    ['get ' + apiPrfx + '/groups/:groupId/get-parent-groups']: 'Group.getParentGroups',
+    ['put ' + apiPrfx + '/groups/:groupId/add-child-group']: 'Group.addChildGroup',
+    ['delete ' + apiPrfx + '/groups/:groupId/remove-child-group/:childGroupId']: 'Group.removeChildGroup',
 
     //Research item API
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/delete']: 'ResearchEntity.deleteDrafts',

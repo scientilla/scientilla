@@ -113,17 +113,36 @@ module.exports.policies = {
         getPatents: true,
         getMBOInstitutePerformance: true,
         getMBOInvitedTalks: true,
+        getCollaborator: true,
+        getCollaborators: true,
+        addCollaborator: canChangeCollaborator,
+        updateCollaborator: canChangeCollaborator,
+        removeCollaborator: canChangeCollaborator,
+        getChildGroups: true,
+        getParentGroups: true,
+        addChildGroup: isGroupOwner,
+        removeChildGroup: isGroupOwner
     }, defaultPolicy),
 
     InstituteController: defaultPolicy,
 
-    MembershipController: _.defaults({
-        destroy: canChangeCollaborator,
-        create: canChangeCollaborator,
-        update: canChangeCollaborator
-    }, defaultPolicy),
+    MembershipController: {
+        findOne: true,
+        find: true,
+        populate: true,
+        destroy: false,
+        create: false,
+        update: false
+    },
 
-    MembershipGroupController: defaultPolicy,
+    MembershipGroupController: {
+        findOne: true,
+        find: true,
+        populate: true,
+        destroy: false,
+        create: false,
+        update: false
+    },
 
     SettingsController: _.defaults({
         getSettings: true,

@@ -737,4 +737,7 @@ async function run() {
 
     // Import the facility data from matrix
     await handleMatrixOfGroupType('researchStructures', GroupTypes.FACILITY);
+
+    await SqlService.refreshMaterializedView('person');
+    sails.log.debug('Refreshed person view...');
 }
