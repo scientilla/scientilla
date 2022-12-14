@@ -328,8 +328,7 @@ async function run() {
                             // Find the membership group record
                             centerMembership = await MembershipGroup.findOne({
                                 child_group: group.id,
-                                parent_group: center.id,
-                                synchronized: true
+                                parent_group: center.id
                             });
 
                             // Push the membership to an array to log later
@@ -349,8 +348,7 @@ async function run() {
                             // Find the membership group record
                             mainResearchDomainMembership = await MembershipGroup.findOne({
                                 child_group: group.id,
-                                parent_group: mainResearchDomain.id,
-                                synchronized: true
+                                parent_group: mainResearchDomain.id
                             });
 
                             // Push the membership to an array to log later
@@ -434,6 +432,7 @@ async function run() {
                                 // If the center membership is already existing, find the membership
                                 await MembershipGroup.update({id: centerMembership.id}, {
                                     lastsynch: moment().format(ISO8601Format),
+                                    synchronized: true,
                                     active: true
                                 });
                                 centerMembership = await MembershipGroup.findOne({id: centerMembership.id});
@@ -465,6 +464,7 @@ async function run() {
                                 // If the main research domain membership is already existing, find the membership
                                 await MembershipGroup.update({id: mainResearchDomainMembership.id}, {
                                     lastsynch: moment().format(ISO8601Format),
+                                    synchronized: true,
                                     active: true
                                 });
                                 mainResearchDomainMembership = await MembershipGroup.findOne({id: mainResearchDomainMembership.id});
