@@ -129,7 +129,8 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/patents/export']: 'Patent.export',
     ['post ' + apiPrfx + '/agreements/export']: 'Agreement.export',
     ['post ' + apiPrfx + '/training-modules/export']: 'TrainingModule.export',
-
+    ['post ' + apiPrfx + '/sources/:sourceId/metric-sources']: 'Source.addMetricSources',
+    ['delete ' + apiPrfx + '/sources/:sourceId/metric-sources']: 'Source.removeMetricSources',
 
     //Site API
     ['get ' + userUsernamePath + '/publications']: 'User.getPublications',

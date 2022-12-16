@@ -12,10 +12,18 @@
     scientillaAdminSource.$inject = [
         'Restangular',
         'SourceService',
-        '$scope'
+        '$scope',
+        'Notification',
+        'EventsService'
     ];
 
-    function scientillaAdminSource(Restangular, SourceService, $scope) {
+    function scientillaAdminSource(
+        Restangular,
+        SourceService,
+        $scope,
+        Notification,
+        EventsService
+    ) {
         const vm = this;
         vm.getSources = getSources;
         vm.formatSource = SourceService.formatSource;
@@ -31,6 +39,8 @@
 
         vm.metricsToAdd = [];
         vm.metricsToRemove = [];
+        vm.isAdding = false;
+        vm.isRemoving = false;
 
         let selectedSourceWithoutMetricsWatcher;
 
@@ -112,58 +122,76 @@
 
         /* jshint ignore:start */
         async function addMetric() {
-            if (!vm.selectedSource || !vm.foundMetrics)
+            if (!vm.selectedSource || !vm.foundMetrics || !vm.metricsToAdd.length) {
                 return;
+            }
 
-            if (!vm.metricsToAdd.length)
-                return;
+            vm.isAdding = true;
 
-            const sourceMetricSources = vm.metricsToAdd.map(m => ({
-                sourceMetric: m.id,
-                source: vm.selectedSource.id
-            }));
-
-            await Restangular.all('sourcemetricsources')
-                .post(sourceMetricSources)
-                .then(() => {
-                    vm.metricsToAdd = [];
-                    vm.foundMetrics.forEach(function(metric) {
-                        metric.selected = false;
-                    });
+            const result = await Restangular.one('sources', vm.selectedSource.id)
+                .one('metric-sources')
+                .customPOST({
+                    sourceMetricIds: vm.metricsToAdd.map(m => m.id)
                 });
 
             vm.selectedSource = await Restangular.one('sources', vm.selectedSource.id)
                 .get({populate: 'metrics'});
+
+            if (result.length === vm.metricsToAdd.length) {
+                Notification.success(`The source ${vm.metricsToAdd.length === 1 ? 'metric is' : ' metrics are'} successfully been added!`);
+            } else {
+                if (result.length > 0) {
+                    Notification.warning(`Only ${result.length} out of ${vm.metricsToAdd.length} source metrics are been added!`);
+                } else {
+                    Notification.warning('Something went wrong, no source metrics are been added!');
+                }
+            }
+
+            vm.metricsToAdd = [];
+            vm.foundMetrics.forEach(function(metric) {
+                metric.selected = false;
+            });
+            vm.isAdding = false;
+
+            EventsService.publish(EventsService.SOURCE_METRICS_CHANGED, result);
         }
 
         async function removeMetric() {
-            if (!vm.selectedSource || !vm.selectedSource.metrics)
+            if (!vm.selectedSource || !vm.selectedSource.metrics || !vm.metricsToRemove.length) {
                 return;
+            }
 
-            if (!vm.metricsToRemove.length)
-                return;
+            vm.isRemoving = true;
 
-            const criteria = {
-                where: {
-                    or: vm.metricsToRemove.map(m => ({
-                        sourceMetric: m.id,
-                        source: vm.selectedSource.id
-                    }))
-                }
-            };
-
-            const sourceMetricSourcesToDelete = await Restangular.all('sourcemetricsources').getList(criteria);
-
-            for (const sms of sourceMetricSourcesToDelete)
-                await sms.remove()
-                    .then(() => {
-                        vm.metricsToRemove = [];
-                    });
+            const result = await Restangular.one('sources', vm.selectedSource.id)
+                .customDELETE('metric-sources', '', {'content-type': 'application/json'}, {
+                    sourceMetricIds: vm.metricsToRemove.map(m => m.id)
+                });
 
             vm.selectedSource = await Restangular.one('sources', vm.selectedSource.id)
                 .get({populate: 'metrics'});
+
+
+            if (result.length === vm.metricsToRemove.length) {
+                Notification.success(`The source${vm.metricsToRemove.length === 1 ? 'metric is' : 'metrics are'} successfully been removed!`);
+            } else {
+                if (result.length > 0) {
+                    Notification.warning(`Only ${result.length} out of ${vm.metricsToRemove.length} source metrics are been removed!`);
+                } else {
+                    Notification.warning('Something went wrong, no source metrics are been removed!');
+                }
+            }
+
+            vm.metricsToRemove = [];
+            vm.isRemoving = false;
+
+            EventsService.publish(EventsService.SOURCE_METRICS_CHANGED, result);
         }
         /* jshint ignore:end */
+
+        vm.isCheckboxDisabled = metric => {
+            return vm.selectedSource.metrics.some(m => m.id === metric.id) || vm.isAdding;
+        };
     }
 
 })();

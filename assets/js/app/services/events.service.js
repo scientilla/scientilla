@@ -74,6 +74,8 @@
             COLLABORATOR_CREATED: 'collaborator.created',
             COLLABORATOR_UPDATED: 'collaborator.updated',
             COLLABORATOR_DELETED: 'collaborator.deleted',
+
+            SOURCE_METRICS_CHANGED: 'source.metrics.changed',
         };
 
         service.publish = function (event, args) {

@@ -125,23 +125,17 @@ module.exports.policies = {
 
     InstituteController: defaultPolicy,
 
-    MembershipController: {
-        findOne: true,
-        find: true,
-        populate: true,
+    MembershipController: _.defaults({
         destroy: false,
         create: false,
         update: false
-    },
+    }, defaultPolicy),
 
-    MembershipGroupController: {
-        findOne: true,
-        find: true,
-        populate: true,
+    MembershipGroupController: _.defaults({
         destroy: false,
         create: false,
         update: false
-    },
+    }, defaultPolicy),
 
     SettingsController: _.defaults({
         getSettings: true,
@@ -149,9 +143,15 @@ module.exports.policies = {
 
     SourceController: _.defaults({
         create: isLogged,
+        addMetricSources: hasRole([ROLES.ADMINISTRATOR]),
+        removeMetricSources: hasRole([ROLES.ADMINISTRATOR])
     }, defaultPolicy),
 
-    SourceMetricSourceController: defaultPolicy,
+    SourceMetricSourceController: _.defaults({
+        destroy: false,
+        create: false,
+        update: false
+    }, defaultPolicy),
 
     TaglabelController: defaultPolicy,
 
