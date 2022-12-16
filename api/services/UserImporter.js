@@ -566,6 +566,7 @@ async function importUsers(email = getDefaultEmail()) {
         }
 
         await SqlService.refreshMaterializedView('person');
+        sails.log.debug('Refreshed person view...');
 
         // Reporting
         await Utils.log(newMemberships.length + ' memberships created!', logMethod);

@@ -157,8 +157,7 @@
                 vm.groups = await GroupsService.getGroups();
             }
 
-            let memberships = [];
-            let subgroups = false;
+            let subgroups = true;
             let formerMembers = false;
             let groupWhere = {};
 

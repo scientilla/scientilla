@@ -42,6 +42,7 @@
         vm.remove = remove;
         vm.edit = edit;
 
+        vm.saveAndClose = false;
         vm.selectedUser = null;
         vm.selectedUserActive = true;
         vm.userActiveDisabled = false;
@@ -126,11 +127,13 @@
         }
 
         async function addCollaborator(group, user, active, close) {
+            vm.saveAndClose = close;
+            vm.isDoingSomething = true;
             try {
-                const membership =  group.memberships.find(m => m.user === user.id);
-                if (membership) {
+                const collaborator = vm.collaborators.find(c => _.has(c, 'user') && c.user.id === user.id);
+                if (collaborator) {
                     await GroupsService.updateCollaborator(group, user, active);
-                    EventsService.publish(EventsService.COLLABORATOR_UPDATED, membership);
+                    EventsService.publish(EventsService.COLLABORATOR_UPDATED, {group, user, active});
                 } else {
                     await GroupsService.addCollaborator(group, user, active);
                     EventsService.publish(EventsService.COLLABORATOR_CREATED, {group, user, active});
@@ -142,6 +145,8 @@
 
             delete vm.selectedUser;
             delete vm.selectedCollaborator;
+
+            vm.isDoingSomething = false;
 
             if (close && _.isFunction(vm.checkAndClose())) {
                 vm.checkAndClose()(() => true);
@@ -165,9 +170,8 @@
             vm.isDoingSomething = true;
             delete vm.selectedUser;
             delete vm.selectedCollaborator;
-            await GroupsService.removeMembership(membership.id);
+            await GroupsService.removeCollaborator(vm.group, membership.user);
             vm.isDoingSomething = false;
-            Notification.success('Collaborator is been removed!');
             EventsService.publish(EventsService.COLLABORATOR_DELETED, membership);
             await refreshData();
         }

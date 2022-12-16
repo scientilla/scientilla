@@ -24,10 +24,11 @@
         EventsService
     ) {
         const vm = this;
-        vm.addChild = addChild;
-        vm.removeChild = removeChild;
+        vm.addChildGroup = addChildGroup;
+        vm.removeChildGroup = removeChildGroup;
         vm.getGroups = getGroups;
         vm.isAdmin = isAdmin;
+        vm.selectedChild = false;
 
         vm.$onInit = function () {
             vm.selectedGroup = undefined;
@@ -38,24 +39,34 @@
             return GroupsService.getGroups(qs);
         }
 
-        function addChild() {
-            GroupsService.addRelative(vm.group, vm.selectedGroup)
+        function addChildGroup() {
+            vm.selectedChild = _.cloneDeep(vm.selectedGroup);
+            GroupsService.addChildGroup(vm.group, vm.selectedGroup)
                 .then(() => {
                     delete vm.selectedGroup;
                     EventsService.publish(EventsService.GROUP_UPDATED, vm.group);
+                })
+                .finally(() => {
+                    vm.selectedChild = false;
                 });
         }
 
-        function removeChild(child) {
+        function removeChildGroup(child) {
             ModalService
                 .multipleChoiceConfirm('Removing group member',
                     `Are you sure you want to remove ${child.getDisplayName()} from the group members?`,
                     {proceed: 'Proceed'})
                 .then(function (buttonIndex) {
-                    if (buttonIndex === 'proceed')
-                        return GroupsService.removeChild(vm.group, child)
-                            .then(() => EventsService.publish(EventsService.GROUP_UPDATED, vm.group));
-
+                    if (buttonIndex === 'proceed') {
+                        vm.selectedChild = child;
+                        return GroupsService.removeChildGroup(vm.group, child)
+                            .then(() => {
+                                EventsService.publish(EventsService.GROUP_UPDATED, vm.group);
+                            })
+                            .finally(() => {
+                                vm.selectedChild = false;
+                            });
+                    }
                 });
         }
 

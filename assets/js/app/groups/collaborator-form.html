@@ -95,7 +95,7 @@
                 ng-click="vm.addCollaborator(vm.group, vm.selectedCollaborator, vm.selectedUserActive, true)"
                 title="Save & close"
             >
-                Save & close
+                {{ vm.isDoingSomething && vm.saveAndClose ? 'Saving...' : 'Save & close'}}
             </button>
         </li>
         <li>
@@ -106,7 +106,7 @@
                 ng-click="vm.addCollaborator(vm.group, vm.selectedCollaborator, vm.selectedUserActive, false)"
                 title="Save"
             >
-                Save
+                {{ vm.isDoingSomething && !vm.saveAndClose ? 'Saving...' : 'Save'}}
             </button>
         </li>
         <li>

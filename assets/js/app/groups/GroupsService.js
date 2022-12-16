@@ -36,17 +36,17 @@
         service.addCollaborator = addCollaborator;
         service.updateCollaborator = updateCollaborator;
         service.removeCollaborator = removeCollaborator;
-        service.addRelative = addRelative;
-        service.removeChild = removeChild;
+        service.addChildGroup = addChildGroup;
+        service.removeChildGroup = removeChildGroup;
         service.getSettings = getSettings;
         service.getConnectedGroups = getConnectedGroups;
         service.getMembershipGroups = getMembershipGroups;
-        service.getParentMembershipGroups = getParentMembershipGroups;
+        service.getParentGroups = getParentGroups;
         service.getTypeTitle = getTypeTitle;
         service.createInstituteStructure = createInstituteStructure;
         service.getGroupTypeLabel = getGroupTypeLabel;
         service.getCollaborators = getCollaborators;
-        service.removeMembership = removeMembership;
+        service.removeCollaborator = removeCollaborator;
         service.isGroupAdmin = isGroupAdmin;
 
         return service;
@@ -136,13 +136,10 @@
             });
         }
 
-        function getParentMembershipGroups(groupId) {
-            return Restangular.all('membershipgroups').customGET('', {
-                where: {child_group: groupId},
-                populate: ['parent_group', 'child_group']
-            }).then(res => {
-                return res.items;
-            });
+        function getParentGroups(researchEntityId) {
+            return Restangular
+                .one(`groups/${researchEntityId}/get-parent-groups`)
+                .get();
         }
 
         function createInstituteStructure(institute, membershipGroups) {
@@ -203,9 +200,6 @@
         /* jshint ignore:start */
         function getConnectedGroups(groupIds) {
             return Restangular.all('membershipgroups').customGET('', {
-                /*where: {
-                   child_group: groupId
-                },*/
                 populate: ['parent_group', 'child_group']
             }).then(async (res) => {
                 const allMembershipGroups = res.items;
@@ -238,46 +232,15 @@
         /* jshint ignore:end */
 
         /* jshint ignore:start */
-        async function addCollaborator(group, user, active) {
+        async function addChildGroup(parentGroup, childGroup) {
             try {
-                const newMembership = {
-                    group: group.id,
-                    user: user.id,
-                    active: active,
-                    synchronized: false
-                };
-
                 await Restangular
-                    .all('memberships')
-                    .customPOST(newMembership)
+                    .one(`groups/${parentGroup.id}/add-child-group`)
+                    .customPUT({
+                        childGroupId: childGroup.id
+                    })
                     .then(() => {
-                        Notification.success('Collaborator is been added!');
-                    }, error => {
-                        throw error.data;
-                    });
-            } catch (error) {
-               Notification.warning(error);
-            }
-        }
-        /* jshint ignore:end */
-
-        /* jshint ignore:start */
-        async function updateCollaborator(group, user, active) {
-            try {
-                const qs = {where: {group: group.id, user: user.id}};
-                const res = await Restangular.all('memberships').customGET('', qs);
-                if (res.items.length !== 1) {
-                    throw 'Membership not found!';
-                }
-                const membership = res.items[0];
-                membership.synchronized = false;
-                membership.active = active;
-
-                await Restangular
-                    .one('memberships', membership.id)
-                    .customPOST(membership)
-                    .then(() => {
-                        Notification.success('Collaborator is been updated!');
+                        Notification.success('Child group is been added!');
                     }, error => {
                         throw error.data;
                     });
@@ -288,18 +251,14 @@
         /* jshint ignore:end */
 
         /* jshint ignore:start */
-        async function removeCollaborator(group, user) {
+        async function removeChildGroup(parentGroup, childGroup) {
             try {
-                const qs = {where: {group: group.id, user: user.id}};
-                let res = await Restangular.all('memberships').customGET('', qs);
-                if (res.items.length !== 1) {
-                    throw 'Membership not found!';
-                }
                 await Restangular
-                    .one('memberships', res.items[0].id)
+                    .one(`groups/${parentGroup.id}`)
+                    .one(`remove-child-group/${childGroup.id}`)
                     .remove()
                     .then(() => {
-                        Notification.success('Membership removed!');
+                        Notification.success('Child group is been removed!');
                     }, error => {
                         throw error.data;
                     });
@@ -308,28 +267,6 @@
             }
         }
         /* jshint ignore:end */
-
-        function addRelative(parent, child) {
-            const newMembership = {
-                parent_group: parent.id,
-                child_group: child.id
-            };
-            return Restangular
-                .all('membershipgroups')
-                .customPOST(newMembership);
-        }
-
-        function removeChild(parent, child) {
-            const qs = {where: {parent_group: parent.id, child_group: child.id}};
-            return Restangular.all('membershipgroups').customGET('', qs)
-                .then(res => {
-                    if (!res.items[0]) return;
-
-                    return Restangular
-                        .one('membershipgroups', res.items[0].id)
-                        .remove();
-                });
-        }
 
         function getSettings(groupId) {
             return getGroup(groupId);
@@ -348,15 +285,68 @@
 
         function getCollaborators(groupId) {
             return Restangular
-                .one(`memberships/${groupId}/get-collaborators`)
+                .one(`groups/${groupId}/get-collaborators`)
                 .get();
         }
 
-        function removeMembership(id) {
-            return Restangular
-                .one('memberships', id)
-                .remove();
+        /* jshint ignore:start */
+        async function addCollaborator(group, user, active) {
+            try {
+                await Restangular
+                    .one(`groups/${group.id}/add-collaborator`)
+                    .customPUT({
+                        user: user.id,
+                        active: active
+                    })
+                    .then(() => {
+                        Notification.success('Collaborator is been added!');
+                    }, error => {
+                        throw error.data;
+                    });
+            } catch (error) {
+                Notification.warning(error);
+            }
         }
+        /* jshint ignore:end */
+
+        /* jshint ignore:start */
+        async function updateCollaborator(group, user, active) {
+            try {
+                await Restangular
+                    .one(`groups/${group.id}`)
+                    .one(`update-collaborator/${user.id}`)
+                    .customPUT({
+                        synchronized: false,
+                        active: active
+                    })
+                    .then(() => {
+                        Notification.success('Collaborator is been updated!');
+                    }, error => {
+                        throw error.data;
+                    });
+            } catch (error) {
+                Notification.warning(error);
+            }
+        }
+        /* jshint ignore:end */
+
+        /* jshint ignore:start */
+        async function removeCollaborator(group, user) {
+            try {
+                await Restangular
+                    .one(`groups/${group.id}`)
+                    .one(`remove-collaborator/${user.id}`)
+                    .remove()
+                    .then(() => {
+                        Notification.success('Collaborator is been removed!');
+                    }, error => {
+                        throw error.data;
+                    });
+            } catch (error) {
+                Notification.warning(error);
+            }
+        }
+        /* jshint ignore:end */
 
         function isGroupAdmin (group, user) {
             if (!group || !_.has(group, 'administrators') || !user) {

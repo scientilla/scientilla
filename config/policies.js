@@ -113,17 +113,29 @@ module.exports.policies = {
         getPatents: true,
         getMBOInstitutePerformance: true,
         getMBOInvitedTalks: true,
+        getCollaborator: true,
+        getCollaborators: true,
+        addCollaborator: canChangeCollaborator,
+        updateCollaborator: canChangeCollaborator,
+        removeCollaborator: canChangeCollaborator,
+        getParentGroups: true,
+        addChildGroup: isGroupOwner,
+        removeChildGroup: isGroupOwner
     }, defaultPolicy),
 
     InstituteController: defaultPolicy,
 
     MembershipController: _.defaults({
-        destroy: canChangeCollaborator,
-        create: canChangeCollaborator,
-        update: canChangeCollaborator
+        destroy: false,
+        create: false,
+        update: false
     }, defaultPolicy),
 
-    MembershipGroupController: defaultPolicy,
+    MembershipGroupController: _.defaults({
+        destroy: false,
+        create: false,
+        update: false
+    }, defaultPolicy),
 
     SettingsController: _.defaults({
         getSettings: true,
@@ -131,9 +143,15 @@ module.exports.policies = {
 
     SourceController: _.defaults({
         create: isLogged,
+        addMetricSources: hasRole([ROLES.ADMINISTRATOR]),
+        removeMetricSources: hasRole([ROLES.ADMINISTRATOR])
     }, defaultPolicy),
 
-    SourceMetricSourceController: defaultPolicy,
+    SourceMetricSourceController: _.defaults({
+        destroy: false,
+        create: false,
+        update: false
+    }, defaultPolicy),
 
     TaglabelController: defaultPolicy,
 

@@ -1402,21 +1402,22 @@
                         deleteData(researchEntity, name);
                     }, 60 * 60 * 1000);
                 }
-
-                EventsService.subscribeAll(researchEntity, [
-                    EventsService.DRAFT_VERIFIED,
-                    EventsService.DOCUMENT_VERIFIED,
-                    EventsService.DOCUMENT_UNVERIFIED,
-                    EventsService.RESEARCH_ITEM_VERIFIED,
-                    EventsService.RESEARCH_ITEM_UNVERIFIED,
-                    EventsService.RESEARCH_ITEM_DRAFT_VERIFIED,
-                    EventsService.AUTH_LOGOUT
-                ], () => {
-                    for (const name of chartNames) {
-                        deleteData(researchEntity, name);
-                    }
-                });
             }
+
+            EventsService.subscribeAll(service, [
+                EventsService.DRAFT_VERIFIED,
+                EventsService.DOCUMENT_VERIFIED,
+                EventsService.DOCUMENT_UNVERIFIED,
+                EventsService.RESEARCH_ITEM_VERIFIED,
+                EventsService.RESEARCH_ITEM_UNVERIFIED,
+                EventsService.RESEARCH_ITEM_DRAFT_VERIFIED,
+                EventsService.AUTH_LOGOUT,
+                EventsService.SOURCE_METRICS_CHANGED
+            ], () => {
+                for (const name of chartNames) {
+                    deleteData(researchEntity, name);
+                }
+            });
 
             return Object.keys(data[researchEntity.researchEntity])
                 .filter(k => chartNames.includes(k))

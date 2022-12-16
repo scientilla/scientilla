@@ -10,14 +10,16 @@
             <a ng-href="#{{ cg.getProfileUrl() }}">
                 {{ cg.getDisplayName() }}
             </a>
-            <a
+            <button
                 href=""
                 ng-if="vm.isAdmin()"
-                ng-click="vm.removeChild(cg)"
+                ng-click="vm.removeChildGroup(cg)"
+                ng-disabled="vm.selectedChild"
                 class="btn btn-primary"
                 title="Removes {{ cg.getDisplayName() }} from the child groups">
-                <i class="fas fa-minus fa-left"></i>Remove group
-            </a>
+                <i class="fas fa-minus fa-left"></i>
+                {{ vm.selectedChild && vm.selectedChild.id === cg.id ? 'Removing group...' : 'Remove group' }}
+            </button>
         </li>
     </ul>
 </div>
@@ -49,9 +51,11 @@
             <li>
                  <button
                     class="btn btn-primary"
-                    ng-click="vm.addChild()"
+                    ng-disabled="vm.selectedChild"
+                    ng-click="vm.addChildGroup()"
                     title="Add {{vm.selectedGroup.getDisplayName()}} as a child group">
-                    <span class="fas fa-plus fa-left"></span> Add group
+                    <i class="fas fa-plus fa-left"></i>
+                    {{ vm.selectedChild && vm.selectedChild.id === vm.selectedGroup.id ? 'Adding group...' : 'Add group' }}
                 </button>
             </li>
         </ul>
