@@ -59,6 +59,7 @@
             multipleDiscard: ResearchEntitiesService.multipleDiscard,
             filterFields,
             generateGroup,
+            getActions,
             exportDownload,
             isValid,
             editAgreement: (researchEntity, draft) => ModalService.openAgreementForm(researchEntity, _.cloneDeep(draft)),
@@ -88,6 +89,10 @@
             if (prj.group)
                 EventsService.publish(EventsService.RESEARCH_ITEM_VERIFIED, prj);
 
+        }
+
+        async function getActions() {
+            return await Restangular.all('projects').customGET('get-actions');
         }
         /* jshint ignore:end */
 

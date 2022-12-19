@@ -126,6 +126,7 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/accomplishments/export']: 'Accomplishment.export',
     ['post ' + apiPrfx + '/projects/export']: 'Project.export',
     ['put ' + apiPrfx + '/projects/:projectId/group']: 'Project.generateGroup',
+    ['get ' + apiPrfx + '/projects/get-actions']: 'Project.getActions',
     ['post ' + apiPrfx + '/patents/export']: 'Patent.export',
     ['post ' + apiPrfx + '/agreements/export']: 'Agreement.export',
     ['post ' + apiPrfx + '/training-modules/export']: 'TrainingModule.export',

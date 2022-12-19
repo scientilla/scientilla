@@ -11,6 +11,10 @@ module.exports = {
         const format = req.body.format;
 
         res.halt(Project.export(projectIds, format), {dataType: 'file'});
+    },
+    async getActions(req, res) {
+        const results = await SqlService.query('SELECT DISTINCT project_type_2 FROM project WHERE project_type_2 IS NOT NULL ORDER BY project_type_2 ASC');
+        const actions = results.map(r => r.project_type_2);
+        res.halt(Promise.resolve(actions));
     }
-
 };

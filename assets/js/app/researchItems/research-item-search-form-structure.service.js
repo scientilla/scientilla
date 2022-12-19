@@ -11,8 +11,8 @@
         'AuthService',
         'ExternalConnectorService',
         'Restangular',
-        'ResearchEntitiesService',
         'PeopleService',
+        'ProjectService',
         'ISO3166',
         'agreementTypes'
     ];
@@ -25,8 +25,8 @@
         AuthService,
         ExternalConnectorService,
         Restangular,
-        ResearchEntitiesService,
         PeopleService,
+        ProjectService,
         ISO3166,
         agreementTypes
     ) {
@@ -522,7 +522,7 @@
             formStructures[constant].payment.values = getProjectPayments();
             formStructures[constant].category.values = getProjectCategories();
             formStructures[constant].funding.values = getProjectFundings();
-            formStructures[constant].action.values = getProjectActions();
+            formStructures[constant].action.values = await getProjectActions();
         }
 
         async function setupAgreementStructure(constant) {
@@ -907,16 +907,18 @@
             return fundings;
         }
 
-        function getProjectActions() {
-            const fundings = [];
-            fundings.push({value: '?', label: 'Select'});
+        /* jshint ignore:start */
+        async function getProjectActions() {
+            const actions = [];
+            actions.push({value: '?', label: 'Select'});
 
-            for (const property in competitiveProjectActions) {
-                fundings.push({value: property, label: competitiveProjectActions[property]});
+            for (const action of await ProjectService.getActions()) {
+                actions.push({value: action, label: action});
             }
 
-            return fundings;
+            return actions;
         }
+        /* jshint ignore:end */
 
         function getAgreementTypes() {
             const types = [];
