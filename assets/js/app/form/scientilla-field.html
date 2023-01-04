@@ -22,6 +22,16 @@
         on-validate="vm.onValidate({name})"
         on-change="vm.onChange({name})">
     </scientilla-autocomplete-group-field>
+    <scientilla-multiple-checkbox-field
+        ng-if="vm.structure.inputType==='multiple-checkbox'"
+        name="vm.name"
+        model="vm.values[vm.name]"
+        field-id="vm.id"
+        structure="vm.fieldStructure"
+        errors="vm.errors"
+        on-validate="vm.onValidate({name})"
+        on-change="vm.onChange({name})">
+    </scientilla-multiple-checkbox-field>
     <scientilla-select-field
         ng-if="vm.structure.inputType==='select'"
         model="vm.values[vm.name]"

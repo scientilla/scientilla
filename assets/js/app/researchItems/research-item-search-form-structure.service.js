@@ -140,7 +140,7 @@
                 type: 'field'
             },
             action: {
-                inputType: 'select',
+                inputType: 'multiple-checkbox',
                 label: 'Action type',
                 matchColumn: 'project_type_2',
                 values: [],
@@ -909,14 +909,7 @@
 
         /* jshint ignore:start */
         async function getProjectActions() {
-            const actions = [];
-            actions.push({value: '?', label: 'Select'});
-
-            for (const action of await ProjectService.getActions()) {
-                actions.push({value: action, label: action});
-            }
-
-            return actions;
+            return await ProjectService.getActions();
         }
         /* jshint ignore:end */
 
