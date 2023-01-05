@@ -671,10 +671,11 @@ label{
 
         .dropdown-close{
             position: absolute;
-            top: 0;
+            top: .5rem;
             right: 1rem;
+            z-index: 3;
             width: .825rem;
-            height: 1.5rem;
+            height: 1.2rem;
             margin: 0;
             padding: 0;
             border: 0;
@@ -684,9 +685,12 @@ label{
             cursor: pointer;
 
             &:before{
+                display: inline-block;
                 font-family: $font-awesome;
                 font-size: 1.2rem;
+                line-height: 1;
                 font-weight: 900;
+                vertical-align: top;
                 content: '\f00d';
                 color: $black;
             }
@@ -711,10 +715,44 @@ label{
         }
     }
 
+    .search-term-container{
+        position: relative;
+        z-index: 2;
+        margin: 0;
+        padding: 2rem 1rem 1rem 1rem;
+
+        .remove-search-term{
+            position: absolute;
+            top: 4.9rem;
+            right: 2rem;
+            width: .825rem;
+            height: 1.5rem;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            background: none;
+            color: transparent;
+            overflow: hidden;
+            cursor: pointer;
+
+            &:before{
+                font-family: $font-awesome;
+                font-size: 1.2rem;
+                font-weight: 900;
+                content: '\f00d';
+                color: $black;
+            }
+        }
+
+        .form-control{
+            padding-right: 2.5rem
+        }
+    }
+
     .multiselect-top-actions{
         @include normalize-listing;
         @include clearfix;
-        margin: 1rem 4rem 1rem 1rem;
+        margin: 0 1rem 1rem 1rem;
 
         & > li{
             &:first-child{
@@ -735,7 +773,15 @@ label{
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
+
+            &:disabled{
+                cursor: not-allowed;
+            }
         }
+    }
+
+    .no-option-label{
+        font-size: 1rem;
     }
 }
 

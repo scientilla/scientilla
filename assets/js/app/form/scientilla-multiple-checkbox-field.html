@@ -18,14 +18,43 @@
         ng-click="$event.stopPropagation()"
     >
         <div class="dropdown-inner-menu">
-            <button class="dropdown-close" ng-click="vm.close($event)">Close</button>
+            <button
+                class="dropdown-close"
+                ng-click="vm.close($event)"
+                title="Close dropdown"
+            >Close</button>
+
+            <div class="form-group search-term-container">
+                <label
+                    class="label-control"
+                    for="search-term"
+                >Filter options</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="search-term"
+                    ng-model="vm.searchTerm"
+                />
+                <button
+                    class="remove-search-term"
+                    ng-if="vm.searchTerm.length > 0"
+                    ng-click="vm.removeSearchTerm($event)"
+                    title="Remove search term"
+                >Close</button>
+            </div>
 
             <ul class="multiselect-top-actions">
                 <li>
-                    <button ng-click="vm.selectAll($event)">Select all</button>
+                    <button
+                        ng-click="vm.selectAll($event)"
+                        ng-disabled="vm.filteredValues.length == 0"
+                    >Select all</button>
                 </li>
                 <li>
-                    <button ng-click="vm.deselectAll($event)">Deselect all</button>
+                    <button
+                        ng-click="vm.deselectAll($event)"
+                        ng-disabled="vm.filteredValues.length == 0"
+                    >Deselect all</button>
                 </li>
             </ul>
 
@@ -33,12 +62,12 @@
                 <div class="dropdown-inner-scroll-container">
                     <div
                         class="selected-items-container"
-                        ng-if="vm.getNumberOfSelectedOptions()"
+                        ng-if="vm.getNumberOfFilteredOptions()"
                     >
                         <span class="selected-items-title">Selected {{ vm.structure.label.toLowerCase() }}s</span>
                         <ul class="option-listing">
                             <li
-                                ng-repeat="option in vm.structure.values track by $index"
+                                ng-repeat="option in vm.filteredValues track by $index"
                                 ng-if="vm.isChecked(option)"
                             >
                                 <label class="form-checkbox">
@@ -55,10 +84,10 @@
 
                     <ul
                         class="option-listing"
-                        ng-if="vm.getNumberOfSelectedOptions() < vm.structure.values.length"
+                        ng-if="vm.hasNotCheckedFilteredOptions()"
                     >
                         <li
-                            ng-repeat="option in vm.structure.values track by $index"
+                            ng-repeat="option in vm.filteredValues track by $index"
                             ng-if="vm.isNotChecked(option)"
                         >
                             <label class="form-checkbox">
@@ -71,6 +100,13 @@
                             </label>
                         </li>
                     </ul>
+
+                    <span
+                        class="no-option-label"
+                        ng-if="vm.filteredValues.length == 0"
+                    >
+                        No options found!
+                    </span>
                 </div>
             </div>
         </div>
