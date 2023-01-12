@@ -441,6 +441,7 @@
             const populate = {populate: projectPopulates};
             const q = _.defaultsDeep({}, query, populate);
             await setProjectType(q);
+            setProjectActions(q);
             return await researchEntity.getList('suggestedProjects', q);
         }
 
@@ -448,6 +449,7 @@
             const populate = {populate: projectPopulates};
             const q = _.defaultsDeep({}, query, populate);
             await setProjectType(q);
+            setProjectActions(q);
             const discarded = await researchEntity.getList('discardedProjects', q);
             discarded.forEach(d => ResearchItemService.addLabel(d, researchItemLabels.DISCARDED));
             return discarded
@@ -458,6 +460,7 @@
             const q = _.merge({}, query, populate);
 
             await setProjectType(q);
+            setProjectActions(q);
 
             if (favorites) {
                 return await researchEntity.getList('favoriteProjects', q);
@@ -472,6 +475,7 @@
 
         async function getProjectDrafts(researchEntity, query, populates = projectPopulates) {
             await setProjectType(query);
+            setProjectActions(query);
             return await getResearchItemDrafts(researchEntity, 'projectDrafts', query, populates);
         }
 
@@ -485,6 +489,34 @@
                     query.where.type = type.id;
                 }
             }
+        }
+
+        function setProjectActions(query) {
+            if (!_.has(query, 'where.project_type_2')) {
+                return;
+            }
+
+            if (_.has(query, 'where.project_type_2') && _.isEmpty(query.where.project_type_2)) {
+                delete query.where.project_type_2;
+                return;
+            }
+
+            const or = [];
+            const actions = query.where.project_type_2.split(',');
+            if (actions.length <= 0) {
+                delete query.where.project_type_2;
+                return;
+            }
+
+            for (const action of actions) {
+                const tmpWhere = _.cloneDeep(query.where);
+                tmpWhere.project_type_2 = action;
+                or.push(tmpWhere);
+            }
+
+            query.where = {
+                or: or
+            };
         }
 
         async function getSuggestedPatents(researchEntity, query) {

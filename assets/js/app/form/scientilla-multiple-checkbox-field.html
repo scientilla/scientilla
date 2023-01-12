@@ -1,0 +1,122 @@
+<label>
+    <span ng-bind-html="vm.structure.label"></span>
+    <span ng-if="vm.structure.required">*</span>
+</label>
+<div
+    class="dropdown-container multiple-checkbox-field"
+    uib-dropdown
+    is-open="vm.dropdownIsOpen"
+>
+    <div class="dropdown-wrapper" uib-dropdown-toggle>
+        <div class="dropdown-rapper-label">
+            {{ vm.getDropdownLabel() }}
+        </div>
+    </div>
+    <div
+        uib-dropdown-menu
+        class="dropdown-menu"
+        ng-click="$event.stopPropagation()"
+    >
+        <div class="dropdown-inner-menu">
+            <button
+                class="dropdown-close"
+                ng-click="vm.close($event)"
+                title="Close dropdown"
+            >Close</button>
+
+            <div class="form-group search-term-container">
+                <label
+                    class="label-control"
+                    for="search-term"
+                >Filter options</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="search-term"
+                    ng-model="vm.searchTerm"
+                />
+                <button
+                    class="remove-search-term"
+                    ng-if="vm.searchTerm.length > 0"
+                    ng-click="vm.removeSearchTerm($event)"
+                    title="Remove search term"
+                >Close</button>
+            </div>
+
+            <ul class="multiselect-top-actions">
+                <li>
+                    <button
+                        ng-click="vm.selectAll($event)"
+                        ng-disabled="vm.filteredValues.length == 0"
+                    >Select all</button>
+                </li>
+                <li>
+                    <button
+                        ng-click="vm.deselectAll($event)"
+                        ng-disabled="vm.filteredValues.length == 0"
+                    >Deselect all</button>
+                </li>
+            </ul>
+
+            <div class="dropdown-scroll-container">
+                <div class="dropdown-inner-scroll-container">
+                    <div
+                        class="selected-items-container"
+                        ng-if="vm.getNumberOfFilteredOptions()"
+                    >
+                        <span class="selected-items-title">Selected {{ vm.structure.label.toLowerCase() }}s</span>
+                        <ul class="option-listing">
+                            <li
+                                ng-repeat="option in vm.filteredValues track by $index"
+                                ng-if="vm.isChecked(option)"
+                            >
+                                <label class="form-checkbox">
+                                    <input
+                                        type="checkbox"
+                                        placeholder="{{ option }}"
+                                        ng-model="vm.checkboxModel[option]"
+                                    />
+                                    <span ng-bind-html="option"></span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <ul
+                        class="option-listing"
+                        ng-if="vm.hasNotCheckedFilteredOptions()"
+                    >
+                        <li
+                            ng-repeat="option in vm.filteredValues track by $index"
+                            ng-if="vm.isNotChecked(option)"
+                        >
+                            <label class="form-checkbox">
+                                <input
+                                    type="checkbox"
+                                    placeholder="{{ option }}"
+                                    ng-model="vm.checkboxModel[option]"
+                                />
+                                <span ng-bind-html="option"></span>
+                            </label>
+                        </li>
+                    </ul>
+
+                    <span
+                        class="no-option-label"
+                        ng-if="vm.filteredValues.length == 0"
+                    >
+                        No options found!
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input
+    class="hidden"
+    type="text"
+    ng-model="vm.model"
+    ng-change="vm.structure.required && vm.valueChanged(vm.name)">
+<scientilla-error-messages
+    class="error-messages"
+    errors="vm.errors"></scientilla-error-messages>
