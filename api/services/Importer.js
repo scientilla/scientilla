@@ -1,7 +1,7 @@
 /* global Source, User, Group, SourceMetric, SourceTypes, PrincipalInvestigator */
 /* global MembershipGroup, GroupTypes, ResearchEntityData, ResearchItemTypes, ResearchItem, ResearchItemKinds, Project */
 /* global Verify, Membership, MembershipGroup, GroupTypes, ResearchEntityData, Utils, Patent */
-/* global GeneralSetting, SqlService */
+/* global GeneralSetting, SqlService, Author */
 
 // Importer.js - in api/services
 
@@ -404,12 +404,16 @@ async function importProjects() {
                 if (!prj) {
                     await ResearchItem.createExternal(config.origin, code, data, authorsData);
                     created++;
-                } else if (!_.isEqual(prj.projectData, data.projectData)) {
-                    await ResearchItem.updateExternal(prj.id, data, authorsData);
-                    updated++;
+                } else {
+                    const currentAuthors = await Author.find({researchItem: prj.id}).populate('affiliations');
+                    if (!_.isEqual(prj.projectData, data.projectData) || !Author.hasSameAuthorsAffiliations(currentAuthors, authorsData)) {
+                        await ResearchItem.updateExternal(prj.id, data, authorsData);
+                        updated++;
+                    }
                 }
             } catch (e) {
-                sails.log.debug(project)
+                sails.log.debug(project.code);
+                sails.log.debug(e);
                 errors.push(e);
             }
         }

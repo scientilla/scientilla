@@ -141,12 +141,17 @@ module.exports = _.merge({}, BaseModel, {
 
         const authorsStrArr = Author.splitAuthorStr(authorsStr);
 
-        const currentAuthors = await Author.find({researchItem: researchItem.id}).populate('affiliations');
-        const currentAuthorsData = currentAuthors.map(a => {
-            const af = Author.filterFields(a);
-            af.id = a.id;
-            return af;
-        });
+        const currentAuthors = await Author.find({researchItem: researchItem.id});
+        const currentAuthorsData = [];
+        for (const author of currentAuthors) {
+            const authorData = Author.filterFields(author);
+            authorData.id = author.id;
+            if (researchItem.needsAffiliations()) {
+                const authorAffiliations = await AuthorAffiliation.find({author: author.id});
+                authorData.affiliations = authorAffiliations.map(aa => aa.institute);
+            }
+            currentAuthorsData.push(authorData);
+        }
 
         const authorsToDelete = currentAuthorsData.filter(a => a.position >= authorsStrArr.length);
         const authorsToCreate = [];
@@ -159,6 +164,9 @@ module.exports = _.merge({}, BaseModel, {
                 Author.filterFields(currentAuthor) :
                 Author.getDefaults(researchItem.id, authorStr, position);
             const newAuthor = Object.assign({}, defaults, newAuthorData);
+            if (researchItem.needsAffiliations() && newAuthorData && newAuthorData.affiliations) {
+                newAuthor.affiliations = newAuthorData.affiliations;
+            }
 
             if (currentAuthor && currentAuthor.verify)
                 return; //TODO handle when currentAuthor is verified
@@ -175,9 +183,25 @@ module.exports = _.merge({}, BaseModel, {
         if (authorsToCreate.length)
             await Author.create(authorsToCreate);
 
-        for (const author of authorsToUpdate)
+        for (const author of authorsToUpdate) {
             await Author.update({id: author.current.id}, author.new);
+            if (researchItem.needsAffiliations() && !_.isEqual(author.current.affiliations.sort(), author.new.affiliations.sort())) {
+                await Author.updateAffiliations(author.current, author.new.affiliations);
+            }
+        }
 
+    },
+    async updateAffiliations(author, newAffiliations) {
+        if (!author.id) return;
+        if (!_.isArray(newAffiliations)) return;
+
+        const affiliationsToCreate = _.difference(newAffiliations, author.affiliations);
+        const affiliationsToDelete = _.difference(author.affiliations, newAffiliations);
+
+        for (const institute of affiliationsToCreate)
+            await AuthorAffiliation.create({author: author.id, institute: institute});
+        for (const institute of affiliationsToDelete)
+            await AuthorAffiliation.destroy({author: author.id, institute: institute});
     },
     cleanauthorData(authorsData) {
         const cleanAuthorsData = [];
@@ -259,6 +283,16 @@ module.exports = _.merge({}, BaseModel, {
                 await Author.getFixedCollection(Institute, verificationData.affiliations) :
                 author.affiliations.map(a => a.id)
         };
+    },
+    hasSameAuthorsAffiliations(authors1, authors2) {
+        return _.isEqual(filterAuthors(authors1), filterAuthors(authors2));
+
+        function filterAuthors(authors) {
+            return authors.map(author => ({
+                affiliations: author.affiliations.map(a => _.isNumber(a) ? a : a.id).sort(),
+                position: author.position
+            })).sort((a, b) => a.position < b.position ? -1 : a.position > b.position ? 1 : 0);
+        }
     }
 });
 
