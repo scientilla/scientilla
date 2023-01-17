@@ -225,7 +225,7 @@ module.exports.policies = {
 
     ProjectController: _.defaults({
         export: isLogged,
-        getActions: isLogged
+        getActions: true
     }, defaultPolicy),
 
     PatentController: _.defaults({
