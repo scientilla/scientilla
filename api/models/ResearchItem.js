@@ -154,10 +154,10 @@ module.exports = _.merge({}, BaseModel, {
         await this.synchronizeExternal(res.researchItem, itemData, newAuthorsData);
         return res;
     },
-    async synchronizeExternal(external, itemData) {
+    async synchronizeExternal(external, itemData, newAuthorsData) {
         const verified = await this.getVerifiedExternal(external);
         if (verified)
-            await this.doUpdate(verified, itemData);
+            await this.doUpdate(verified, itemData, newAuthorsData);
     },
     async doUpdate(researchItem, itemData, newAuthorsData = []) {
         const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(itemData.type);
