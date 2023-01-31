@@ -88,9 +88,10 @@ function bibtexInit() {
             'year'
         ],
         optional: [
+            'doi',
             'volume',
             'number',
-            'pages'
+            'pages',
         ]
     };
     bibtexEntryFields['CONFERENCE'] = {
@@ -101,6 +102,7 @@ function bibtexInit() {
             'year'
         ],
         optional: [
+            'doi',
             'pages'
         ]
     };
@@ -112,6 +114,7 @@ function bibtexInit() {
             'year'
         ],
         optional: [
+            'doi',
             'volume'
         ]
     };
@@ -123,6 +126,7 @@ function bibtexInit() {
             'year'
         ],
         optional: [
+            'doi',
             'pages'
         ]
     };
@@ -133,7 +137,9 @@ function bibtexInit() {
             'school',
             'year'
         ],
-        optional: []
+        optional: [
+            'doi'
+        ]
     };
     bibtexEntryFields['TECHREPORT'] = {
         required: [
@@ -142,7 +148,9 @@ function bibtexInit() {
             'institution',
             'year'
         ],
-        optional: []
+        optional: [
+            'doi'
+        ]
     };
     bibtexEntryFields['MISC'] = {
         required: [
@@ -150,7 +158,9 @@ function bibtexInit() {
             'title',
             'year'
         ],
-        optional: []
+        optional: [
+            'doi'
+        ]
     };
 }
 
@@ -482,6 +492,7 @@ function getBibtex(doc) {
         publisher: doc.source ? doc.source.title : '',
         school: doc.source ? doc.source.title : '',
         year: doc.year,
+        doi: doc.doi,
         volume: doc.volume,
         number: doc.articleNumber,
         pages: doc.pages,
