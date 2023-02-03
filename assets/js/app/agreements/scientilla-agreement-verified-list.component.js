@@ -11,6 +11,7 @@
         });
 
     controller.$inject = [
+        'AgreementService',
         'ProjectService',
         'EventsService',
         'agreementListSections',
@@ -22,6 +23,7 @@
     ];
 
     function controller(
+        AgreementService,
         ProjectService,
         EventsService,
         agreementListSections,
@@ -37,7 +39,7 @@
         vm.agreements = [];
         vm.onFilter = onFilter;
         vm.unverify = (agreement) => ProjectService.unverify(vm.researchEntity, agreement);
-        vm.exportDownload = agreements => ProjectService.exportDownload(agreements, 'csv', agreementDownloadFileName, agreementExportUrl);
+        vm.exportDownload = agreements => AgreementService.exportDownload(agreements, agreementDownloadFileName, agreementExportUrl, 'csv');
         vm.subResearchEntity = context.getSubResearchEntity();
 
         let query = {

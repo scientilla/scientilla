@@ -2,9 +2,11 @@
 (function () {
     angular.module("agreements").factory("AgreementService", controller);
 
-    controller.$inject = [];
+    controller.$inject = [
+        '$http'
+    ];
 
-    function controller() {
+    function controller($http) {
         const service = {};
 
         service.getStatus = agreement => {
@@ -19,6 +21,25 @@
             }
 
             return status;
+        };
+
+        service.exportDownload = (items, filename, url, format = 'csv') => {
+            console.log(items, format, filename, url);
+            $http.post(url, {
+                format: format,
+                projectIds: items.map(d => d.id)
+            }).then((res) => {
+                const element = document.createElement('a');
+                element.setAttribute('href', 'data:text/csv;charset=UTF-8,' + encodeURIComponent(res.data));
+                element.setAttribute('download', filename);
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
+            });
         };
 
         return service;
