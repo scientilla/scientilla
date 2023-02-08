@@ -22,10 +22,11 @@
         'Notification',
         '$timeout',
         '$scope',
-        'DateService'
+        'DateService',
+        'ResearchEntitiesService'
     ];
 
-    function profileForm(UsersService, AuthService, ProfileService, Notification, $timeout, $scope, DateService) {
+    function profileForm(UsersService, AuthService, ProfileService, Notification, $timeout, $scope, DateService, ResearchEntitiesService) {
         const vm = this;
 
         vm.index = 0;
@@ -159,7 +160,7 @@
 
         function getEditProfile() {
 
-            UsersService.getProfile(AuthService.user.researchEntity, true).then(response => {
+            ResearchEntitiesService.getProfile(AuthService.user.researchEntity, true).then(response => {
                 vm.profile = response.plain();
                 vm.profileIsLoaded = true;
                 originalProfileJson = angular.toJson(vm.profile);

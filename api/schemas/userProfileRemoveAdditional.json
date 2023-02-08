@@ -1,5 +1,5 @@
 {
-  "$id": "profileRemoveAdditional",
+  "$id": "userProfileRemoveAdditional",
   "type": "object",
   "properties": {
     "username": {

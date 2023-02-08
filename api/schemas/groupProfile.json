@@ -1,0 +1,45 @@
+{
+  "$id": "groupProfile",
+  "type": "object",
+  "properties": {
+    "description": {
+      "allOf": [
+        { "$ref": "userProfileDefs#/definitions/notEmptyStringValue" },
+        { "$ref": "userProfileDefs#/definitions/privacy" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+      ]
+    },
+    "collaborations": {
+      "allOf": [
+        { "$ref": "userProfileDefs#/definitions/stringValue" },
+        { "$ref": "userProfileDefs#/definitions/privacy" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+      ]
+    },
+    "facilities": {
+      "allOf": [
+        { "$ref": "userProfileDefs#/definitions/stringValue" },
+        { "$ref": "userProfileDefs#/definitions/privacy" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+      ]
+    },
+    "topics": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "allOf": [
+          { "$ref": "userProfileDefs#/definitions/notEmptyStringValue" },
+          { "$ref": "userProfileDefs#/definitions/privacy" },
+          { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+        ]
+      }
+    },
+    "coverImage": {
+      "allOf": [
+        { "$ref": "userProfileDefs#/definitions/stringValue" },
+        { "$ref": "userProfileDefs#/definitions/privacy" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+      ]
+    }
+  }
+}

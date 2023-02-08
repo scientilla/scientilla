@@ -10,17 +10,17 @@
 
     controller.$inject = [
         'AuthService',
-        'UsersService'
+        'ResearchEntitiesService'
     ];
 
-    function controller(AuthService, UsersService) {
+    function controller(AuthService, ResearchEntitiesService) {
         const vm = this;
 
         vm.profile = false;
 
         /* jshint ignore:start */
         vm.$onInit = async () => {
-            vm.profile = await UsersService.getProfile(AuthService.user.researchEntity);
+            vm.profile = await ResearchEntitiesService.getProfile(AuthService.user.researchEntity);
         };
         /* jshint ignore:end */
     }

@@ -6,8 +6,18 @@
 
     <div ng-if="vm.firstTimeLoaded">
         <div class="row">
-            <div class="col-12 col-xl-4 col-xxl-2 column-legend">
+            <div class="col-12 col-lg-6 col-xl-5 col-xxl-4">
                 <div class="card card-primary group-card">
+                    <div
+                        class="card-header-image"
+                        ng-if="vm.profile.coverImage"
+                    >
+                        <img
+                            ng-src="{{ vm.pathProfileImages }}/{{ vm.profile.coverImage }}"
+                            alt=""
+                            class="img-fluid"
+                        />
+                    </div>
                     <div class="card-body">
                         <h2>{{ vm.group.type }}</h2>
 
@@ -69,6 +79,16 @@
                             </li>
                         </ul>
 
+                        <p class="chart-info">* This representation of group members may not be accurate or up-to-date.
+                            If you need to use this data, please contact the <a href="mailto:hr_servicedesk@iit.it">HCOD</a>.</p>
+                    </div>
+                </div>
+
+                <div
+                    class="card role-card"
+                    ng-if="vm.totalMembers > 0"
+                >
+                    <div class="card-body">
                         <div class="checkbox-container">
                             <div class="form-checkbox">
                                 <label for="include-subgroups" title="Include subgroups">
@@ -82,24 +102,43 @@
                             </div>
                         </div>
 
-                        <p class="chart-info">* This representation of group members may not be accurate or up-to-date.
-                            If you need to use this data, please contact the <a href="mailto:hr_servicedesk@iit.it">HCOD</a>.</p>
-                    </div>
-                </div>
-
-                <div
-                    class="card role-card"
-                    ng-if="vm.totalMembers > 0">
-                    <div class="card-body">
                         <em>You can update the charts by selecting a set of roles by clicking on the pie chart icon
                             (<i class="fas fa-chart-pie"></i>). All the charts will be updated except "Members by role".</em>
                     </div>
                 </div>
             </div>
+            <div class="col-12 col-lg-6 col-xl-7 col-xxl-8">
+                <div ng-if="vm.profile.description">
+                    <h3>Description</h2>
+                    <div class="group-text-container" ng-bind-html="vm.profile.description"></div>
+                </div>
+
+                <div ng-if="vm.profile.collaborations">
+                    <h3>Collaborations</h2>
+                    <div class="group-text-container" ng-bind-html="vm.profile.collaborations"></div>
+                </div>
+
+                <div ng-if="vm.profile.facilities">
+                    <h3>Facilities / labs</h2>
+                    <div class="group-text-container" ng-bind-html="vm.profile.facilities"></div>
+                </div>
+
+                <div ng-if="vm.profile.topics">
+                    <h3>Topics</h3>
+                    <div class="group-text-container">
+                        <ul>
+                            <li ng-repeat="topic in vm.profile.topics track by $index">{{ topic }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div
                 class="col-12 column-by-role"
-                ng-class="vm.loggedUser.isSuperViewer() ? 'col-xl-8 col-xxl-6' : 'col-xl-8 col-xxl-10'"
-                ng-if="vm.totalMembers > 0">
+                ng-class="vm.loggedUser.isSuperViewer() ? 'col-xl-12 col-xxl-6' : 'col-xl-8 col-xxl-12'"
+                ng-if="vm.totalMembers > 0"
+            >
                 <h2 class="chart-title">Members by role</h2>
                 <div class="hidden">{{ vm.totalMembersByRole }} members</div>
                 <ul class="legend legend-roles">
@@ -148,7 +187,7 @@
             </div>
 
             <div
-                class="col-12 col-xl-6 col-xxl-4 column-by-gender"
+                class="col-12 col-xl-6 col-xxl-6 column-by-gender"
                 ng-if="vm.totalMembers > 0 && vm.loggedUser.isSuperViewer()">
                 <div class="inner-column-by-gender">
                     <h2 class="chart-title">Members by gender</h2>

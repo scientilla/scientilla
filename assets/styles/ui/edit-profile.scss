@@ -1,6 +1,18 @@
 .edit-profile{
     padding-bottom: 4rem;
 
+    &.edit-user-profile{
+        .image-container{
+            border-radius: 50%;
+        }
+    }
+
+    &.edit-group-profile{
+        .topic-listing{
+            margin-bottom: 2rem;
+        }
+    }
+
     .desktop-actions{
         display: none;
     }
@@ -244,7 +256,6 @@
         position: relative;
         max-width: 150px;
         width: 100%;
-        border-radius: 50%;
         overflow: hidden;
 
         .btn-remove-image{
