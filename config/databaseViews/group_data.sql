@@ -1,6 +1,7 @@
 CREATE OR REPLACE VIEW group_data AS
 SELECT
   red.id as id,
+  red.profile,
   red.imported_data,
   g.id as "group",
   g.active as "active",
