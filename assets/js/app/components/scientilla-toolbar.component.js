@@ -16,7 +16,8 @@
         'GroupsService',
         'UsersService',
         'ModalService',
-        'path'
+        'path',
+        'ResearchEntitiesService'
     ];
 
     function scientillaToolbar(
@@ -27,7 +28,8 @@
         GroupsService,
         UsersService,
         ModalService,
-        path
+        path,
+        ResearchEntitiesService
     ) {
         const vm = this;
         vm.wizardOpened = false;
@@ -39,6 +41,7 @@
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
         vm.editUserProfile = editUserProfile;
+        vm.editGroupProfile = editGroupProfile;
         vm.getUrl = getUrl;
         vm.profile = false;
         vm.isUser = isUser;
@@ -50,7 +53,7 @@
             vm.subResearchEntity = context.getSubResearchEntity();
 
             EventsService.subscribeAll(vm, [
-                EventsService.USER_PROFILE_CHANGED,
+                EventsService.USER_PROFILE_SAVED,
             ], (evt, profile) => {
                 vm.profile = profile;
 
@@ -69,7 +72,7 @@
                 EventsService.GROUP_UPDATED
             ], reloadUser);
 
-            vm.profile = await UsersService.getProfile(AuthService.user.researchEntity);
+            vm.profile = await ResearchEntitiesService.getProfile(AuthService.user.researchEntity);
 
             refresh();
         };
@@ -144,6 +147,10 @@
 
         function editUserProfile() {
             ModalService.openProfileForm();
+        }
+
+        function editGroupProfile() {
+            ModalService.openGroupProfileForm();
         }
 
         function researchEntityIsUser() {

@@ -64,6 +64,7 @@
         service.getSuggestedTrainingModules = getSuggestedTrainingModules;
         service.getDiscardedTrainingModules = getDiscardedTrainingModules;
         service.getTrainingModuleDrafts = getTrainingModuleDrafts;
+        service.getProfile = getProfile;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
         const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
@@ -578,6 +579,14 @@
 
         async function getTrainingModuleDrafts(researchEntity, query, populates = trainingModulePopulates) {
             return await getResearchItemDrafts(researchEntity, 'trainingModuleDrafts', query, populates);
+        }
+
+        async function getProfile (researchEntityId, edit = false) {
+            if (edit) {
+                return Restangular.one('researchentities', researchEntityId).customGET('get-edit-profile');
+            }
+
+            return await Restangular.one('researchentities', researchEntityId).customGET('get-profile');
         }
 
         /* jshint ignore:end */

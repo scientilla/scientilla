@@ -11,7 +11,9 @@
         'Notification',
         'groupTypes',
         'groupTypeLabels',
-        'groupTypePluralLabels'
+        'groupTypePluralLabels',
+        'EventsService',
+        'ResearchEntitiesService'
     ];
 
     function GroupService(
@@ -20,7 +22,9 @@
         Notification,
         groupTypes,
         groupTypeLabels,
-        groupTypePluralLabels
+        groupTypePluralLabels,
+        EventsService,
+        ResearchEntitiesService
     ) {
         var service = Restangular.service("groups");
 
@@ -48,6 +52,7 @@
         service.getCollaborators = getCollaborators;
         service.removeCollaborator = removeCollaborator;
         service.isGroupAdmin = isGroupAdmin;
+        service.saveProfile = saveProfile;
 
         return service;
 
@@ -354,5 +359,30 @@
             }
             return group.administrators.some(administrator => administrator.id === user.id);
         }
+
+        /* jshint ignore:start */
+        async function saveProfile (researchEntityId, profile, coverImage = false) {
+            const formData = new FormData();
+            formData.append('profile', JSON.stringify(profile));
+
+            if (coverImage) {
+                formData.append('coverImage', coverImage);
+            }
+
+            let response = await Restangular.one('researchentities', researchEntityId)
+                .one('save-profile')
+                .customPOST(formData, '', undefined, {'Content-Type': undefined});
+
+            response = response.plain();
+
+            if (_.isEmpty(response.errors)) {
+                const updatedProfileResponse = await ResearchEntitiesService.getProfile(researchEntityId);
+
+                EventsService.publish(EventsService.GROUP_PROFILE_SAVED, updatedProfileResponse.plain());
+            }
+
+            return response;
+        };
+        /* jshint ignore:end */
     }
 }());
