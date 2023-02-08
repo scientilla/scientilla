@@ -1,4 +1,4 @@
-/* global RoleAssociations */
+/* global ResearchEntity, RoleAssociations */
 
 const dot = require('dot-object');
 
@@ -13,8 +13,10 @@ const JsonValidator = require('../services/JsonValidator');
 const util = require('util');
 
 const pathProfileImages = path.join('profile', 'images');
-const validateProfile = JsonValidator.getProfileValidator();
-const validateProfileRemoveAdditional = JsonValidator.getProfileRemoveAdditionalValidator();
+const validateUserProfile = JsonValidator.getUserProfileValidator();
+const validateUserProfileRemoveAdditional = JsonValidator.getUserProfileRemoveAdditionalValidator();
+const validateGroupProfile = JsonValidator.getGroupProfileValidator();
+const validateGroupProfileRemoveAdditional = JsonValidator.getGroupProfileRemoveAdditionalValidator();
 
 const requiredMessage = 'This field is required.';
 
@@ -35,7 +37,8 @@ module.exports = {
     getProfile: getProfile,
     saveProfile: saveProfile,
     exportProfile: exportProfile,
-    setupProfile: setupProfile,
+    setupUserProfile: setupUserProfile,
+    setupGroupProfile: setupGroupProfile,
     filterProfile: filterProfile
 };
 
@@ -144,15 +147,35 @@ function filterProfile(profile, onlyPublic = false) {
 }
 
 /**
- * Returns the profile object with defaults
+ * Returns the group profile object with defaults
  *
  * @param {Object} researchEntityData
  *
  * @returns {Object} profile
  */
-function setupProfile(researchEntityData) {
+function setupGroupProfile(researchEntityData) {
+    // Get the default group profile object
+    const defaultProfile = JsonValidator.getDefaultGroupProfile();
+
+    // Return the default group profile merged with the existing group's profile data
+    if (researchEntityData && !_.isEmpty(researchEntityData.profile)) {
+        return _.merge({}, defaultProfile, researchEntityData.profile);
+    }
+
+    // return the default group profile
+    return _.cloneDeep(defaultProfile);
+}
+
+/**
+ * Returns the user profile object with defaults
+ *
+ * @param {Object} researchEntityData
+ *
+ * @returns {Object} profile
+ */
+function setupUserProfile(researchEntityData) {
     // We store the defaults of the research entity data schema.
-    const defaultProfile = JsonValidator.getDefaultProfile();
+    const defaultProfile = JsonValidator.getDefaultUserProfile();
     const privacyDefault = _.has(researchEntityData, 'profile.hidden') && researchEntityData.profile.hidden ? 'hidden' : 'public';
 
     if (!_.has(researchEntityData, 'importedData') || _.isNil(researchEntityData.importedData)) {
@@ -256,17 +279,37 @@ function setupProfile(researchEntityData) {
  */
 async function getEditProfile(researchEntityId) {
 
-    // We search if there is already a record for this research entity.
-    const data = await UserData.findOne({
-        researchEntity: researchEntityId
+    // Get the research entity
+    const researchEntity = await ResearchEntity.findOne({
+        id: researchEntityId
     });
 
-    // Return false of the data object doesn't have the profile property.
-    if (!_.has(data, 'profile') || _.isNil(data.profile)) {
-        return false;
-    }
+    // To check if it is an user
+    if (researchEntity.type === 'user') {
 
-    return setupProfile(data);
+        // We search if there is already a record for this research entity.
+        const data = await UserData.findOne({
+            researchEntity: researchEntityId
+        });
+
+        // Return false if the data object doesn't have the profile property.
+        if (!_.has(data, 'profile') || _.isNil(data.profile)) {
+            return false;
+        }
+
+        // Return the user profile
+        return setupUserProfile(data);
+    } else {
+        // Or a group
+
+        // We search if there is already a record for this research entity.
+        const data = await GroupData.findOne({
+            researchEntity: researchEntityId
+        });
+
+        // Return the group profile
+        return setupGroupProfile(data);
+    }
 }
 
 /**
@@ -277,6 +320,7 @@ async function getEditProfile(researchEntityId) {
  * @returns {Object}
  */
 async function getProfile(researchEntityId) {
+    // Get the editable profile
     let profile = await getEditProfile(researchEntityId);
 
     // Return false of the profile doesn't exist
@@ -317,187 +361,330 @@ async function saveProfile(req) {
         researchEntity: researchEntityId
     });
 
+    // Check if the request has files
     const hasFiles = (req._fileparser.upstreams.length > 0);
-    if (hasFiles) {
-        const imagePath = path.join(pathProfileImages, researchEntityId);
-        const filePath = path.resolve(sails.config.appPath, imagePath);
 
-        await new Promise(function (resolve, reject) {
+    // Get the research entity
+    const researchEntity = await ResearchEntity.findOne({
+        id: researchEntityId
+    });
 
-            let filename = req.file('profileImage')._files[0].stream.filename;
-            const originalImage = path.join(filePath, filename);
+    // To check if it is an user
+    if (researchEntity.type === 'user') {
+        if (hasFiles) {
+            const imagePath = path.join(pathProfileImages, researchEntityId);
+            const filePath = path.resolve(sails.config.appPath, imagePath);
 
-            const widthSmall = 200;
-            const heightSmall = 200;
-            const prefixSmall = `${widthSmall}x${heightSmall}_`;
-            const croppedImageSmall = path.join(filePath, prefixSmall + filename);
+            await new Promise(function (resolve, reject) {
 
-            const widthBig = 600;
-            const heightBig = 600;
-            const prefixBig = `${widthBig}x${heightBig}_`;
-            const croppedImageBig = path.join(filePath, prefixBig + filename);
+                let filename = req.file('profileImage')._files[0].stream.filename;
+                const originalImage = path.join(filePath, filename);
 
-            newProfileImageSmall = prefixSmall + filename;
-            newProfileImageBig = prefixBig + filename;
+                const widthSmall = 200;
+                const heightSmall = 200;
+                const prefixSmall = `${widthSmall}x${heightSmall}_`;
+                const croppedImageSmall = path.join(filePath, prefixSmall + filename);
 
-            req.file('profileImage').upload({
-                dirname: filePath,
-                saveAs: filename
-            }, async function (err, files) {
-                if (err) {
-                    reject(err);
-                }
+                const widthBig = 600;
+                const heightBig = 600;
+                const prefixBig = `${widthBig}x${heightBig}_`;
+                const croppedImageBig = path.join(filePath, prefixBig + filename);
 
-                await sharp(originalImage)
-                    .resize(widthSmall, heightSmall)
-                    .toFile(croppedImageSmall);
+                newProfileImageSmall = prefixSmall + filename;
+                newProfileImageBig = prefixBig + filename;
 
-                await sharp(originalImage)
-                    .resize(widthBig, heightBig)
-                    .toFile(croppedImageBig);
+                req.file('profileImage').upload({
+                    dirname: filePath,
+                    saveAs: filename
+                }, async function (err, files) {
+                    if (err) {
+                        reject(err);
+                    }
 
-                if (files.length > 0) {
-                    let src = files[0].fd.split('/');
-                    src = src[src.length - 1];
+                    await sharp(originalImage)
+                        .resize(widthSmall, heightSmall)
+                        .toFile(croppedImageSmall);
 
-                    profile.image.value = prefixBig + src;
-                }
+                    await sharp(originalImage)
+                        .resize(widthBig, heightBig)
+                        .toFile(croppedImageBig);
 
-                resolve();
-            });
-        });
+                    if (files.length > 0) {
+                        let src = files[0].fd.split('/');
+                        src = src[src.length - 1];
 
-        const readdir = util.promisify(fs.readdir);
-        const files = await readdir(filePath);
-        const unlink = util.promisify(fs.unlink);
+                        profile.image.value = prefixBig + src;
+                    }
 
-        // Remove all other profile images
-        for (const file of files) {
-            if (![newProfileImageSmall, newProfileImageBig].includes(file)) {
-                await unlink(path.join(filePath, file));
-            }
-        }
-    }
-
-    try {
-        if (researchEntityData) {
-            profile.hidden = researchEntityData.profile.hidden;
-        } else {
-            profile.hidden = false;
-        }
-
-        profile.remove = true;
-
-        const valid = validateProfile(profile);
-
-        // Run the validator again to remove all the additional properties
-        validateProfileRemoveAdditional(profile);
-
-        // After validating restore original basic information
-        // If the profile is valid without any errors
-        if (researchEntityData) {
-            profile.username = researchEntityData.profile.username;
-            profile.name = researchEntityData.profile.name;
-            profile.surname = researchEntityData.profile.surname;
-            profile.jobTitle = researchEntityData.profile.jobTitle;
-            profile.roleCategory = researchEntityData.profile.roleCategory;
-            profile.phone = researchEntityData.profile.phone;
-            profile.gender = researchEntityData.profile.gender;
-            profile.nationality = researchEntityData.profile.nationality;
-            profile.dateOfBirth = researchEntityData.profile.dateOfBirth;
-            profile.groups = researchEntityData.profile.groups;
-
-            if (!hasFiles && _.has(profile, 'image.value') && !_.isEmpty(profile.image.value)) {
-                profile.image.value = researchEntityData.profile.image.value;
-            }
-
-            profile.experiencesInternal = researchEntityData.profile.experiencesInternal;
-            profile.hidden = researchEntityData.profile.hidden;
-        }
-
-        // Sorting experiences
-        profile.experiencesExternal = _.orderBy(
-            profile.experiencesExternal,
-            [
-                experience => new moment(experience.from, ISO8601Format),
-                experience => new moment(experience.to, ISO8601Format)
-            ],
-            [
-                'desc',
-                'desc'
-            ]
-        );
-
-        // If the profile has some errors
-        if (!valid || validateProfile.errors) {
-
-            const row = {};
-
-            // We loop over the validation errors and group the error messages for each field
-            for (let i = 0; i < validateProfile.errors.length; i++) {
-                let error = validateProfile.errors[i];
-
-                // We ignore the if keyword.
-                if (error.keyword === 'if') {
-                    continue;
-                }
-
-                let path = '';
-
-                if (error.keyword === 'required') {
-                    path = error.dataPath.substring(1).replace(/\//g, '.');
-                    path += '.errors';
-                    path += '.' + error.params.missingProperty;
-                    error.message = requiredMessage;
-                } else {
-                    let pathArray = error.dataPath.substring(1).split('/');
-                    let property = pathArray.pop();
-                    path = pathArray.join('.');
-                    path += '.errors';
-                    path += '.' + property;
-                }
-
-                if (typeof row[path] === 'undefined') {
-                    row[path] = [];
-                }
-
-                row[path].push({
-                    keyword: error.keyword,
-                    message: error.message
+                    resolve();
                 });
+            });
 
-                count++;
+            const readdir = util.promisify(fs.readdir);
+            const files = await readdir(filePath);
+            const unlink = util.promisify(fs.unlink);
+
+            // Remove all other profile images
+            for (const file of files) {
+                if (![newProfileImageSmall, newProfileImageBig].includes(file)) {
+                    await unlink(path.join(filePath, file));
+                }
+            }
+        }
+
+        try {
+            if (researchEntityData) {
+                profile.hidden = researchEntityData.profile.hidden;
+            } else {
+                profile.hidden = false;
             }
 
-            // We expand the row object from dotted strings to object
-            errors = dot.object(row);
+            profile.remove = true;
 
-            message = 'Please correct the errors!';
-        } else {
+            const valid = validateUserProfile(profile);
 
+            // Run the validator again to remove all the additional properties
+            validateUserProfileRemoveAdditional(profile);
+
+            // After validating restore original basic information
             // If the profile is valid without any errors
             if (researchEntityData) {
-                // We update the existing record with the new profile
-                await ResearchEntityData.update(
-                    { id: researchEntityData.id },
-                    { profile: profile }
-                );
-            } else {
-                // If there isn't any record yet, we create one for this researchEntity and save the profile.
-                await ResearchEntityData.create({
-                    researchEntity: researchEntityId,
-                    profile: profile
-                });
+                profile.username = researchEntityData.profile.username;
+                profile.name = researchEntityData.profile.name;
+                profile.surname = researchEntityData.profile.surname;
+                profile.jobTitle = researchEntityData.profile.jobTitle;
+                profile.roleCategory = researchEntityData.profile.roleCategory;
+                profile.phone = researchEntityData.profile.phone;
+                profile.gender = researchEntityData.profile.gender;
+                profile.nationality = researchEntityData.profile.nationality;
+                profile.dateOfBirth = researchEntityData.profile.dateOfBirth;
+                profile.groups = researchEntityData.profile.groups;
+
+                if (!hasFiles && _.has(profile, 'image.value') && !_.isEmpty(profile.image.value)) {
+                    profile.image.value = researchEntityData.profile.image.value;
+                }
+
+                profile.experiencesInternal = researchEntityData.profile.experiencesInternal;
+                profile.hidden = researchEntityData.profile.hidden;
             }
 
-            // Find user and update hasChangedProfile boolean to true if not is already true
-            let user = await User.findOne({ researchEntity: researchEntityId });
-            if (user && !user.already_changed_profile) {
-                await User.update({ id: user.id }, { already_changed_profile: true });
+            // Sorting experiences
+            profile.experiencesExternal = _.orderBy(
+                profile.experiencesExternal,
+                [
+                    experience => new moment(experience.from, ISO8601Format),
+                    experience => new moment(experience.to, ISO8601Format)
+                ],
+                [
+                    'desc',
+                    'desc'
+                ]
+            );
+
+            // If the profile has some errors
+            if (!valid || validateUserProfile.errors) {
+
+                const row = {};
+
+                // We loop over the validation errors and group the error messages for each field
+                for (let i = 0; i < validateUserProfile.errors.length; i++) {
+                    let error = validateUserProfile.errors[i];
+
+                    // We ignore the if keyword.
+                    if (error.keyword === 'if') {
+                        continue;
+                    }
+
+                    let path = '';
+
+                    if (error.keyword === 'required') {
+                        path = error.dataPath.substring(1).replace(/\//g, '.');
+                        path += '.errors';
+                        path += '.' + error.params.missingProperty;
+                        error.message = requiredMessage;
+                    } else {
+                        let pathArray = error.dataPath.substring(1).split('/');
+                        let property = pathArray.pop();
+                        path = pathArray.join('.');
+                        path += '.errors';
+                        path += '.' + property;
+                    }
+
+                    if (typeof row[path] === 'undefined') {
+                        row[path] = [];
+                    }
+
+                    row[path].push({
+                        keyword: error.keyword,
+                        message: error.message
+                    });
+
+                    count++;
+                }
+
+                // We expand the row object from dotted strings to object
+                errors = dot.object(row);
+
+                message = 'Please correct the errors!';
+            } else {
+
+                // If the profile is valid without any errors
+                if (researchEntityData) {
+                    // We update the existing record with the new profile
+                    await ResearchEntityData.update(
+                        { id: researchEntityData.id },
+                        { profile: profile }
+                    );
+                } else {
+                    // If there isn't any record yet, we create one for this researchEntity and save the profile.
+                    await ResearchEntityData.create({
+                        researchEntity: researchEntityId,
+                        profile: profile
+                    });
+                }
+
+                // Find user and update hasChangedProfile boolean to true if not is already true
+                let user = await User.findOne({ researchEntity: researchEntityId });
+                if (user && !user.already_changed_profile) {
+                    await User.update({ id: user.id }, { already_changed_profile: true });
+                }
+            }
+        } catch (e) {
+            sails.log.debug(e);
+        }
+    } else {
+        // Or a group
+
+        // Handle the files
+        if (hasFiles) {
+            const imagePath = path.join(pathProfileImages, researchEntityId);
+            const filePath = path.resolve(sails.config.appPath, imagePath);
+
+            await new Promise(function (resolve, reject) {
+
+                let filename = req.file('coverImage')._files[0].stream.filename;
+                const originalImage = path.join(filePath, filename);
+
+                const width = 750;
+                const height = 500;
+                const prefix = `${width}x${height}_`;
+                const croppedImage = path.join(filePath, prefix + filename);
+
+                newCoverImage = prefix + filename;
+
+                console.log(filePath, filename);
+
+                req.file('coverImage').upload({
+                    dirname: filePath,
+                    saveAs: filename
+                }, async function (err, files) {
+                    if (err) {
+                        reject(err);
+                    }
+
+                    await sharp(originalImage)
+                        .resize(width, height)
+                        .toFile(croppedImage);
+
+                    if (files.length > 0) {
+                        let src = files[0].fd.split('/');
+                        src = src[src.length - 1];
+
+                        profile.coverImage.value = prefix + src;
+                    }
+
+                    resolve();
+                });
+            });
+
+            const readdir = util.promisify(fs.readdir);
+            const files = await readdir(filePath);
+            const unlink = util.promisify(fs.unlink);
+
+            // Remove all other profile images
+            for (const file of files) {
+                if (![newCoverImage].includes(file)) {
+                    await unlink(path.join(filePath, file));
+                }
             }
         }
-    } catch (e) {
-        sails.log.debug(e);
+
+        try {
+            const valid = validateGroupProfile(profile);
+
+            if (researchEntityData) {
+                if (!hasFiles && _.has(profile, 'coverImage.value') && !_.isEmpty(profile.coverImage.value)) {
+                    profile.coverImage.value = researchEntityData.profile.coverImage.value;
+                }
+            }
+
+            validateGroupProfileRemoveAdditional(profile);
+
+            // If the profile has some errors
+            if (!valid || validateGroupProfile.errors) {
+
+                const row = {};
+
+                // We loop over the validation errors and group the error messages for each field
+                for (let i = 0; i < validateGroupProfile.errors.length; i++) {
+                    let error = validateGroupProfile.errors[i];
+
+                    // We ignore the if keyword.
+                    if (error.keyword === 'if') {
+                        continue;
+                    }
+
+                    let path = '';
+
+                    if (error.keyword === 'required') {
+                        path = error.dataPath.substring(1).replace(/\//g, '.');
+                        path += '.errors';
+                        path += '.' + error.params.missingProperty;
+                        error.message = requiredMessage;
+                    } else {
+                        let pathArray = error.dataPath.substring(1).split('/');
+                        let property = pathArray.pop();
+                        path = pathArray.join('.');
+                        path += '.errors';
+                        path += '.' + property;
+                    }
+
+                    if (typeof row[path] === 'undefined') {
+                        row[path] = [];
+                    }
+
+                    row[path].push({
+                        keyword: error.keyword,
+                        message: error.message
+                    });
+
+                    count++;
+                }
+
+                // We expand the row object from dotted strings to object
+                errors = dot.object(row);
+
+                message = 'Please correct the errors!';
+            } else {
+
+                // If the profile is valid without any errors
+                if (researchEntityData) {
+                    // We update the existing record with the new profile
+                    await ResearchEntityData.update(
+                        { id: researchEntityData.id },
+                        { profile: profile }
+                    );
+                } else {
+                    // If there isn't any record yet, we create one for this researchEntity and save the profile.
+                    await ResearchEntityData.create({
+                        researchEntity: researchEntityId,
+                        profile: profile
+                    });
+                }
+            }
+        } catch (e) {
+            sails.log.debug(e);
+        }
     }
 
     // We merge the profile and errors object
