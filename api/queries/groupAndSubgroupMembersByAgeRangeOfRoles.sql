@@ -13,4 +13,4 @@ FROM general_settings gs,
 WHERE gs.name = 'role-associations' AND (
           (roles->>'roleCategory')::text IS NOT NULL AND
           (roles->>'roleCategory')::text = ANY ($2)
-) AND u.active = true AND (ud.profile -> 'dateOfBirth' ->> 'value')::text ~ '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]';;
+) AND u.active = true AND (ud.profile -> 'dateOfBirth' ->> 'value')::text ~ '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]';
