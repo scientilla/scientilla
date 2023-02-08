@@ -572,8 +572,6 @@ async function saveProfile(req) {
 
                 newCoverImage = prefix + filename;
 
-                console.log(filePath, filename);
-
                 req.file('coverImage').upload({
                     dirname: filePath,
                     saveAs: filename
