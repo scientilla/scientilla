@@ -27,7 +27,7 @@ module.exports = {
         toJSON: function(replaceImage = true) {
             const data = this.toObject();
 
-            let profile = ResearchEntityData.setupProfile(data);
+            let profile = ResearchEntityData.setupUserProfile(data);
 
             if (_.has(profile, 'hidden') && profile.hidden) {
                 return {

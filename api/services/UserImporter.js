@@ -1509,7 +1509,7 @@ function collectGroupCodes(contract) {
  * @returns {Object}
  */
 function getProfileObject(researchEntityData, contract, allMembershipGroups, activeGroups) {
-    const profile = ResearchEntityData.setupProfile(researchEntityData);
+    const profile = ResearchEntityData.setupUserProfile(researchEntityData);
 
     if (!profile) {
         return;
