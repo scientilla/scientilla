@@ -1,0 +1,25 @@
+{
+  "$id": "userProfile",
+  "type": "object",
+  "if": {
+    "type": "object",
+    "properties": {
+      "hidden": {
+        "type": "boolean",
+        "const": true
+      }
+    }
+  },
+  "then": {
+    "allOf": [
+      { "$ref": "userProfileDefault#/definitions/userProfile" },
+      { "$ref": "userProfileHidden#/definitions/userProfile" }
+    ]
+  },
+  "else": {
+    "allOf": [
+      { "$ref": "userProfileDefault#/definitions/userProfile" },
+      { "$ref": "userProfilePublic#/definitions/userProfile" }
+    ]
+  }
+}

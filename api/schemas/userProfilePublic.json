@@ -1,0 +1,247 @@
+{
+  "$id": "userProfilePublic",
+  "definitions": {
+    "userProfile": {
+      "type": "object",
+      "properties": {
+        "username": { "$ref": "userProfileDefs#/definitions/ifValueCheckPublicPrivacy" },
+        "name": { "$ref": "userProfileDefs#/definitions/ifValueCheckPublicPrivacy" },
+        "surname": { "$ref": "userProfileDefs#/definitions/ifValueCheckPublicPrivacy" },
+        "jobTitle": { "$ref": "userProfileDefs#/definitions/ifValueCheckPublicPrivacy" },
+        "roleCategory": {
+          "$ref": "userProfileDefs#/definitions/ifValueCheckPublicPrivacy"
+        },
+        "phone": { "$ref": "userProfileDefs#/definitions/ifValueCheckPublicPrivacy" },
+        "gender": { "$ref": "userProfileDefs#/definitions/ifValueCheckPublicPrivacy" },
+        "nationality": {
+          "$ref": "userProfileDefs#/definitions/ifValueCheckHiddenPrivacy"
+        },
+        "dateOfBirth": {
+          "$ref": "userProfileDefs#/definitions/ifValueCheckHiddenPrivacy"
+        },
+        "groups": {
+          "type": "array",
+          "items": { "$ref": "userProfileDefs#/definitions/ifValueCheckPublicPrivacy" }
+        },
+        "image": {
+          "oneOf": [
+            { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+            { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+            { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+          ]
+        },
+        "titles": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+              { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+              { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+            ]
+          }
+        },
+        "description": {
+          "oneOf": [
+            { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+            { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+            { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+          ]
+        },
+        "role": {
+          "oneOf": [
+            { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+            { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+            { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+          ]
+        },
+        "website": {
+          "oneOf": [
+            { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+            { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+            { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+          ]
+        },
+        "address": {
+          "oneOf": [
+            { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+            { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+            { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+          ]
+        },
+        "interests": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+              { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+              { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+            ]
+          }
+        },
+        "socials": {
+          "type": "object",
+          "properties": {
+            "linkedin": {
+              "oneOf": [
+                { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+              ]
+            },
+            "twitter": {
+              "oneOf": [
+                { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+              ]
+            },
+            "facebook": {
+              "oneOf": [
+                { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+              ]
+            },
+            "instagram": {
+              "oneOf": [
+                { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+              ]
+            },
+            "researchgate": {
+              "oneOf": [
+                { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+              ]
+            },
+            "github": {
+              "oneOf": [
+                { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+              ]
+            },
+            "bitbucket": {
+              "oneOf": [
+                { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+              ]
+            },
+            "youtube": {
+              "oneOf": [
+                { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+              ]
+            },
+            "flickr": {
+              "oneOf": [
+                { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+              ]
+            },
+            "googleScholar": {
+              "oneOf": [
+                { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+                { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+              ]
+            }
+          }
+        },
+        "experiencesInternal": {
+          "type": "array",
+          "items": { "$ref": "userProfileDefs#/definitions/ifJobTitleCheckHiddenPrivacy" }
+        },
+        "experiencesExternal": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+              { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+              { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+            ]
+          }
+        },
+        "education": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+              { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+              { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+            ]
+          }
+        },
+        "certificates": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+              { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+              { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+            ]
+          }
+        },
+        "skillCategories": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "skills": {
+                    "type": "array",
+                    "items": {
+                      "oneOf": [
+                        { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+                        { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+                        { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "oneOf": [
+                  { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" },
+                  { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+                  { "$ref": "userProfileDefs#/definitions/privacyEnumInvisible" }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "username",
+        "name",
+        "surname",
+        "jobTitle",
+        "roleCategory",
+        "phone",
+        "gender",
+        "nationality",
+        "dateOfBirth",
+        "groups",
+        "image",
+        "titles",
+        "description",
+        "role",
+        "website",
+        "address",
+        "interests",
+        "socials",
+        "experiencesInternal",
+        "experiencesExternal",
+        "education",
+        "certificates",
+        "skillCategories"
+      ]
+    }
+  }
+}

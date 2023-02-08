@@ -1,0 +1,64 @@
+{
+  "$id": "groupProfileRemoveAdditional",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "collaborations": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "facilities": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "privacy": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "coverImage": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

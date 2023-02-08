@@ -1,5 +1,5 @@
 {
-  "$id": "profileDefs",
+  "$id": "userProfileDefs",
   "definitions": {
     "name": {
       "type": "object",
@@ -109,7 +109,7 @@
         },
         "required": ["value"]
       },
-      "then": { "$ref": "profileDefs#/definitions/privacyEnumPublic" }
+      "then": { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" }
     },
     "ifJobTitleCheckHiddenPrivacy": {
       "if": {
@@ -122,7 +122,7 @@
         },
         "required": ["jobTitle"]
       },
-      "then": { "$ref": "profileDefs#/definitions/privacyEnumHidden" }
+      "then": { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" }
     },
     "ifValueCheckHiddenPrivacy": {
       "if": {
@@ -135,7 +135,7 @@
         },
         "required": ["value"]
       },
-      "then": { "$ref": "profileDefs#/definitions/privacyEnumHidden" }
+      "then": { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" }
     },
     "ifNameCheckHiddenPrivacy": {
       "if": {
@@ -148,7 +148,7 @@
         },
         "required": ["name"]
       },
-      "then": { "$ref": "profileDefs#/definitions/privacyEnumHidden" }
+      "then": { "$ref": "userProfileDefs#/definitions/privacyEnumHidden" }
     },
     "externalExperience": {
       "type": "object",
@@ -337,9 +337,9 @@
           "default": [],
           "items": {
             "allOf": [
-              { "$ref": "profileDefs#/definitions/privacy" },
-              { "$ref": "profileDefs#/definitions/privacyDefaultHidden" },
-              { "$ref": "profileDefs#/definitions/skill" }
+              { "$ref": "userProfileDefs#/definitions/privacy" },
+              { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" },
+              { "$ref": "userProfileDefs#/definitions/skill" }
             ]
           }
         }

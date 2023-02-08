@@ -1,0 +1,309 @@
+{
+  "$id": "userProfileDefault",
+  "definitions": {
+    "userProfile": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "allOf": [
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "name": {
+          "allOf": [
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "surname": {
+          "allOf": [
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "jobTitle": {
+          "allOf": [
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "roleCategory": {
+          "allOf": [
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "phone": {
+          "allOf": [
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "gender": {
+          "allOf": [
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "nationality": {
+          "allOf": [
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "dateOfBirth": {
+          "allOf": [
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "groups": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "enum": ["Research Line", "Facility", "Directorate", "Institute"]
+                  },
+                  "center": {
+                    "allOf": [
+                      { "$ref": "userProfileDefs#/definitions/name" },
+                      { "$ref": "userProfileDefs#/definitions/code" }
+                    ]
+                  },
+                  "offices": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              { "$ref": "userProfileDefs#/definitions/name" },
+              { "$ref": "userProfileDefs#/definitions/code" },
+              { "$ref": "userProfileDefs#/definitions/privacy" },
+              { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+            ]
+          }
+        },
+        "socials": {
+          "type": "object",
+          "properties": {
+            "linkedin": {
+              "allOf": [
+                { "$ref": "userProfileDefs#/definitions/urlValue" },
+                { "$ref": "userProfileDefs#/definitions/privacy" },
+                { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+              ]
+            },
+            "twitter": {
+              "allOf": [
+                { "$ref": "userProfileDefs#/definitions/urlValue" },
+                { "$ref": "userProfileDefs#/definitions/privacy" },
+                { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+              ]
+            },
+            "facebook": {
+              "allOf": [
+                { "$ref": "userProfileDefs#/definitions/urlValue" },
+                { "$ref": "userProfileDefs#/definitions/privacy" },
+                { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+              ]
+            },
+            "instagram": {
+              "allOf": [
+                { "$ref": "userProfileDefs#/definitions/urlValue" },
+                { "$ref": "userProfileDefs#/definitions/privacy" },
+                { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+              ]
+            },
+            "researchgate": {
+              "allOf": [
+                { "$ref": "userProfileDefs#/definitions/urlValue" },
+                { "$ref": "userProfileDefs#/definitions/privacy" },
+                { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+              ]
+            },
+            "googleScholar": {
+              "allOf": [
+                { "$ref": "userProfileDefs#/definitions/urlValue" },
+                { "$ref": "userProfileDefs#/definitions/privacy" },
+                { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+              ]
+            },
+            "github": {
+              "allOf": [
+                { "$ref": "userProfileDefs#/definitions/urlValue" },
+                { "$ref": "userProfileDefs#/definitions/privacy" },
+                { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+              ]
+            },
+            "bitbucket": {
+              "allOf": [
+                { "$ref": "userProfileDefs#/definitions/urlValue" },
+                { "$ref": "userProfileDefs#/definitions/privacy" },
+                { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+              ]
+            },
+            "youtube": {
+              "allOf": [
+                { "$ref": "userProfileDefs#/definitions/urlValue" },
+                { "$ref": "userProfileDefs#/definitions/privacy" },
+                { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+              ]
+            },
+            "flickr": {
+              "allOf": [
+                { "$ref": "userProfileDefs#/definitions/urlValue" },
+                { "$ref": "userProfileDefs#/definitions/privacy" },
+                { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+              ]
+            }
+          }
+        },
+        "image": {
+          "allOf": [
+            { "$ref": "userProfileDefs#/definitions/stringValue" },
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "titles": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "allOf": [
+              { "$ref": "userProfileDefs#/definitions/notEmptyStringValue" },
+              { "$ref": "userProfileDefs#/definitions/privacy" },
+              { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+            ]
+          }
+        },
+        "description": {
+          "allOf": [
+            { "$ref": "userProfileDefs#/definitions/stringValue" },
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "role": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "maxLength": 75,
+                  "errorMessage": "This field is limited to 75 characters!"
+                }
+              }
+            },
+            { "$ref": "userProfileDefs#/definitions/stringValue" },
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "website": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "maxLength": 255,
+                  "errorMessage": "This field is limited to 255 characters!"
+                }
+              }
+            },
+            { "$ref": "userProfileDefs#/definitions/urlValue" },
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "address": {
+          "allOf": [
+            { "$ref": "userProfileDefs#/definitions/stringValue" },
+            { "$ref": "userProfileDefs#/definitions/privacy" },
+            { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          ]
+        },
+        "interests": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "allOf": [
+              { "$ref": "userProfileDefs#/definitions/notEmptyStringValue" },
+              { "$ref": "userProfileDefs#/definitions/privacy" },
+              { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+            ]
+          }
+        },
+        "experiencesExternal": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "allOf": [
+              { "$ref": "userProfileDefs#/definitions/externalExperience" },
+              { "$ref": "userProfileDefs#/definitions/privacy" },
+              { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+            ]
+          }
+        },
+        "education": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "allOf": [
+              { "$ref": "userProfileDefs#/definitions/educationItem" },
+              { "$ref": "userProfileDefs#/definitions/privacy" },
+              { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+            ]
+          }
+        },
+        "certificates": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "allOf": [
+              { "$ref": "userProfileDefs#/definitions/certificate" },
+              { "$ref": "userProfileDefs#/definitions/privacy" },
+              { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+            ]
+          }
+        },
+        "skillCategories": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "allOf": [
+              { "$ref": "userProfileDefs#/definitions/skillCategory" },
+              { "$ref": "userProfileDefs#/definitions/privacy" },
+              { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+            ]
+          }
+        },
+        "hidden": {
+          "type": "boolean",
+          "default": false
+        },
+        "publicWebsite": { "$ref": "userProfileDefs#/definitions/publicWebsite" },
+        "export": { "$ref": "userProfileDefs#/definitions/export" },
+        "experiencesInternal": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "allOf": [
+              { "$ref": "userProfileDefs#/definitions/internalExperience" },
+              { "$ref": "userProfileDefs#/definitions/privacy" },
+              { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
