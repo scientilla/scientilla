@@ -18,9 +18,9 @@
             'context',
             'researchEntityService',
             'AccomplishmentService',
-            'UsersService',
             'GroupsService',
-            'path'
+            'path',
+            'ResearchEntitiesService'
         ];
 
         function controller(
@@ -29,9 +29,9 @@
             context,
             researchEntityService,
             AccomplishmentService,
-            UsersService,
             GroupsService,
-            path
+            path,
+            ResearchEntitiesService
         ) {
             const vm = this;
 
@@ -67,23 +67,22 @@
                 }
 
                 vm.researchEntity = AuthService.user.researchEntity;
-                vm.profile = await UsersService.getProfile(vm.researchEntity);
+                vm.profile = await ResearchEntitiesService.getProfile(vm.researchEntity);
 
                 EventsService.subscribeAll(vm, [
-                    EventsService.USER_PROFILE_CHANGED,
+                    EventsService.USER_PROFILE_SAVED,
                 ], (evt, profile) => {
                     vm.profile = profile;
+
                     loadProfile();
+
+                    AuthService.savedProfile();
+
+                    vm.user = AuthService.user;
                 });
 
                 EventsService.subscribe(vm, EventsService.AUTH_USER_CHANGED, (evt, user) => {
                     vm.user = user;
-                });
-
-                EventsService.subscribe(vm, EventsService.USER_PROFILE_SAVED, () => {
-                    AuthService.savedProfile();
-
-                    vm.user = AuthService.user;
                 });
 
                 loadProfile();
@@ -118,7 +117,7 @@
 
             function loadProfile() {
                 if (!_.isEmpty(vm.profile)) {
-                    vm.missingProfile = _.isEmpty(vm.profile.plain());
+                    vm.missingProfile = _.isEmpty(vm.profile);
                     setNumberOfItems();
                     vm.loading = false;
                 }
