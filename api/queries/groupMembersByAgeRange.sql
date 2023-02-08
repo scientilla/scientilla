@@ -8,4 +8,4 @@ SELECT
 FROM user_data ud
        JOIN "user" u ON u.research_entity = ud.research_entity
        JOIN membership m ON u.id = m."user"
-WHERE m.active = TRUE AND m."group" = $1 AND u.active = true;
+WHERE m.active = TRUE AND m."group" = $1 AND u.active = true AND (ud.profile -> 'dateOfBirth' ->> 'value')::text ~ '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]';;
