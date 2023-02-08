@@ -3,8 +3,9 @@
 const Ajv = require('ajv').default;
 
 const defs = require('../schemas/defs.json');
-const profileDefs = require('../schemas/profileDefs.json');
-const profileDefault = require('../schemas/profileDefault.json');
+const userProfileDefs = require('../schemas/userProfileDefs.json');
+const userProfileDefault = require('../schemas/userProfileDefault.json');
+const groupProfile = require('../schemas/groupProfile.json');
 
 const defaults = require('json-schema-defaults');
 
@@ -20,13 +21,15 @@ const ajv = new Ajv({
         require('../schemas/projectAgreement.json'),
         require('../schemas/patent.json'),
         require('../schemas/patentFamily.json'),
-        profileDefs,
-        profileDefault,
-        require('../schemas/profileHidden.json'),
-        require('../schemas/profilePublic.json'),
-        require('../schemas/profile.json'),
-        require('../schemas/profileRemoveAdditional.json'),
+        userProfileDefs,
+        userProfileDefault,
+        require('../schemas/userProfileHidden.json'),
+        require('../schemas/userProfilePublic.json'),
+        require('../schemas/userProfile.json'),
+        require('../schemas/userProfileRemoveAdditional.json'),
         require('../schemas/trainingModule.json'),
+        groupProfile,
+        require('../schemas/groupProfileRemoveAdditional.json'),
     ]
 });
 
@@ -49,39 +52,66 @@ module.exports = {
     getPatentFamilyValidator: () => {
         return ajv.getSchema('patentFamily');
     },
-    getProfileValidator: () => {
-        return ajv.getSchema('profile');
+    getUserProfileValidator: () => {
+        return ajv.getSchema('userProfile');
     },
-    getProfileRemoveAdditionalValidator: () => {
+    getUserProfileRemoveAdditionalValidator: () => {
         const value = ajv.opts.removeAdditional;
         ajv.opts.removeAdditional = 'all';
-        const schema = ajv.getSchema('profileRemoveAdditional');
+        const schema = ajv.getSchema('userProfileRemoveAdditional');
         ajv.opts.removeAdditional = value;
         return schema;
     },
     getTrainingModuleValidator: () => {
         return ajv.getSchema('trainingModule');
     },
-    getDefaultProfile: () => {
-        const profileDefsJSON = JSON.stringify(profileDefs);
-        const updatedProfileDefsJSON = profileDefsJSON.replace(new RegExp('profileDefs#', 'g'), '#')
+    getDefaultUserProfile: () => {
+        const userProfileDefsJSON = JSON.stringify(userProfileDefs);
+        const updatedUserProfileDefsJSON = userProfileDefsJSON.replace(new RegExp('userProfileDefs#', 'g'), '#')
             .replace(new RegExp('defs#', 'g'), '#');
-        const updatedProfileDefs = JSON.parse(updatedProfileDefsJSON);
+        const updatedUserProfileDefs = JSON.parse(updatedUserProfileDefsJSON);
 
-        const profileDefaultJSON = JSON.stringify(profileDefault.definitions.profile);
-        const updatedRefsProfileDefaultJSON = profileDefaultJSON.replace(new RegExp('profileDefs#', 'g'), '#')
+        const profileDefaultJSON = JSON.stringify(userProfileDefault.definitions.userProfile);
+        const updatedRefsProfileDefaultJSON = profileDefaultJSON.replace(new RegExp('userProfileDefs#', 'g'), '#')
             .replace(new RegExp('defs#', 'g'), '#');
         const updatedRefsProfileDefault = JSON.parse(updatedRefsProfileDefaultJSON);
 
         updatedRefsProfileDefault.definitions = _.merge(
             defs.definitions,
-            updatedProfileDefs.definitions
+            updatedUserProfileDefs.definitions
         );
 
         return defaults({
             type: 'object',
             definitions: updatedRefsProfileDefault.definitions,
             properties: updatedRefsProfileDefault.properties
+        });
+    },
+    getGroupProfileRemoveAdditionalValidator: () => {
+        const value = ajv.opts.removeAdditional;
+        ajv.opts.removeAdditional = 'all';
+        const schema = ajv.getSchema('groupProfileRemoveAdditional');
+        ajv.opts.removeAdditional = value;
+        return schema;
+    },
+    getGroupProfileValidator: () => {
+        return ajv.getSchema('groupProfile');
+    },
+    getDefaultGroupProfile: () => {
+        const groupProfileJSON = JSON.stringify(groupProfile);
+        const updatedRefsGroupProfileJSON = groupProfileJSON.replace(new RegExp('userProfileDefs#', 'g'), '#')
+            .replace(new RegExp('defs#', 'g'), '#');
+        const updatedRefsGroupProfile = JSON.parse(updatedRefsGroupProfileJSON);
+
+        updatedRefsGroupProfile.definitions = _.merge(
+            defs.definitions,
+            updatedRefsGroupProfile.definitions
+        );
+
+        return defaults({
+            type: 'object',
+            definitions: updatedRefsGroupProfile.definitions,
+            properties: updatedRefsGroupProfile.properties
         });
     }
 };
