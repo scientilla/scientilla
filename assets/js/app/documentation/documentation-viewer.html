@@ -7,7 +7,7 @@
                     can use.</p>
             </div>
 
-            <h2>Profile</h2>
+            <h2>User profile</h2>
             <div class="sub-description">
                 <p>This is a collection of information about the API endpoints regarding the user profile.</p>
             </div>
@@ -115,6 +115,164 @@
                     </pre>
 
                     <p>When a user has a public image but it cannot be found you will receive a <strong>404 Not
+                        found</strong> response with following message:</p>
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "Image is not public!"<br>}</code>
+                    </pre>
+                </li>
+            </ul>
+
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+
+            <h2>Group profile</h2>
+            <div class="sub-description">
+                <p>This is a collection of information about the API endpoints regarding the group profile.</p>
+            </div>
+
+            <ul class="documentation-listing">
+                <li id="get-profile-of-all-groups">
+                    <h3>Get the profile of all groups</h3>
+                    <p>You can get the profile of all groups by using this API endpoint. You will receive an object with
+                        the number of items and an array of profile objects.</p>
+                    <pre data-type="get">
+                        <code>/api/v1/groupData?limit=0</code>
+                    </pre>
+
+                    <bearer-token></bearer-token>
+
+                    <p><strong>Success response</strong></p>
+                    <documentation-group-object-table></documentation-group-object-table>
+                </li>
+                <li id="get-profile-of-specific-group">
+                    <h3>Get the profile of a specific group</h3>
+                    <p>You can get a profile of a specific group by using the slug of the group.</p>
+                    <pre data-type="get">
+                        <code>/api/v1/groups/slug/:slug/profile</code>
+                    </pre>
+
+                    <p><strong>Parameter</strong></p>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>slug</td>
+                            <td>String</td>
+                            <td>The group's slug.</td>
+                        </tr>
+                    </table>
+
+                    <p>You can get a profile of a specific group by using the CDR code of the group.</p>
+                    <pre data-type="get">
+                        <code>/api/v1/groups/code/:code/profile</code>
+                    </pre>
+
+                    <p><strong>Parameter</strong></p>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>code</td>
+                            <td>String</td>
+                            <td>The group's CDR code.</td>
+                        </tr>
+                    </table>
+
+                    <bearer-token></bearer-token>
+
+                    <p><strong>Success response</strong></p>
+                    <documentation-group-object-table></documentation-group-object-table>
+
+                    <p><strong>Error response</strong><br>If you are trying to get a not existing profile you will
+                        receive the following result:</p>
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"error": "404 not found",<br>&nbsp;&nbsp;&nbsp;&nbsp;"item": {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"username": "john.doe@iit.it"<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}</code>
+                    </pre>
+                </li>
+                <li id="get-profile-image-of-specific-group">
+                    <h3>Get the profile image of a specific group</h3>
+                    <p></p>
+                    <pre data-type="get">
+                        <code>/api/v1/groups/slug/:slug/cover-image</code>
+                    </pre>
+
+                    <p><strong>Parameter</strong></p>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>slug</td>
+                            <td>String</td>
+                            <td>The group's slug.</td>
+                        </tr>
+                    </table>
+
+                    <p></p>
+                    <pre data-type="get">
+                        <code>/api/v1/groups/code/:code/cover-image</code>
+                    </pre>
+
+                    <p><strong>Parameter</strong></p>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>code</td>
+                            <td>String</td>
+                            <td>The group's code.</td>
+                        </tr>
+                    </table>
+
+                    <p>
+                        <strong>Success response</strong><br>
+                        This will return the URL of the image, this can be used directly into the image source
+                        attribute.
+                    </p>
+                    <pre>
+                        <code>/api/v1/groups/slug/this-is-a-slug/cover-image</code>
+                    </pre>
+
+                    <p><strong>Error responses</strong></p>
+
+                    <p>When a user doesn't exist you will receive a <strong>404 Not Found</strong> response with
+                        following message:</p>
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "Group not found!"<br>}</code>
+                    </pre>
+
+                    <p>When a group doesn't have a profile you will receive a <strong>404 Not Found</strong> response
+                        with following message:</p>
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "Profile not found!"<br>}</code>
+                    </pre>
+
+                    <p>When a group doesn't have a public profile you will receive a <strong>403 Forbidden</strong>
+                        response with following message:</p>
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "This profile is not public!"<br>}</code>
+                    </pre>
+
+                    <p>When a group doesn't have a public cover image you will receive a <strong>403 Forbidden</strong>
+                        response with following message:</p>
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "This image is not public!"<br>}</code>
+                    </pre>
+
+                    <p>When a group has a public cover image but it cannot be found you will receive a <strong>404 Not
                         found</strong> response with following message:</p>
                     <pre>
                         <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "Image is not public!"<br>}</code>

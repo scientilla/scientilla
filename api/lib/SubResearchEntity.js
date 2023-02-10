@@ -283,7 +283,8 @@ module.exports = _.merge({}, BaseModel, {
             'scientificTalks',
             'favoritePublications',
             'oralPresentations',
-            'userData'
+            'userData',
+            'groupData'
         ];
         const path = (subResearchEntityAttributes.includes(attribute)) ?
             `/api/v1/${subResearchEntity.getUrlSection()}/${subResearchEntity.id}/${attribute}` :

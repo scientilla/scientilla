@@ -24,7 +24,18 @@
         }
       }
     },
-    "facilities": {
+    "laboratories": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "url": {
       "type": "object",
       "properties": {
         "value": {

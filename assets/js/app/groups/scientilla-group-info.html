@@ -77,6 +77,10 @@
                                     Scopus profile
                                 </a>
                             </li>
+                            <li ng-if="vm.profile.url">
+                                <strong>URL:</strong>
+                                <a href="{{ vm.profile.url }}" target="_blank">{{ vm.profile.url }}</a>
+                            </li>
                         </ul>
 
                         <p class="chart-info">* This representation of group members may not be accurate or up-to-date.
@@ -118,9 +122,9 @@
                     <div class="group-text-container" ng-bind-html="vm.profile.collaborations"></div>
                 </div>
 
-                <div ng-if="vm.profile.facilities">
-                    <h3>Facilities / labs</h2>
-                    <div class="group-text-container" ng-bind-html="vm.profile.facilities"></div>
+                <div ng-if="vm.profile.laboratories">
+                    <h3>Laboratories</h2>
+                    <div class="group-text-container" ng-bind-html="vm.profile.laboratories"></div>
                 </div>
 
                 <div ng-if="vm.profile.topics">

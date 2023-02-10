@@ -116,9 +116,10 @@
                     skillRegex.test(vm.context) ||
                     externalExperiencesRegex.test(vm.context) ||
                     vm.context === 'collaborations' ||
-                    vm.context === 'facilities' ||
+                    vm.context === 'laboratories' ||
                     topicsRegex.test(vm.context) ||
-                    vm.context === 'coverImage'
+                    vm.context === 'coverImage' ||
+                    vm.context === 'url'
                 :
                     if (!vm.profile.hidden) {
                         showPublicOption = true;

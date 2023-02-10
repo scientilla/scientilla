@@ -22,8 +22,8 @@
 
 const apiPrfx = '/api/v1';
 const userUsernamePath = apiPrfx + '/users/username/:username';
-const groupCodePath = apiPrfx + '/groups/slug/:slug';
-const groupSlugPath = apiPrfx + '/groups/code/:code';
+const groupSlugPath = apiPrfx + '/groups/slug/:slug';
+const groupCodePath = apiPrfx + '/groups/code/:code';
 
 module.exports.routes = {
     /***************************************************************************
@@ -146,7 +146,7 @@ module.exports.routes = {
     ['get ' + userUsernamePath + '/industrial-projects']: 'User.getIndustrialProjects',
     ['get ' + userUsernamePath + '/patent-families']: 'User.getPatentFamilies',
     ['get ' + userUsernamePath + '/patents']: 'User.getPatents',
-    ['get ' + userUsernamePath + '/profile']: 'User.getPublicProfile',
+    ['get ' + userUsernamePath + '/profile']: 'User.getPublicUserProfile',
     ['get ' + userUsernamePath + '/profile-image']: 'userData.getProfileImage',
 
     ['get ' + groupCodePath + '/publications']: 'Group.getPublications',
@@ -161,6 +161,9 @@ module.exports.routes = {
     ['get ' + groupCodePath + '/industrial-projects']: 'Group.getIndustrialProjects',
     ['get ' + groupCodePath + '/patent-families']: 'Group.getPatentFamilies',
     ['get ' + groupCodePath + '/patents']: 'Group.getPatents',
+    ['get ' + groupCodePath + '/profile']: 'Group.getPublicGroupProfile',
+    ['get ' + groupCodePath + '/cover-image']: 'GroupData.getCoverImageByCode',
+    ['post ' + apiPrfx + '/groupData']: 'GroupData.find',
 
     ['get ' + groupSlugPath + '/publications']: 'Group.getPublications',
     ['get ' + groupSlugPath + '/high-impact-publications']: 'Group.getHighImpactPublications',
@@ -174,6 +177,8 @@ module.exports.routes = {
     ['get ' + groupSlugPath + '/industrial-projects']: 'Group.getIndustrialProjects',
     ['get ' + groupSlugPath + '/patent-families']: 'Group.getPatentFamilies',
     ['get ' + groupSlugPath + '/patents']: 'Group.getPatents',
+    ['get ' + groupSlugPath + '/profile']: 'Group.getPublicGroupProfile',
+    ['get ' + groupSlugPath + '/cover-image']: 'groupData.getCoverImageBySlug',
 
     //Commands
     ['put ' + apiPrfx + '/status/enable']: 'Status.enable',
