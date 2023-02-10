@@ -16,9 +16,16 @@
         { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
       ]
     },
-    "facilities": {
+    "laboratories": {
       "allOf": [
         { "$ref": "userProfileDefs#/definitions/stringValue" },
+        { "$ref": "userProfileDefs#/definitions/privacy" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+      ]
+    },
+    "url": {
+      "allOf": [
+        { "$ref": "userProfileDefs#/definitions/urlValue" },
         { "$ref": "userProfileDefs#/definitions/privacy" },
         { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
       ]

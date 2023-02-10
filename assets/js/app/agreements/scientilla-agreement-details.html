@@ -79,6 +79,13 @@
                 >
                     <strong>Link:</strong> <a href="{{ vm.agreement.projectData.link }}" target="_blank">{{ vm.agreement.projectData.link }}</a><br />
                 </ng-container>
+
+                <ng-container
+                    ng-if="vm.profile.url"
+                    class="profile-url"
+                >
+                    <strong>URL:</strong> <a href="{{ vm.profile.url }}" target="_blank">{{ vm.profile.url }}</a><br />
+                </ng-container>
             </div>
         </div>
     </div>
@@ -93,9 +100,9 @@
             <div class="group-text-container" ng-bind-html="vm.profile.collaborations"></div>
         </div>
 
-        <div ng-if="vm.profile.facilities">
-            <h3>Facilities / labs</h2>
-            <div class="group-text-container" ng-bind-html="vm.profile.facilities"></div>
+        <div ng-if="vm.profile.laboratories">
+            <h3>Laboratories</h2>
+            <div class="group-text-container" ng-bind-html="vm.profile.laboratories"></div>
         </div>
 
         <div ng-if="vm.profile.topics">

@@ -44,6 +44,7 @@
             description: {},
             collaborations: {},
             facilities: {},
+            url: {},
             topics: [],
             cover: {},
         };

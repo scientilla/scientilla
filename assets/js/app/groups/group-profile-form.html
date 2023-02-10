@@ -72,33 +72,63 @@
         </li>
     </ul>
 
-    <label for="facilities">Facilities / labs</label>
+    <label for="laboratories">Laboratories</label>
     <ul class="enable-listing">
         <li>
             <scientilla-privacy-selector
-                context-string="facilities"
+                context-string="laboratories"
                 profile="vm.profile"
-                errors="vm.profile.facilities.errors.privacy"
-                model="vm.profile.facilities.privacy"></scientilla-privacy-selector>
+                errors="vm.profile.laboratories.errors.privacy"
+                model="vm.profile.laboratories.privacy"></scientilla-privacy-selector>
         </li>
         <li>
             <div
                 class="form-group"
-                ng-class="{'has-error': vm.profile.facilities.errors.value}">
+                ng-class="{'has-error': vm.profile.laboratories.errors.value}">
                 <text-angular
-                    name="facilities"
-                    id="facilities"
+                    name="laboratories"
+                    id="laboratories"
                     cols="30"
                     rows="10"
-                    ng-model="vm.profile.facilities.value"
+                    ng-model="vm.profile.laboratories.value"
                     ng-class="{
-                        'is-invalid': vm.profile.facilities.errors.value,
-                        'is-invisible' : vm.profile.facilities.privacy === 'invisible'
+                        'is-invalid': vm.profile.laboratories.errors.value,
+                        'is-invisible' : vm.profile.laboratories.privacy === 'invisible'
                     }"
                     ta-paste="vm.format($html)"
                 ></text-angular>
                 <scientilla-field-errors
-                    errors="vm.profile.facilities.errors.value"></scientilla-field-errors>
+                    errors="vm.profile.laboratories.errors.value"></scientilla-field-errors>
+            </div>
+        </li>
+    </ul>
+
+    <label for="url">URL</label>
+    <ul class="enable-listing">
+        <li>
+            <scientilla-privacy-selector
+                context-string="url"
+                profile="vm.profile"
+                errors="vm.profile.url.errors.privacy"
+                model="vm.profile.url.privacy"></scientilla-privacy-selector>
+        </li>
+        <li>
+            <div
+                class="form-group"
+                ng-class="{'has-error': vm.profile.url.errors.value}"
+            >
+                <input
+                    type="text"
+                    class="form-control"
+                    id="url"
+                    placeholder="URL"
+                    ng-model="vm.profile.url.value"
+                    ng-class="{
+                        'is-invalid': vm.profile.url.errors.value,
+                        'is-invisible' : vm.profile.url.privacy === 'invisible'
+                    }">
+                <scientilla-field-errors
+                    errors="vm.profile.url.errors.value"></scientilla-field-errors>
             </div>
         </li>
     </ul>
