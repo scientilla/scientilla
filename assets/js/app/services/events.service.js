@@ -51,13 +51,13 @@
             CUSTOMIZATIONS_CHANGED: 'customizations.changed',
             CONNECTORS_CHANGED: 'external.connectors.changed',
 
-            USER_PROFILE_CHANGED: 'userProfile.changed',
             USER_PROFILE_SAVED: 'userProfile.saved',
 
             PROJECT_GROUP_CREATED: 'projectGroup.created',
             PROJECT_GROUP_DELETED: 'projectGroup.deleted',
 
             GROUP_UPDATED: 'group.updated',
+            GROUP_PROFILE_SAVED: 'userProfile.saved',
 
             PHD_INSTITUTE_CREATED: 'phdInstitute.created',
             PHD_INSTITUTE_UPDATED: 'phdInstitute.updated',

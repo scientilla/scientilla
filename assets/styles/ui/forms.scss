@@ -54,6 +54,16 @@ label{
             border-color: $apple-blossom;
         }
     }
+
+    .ta-editor{
+        border-color: $error-color;
+    }
+
+    .ta-toolbar{
+        .btn{
+            color: $error-color;
+        }
+    }
 }
 
 .has-warning{
@@ -67,7 +77,8 @@ label{
 
     label,
     i,
-    .invalid-feedback{
+    .invalid-feedback,
+    .ta-toolbar{
         color: $neon-carrot;
     }
 }

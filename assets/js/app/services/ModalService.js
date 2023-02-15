@@ -323,6 +323,23 @@
                 });
         };
 
+        service.openGroupProfileForm = function () {
+
+            const scopeVars = {};
+
+            return openModal(
+                `<group-profile-form
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"></group-profile-form>`,
+                scopeVars,
+                {
+                    size: 'md',
+                    backdrop: 'static',
+                    keyboard: false
+                });
+        };
+
         service.openDocumentComparisonForm = function (document, duplicates, category) {
 
             const scopeVars = {

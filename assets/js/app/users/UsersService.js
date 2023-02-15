@@ -9,13 +9,11 @@
         "Prototyper",
         'userConstants',
         'EventsService',
+        'ResearchEntitiesService'
     ];
 
-    function UsersService(Restangular, $q, Prototyper, userConstants, EventsService) {
+    function UsersService(Restangular, $q, Prototyper, userConstants, EventsService, ResearchEntitiesService) {
         var service = Restangular.service("users");
-
-        let _profile = false;
-        let _hasNoProfile = false;
 
         const userFields = [
             'id',
@@ -131,40 +129,12 @@
             response = response.plain();
 
             if (_.isEmpty(response.errors)) {
-                _profile = false;
-                EventsService.publish(EventsService.USER_PROFILE_SAVED);
-                await service.getProfile(researchEntityId);
+                const updatedProfileResponse = await ResearchEntitiesService.getProfile(researchEntityId);
+
+                EventsService.publish(EventsService.USER_PROFILE_SAVED, updatedProfileResponse.plain());
             }
 
             return response;
-        };
-
-        service.getProfile = async (researchEntityId, edit = false, forceReload = false) => {
-            if (edit) {
-                return Restangular.one('researchentities', researchEntityId).customGET('get-edit-profile');
-            }
-
-            if ((!_profile || forceReload) && !_hasNoProfile) {
-                const profile = await Restangular.one('researchentities', researchEntityId).customGET('get-profile');
-                if (profile !== 'Has no profile!') {
-                    _profile = profile;
-                    _hasNoProfile = false;
-                    EventsService.publish(EventsService.USER_PROFILE_CHANGED, _profile);
-                } else {
-                    _hasNoProfile = true;
-                }
-            }
-
-            return _profile;
-        };
-
-        service.getUserProfile = async (researchEntityId) => {
-            return await Restangular.one('researchentities', researchEntityId).customGET('get-profile');
-        };
-
-        service.emptyProfile = () => {
-            _profile = false;
-            _hasNoProfile = false;
         };
 
         service.delete = async (user) => {

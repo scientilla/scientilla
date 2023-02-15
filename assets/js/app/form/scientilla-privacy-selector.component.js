@@ -35,6 +35,7 @@
         const groupsRegex = RegExp(/^groups\[([0-9]*?)]/);
         const externalExperiencesRegex = RegExp(/^experiencesExternal\[([0-9]*?)]/);
         const internalExperiencesRegex = RegExp(/^experiencesInternal\[([0-9]*?)]/);
+        const topicsRegex = RegExp(/^topics\[([0-9]*?)]/);
 
         const defaultOption = 'hidden';
 
@@ -113,7 +114,12 @@
                     certificatesRegex.test(vm.context) ||
                     skillCategoryRegex.test(vm.context) ||
                     skillRegex.test(vm.context) ||
-                    externalExperiencesRegex.test(vm.context)
+                    externalExperiencesRegex.test(vm.context) ||
+                    vm.context === 'collaborations' ||
+                    vm.context === 'laboratories' ||
+                    topicsRegex.test(vm.context) ||
+                    vm.context === 'coverImage' ||
+                    vm.context === 'url'
                 :
                     if (!vm.profile.hidden) {
                         showPublicOption = true;

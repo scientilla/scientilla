@@ -16,7 +16,8 @@
         'GroupsService',
         'UsersService',
         'ModalService',
-        'path'
+        'path',
+        'ResearchEntitiesService'
     ];
 
     function scientillaToolbar(
@@ -27,7 +28,8 @@
         GroupsService,
         UsersService,
         ModalService,
-        path
+        path,
+        ResearchEntitiesService
     ) {
         const vm = this;
         vm.wizardOpened = false;
@@ -47,7 +49,7 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             EventsService.subscribeAll(vm, [
-                EventsService.USER_PROFILE_CHANGED,
+                EventsService.USER_PROFILE_SAVED,
             ], (evt, profile) => {
                 vm.profile = profile;
 
@@ -66,7 +68,7 @@
                 EventsService.GROUP_UPDATED
             ], reloadUser);
 
-            vm.profile = await UsersService.getProfile(AuthService.user.researchEntity);
+            vm.profile = await ResearchEntitiesService.getProfile(AuthService.user.researchEntity);
 
             refresh();
         };

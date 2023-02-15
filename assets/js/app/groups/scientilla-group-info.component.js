@@ -22,7 +22,9 @@
         'AuthService',
         'DateService',
         'groupTypes',
-        'EventsService'
+        'EventsService',
+        'ResearchEntitiesService',
+        'pathProfileImages'
     ];
 
     function controller(
@@ -36,12 +38,16 @@
         AuthService,
         DateService,
         groupTypes,
-        EventsService
+        EventsService,
+        ResearchEntitiesService,
+        pathProfileImages
     ) {
         const vm = this;
 
         vm.name = 'group-info';
         vm.shouldBeReloaded = true;
+
+        vm.profile = false;
 
         vm.charts = [];
         vm.includeSubgroups = true;
@@ -49,6 +55,7 @@
         vm.isLoading = false;
         vm.loggedUser = AuthService.user;
         vm.format = DateService.format;
+        vm.pathProfileImages = pathProfileImages + '/' + vm.group.researchEntity;
 
         let includeSubgroupsWatcher;
 
@@ -88,6 +95,8 @@
                 vm.reload(true);
             });
 
+            vm.profile = await ResearchEntitiesService.getProfile(vm.group.researchEntity);
+
             if (_.has(vm, 'active')) {
                 vm.loadCharts = angular.copy(vm.active);
 
@@ -114,6 +123,12 @@
                 EventsService.GROUP_UPDATED
             ], () => {
                 vm.charts = [];
+            });
+
+            EventsService.subscribeAll(vm, [
+                EventsService.GROUP_PROFILE_SAVED
+            ], (evt, profile) => {
+                vm.profile = profile;
             });
         };
         /* jshint ignore:end */

@@ -283,4 +283,5 @@ FROM "user" u
          LEFT JOIN research_entity_data red ON red.research_entity = u.research_entity
          LEFT JOIN role_association ra ON LOWER(ra.original_role) = LOWER(
         (red.profile -> 'roleCategory' ->> 'value') :: text
-    );
+    )
+where u.role not in ('evaluator', 'guest') AND (red.profile -> 'dateOfBirth' ->> 'value')::text ~ '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]';

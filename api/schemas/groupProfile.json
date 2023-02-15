@@ -1,0 +1,52 @@
+{
+  "$id": "groupProfile",
+  "type": "object",
+  "properties": {
+    "description": {
+      "allOf": [
+        { "$ref": "userProfileDefs#/definitions/notEmptyStringValue" },
+        { "$ref": "userProfileDefs#/definitions/privacy" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+      ]
+    },
+    "collaborations": {
+      "allOf": [
+        { "$ref": "userProfileDefs#/definitions/stringValue" },
+        { "$ref": "userProfileDefs#/definitions/privacy" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+      ]
+    },
+    "laboratories": {
+      "allOf": [
+        { "$ref": "userProfileDefs#/definitions/stringValue" },
+        { "$ref": "userProfileDefs#/definitions/privacy" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+      ]
+    },
+    "url": {
+      "allOf": [
+        { "$ref": "userProfileDefs#/definitions/urlValue" },
+        { "$ref": "userProfileDefs#/definitions/privacy" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+      ]
+    },
+    "topics": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "allOf": [
+          { "$ref": "userProfileDefs#/definitions/notEmptyStringValue" },
+          { "$ref": "userProfileDefs#/definitions/privacy" },
+          { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+        ]
+      }
+    },
+    "coverImage": {
+      "allOf": [
+        { "$ref": "userProfileDefs#/definitions/stringValue" },
+        { "$ref": "userProfileDefs#/definitions/privacy" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+      ]
+    }
+  }
+}

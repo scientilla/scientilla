@@ -13,7 +13,6 @@
         });
 
     controller.$inject = [
-        'UsersService',
         'researchEntityService',
         'ResearchEntitiesService',
         'AccomplishmentService',
@@ -21,7 +20,6 @@
     ];
 
     function controller(
-        UsersService,
         researchEntityService,
         ResearchEntitiesService,
         AccomplishmentService,
@@ -72,7 +70,7 @@
 
         async function loadProfile() {
             vm.researchEntity = vm.user.researchEntity;
-            vm.profile = await UsersService.getUserProfile(vm.researchEntity);
+            vm.profile = await ResearchEntitiesService.getProfile(vm.researchEntity);
             setNumberOfItems();
 
             vm.loading = false;

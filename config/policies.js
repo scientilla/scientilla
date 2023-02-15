@@ -120,7 +120,8 @@ module.exports.policies = {
         removeCollaborator: canChangeCollaborator,
         getParentGroups: true,
         addChildGroup: isGroupOwner,
-        removeChildGroup: isGroupOwner
+        removeChildGroup: isGroupOwner,
+        getPublicGroupProfile: hasValidAPIKey,
     }, defaultPolicy),
 
     InstituteController: defaultPolicy,
@@ -178,7 +179,7 @@ module.exports.policies = {
         getHighImpactPublications: true,
         getFavoritePublications: true,
         getOralPresentations: true,
-        getPublicProfile: hasValidAPIKey,
+        getPublicUserProfile: hasValidAPIKey,
         getDisseminationTalks: true,
         getScientificTalks: true,
         getAccomplishments: true,
@@ -196,6 +197,12 @@ module.exports.policies = {
         '*': hasValidAPIKey,
         getProfileImage: true
     }, defaultPolicy),
+
+    GroupDataController: {
+        '*': hasValidAPIKey,
+        getCoverImageByCode: true,
+        getCoverImageBySlug: true
+    },
 
     ResearchEntityController: _.defaults({
         createDraft: isResearchEntityOwner,
@@ -225,7 +232,7 @@ module.exports.policies = {
 
     ProjectController: _.defaults({
         export: isLogged,
-        getActions: isLogged
+        getActions: true
     }, defaultPolicy),
 
     PatentController: _.defaults({

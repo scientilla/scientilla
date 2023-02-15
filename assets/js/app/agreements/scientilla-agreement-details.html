@@ -1,67 +1,117 @@
-<h3 class="agreement-acronym" ng-bind-html='vm.agreement.acronym'></h3>
+<div class="row">
+    <div class="col-12 col-lg-6 col-xl-5 col-xxl-4">
+        <div class="card card-primary group-card">
+            <div
+                class="card-header-image"
+                ng-if="vm.profile.coverImage"
+            >
+                <img
+                    ng-src="{{ vm.pathProfileImages }}/{{ vm.profile.coverImage }}"
+                    alt=""
+                    class="img-fluid"
+                />
+            </div>
+            <div class="card-body">
+                <h2 class="agreement-acronym" ng-bind-html='vm.agreement.acronym'></h2>
 
-<ng-container
-    ng-if="vm.agreement.title"
-    class="agreement-title"
->
-    <strong>Title:</strong> {{ vm.agreement.title }}<br />
-</ng-container>
+                <ng-container
+                    ng-if="vm.agreement.title"
+                    class="agreement-title"
+                >
+                    <strong>Title:</strong> {{ vm.agreement.title }}<br />
+                </ng-container>
 
-<ng-container ng-if="vm.agreement.projectData.type">
-    <strong>Type:</strong> {{ vm.getTypeLabel(vm.agreement.projectData.type) }}<br />
-</ng-container>
+                <ng-container ng-if="vm.agreement.projectData.type">
+                    <strong>Type:</strong> {{ vm.getTypeLabel(vm.agreement.projectData.type) }}<br />
+                </ng-container>
 
-<ng-container
-    ng-if="vm.agreement.projectData.subject"
-    class="agreement-subject"
->
-    <strong>Subject:</strong> {{ vm.agreement.projectData.subject }}<br />
-</ng-container>
+                <ng-container
+                    ng-if="vm.agreement.projectData.subject"
+                    class="agreement-subject"
+                >
+                    <strong>Subject:</strong> {{ vm.agreement.projectData.subject }}<br />
+                </ng-container>
 
-<ng-container ng-if="vm.agreement.projectData.budget">
-    <strong>Total budget:</strong> €{{ vm.agreement.projectData.budget }}<br />
-</ng-container>
+                <ng-container ng-if="vm.agreement.projectData.budget">
+                    <strong>Total budget:</strong> €{{ vm.agreement.projectData.budget }}<br />
+                </ng-container>
 
-<ng-container ng-if="vm.agreement.projectData.contribution">
-    <strong>Institute budget:</strong> €{{ vm.agreement.projectData.contribution }}<br />
-</ng-container>
+                <ng-container ng-if="vm.agreement.projectData.contribution">
+                    <strong>Institute budget:</strong> €{{ vm.agreement.projectData.contribution }}<br />
+                </ng-container>
 
-<ng-container ng-if="vm.agreement.status">
-    <strong>Status:</strong> {{ vm.agreement.status }} <span class="agreement-status" ng-class="vm.agreement.status"></span><br />
-</ng-container>
+                <ng-container ng-if="vm.agreement.status">
+                    <strong>Status:</strong> {{ vm.agreement.status }} <span class="agreement-status" ng-class="vm.agreement.status"></span><br />
+                </ng-container>
 
-<ng-container ng-if="vm.agreement.projectData.startDate">
-    <strong>Start date:</strong> {{ vm.agreement.projectData.startDate | date: 'd/M/y'}}<br />
-</ng-container>
+                <ng-container ng-if="vm.agreement.projectData.startDate">
+                    <strong>Start date:</strong> {{ vm.agreement.projectData.startDate | date: 'd/M/y'}}<br />
+                </ng-container>
 
-<ng-container ng-if="vm.agreement.projectData.endDate">
-    <strong>End date:</strong> {{ vm.agreement.projectData.endDate | date: 'd/M/y'}}<br />
-</ng-container>
+                <ng-container ng-if="vm.agreement.projectData.endDate">
+                    <strong>End date:</strong> {{ vm.agreement.projectData.endDate | date: 'd/M/y'}}<br />
+                </ng-container>
 
-<ng-container ng-if="vm.agreement.projectData.partners && vm.agreement.projectData.partners.length > 0">
-    <strong>Counterpart{{ vm.agreement.projectData.partners.length === 1 ? '' : 's'}}:</strong>
-    <ul class="agreement-partners">
-        <li ng-repeat="partner in vm.agreement.projectData.partners">
-            {{ partner.institute }}
-            <ng-container ng-if="partner.department">
-                - {{ partner.department }}
-            </ng-container>
-        </li>
-    </ul>
-</ng-container>
+                <ng-container ng-if="vm.agreement.projectData.partners && vm.agreement.projectData.partners.length > 0">
+                    <strong>Counterpart{{ vm.agreement.projectData.partners.length === 1 ? '' : 's'}}:</strong>
+                    <ul class="agreement-partners">
+                        <li ng-repeat="partner in vm.agreement.projectData.partners">
+                            {{ partner.institute }}
+                            <ng-container ng-if="partner.department">
+                                - {{ partner.department }}
+                            </ng-container>
+                        </li>
+                    </ul>
+                </ng-container>
 
-<ng-container ng-if="vm.agreement.projectData.pis && vm.agreement.projectData.pis.length > 0">
-    <strong>Scientific coordinator{{ vm.agreement.projectData.pis.length === 1 ? '' : 's'}}:</strong>
-    <ul class="agreement-pis">
-        <li class="agreement-pi" ng-repeat="pi in vm.agreement.projectData.pis">
-            {{ pi.surname }} {{ pi.name }}
-        </li>
-    </ul>
-</ng-container>
+                <ng-container ng-if="vm.agreement.projectData.pis && vm.agreement.projectData.pis.length > 0">
+                    <strong>Scientific coordinator{{ vm.agreement.projectData.pis.length === 1 ? '' : 's'}}:</strong>
+                    <ul class="agreement-pis">
+                        <li class="agreement-pi" ng-repeat="pi in vm.agreement.projectData.pis">
+                            {{ pi.surname }} {{ pi.name }}
+                        </li>
+                    </ul>
+                </ng-container>
 
-<ng-container
-    ng-if="vm.agreement.projectData.link"
-    class="agreement-link"
->
-    <strong>Link:</strong> <a href="{{ vm.agreement.projectData.link }}" target="_blank">{{ vm.agreement.projectData.link }}</a><br />
-</ng-container>
+                <ng-container
+                    ng-if="vm.agreement.projectData.link"
+                    class="agreement-link"
+                >
+                    <strong>Link:</strong> <a href="{{ vm.agreement.projectData.link }}" target="_blank">{{ vm.agreement.projectData.link }}</a><br />
+                </ng-container>
+
+                <ng-container
+                    ng-if="vm.profile.url"
+                    class="profile-url"
+                >
+                    <strong>URL:</strong> <a href="{{ vm.profile.url }}" target="_blank">{{ vm.profile.url }}</a><br />
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6 col-xl-7 col-xxl-8">
+        <div ng-if="vm.profile.description">
+            <h3>Description</h2>
+            <div class="group-text-container" ng-bind-html="vm.profile.description"></div>
+        </div>
+
+        <div ng-if="vm.profile.collaborations">
+            <h3>Collaborations</h2>
+            <div class="group-text-container" ng-bind-html="vm.profile.collaborations"></div>
+        </div>
+
+        <div ng-if="vm.profile.laboratories">
+            <h3>Laboratories</h2>
+            <div class="group-text-container" ng-bind-html="vm.profile.laboratories"></div>
+        </div>
+
+        <div ng-if="vm.profile.topics">
+            <h3>Topics</h3>
+            <div class="group-text-container">
+                <ul>
+                    <li ng-repeat="topic in vm.profile.topics track by $index">{{ topic }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
