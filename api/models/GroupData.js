@@ -3,6 +3,7 @@
 
 "use strict";
 
+const { replace } = require('lodash');
 const path = require('path');
 
 module.exports = {
@@ -14,6 +15,9 @@ module.exports = {
         },
         group: {
             model: 'group'
+        },
+        slug: {
+            type: 'STRING'
         },
         active: {
             type: 'BOOLEAN',
@@ -30,14 +34,22 @@ module.exports = {
             let profile = ResearchEntityData.setupGroupProfile(data);
             profile = ResearchEntityData.filterProfile(profile, true);
             profile.id = data.researchEntity;
+            profile.active = data.active;
 
-            if (replaceImage && _.has(profile, 'coverImage') && _.has(data, 'group.code')) {
+            if (!profile.active) {
+                return {
+                    id: profile.id,
+                    active: profile.active
+                };
+            }
+
+            if (replaceImage && _.has(profile, 'coverImage') && _.has(data, 'slug')) {
                 profile.coverImage = path.join(
                     'api',
                     'v1',
                     'groups',
-                    'code',
-                    data.group.code,
+                    'slug',
+                    data.slug,
                     'cover-image'
                 );
             }

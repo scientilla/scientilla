@@ -1,7 +1,7 @@
 /**
  * UserDataController
  *
- * @description :: Server-side logic for managing Journals
+ * @description :: Server-side logic for managing User Data
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
