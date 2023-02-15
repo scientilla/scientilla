@@ -163,7 +163,6 @@ module.exports.routes = {
     ['get ' + groupCodePath + '/patents']: 'Group.getPatents',
     ['get ' + groupCodePath + '/profile']: 'Group.getPublicGroupProfile',
     ['get ' + groupCodePath + '/cover-image']: 'GroupData.getCoverImageByCode',
-    ['post ' + apiPrfx + '/groupData']: 'GroupData.find',
 
     ['get ' + groupSlugPath + '/publications']: 'Group.getPublications',
     ['get ' + groupSlugPath + '/high-impact-publications']: 'Group.getHighImpactPublications',
