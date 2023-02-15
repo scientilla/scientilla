@@ -4,6 +4,7 @@ SELECT
   red.profile,
   red.imported_data,
   g.id as "group",
+  g.slug as "slug",
   g.active as "active",
   re.id as "research_entity"
 FROM research_entity_data red
