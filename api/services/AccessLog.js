@@ -22,7 +22,8 @@ async function create(req) {
     const timestamp = moment();
     const fileName = `access_logs_${timestamp.format(fileFormat)}.log`;
     const filePath = path.join(baseFolder, fileName);
-    await appendToFile(filePath, `"${timestamp}", "${req.path}", "${req.method}", "${req.socket.remoteAddress}"\n`);
+    const realIp = req.get('X-Real-IP') || req.socket.remoteAddress;
+    await appendToFile(filePath, `"${timestamp}", "${req.path}", "${req.method}", "${realIp}" \n`);
 }
 
 async function get(name = false) {
