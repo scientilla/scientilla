@@ -34,6 +34,16 @@ const ROLES = {
     GUEST: 'guest'
 };
 
+const defaultApiPolicy = {
+    '*': hasValidAPIKey,
+    findOne: hasValidAPIKey,
+    find: hasValidAPIKey,
+    populate: hasValidAPIKey,
+    destroy: false,
+    create: false,
+    update: false
+};
+
 const defaultPolicy = {
     '*': isLogged,
     findOne: true,
@@ -194,15 +204,13 @@ module.exports.policies = {
     }, defaultPolicy),
 
     UserDataController: _.defaults({
-        '*': hasValidAPIKey,
         getProfileImage: true
-    }, defaultPolicy),
+    }, defaultApiPolicy),
 
-    GroupDataController: {
-        '*': hasValidAPIKey,
+    GroupDataController: _.defaults({
         getCoverImageByCode: true,
         getCoverImageBySlug: true
-    },
+    }, defaultApiPolicy),
 
     ResearchEntityController: _.defaults({
         createDraft: isResearchEntityOwner,

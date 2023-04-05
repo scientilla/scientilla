@@ -194,7 +194,13 @@
                     <p><strong>Error response</strong><br>If you are trying to get a not existing profile you will
                         receive the following result:</p>
                     <pre>
-                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"error": "404 not found",<br>&nbsp;&nbsp;&nbsp;&nbsp;"item": {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"username": "john.doe@iit.it"<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}</code>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"error": "404 not found",<br>&nbsp;&nbsp;&nbsp;&nbsp;"item": {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"slug": "this-is-a-not-existing-slug"<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}</code>
+                    </pre>
+
+                    or
+
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"error": "404 not found",<br>&nbsp;&nbsp;&nbsp;&nbsp;"item": {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"code": "thisIsANotExistingCode"<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}</code>
                     </pre>
                 </li>
                 <li id="get-profile-image-of-specific-group">
@@ -258,12 +264,6 @@
                         with following message:</p>
                     <pre>
                         <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "Profile not found!"<br>}</code>
-                    </pre>
-
-                    <p>When a group doesn't have a public profile you will receive a <strong>403 Forbidden</strong>
-                        response with following message:</p>
-                    <pre>
-                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "This profile is not public!"<br>}</code>
                     </pre>
 
                     <p>When a group doesn't have a public cover image you will receive a <strong>403 Forbidden</strong>

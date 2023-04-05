@@ -156,17 +156,7 @@ module.exports = {
     getPatentFamilies: async (req, res) => makePublicAPIrequest(req, res, 'patentFamilies', true),
     getPatents: async (req, res) => makePublicAPIrequest(req, res, 'patents', true),
     getPublicUserProfile: async (req, res) => makePublicAPIrequest(req, res, 'userData'),
-    getPublicGroupProfile: async (req, res) => {
-        if (!_.has(req, 'query.populate')) {
-            if (!_.has(req, 'query')) {
-                req.query = {};
-            }
-            req.query.populate = ['group'];
-        } else {
-            req.query.populate = _.union(['group'], req.query.populate);
-        }
-        return makePublicAPIrequest(req, res, 'groupData')
-    }
+    getPublicGroupProfile: async (req, res) => makePublicAPIrequest(req, res, 'groupData')
 };
 
 function makePublicAPIrequest(req, res, attribute, skipPopulate = false) {
