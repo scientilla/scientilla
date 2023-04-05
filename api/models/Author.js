@@ -185,23 +185,25 @@ module.exports = _.merge({}, BaseModel, {
 
         for (const author of authorsToUpdate) {
             await Author.update({id: author.current.id}, author.new);
-            if (researchItem.needsAffiliations() && !_.isEqual(author.current.affiliations.sort(), author.new.affiliations.sort())) {
-                await Author.updateAffiliations(author.current, author.new.affiliations);
+            if (researchItem.needsAffiliations() &&
+                !_.isEqual(author.current.affiliations.sort(), author.new.affiliations.sort())) {
+                await Author.updateAffiliations(author.current, author.new);
             }
         }
 
     },
-    async updateAffiliations(author, newAffiliations) {
-        if (!author.id) return;
+    async updateAffiliations(author, newAuthor) {
+        const newAffiliations = newAuthor.affiliations;
+        if (!newAuthor.id) return;
         if (!_.isArray(newAffiliations)) return;
 
         const affiliationsToCreate = _.difference(newAffiliations, author.affiliations);
         const affiliationsToDelete = _.difference(author.affiliations, newAffiliations);
 
         for (const institute of affiliationsToCreate)
-            await AuthorAffiliation.create({author: author.id, institute: institute});
+            await AuthorAffiliation.create({author: newAuthor.id, institute: institute});
         for (const institute of affiliationsToDelete)
-            await AuthorAffiliation.destroy({author: author.id, institute: institute});
+            await AuthorAffiliation.destroy({author: newAuthor.id, institute: institute});
     },
     cleanauthorData(authorsData) {
         const cleanAuthorsData = [];
