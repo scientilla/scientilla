@@ -168,6 +168,8 @@ module.exports.policies = {
 
     UserController: _.defaults({
         jwt: true,
+        find: isLogged,
+        findOne: isLogged,
         getExternalDocuments: true,
         getChartsData: true,
         update: isActivityOwner,

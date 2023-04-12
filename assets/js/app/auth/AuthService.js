@@ -67,14 +67,8 @@
                 return;
             }
 
-            return UsersService.getSettings(userId)
-                .then(function (user) {
-                    service.user = user;
-                    service.userId = user.id;
-                    service.username = user.username;
-                    const url = '/users/jwt';
-                    return Restangular.one(url).get();
-                })
+            const url = '/users/jwt';
+            return Restangular.one(url).get()
                 .then(function (jwt) {
                     service.isLogged = true;
                     service.jwtToken = jwt.token;
@@ -83,6 +77,13 @@
                     $http.defaults.headers.common.access_token = service.jwtToken;
 
                     setLocaleStorage();
+
+                    return UsersService.getSettings(userId);
+                })
+                .then(function (user) {
+                    service.user = user;
+                    service.userId = user.id;
+                    service.username = user.username;
 
                     if (
                         _.has(service, 'user.name') &&
