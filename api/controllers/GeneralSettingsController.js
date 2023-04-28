@@ -14,6 +14,8 @@ module.exports = {
         switch (name) {
             case 'cid-associations':
                 await handleCIDAssociations(data);
+            case 'role-associations':
+                await SqlService.refreshMaterializedView('person');
             default:
                 break;
         }

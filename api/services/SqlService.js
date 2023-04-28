@@ -46,5 +46,6 @@ async function readQueryFromFs(filePath) {
 }
 
 async function refreshMaterializedView(view) {
+    sails.log.debug(`Refreshing materialized view ${view}`);
     await query(`REFRESH MATERIALIZED VIEW ${view}`);
 }
