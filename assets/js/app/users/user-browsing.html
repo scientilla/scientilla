@@ -23,8 +23,19 @@
                         <div class="user-fullname">
                             {{ u | fullname }}
                         </div>
-                        <div class="job-title">
-                             {{ u.jobTitle }}
+                        <div
+                            ng-if="u.jobTitle"
+                            class="job-title"
+                            title="Job title: {{ u.jobTitle }}"
+                        >
+                            {{ u.jobTitle }}<br/>
+                        </div>
+                        <div
+                            ng-if="u.roleCategory"
+                            class="role-category"
+                            title="Role category: {{ u.roleCategory }}"
+                        >
+                            {{ u.roleCategory }}
                         </div>
                         <div
                             class="socials-container"
