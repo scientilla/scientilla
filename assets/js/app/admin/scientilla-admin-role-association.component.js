@@ -28,9 +28,21 @@
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
 
+            await vm.getRoleAssociations();
+        };
+        /* jshint ignore:end */
+
+        vm.$onDestroy = function () {
+            const unregisterTab = requireParentMethod($element, 'unregisterTab');
+            unregisterTab(vm);
+        };
+
+        /* jshint ignore:start */
+        vm.getRoleAssociations = async function () {
             const res = await Restangular.one('general-setting', 'role-associations').get();
 
             if (_.has(res, 'data') && !_.isEmpty(res.data)) {
+                vm.associations = [];
                 for (const association of res.data) {
                     vm.associations.push({
                         originalRole: association.originalRole,
@@ -41,11 +53,6 @@
             }
         };
         /* jshint ignore:end */
-
-        vm.$onDestroy = function () {
-            const unregisterTab = requireParentMethod($element, 'unregisterTab');
-            unregisterTab(vm);
-        };
 
         vm.addAssociation = function () {
             vm.associations.push({
@@ -70,11 +77,21 @@
         /* jshint ignore:start */
         vm.saveAssociations = async function () {
             const toBeSavedAssociations = [];
+            const duplicateAssociations = [];
             for (const association of vm.associations) {
-                toBeSavedAssociations.push({
-                    originalRole: association.originalRole,
-                    roleCategory: association.roleCategory
-                });
+                const tmpDuplicate = toBeSavedAssociations.find(a => _.lowerCase(a.originalRole) === _.lowerCase(association.originalRole));
+                if (!tmpDuplicate) {
+                    toBeSavedAssociations.push({
+                        originalRole: association.originalRole,
+                        roleCategory: association.roleCategory
+                    });
+                } else {
+                    duplicateAssociations.push(tmpDuplicate);
+                }
+            }
+
+            if (!_.isEmpty(duplicateAssociations)) {
+                Notification.info(`The duplicate${duplicateAssociations.length > 1 ? 's' : ''}: "${duplicateAssociations.map(a => a.originalRole).join(', ')}" ${duplicateAssociations.length > 1 ? 'are' : 'is'} been removed automatically!`);
             }
 
             const formData = new FormData();
@@ -83,14 +100,12 @@
             const result = await Restangular.one('general-setting', 'role-associations')
                 .customPOST(formData, '', undefined, { 'Content-Type': undefined });
 
+            await vm.getRoleAssociations();
+
             if (!_.isEmpty(result)) {
                 Notification.success('The associations are been saved!');
             } else {
                 Notification.warning('Something went wrong, please try again!');
-            }
-
-            for (const association of vm.associations) {
-                association.editable = false;
             }
         };
         /* jshint ignore:end */
