@@ -192,7 +192,7 @@ function setupUserProfile(researchEntityData) {
         }
 
         const associations = RoleAssociations.get();
-        const association = associations.find(a => a.originalRole === researchEntityData.profile.roleCategory.value);
+        const association = associations.find(a => _.lowerCase(a.originalRole) === _.lowerCase(researchEntityData.profile.roleCategory.value));
         if (association) {
             researchEntityData.profile.roleCategory.value = association.roleCategory;
         } else {
