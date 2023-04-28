@@ -86,7 +86,7 @@
                         roleCategory: association.roleCategory
                     });
                 } else {
-                    duplicateAssociations.push(tmpDuplicate);
+                    duplicateAssociations.push(association);
                 }
             }
 
