@@ -106,7 +106,7 @@ module.exports = _.merge({}, BaseModel, {
         const researchItemData = {
             kind: ResearchItemKinds.DRAFT,
             draftCreator: researchEntityId,
-            origin: 'scientilla'
+            origin: itemData.origin || 'scientilla'
         };
 
         return await this.createResearchItem(researchItemData, itemData, newAuthorsData);
