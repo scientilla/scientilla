@@ -707,7 +707,7 @@ async function importProjects() {
             }
         }
 
-        return externalPrjsToDelete.length + verifiedPrjsToDelete.delete;
+        return externalPrjsToDelete.length + verifiedPrjsToDelete.length;
     }
 
     async function projectAutoVerify() {
