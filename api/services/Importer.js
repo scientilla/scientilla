@@ -1,4 +1,4 @@
-/* global Source, User, Group, SourceMetric, SourceTypes, PrincipalInvestigator */
+/* global sails, Source, User, Group, SourceMetric, SourceTypes, PrincipalInvestigator */
 /* global MembershipGroup, GroupTypes, ResearchEntityData, ResearchItemTypes, ResearchItem, ResearchItemKinds, Project */
 /* global Verify, Membership, MembershipGroup, GroupTypes, ResearchEntityData, Utils, Patent */
 /* global GeneralSetting, SqlService, Author */
@@ -328,6 +328,7 @@ async function importProjects() {
         }
 
         const errors = [];
+        const projectCodes = [];
         let totalItems = 0, internalProjects = 0, created = 0, updated = 0;
 
         for (const project of projects) {
@@ -349,6 +350,8 @@ async function importProjects() {
                     });
                     continue;
                 }
+
+                projectCodes.push(code);
 
                 const users = await User.find({username: projectData.members.map(m => m.email)});
                 users.forEach(u => {
@@ -418,11 +421,14 @@ async function importProjects() {
             }
         }
 
+        const deleted = await deleteProjects(projectCodes, type, config.origin)
+
         sails.log.info(`import ${type} completed`);
         sails.log.info(`${totalItems} found`);
         sails.log.info(`${internalProjects} internal projects`);
         sails.log.info(`external created: ${created}`);
         sails.log.info(`external updated: ${updated}`);
+        sails.log.info(`external deleted: ${deleted}`);
         sails.log.info(`errors: ${errors.length}`);
         errors.forEach(error => {
             if (error.researchItem)
@@ -437,6 +443,7 @@ async function importProjects() {
         let projectsObj = {};
         let res;
         const errors = [];
+        const projectCodes = [];
         let totalItems = 0, skipped = 0, created = 0, updated = 0;
         const config = sails.config.scientilla.researchItems.external.project_industrial;
         const reqOptionsGroups = config.requestGroups;
@@ -586,6 +593,8 @@ async function importProjects() {
         for (const projectData of projects) {
             totalItems++;
             try {
+                projectCodes.push(projectData.code);
+
                 const data = {
                     type: type,
                     startYear: projectData.startDate.slice(0, 4),
@@ -612,10 +621,14 @@ async function importProjects() {
             }
         }
 
+
+        const deleted = await deleteProjects(projectCodes, type, config.origin)
+
         sails.log.info(`import of industrial projects completed`);
         sails.log.info(`${totalItems} found`);
         sails.log.info(`external created: ${created}`);
         sails.log.info(`external updated: ${updated}`);
+        sails.log.info(`external deleted: ${deleted}`);
         sails.log.info(`errors: ${errors.length}`);
         errors.forEach(error => {
             if (error.researchItem)
@@ -662,6 +675,39 @@ async function importProjects() {
                     return mergedContr;
                 }, [])
         }
+    }
+
+    async function deleteProjects(codesToKeep, type, origin) {
+        const externalPrjsToDelete = await Project.find({
+            where: {
+                kind: ResearchItemKinds.EXTERNAL,
+                code: {'!': codesToKeep},
+                key: type,
+                origin: origin
+            }
+        });
+
+        for (const eptd of externalPrjsToDelete)
+            if (eptd.id)
+                await ResearchItem.destroy({id: eptd.id})
+
+        const verifiedPrjsToDelete = await Project.find({
+            where: {
+                kind: ResearchItemKinds.VERIFIED,
+                code: {'!': codesToKeep},
+                key: type,
+                origin: origin
+            }
+        });
+
+        for (const vptd of verifiedPrjsToDelete) {
+            if (vptd.id) {
+                await Verify.destroy({researchItem: vptd.id});
+                await ResearchItem.destroy({id: vptd.id})
+            }
+        }
+
+        return externalPrjsToDelete.length + verifiedPrjsToDelete.delete;
     }
 
     async function projectAutoVerify() {

@@ -42,6 +42,7 @@ module.exports = _.merge({}, BaseModel, {
         type: {
             model: 'researchitemtype'
         },
+        origin: 'STRING',
         draftCreator: {
             model: 'researchentity',
             columnName: 'draft_creator'
