@@ -103,6 +103,7 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/groups/:groupId/get-parent-groups']: 'Group.getParentGroups',
     ['put ' + apiPrfx + '/groups/:groupId/add-child-group']: 'Group.addChildGroup',
     ['delete ' + apiPrfx + '/groups/:groupId/remove-child-group/:childGroupId']: 'Group.removeChildGroup',
+    ['get ' + apiPrfx + '/users/email/:email'] : 'User.getByEmail',
 
     //Research item API
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/delete']: 'ResearchEntity.deleteDrafts',
@@ -132,8 +133,6 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/training-modules/export']: 'TrainingModule.export',
     ['post ' + apiPrfx + '/sources/:sourceId/metric-sources']: 'Source.addMetricSources',
     ['delete ' + apiPrfx + '/sources/:sourceId/metric-sources']: 'Source.removeMetricSources',
-
-    ['get ' + apiPrfx + '/users/email/:email'] : 'User.getByEmail',
 
     //Site API
     ['get ' + userUsernamePath + '/publications']: 'User.getPublications',
