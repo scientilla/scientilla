@@ -217,6 +217,17 @@
                 color: $gray;
             }
 
+            .role-category{
+                display: inline-block;
+                margin-bottom: 1rem;
+                padding: .5rem 1rem;
+                font-size: 1rem;
+                line-height: 1;
+                border-radius: 1rem;
+                background: $gray-100;
+                color: $gray;
+            }
+
             .memberships {
                 @include normalize-listing;
                 @include clearfix;
@@ -289,8 +300,8 @@
                     font-size: 1rem;
                     line-height: 1;
                     border-radius: 1rem;
-                    background: $gray-100;
-                    color: $gray;
+                    background: $dusty-gray;
+                    color: $white;
                 }
             }
 

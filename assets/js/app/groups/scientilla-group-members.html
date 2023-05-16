@@ -18,8 +18,19 @@
                     <div class="group-member-fullname">
                         {{ m | fullname }}
                     </div>
-                    <div class="job-title">
-                        {{ m.jobTitle }}
+                    <div
+                        ng-if="m.jobTitle"
+                        class="job-title"
+                        title="Job title: {{ m.jobTitle }}"
+                    >
+                        {{ m.jobTitle }}<br/>
+                    </div>
+                    <div
+                        ng-if="m.roleCategory"
+                        class="role-category"
+                        title="Role category: {{ m.roleCategory }}"
+                    >
+                        {{ m.roleCategory }}
                     </div>
                     <div
                         class="socials-container"
