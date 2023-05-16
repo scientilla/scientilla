@@ -133,6 +133,8 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/sources/:sourceId/metric-sources']: 'Source.addMetricSources',
     ['delete ' + apiPrfx + '/sources/:sourceId/metric-sources']: 'Source.removeMetricSources',
 
+    ['get ' + apiPrfx + '/users/email/:email'] : 'User.getByEmail',
+
     //Site API
     ['get ' + userUsernamePath + '/publications']: 'User.getPublications',
     ['get ' + userUsernamePath + '/high-impact-publications']: 'User.getHighImpactPublications',

@@ -202,7 +202,8 @@ module.exports.policies = {
         getMBOOverallPerformance: true,
         getMBOInstitutePerformance: true,
         getMBOInvitedTalks: true,
-        aliases: isActivityOwner
+        aliases: isActivityOwner,
+        getByEmail: hasValidAPIKey
     }, defaultPolicy),
 
     UserDataController: _.defaults({
