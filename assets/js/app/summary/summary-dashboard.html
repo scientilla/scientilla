@@ -22,7 +22,7 @@
             <uib-tab
                 index="3"
                 heading="Scientific production"
-                ng-if="vm.showScientificProduction() && (vm.isGroupAdmin() || vm.isSuperUser())"
+                ng-if="vm.showScientificProduction() && vm.isSuperUser()"
             >
                 <scientific-production
                     ng-if="vm.group"
