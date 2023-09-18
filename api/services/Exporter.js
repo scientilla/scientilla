@@ -167,11 +167,11 @@ function bibtexInit() {
 function trainingModulesToCsv(researchItems) {
     const rows = [[
         'Title',
-        'Teachers',
+        'Lecturer(s)',
         'Year',
         'Description/Abstract',
-        'Referent',
-        'Institute',
+        'IIT contact person',
+        'Institution',
         'PhD course',
         'Hours',
         'Lectures',
