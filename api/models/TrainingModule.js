@@ -1,4 +1,4 @@
-/* global require, sails, TrainingModule, ResearchItemTypes, ResearchItemTrainingModule, ResearchItemKinds, Exporter  */
+/* global require, sails, TrainingModule, ResearchItemTypes, ResearchItemPhdLecture, ResearchItemSummerWinterSchoolLecture, ResearchItemKinds, Exporter  */
 'use strict';
 
 const _ = require('lodash');
@@ -111,8 +111,13 @@ module.exports = _.merge({}, BaseModel, {
             return this.validationErrors;
         }
     },
-    getResearchItemModel(_) {
-        return ResearchItemTrainingModule;
+    getResearchItemModel(type) {
+        const researchItemModels = {
+            'phd_lecture': ResearchItemPhdLecture,
+            'summer_winter_school_lecture': ResearchItemSummerWinterSchoolLecture,
+        };
+        const researchItemType = ResearchItemTypes.getType(type);
+        return researchItemModels[researchItemType.key];
     },
     async createResearchItem(itemData) {
         const ResearchItemModel = this.getResearchItemModel(itemData.type);
@@ -128,7 +133,7 @@ module.exports = _.merge({}, BaseModel, {
             throw {
                 researchItem: researchItemId,
                 success: false,
-                message: 'Project update: research item not found'
+                message: 'Training module update: research item not found'
             };
         const selectedData = await ResearchItemModel.selectData(itemData);
         const preparedData = ResearchItemModel.prepare(selectedData);
@@ -145,7 +150,7 @@ module.exports = _.merge({}, BaseModel, {
         const copies = await TrainingModule.find(riData);
 
         if (copies.length > 1)
-            sails.log.debug(`WARNING Accomplishment.getVerifiedCopy found ${copies.length} copies`);
+            sails.log.debug(`WARNING TrainingModule.getVerifiedCopy found ${copies.length} copies`);
 
         return copies.length > 0 ? copies[0] : false;
     },
@@ -154,6 +159,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     async export(trainingModulesIds, format) {
         let trainingModules = await TrainingModule.find({id: trainingModulesIds}).populate([
+            'type',
             'referent',
             'institute',
             'phdCourse'

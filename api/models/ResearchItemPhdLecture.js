@@ -1,11 +1,11 @@
-/* global require, ResearchItemTrainingModule, Validator, JsonValidator, Institute */
+/* global require, ResearchItemPhdLecture, Validator, JsonValidator, Institute */
 'use strict';
 
 const _ = require('lodash');
 const BaseModel = require('../lib/BaseModel.js');
 
 module.exports = _.merge({}, BaseModel, {
-    tableName: 'research_item_training_module',
+    tableName: 'research_item_phd_lecture',
     attributes: {
         researchItem: {
             model: 'researchitem',
@@ -42,7 +42,7 @@ module.exports = _.merge({}, BaseModel, {
         location: 'STRING',
         delivery: 'STRING',
         isValid() {
-            const validate = JsonValidator.getTrainingModuleValidator();
+            const validate = JsonValidator.getTrainingModulePhdLectureValidator();
             const res = validate(this);
             if (!res) this.validationErrors = validate.errors;
             return res;
@@ -77,6 +77,6 @@ module.exports = _.merge({}, BaseModel, {
         return preparedData;
     },
     selectData(itemData) {
-        return _.pick(itemData, ResearchItemTrainingModule.getFields());
+        return _.pick(itemData, ResearchItemPhdLecture.getFields());
     }
 });

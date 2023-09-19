@@ -312,6 +312,13 @@
                 matchColumn: 'year',
                 matchRule: 'contains',
                 type: 'field',
+            },
+            trainingModuleType: {
+                inputType: 'select',
+                label: 'Training Module Type',
+                values: [],
+                matchColumn: 'type',
+                type: 'field'
             }
         };
 
@@ -790,9 +797,11 @@
                     structure.nationality.values = nationalities;
                     break;
                 case constant === 'training-module':
+                    formStructures[constant].trainingModuleType.values = await getResearchItemTypes('training_module');
                     structure = formStructures[constant];
                     break;
                 case constant === 'training-module-suggested':
+                    formStructures[constant].trainingModuleType.values = await getResearchItemTypes('training_module');
                     structure = Object.assign({},
                         formStructures[constant],
                         {
@@ -808,12 +817,15 @@
                     );
                     break;
                 case constant === 'training-module-verified':
+                    formStructures[constant].trainingModuleType.values = await getResearchItemTypes('training_module');
                     structure = formStructures[constant];
                     break;
                 case constant === 'training-module-draft':
+                    formStructures[constant].trainingModuleType.values = await getResearchItemTypes('training_module');
                     structure = formStructures[constant];
                     break;
                 case constant === 'training-module-group':
+                    formStructures[constant].trainingModuleType.values = await getResearchItemTypes('training_module');
                     structure = formStructures[constant];
                     break;
                 default:

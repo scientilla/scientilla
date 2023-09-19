@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h3>{{ !!vm.trainingModule.id ? 'Edit' : 'New' }} training module</h3>
+    <h3>{{ !!vm.trainingModule.id ? 'Edit' : 'New' }} {{ vm.trainingModule.type.label }}</h3>
     <button
         type="button"
         class="close"
@@ -128,79 +128,81 @@
             ></scientilla-error-messages>
         </div>
 
-        <div class="row">
-            <div class="col-12 col-md-6">
-                <div
-                    class="form-group has-feedback"
-                    ng-class="{
-                        'has-error' : vm.errors.institute && vm.mode == 'verify',
-                        'has-warning' : vm.errors.institute && vm.mode == 'draft'
-                    }"
-                >
-                    <label for="phd-institution">Institution *</label>
-                    <div class="select-wrapper">
-                        <select
-                            class="form-control"
-                            id="institute"
-                            name="institute"
-                            required
-                            placeholder="Institution"
-                            ng-model="vm.trainingModule.institute"
-                            ng-disabled="vm.trainingModule.otherCourse"
-                            ng-options="institute.id as institute.name for institute in vm.institutes"
-                            ng-class="{'is-invalid' : vm.errors.institute}"
-                            ng-blur="vm.checkValidation('institute')"
-                            ng-change="vm.fieldValueHasChanged('institute')"
-                        >
-                            <option disabled value="">Please select ...</option>
-                        </select>
+        <div ng-if="vm.trainingModule.type.key !== 'summer_winter_school_lecture'">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div
+                        class="form-group has-feedback"
+                        ng-class="{
+                            'has-error' : vm.errors.institute && vm.mode == 'verify',
+                            'has-warning' : vm.errors.institute && vm.mode == 'draft'
+                        }"
+                    >
+                        <label for="phd-institution">Institution *</label>
+                        <div class="select-wrapper">
+                            <select
+                                class="form-control"
+                                id="institute"
+                                name="institute"
+                                required
+                                placeholder="Institution"
+                                ng-model="vm.trainingModule.institute"
+                                ng-disabled="vm.trainingModule.otherCourse"
+                                ng-options="institute.id as institute.name for institute in vm.institutes"
+                                ng-class="{'is-invalid' : vm.errors.institute}"
+                                ng-blur="vm.checkValidation('institute')"
+                                ng-change="vm.fieldValueHasChanged('institute')"
+                            >
+                                <option disabled value="">Please select ...</option>
+                            </select>
+                        </div>
+                        <scientilla-error-messages
+                            class="error-messages"
+                            errors="vm.errors.institute"
+                        ></scientilla-error-messages>
                     </div>
-                    <scientilla-error-messages
-                        class="error-messages"
-                        errors="vm.errors.institute"
-                    ></scientilla-error-messages>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div
+                        class="form-group has-feedback"
+                        ng-class="{
+                            'has-error' : vm.errors.phdCourse && vm.mode == 'verify',
+                            'has-warning' : vm.errors.phdCourse && vm.mode == 'draft'
+                        }"
+                    >
+                        <label for="phd-course">PhD course *</label>
+                        <div class="select-wrapper">
+                            <select
+                                class="form-control"
+                                id="phd-course"
+                                name="phd-course"
+                                required
+                                placeholder="PhD course"
+                                ng-model="vm.trainingModule.phdCourse"
+                                ng-options="course.id as course.name for course in vm.courses"
+                                ng-disabled="!vm.trainingModule.institute || vm.trainingModule.otherCourse"
+                                ng-class="{'is-invalid' : vm.errors.phdCourse}"
+                                ng-blur="vm.checkValidation('phdCourse')"
+                                ng-change="vm.fieldValueHasChanged('phdCourse')"
+                            >
+                                <option disabled value="">Please select ...</option>
+                            </select>
+                        </div>
+                        <scientilla-error-messages
+                            class="error-messages"
+                            errors="vm.errors.phdCourse"
+                        ></scientilla-error-messages>
+                    </div>
                 </div>
             </div>
-            <div class="col-12 col-md-6">
-                <div
-                    class="form-group has-feedback"
-                    ng-class="{
-                        'has-error' : vm.errors.phdCourse && vm.mode == 'verify',
-                        'has-warning' : vm.errors.phdCourse && vm.mode == 'draft'
-                    }"
-                >
-                    <label for="phd-course">PhD course *</label>
-                    <div class="select-wrapper">
-                        <select
-                            class="form-control"
-                            id="phd-course"
-                            name="phd-course"
-                            required
-                            placeholder="PhD course"
-                            ng-model="vm.trainingModule.phdCourse"
-                            ng-options="course.id as course.name for course in vm.courses"
-                            ng-disabled="!vm.trainingModule.institute || vm.trainingModule.otherCourse"
-                            ng-class="{'is-invalid' : vm.errors.phdCourse}"
-                            ng-blur="vm.checkValidation('phdCourse')"
-                            ng-change="vm.fieldValueHasChanged('phdCourse')"
-                        >
-                            <option disabled value="">Please select ...</option>
-                        </select>
-                    </div>
-                    <scientilla-error-messages
-                        class="error-messages"
-                        errors="vm.errors.phdCourse"
-                    ></scientilla-error-messages>
-                </div>
-            </div>
-        </div>
 
-        <div class="form-group">
-            <label class="form-checkbox">
-                <input type="checkbox" ng-model="vm.trainingModule.otherCourse" />
-                <span></span>Other PhD course
-            </label>
-            <em>Please select this if you didn't find your PhD course in the list above.</em>
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" ng-model="vm.trainingModule.otherCourse" />
+                    <span></span>Other PhD course
+                </label>
+                <em>Please select this if you didn't find your PhD course in the list above.</em>
+            </div>
         </div>
 
         <div class="row">

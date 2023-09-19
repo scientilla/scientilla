@@ -62,7 +62,6 @@
         vm.fieldValueHasChanged = fieldValueHasChanged;
         vm.getCourses = getCourses;
         vm.getUsers = getUsers;
-        vm.trainingModule.type = trainingModuleType;
         vm.getNextYear = trainingModuleService.getNextYear;
         vm.researchDomains = [];
         vm.trainingModuleResearchDomains = [];

@@ -1,4 +1,4 @@
-.training-module-form{
+.training_module-form{
     .or-row{
         @include normalize-listing;
 
@@ -36,7 +36,7 @@
 }
 
 @include media-breakpoint-up(md) {
-    .training-module-form{
+    .training_module-form{
         .or-row{
             display: grid;
             grid-template-columns: 1fr auto 1fr;

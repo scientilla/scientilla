@@ -27,7 +27,8 @@ const ajv = new Ajv({
         require('../schemas/userProfilePublic.json'),
         require('../schemas/userProfile.json'),
         require('../schemas/userProfileRemoveAdditional.json'),
-        require('../schemas/trainingModule.json'),
+        require('../schemas/trainingModulePhdLecture.json'),
+        require('../schemas/trainingModuleSummerWinterSchoolLecture.json'),
         groupProfile,
         require('../schemas/groupProfileRemoveAdditional.json'),
     ]
@@ -62,8 +63,11 @@ module.exports = {
         ajv.opts.removeAdditional = value;
         return schema;
     },
-    getTrainingModuleValidator: () => {
-        return ajv.getSchema('trainingModule');
+    getTrainingModulePhdLectureValidator: () => {
+        return ajv.getSchema('trainingModulePhdLecture');
+    },
+    getTrainingModuleSummerWinterSchoolLectureValidator: () => {
+        return ajv.getSchema('trainingModuleSummerWinterSchoolLecture');
     },
     getDefaultUserProfile: () => {
         const userProfileDefsJSON = JSON.stringify(userProfileDefs);

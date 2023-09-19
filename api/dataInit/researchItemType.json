@@ -41,6 +41,16 @@
       "shortLabel": "AG",
       "label": "Agreement",
       "type": "project"
+    }, {
+      "key": "phd_lecture",
+      "shortLabel": "PL",
+      "label": "PhD lecture",
+      "type": "training_module"
+    }, {
+      "key": "summer_winter_school_lecture",
+      "shortLabel": "SWSL",
+      "label": "Summer/Winter school lecture",
+      "type": "training_module"
     }
   ]
 }

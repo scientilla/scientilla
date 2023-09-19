@@ -79,6 +79,7 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
+            console.log(vm.accomplishment);
             vm.researchEntity = await context.getResearchEntity();
             vm.types = await ResearchItemTypesService.getTypes('accomplishment');
 

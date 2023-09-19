@@ -314,8 +314,8 @@
             &.training-module-verified,
             &.training-module-suggested,
             &.training-module{
-                &.fields-3{
-                    grid-template-columns: 1fr 1fr 30rem;
+                &.fields-4{
+                    grid-template-columns: 1fr 1fr 25rem 30rem;
                 }
             }
         }

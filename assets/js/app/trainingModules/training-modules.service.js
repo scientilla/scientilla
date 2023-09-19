@@ -38,7 +38,7 @@
         ];
 
         return {
-            edit: (researchEntity, draft) => ResearchEntitiesService.editDraft(researchEntity, draft, 'training-module'),
+            edit: (researchEntity, draft) => ResearchEntitiesService.editDraft(researchEntity, draft, 'training_module'),
             create: ResearchEntitiesService.createDraft,
             update: ResearchEntitiesService.updateDraft,
             delete: ResearchEntitiesService.deleteDraft,
@@ -98,7 +98,10 @@
 
         function getRequiredFields(trainingModule) {
             const requiredFields = _.cloneDeep(trainingModuleRequiredFields);
-            if (!_.has(trainingModule, 'otherCourse') || !trainingModule.otherCourse) {
+            if (
+                trainingModule.type.key  === 'phd_lecture' &&
+                (!_.has(trainingModule, 'otherCourse') || !trainingModule.otherCourse)
+            ) {
                 requiredFields.push('institute');
                 requiredFields.push('phdCourse');
             }
@@ -108,7 +111,7 @@
         /* jshint ignore:start */
         async function verify(researchEntity, researchItem) {
             const completeResearchItem = await ResearchEntitiesService.getTrainingModule(researchItem.id);
-            await ResearchEntitiesService.verify('training-module', researchEntity, completeResearchItem);
+            await ResearchEntitiesService.verify('training_module', researchEntity, completeResearchItem);
 
             if (researchEntity.type === 'user') {
                 await context.refreshSubResearchEntity();

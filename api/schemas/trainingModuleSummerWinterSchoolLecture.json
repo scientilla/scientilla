@@ -1,0 +1,56 @@
+{
+  "$id": "trainingModuleSummerWinterSchoolLecture",
+  "type": "object",
+  "properties": {
+    "authorsStr": {
+      "$ref": "defs#/definitions/authorsStr"
+    },
+    "referent": {
+      "type": "integer"
+    },
+    "year": {
+      "$ref": "defs#/definitions/year"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "hours": {
+      "type": "integer"
+    },
+    "lectures": {
+      "type": "integer"
+    },
+    "researchDomains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "location": {
+      "type": "string"
+    },
+    "delivery": {
+      "type": "string",
+      "enum": [
+        "On Line",
+        "In Presence",
+        "On Line/In Presence"
+      ]
+    }
+  },
+  "required": [
+    "authorsStr",
+    "referent",
+    "year",
+    "title",
+    "description",
+    "hours",
+    "lectures",
+    "researchDomains",
+    "location",
+    "delivery"
+  ]
+}

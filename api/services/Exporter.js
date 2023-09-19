@@ -170,6 +170,7 @@ function trainingModulesToCsv(researchItems) {
         'Lecturer(s)',
         'Year',
         'Description/Abstract',
+        'Lecture type',
         'IIT contact person',
         'Institution',
         'PhD course',
@@ -185,13 +186,19 @@ function trainingModulesToCsv(researchItems) {
         row.push(researchItem.authorsStr);
         row.push(researchItem.year);
         row.push(researchItem.description);
+        row.push(researchItem.type.label);
         row.push(getDisplayName(researchItem.referent));
-        if (researchItem.otherCourse) {
+        if (researchItem.type.key === 'summer_winter_school_lecture') {
             row.push('/');
-            row.push('Other');
+            row.push('/');
         } else {
-            row.push(researchItem.institute.name);
-            row.push(researchItem.phdCourse.name);
+            if (researchItem.otherCourse) {
+                row.push('/');
+                row.push('Other');
+            } else {
+                row.push(researchItem.institute.name);
+                row.push(researchItem.phdCourse.name);
+            }
         }
         row.push(researchItem.hours);
         row.push(researchItem.lectures);
