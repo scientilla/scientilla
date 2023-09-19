@@ -315,7 +315,7 @@
             },
             trainingModuleType: {
                 inputType: 'select',
-                label: 'Training Module Type',
+                label: 'Lecture type',
                 values: [],
                 matchColumn: 'type',
                 type: 'field'
