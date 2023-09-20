@@ -22,7 +22,7 @@
         'context',
         'FormStatus',
         'trainingModuleService',
-        'trainingModuleType',
+        'trainingModuleTypes',
         'trainingModuleSoftSkillsResearchDomain',
         'GroupsService',
         'UsersService',
@@ -38,7 +38,7 @@
         context,
         FormStatus,
         trainingModuleService,
-        trainingModuleType,
+        trainingModuleTypes,
         trainingModuleSoftSkillsResearchDomain,
         GroupsService,
         UsersService,
@@ -67,6 +67,7 @@
         vm.trainingModuleResearchDomains = [];
         vm.softSkillsCheckbox = false;
         vm.deliveryIsBeenSet = false;
+        vm.moduleTypes = trainingModuleTypes;
         const otherOption = 'Other';
 
         let fieldTimeout;
@@ -94,6 +95,14 @@
 
             if (_.has(vm.trainingModule.phdCourse, 'id')) {
                 vm.trainingModule.phdCourse = vm.trainingModule.phdCourse.id;
+            }
+
+            if (_.has(vm.trainingModule, 'wholeModule')) {
+                if (vm.trainingModule.wholeModule) {
+                    vm.moduleType = trainingModuleTypes.WHOLE_MODULE;
+                } else {
+                    vm.moduleType = trainingModuleTypes.GENERAL_MODULE;
+                }
             }
 
             // Listen to the form reset to trigger $setPristine
@@ -293,6 +302,19 @@
                 vm.trainingModule.location = vm.location;
             }
             vm.fieldValueHasChanged('location');
+        };
+
+        vm.onModuleTypeChange = () => {
+            if (vm.moduleType === trainingModuleTypes.WHOLE_MODULE) {
+                vm.trainingModule.wholeModule = true;
+            } else {
+                vm.trainingModule.wholeModule = false;
+            }
+            checkValidation('generalModuleTitle');
+        };
+
+        vm.isGeneralModule = () => {
+            return _.has(vm.trainingModule, 'wholeModule') && !vm.trainingModule.wholeModule;
         };
 
         /* jshint ignore:start */

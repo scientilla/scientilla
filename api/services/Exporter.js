@@ -171,6 +171,8 @@ function trainingModulesToCsv(researchItems) {
         'Year',
         'Description/Abstract',
         'Lecture type',
+        'Whole module',
+        'General module title',
         'IIT contact person',
         'Institution',
         'PhD course',
@@ -187,6 +189,13 @@ function trainingModulesToCsv(researchItems) {
         row.push(researchItem.year);
         row.push(researchItem.description);
         row.push(researchItem.type.label);
+        row.push(researchItem.wholeModule ? 'Yes' : 'No');
+        if (!researchItem.wholeModule) {
+            row.push(researchItem.generalModuleTitle);
+        } else {
+            row.push('/');
+        }
+
         row.push(getDisplayName(researchItem.referent));
         if (researchItem.type.key === 'summer_winter_school_lecture') {
             row.push('/');

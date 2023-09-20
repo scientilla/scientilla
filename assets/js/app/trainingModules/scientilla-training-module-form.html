@@ -128,6 +128,67 @@
             ></scientilla-error-messages>
         </div>
 
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div
+                    class="form-group has-feedback"
+                    ng-class="{
+                        'has-error' : vm.errors.wholeModule && vm.mode == 'verify',
+                        'has-warning' : vm.errors.wholeModule && vm.mode == 'draft'
+                    }"
+                >
+                    <label for="phd-institution">Module type *</label>
+                    <div class="select-wrapper">
+                        <select
+                            class="form-control"
+                            id="module-type"
+                            name="module-type"
+                            required
+                            placeholder="Module type"
+                            ng-model="vm.moduleType"
+                            ng-options="moduleType for moduleType in vm.moduleTypes"
+                            ng-class="{'is-invalid' : vm.errors.wholeModule}"
+                            ng-blur="vm.checkValidation('wholeModule')"
+                            ng-change="vm.onModuleTypeChange()"
+                        >
+                            <option disabled value="">Please select ...</option>
+                        </select>
+                    </div>
+                    <scientilla-error-messages
+                        class="error-messages"
+                        errors="vm.errors.wholeModule"
+                    ></scientilla-error-messages>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div
+                    class="form-group has-feedback"
+                    ng-class="{
+                        'has-error' : vm.errors.generalModuleTitle && vm.mode == 'verify',
+                        'has-warning' : vm.errors.generalModuleTitle && vm.mode == 'draft'
+                    }"
+                >
+                    <label for="general-module-title">General module title {{ vm.isGeneralModule() ? '*' : '' }}</label>
+                    <input
+                        type="text"
+                        id="general-module-title"
+                        name="general-module-title"
+                        placeholder="General module title"
+                        class="form-control"
+                        ng-disabled="!vm.isGeneralModule()"
+                        ng-model="vm.trainingModule.generalModuleTitle"
+                        ng-class="{'is-invalid' : vm.errors.generalModuleTitle}"
+                        ng-blur="vm.checkValidation('generalModuleTitle')"
+                        ng-change="vm.fieldValueHasChanged('generalModuleTitle')"
+                    />
+                    <scientilla-error-messages
+                        class="error-messages"
+                        errors="vm.errors.generalModuleTitle"
+                    ></scientilla-error-messages>
+                </div>
+            </div>
+        </div>
+
         <div ng-if="vm.trainingModule.type.key !== 'summer_winter_school_lecture'">
             <div class="row">
                 <div class="col-12 col-md-6">

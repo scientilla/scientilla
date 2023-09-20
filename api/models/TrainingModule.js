@@ -15,6 +15,8 @@ const fields = [
     'title',
     'year',
     'description',
+    'wholeModule',
+    'generalModuleTitle',
     'hours',
     'lectures',
     'researchDomains',
@@ -58,6 +60,14 @@ module.exports = _.merge({}, BaseModel, {
         phdCourse: {
             model: 'phdcourse',
             columnName: 'phd_course'
+        },
+        wholeModule: {
+            type: 'BOOLEAN',
+            columnName: 'whole_module'
+        },
+        generalModuleTitle: {
+            type: 'STRING',
+            columnName: 'general_module_title'
         },
         title: 'STRING',
         year: 'STRING',

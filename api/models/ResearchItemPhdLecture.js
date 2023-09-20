@@ -19,6 +19,14 @@ module.exports = _.merge({}, BaseModel, {
         referent: {
             model: 'user'
         },
+        wholeModule: {
+            type: 'BOOLEAN',
+            columnName: 'whole_module'
+        },
+        generalModuleTitle: {
+            type: 'STRING',
+            columnName: 'general_module_title'
+        },
         otherCourse: {
             type: 'BOOLEAN',
             columnName: 'other_course'
@@ -56,6 +64,8 @@ module.exports = _.merge({}, BaseModel, {
             'researchItem',
             'authorsStr',
             'referent',
+            'wholeModule',
+            'generalModuleTitle',
             'otherCourse',
             'institute',
             'phdCourse',

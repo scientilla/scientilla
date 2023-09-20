@@ -28,6 +28,8 @@
             'title',
             'year',
             'description',
+            'wholeModule',
+            'generalModuleTitle',
             'otherCourse',
             'hours',
             'lectures',
@@ -80,15 +82,15 @@
         }
 
         function filterFields(trainingModule) {
-            const filteredtrainingModule = {};
+            const filteredTrainingModule = {};
             fields.forEach(key => {
                 if (typeof trainingModule[key] === 'boolean') {
-                    filteredtrainingModule[key] = trainingModule[key] ? trainingModule[key] : false;
+                    filteredTrainingModule[key] = trainingModule[key] ? trainingModule[key] : false;
                 } else {
-                    filteredtrainingModule[key] = trainingModule[key] ? trainingModule[key] : null;
+                    filteredTrainingModule[key] = trainingModule[key] ? trainingModule[key] : null;
                 }
             });
-            return filteredtrainingModule;
+            return filteredTrainingModule;
         }
 
         function validate(trainingModule, field = false) {
@@ -97,7 +99,13 @@
         }
 
         function getRequiredFields(trainingModule) {
-            const requiredFields = _.cloneDeep(trainingModuleRequiredFields);
+            let requiredFields = _.cloneDeep(trainingModuleRequiredFields);
+            if (_.has(trainingModule, 'wholeModule') && !trainingModule.wholeModule) {
+                requiredFields.push('generalModuleTitle');
+            } else {
+                requiredFields.push('wholeModule');
+            }
+
             if (
                 trainingModule.type.key  === 'phd_lecture' &&
                 (!_.has(trainingModule, 'otherCourse') || !trainingModule.otherCourse)
