@@ -560,25 +560,60 @@
         async function getTrainingModules(researchEntity, query, populates = trainingModulePopulates) {
             const populate = {populate: populates};
             const q = _.merge({}, query, populate);
+            setTrainingModuleResearchDomains(q);
             return await researchEntity.getList('trainingModules', q);
         }
 
         async function getSuggestedTrainingModules(researchEntity, query, populates = trainingModulePopulates) {
             const populate = {populate: populates};
             const q = _.defaultsDeep({}, query, populate);
+            setTrainingModuleResearchDomains(q);
             return await researchEntity.getList('suggestedTrainingModules', q);
         }
 
         async function getDiscardedTrainingModules(researchEntity, query, populates = trainingModulePopulates) {
             const populate = {populate: populates};
             const q = _.defaultsDeep({}, query, populate);
+            setTrainingModuleResearchDomains(q);
             const discarded = await researchEntity.getList('discardedTrainingModules', q);
             discarded.forEach(d => ResearchItemService.addLabel(d, researchItemLabels.DISCARDED));
             return discarded
         }
 
         async function getTrainingModuleDrafts(researchEntity, query, populates = trainingModulePopulates) {
-            return await getResearchItemDrafts(researchEntity, 'trainingModuleDrafts', query, populates);
+            const populate = {populate: populates};
+            const q = _.defaultsDeep({}, query, populate);
+            setTrainingModuleResearchDomains(q);
+            return await getResearchItemDrafts(researchEntity, 'trainingModuleDrafts', q, populates);
+        }
+
+        function setTrainingModuleResearchDomains(query) {
+            if (!_.has(query, 'where.researchDomains')) {
+                return;
+            }
+
+            if (_.has(query, 'where.researchDomains') && _.isEmpty(query.where.researchDomains)) {
+                delete query.where.researchDomains;
+                return;
+            }
+
+            const or = [];
+            const researchDomains = query.where.researchDomains.split(',');
+            if (researchDomains.length <= 0) {
+                delete query.where.researchDomains;
+                return;
+            }
+
+            for (const researchDomain of researchDomains) {
+                console.log(researchDomain);
+                const tmpWhere = _.cloneDeep(query.where);
+                tmpWhere.researchDomains = { contains: researchDomain};
+                or.push(tmpWhere);
+            }
+
+            query.where = {
+                or: or
+            };
         }
 
         async function getProfile (researchEntityId, edit = false) {

@@ -14,7 +14,8 @@
         'PeopleService',
         'ProjectService',
         'ISO3166',
-        'agreementTypes'
+        'agreementTypes',
+        'GroupsService'
     ];
 
     function ResearchItemSearchFormStructureService(
@@ -28,7 +29,8 @@
         PeopleService,
         ProjectService,
         ISO3166,
-        agreementTypes
+        agreementTypes,
+        GroupsService
     ) {
 
         const service = {
@@ -308,7 +310,7 @@
             year: {
                 inputType: 'text',
                 label: 'Academic year',
-                subLabel: '(start year with format YYYY)',
+                placeholder: 'Start year with format YYYY',
                 matchColumn: 'year',
                 matchRule: 'contains',
                 type: 'field',
@@ -319,7 +321,14 @@
                 values: [],
                 matchColumn: 'type',
                 type: 'field'
-            }
+            },
+            researchDomains: {
+                inputType: 'multiple-checkbox',
+                label: 'Research domain',
+                matchColumn: 'researchDomains',
+                values: [],
+                type: 'field'
+            },
         };
 
         const formStructures = {
@@ -802,6 +811,7 @@
                     break;
                 case constant === 'training-module-suggested':
                     formStructures[constant].trainingModuleType.values = await getResearchItemTypes('training_module');
+                    formStructures[constant].researchDomains.values = await getTrainingModuleResearchDomains();
                     structure = Object.assign({},
                         formStructures[constant],
                         {
@@ -818,14 +828,17 @@
                     break;
                 case constant === 'training-module-verified':
                     formStructures[constant].trainingModuleType.values = await getResearchItemTypes('training_module');
+                    formStructures[constant].researchDomains.values = await getTrainingModuleResearchDomains();
                     structure = formStructures[constant];
                     break;
                 case constant === 'training-module-draft':
                     formStructures[constant].trainingModuleType.values = await getResearchItemTypes('training_module');
+                    formStructures[constant].researchDomains.values = await getTrainingModuleResearchDomains();
                     structure = formStructures[constant];
                     break;
                 case constant === 'training-module-group':
                     formStructures[constant].trainingModuleType.values = await getResearchItemTypes('training_module');
+                    formStructures[constant].researchDomains.values = await getTrainingModuleResearchDomains();
                     structure = formStructures[constant];
                     break;
                 default:
@@ -935,5 +948,20 @@
 
             return types;
         }
+
+        /* jshint ignore:start */
+        async function getTrainingModuleResearchDomains() {
+            const researchDomains = [];
+            const researchDomainGroups = await GroupsService.getGroups({type: groupTypes.RESEARCH_DOMAIN, active: true});
+
+            for (const group of researchDomainGroups) {
+                researchDomains.push(group.name);
+            }
+
+            researchDomains.push(trainingModuleSoftSkillsResearchDomain);
+
+            return researchDomains;
+        }
+        /* jshint ignore:end */
     }
 })();

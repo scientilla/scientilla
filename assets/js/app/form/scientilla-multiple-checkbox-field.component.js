@@ -13,7 +13,8 @@
                 name: '<',
                 errors: '<',
                 onValidate: '&',
-                onChange: '&'
+                onChange: '&',
+                reset: '&',
             }
         });
 
@@ -54,6 +55,15 @@
                     vm.filteredValues = _.cloneDeep(vm.structure.values);
                 }
             }));
+
+            watchers.push($scope.$watch('vm.model', () => {
+                if (!vm.model) {
+                    for (const option of vm.filteredValues) {
+                        delete vm.checkboxModel[option];
+                    }
+                    vm.searchTerm = '';
+                }
+            }, true));
         };
 
         vm.$onDestroy = function () {
