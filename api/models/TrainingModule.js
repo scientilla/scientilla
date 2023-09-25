@@ -1,4 +1,4 @@
-/* global require, sails, TrainingModule, ResearchItemTypes, ResearchItemPhdLecture, ResearchItemSummerWinterSchoolLecture, ResearchItemKinds, Exporter  */
+/* global require, sails, TrainingModule, ResearchItemTypes, ResearchItemTrainingModulePhdLecture, ResearchItemTrainingModuleSummerWinterSchoolLecture, ResearchItemKinds, Exporter  */
 'use strict';
 
 const _ = require('lodash');
@@ -123,8 +123,8 @@ module.exports = _.merge({}, BaseModel, {
     },
     getResearchItemModel(type) {
         const researchItemModels = {
-            'phd_lecture': ResearchItemPhdLecture,
-            'summer_winter_school_lecture': ResearchItemSummerWinterSchoolLecture,
+            'training_module_phd_lecture': ResearchItemTrainingModulePhdLecture,
+            'training_module_summer_winter_school_lecture': ResearchItemTrainingModuleSummerWinterSchoolLecture,
         };
         const researchItemType = ResearchItemTypes.getType(type);
         return researchItemModels[researchItemType.key];

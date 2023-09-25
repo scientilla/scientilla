@@ -197,7 +197,7 @@ function trainingModulesToCsv(researchItems) {
         }
 
         row.push(getDisplayName(researchItem.referent));
-        if (researchItem.type.key === 'summer_winter_school_lecture') {
+        if (researchItem.type.key === 'training_module_summer_winter_school_lecture') {
             row.push('/');
             row.push('/');
         } else {

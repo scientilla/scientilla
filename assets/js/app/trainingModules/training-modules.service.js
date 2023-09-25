@@ -107,7 +107,7 @@
             }
 
             if (
-                trainingModule.type.key  === 'phd_lecture' &&
+                trainingModule.type.key  === 'training_module_phd_lecture' &&
                 (!_.has(trainingModule, 'otherCourse') || !trainingModule.otherCourse)
             ) {
                 requiredFields.push('institute');

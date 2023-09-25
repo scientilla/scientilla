@@ -13,8 +13,8 @@ module.exports = {
     PROJECT_INDUSTRIAL: 'project_industrial',
     PROJECT_AGREEMENT: 'project_agreement',
     PATENT: 'patent',
-    PHD_LECTURE: 'phd_lecture',
-    SUMMER_WINTER_SCHOOL_LECTURE: 'summer_winter_school_lecture',
+    TRAINING_MODULE_PHD_LECTURE: 'training_module_phd_lecture',
+    TRAINING_MODULE_SUMMER_WINTER_SCHOOL_LECTURE: 'training_module_summer_winter_school_lecture',
     init: async () => {
         let researchItemTypesArray = await ResearchItemType.find();
         if (!researchItemTypesArray.length < researchItemTypesData.length) {
@@ -37,8 +37,8 @@ module.exports = {
             [this.PROJECT_INDUSTRIAL]: Project,
             [this.PROJECT_AGREEMENT]: Project,
             [this.PATENT]: Patent,
-            [this.PHD_LECTURE]: TrainingModule,
-            [this.SUMMER_WINTER_SCHOOL_LECTURE]: TrainingModule,
+            [this.TRAINING_MODULE_PHD_LECTURE]: TrainingModule,
+            [this.TRAINING_MODULE_SUMMER_WINTER_SCHOOL_LECTURE]: TrainingModule,
         };
 
         const researchItemType = ResearchItemTypes.getType(type);

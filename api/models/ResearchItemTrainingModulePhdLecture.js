@@ -1,11 +1,11 @@
-/* global require, ResearchItemSummerWinterSchoolLecture, Validator, JsonValidator, Institute */
+/* global require, ResearchItemPhdLecture, Validator, JsonValidator, Institute */
 'use strict';
 
 const _ = require('lodash');
 const BaseModel = require('../lib/BaseModel.js');
 
 module.exports = _.merge({}, BaseModel, {
-    tableName: 'research_item_summer_winter_school_lecture',
+    tableName: 'research_item_training_module_phd_lecture',
     attributes: {
         researchItem: {
             model: 'researchitem',
@@ -27,6 +27,17 @@ module.exports = _.merge({}, BaseModel, {
             type: 'STRING',
             columnName: 'general_module_title'
         },
+        otherCourse: {
+            type: 'BOOLEAN',
+            columnName: 'other_course'
+        },
+        institute: {
+            model: 'institute'
+        },
+        phdCourse: {
+            model: 'phdcourse',
+            columnName: 'phd_course'
+        },
         title: 'STRING',
         year: 'STRING',
         description: 'STRING',
@@ -39,7 +50,7 @@ module.exports = _.merge({}, BaseModel, {
         location: 'STRING',
         delivery: 'STRING',
         isValid() {
-            const validate = JsonValidator.getTrainingModuleSummerWinterSchoolLectureValidator();
+            const validate = JsonValidator.getTrainingModulePhdLectureValidator();
             const res = validate(this);
             if (!res) this.validationErrors = validate.errors;
             return res;
@@ -55,6 +66,9 @@ module.exports = _.merge({}, BaseModel, {
             'referent',
             'wholeModule',
             'generalModuleTitle',
+            'otherCourse',
+            'institute',
+            'phdCourse',
             'title',
             'year',
             'description',
@@ -73,6 +87,6 @@ module.exports = _.merge({}, BaseModel, {
         return preparedData;
     },
     selectData(itemData) {
-        return _.pick(itemData, ResearchItemSummerWinterSchoolLecture.getFields());
+        return _.pick(itemData, ResearchItemTrainingModulePhdLecture.getFields());
     }
 });

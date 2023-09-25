@@ -605,7 +605,6 @@
             }
 
             for (const researchDomain of researchDomains) {
-                console.log(researchDomain);
                 const tmpWhere = _.cloneDeep(query.where);
                 tmpWhere.researchDomains = { contains: researchDomain};
                 or.push(tmpWhere);
