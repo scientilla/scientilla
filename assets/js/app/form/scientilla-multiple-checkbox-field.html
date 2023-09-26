@@ -24,7 +24,10 @@
                 title="Close dropdown"
             >Close</button>
 
-            <div class="form-group search-term-container">
+            <div
+                class="form-group search-term-container"
+                ng-if="vm.filteredValues.length > 10"
+            >
                 <label
                     class="label-control"
                     for="search-term"

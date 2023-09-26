@@ -679,6 +679,7 @@ label{
 
     .dropdown-inner-menu{
         position: relative;
+        padding-top: 2rem;
 
         .dropdown-close{
             position: absolute;
@@ -730,7 +731,7 @@ label{
         position: relative;
         z-index: 2;
         margin: 0;
-        padding: 2rem 1rem 1rem 1rem;
+        padding: 1rem;
 
         .remove-search-term{
             position: absolute;
