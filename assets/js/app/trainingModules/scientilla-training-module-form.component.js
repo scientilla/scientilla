@@ -123,7 +123,9 @@
                 }
             });
 
-            vm.trainingModule.researchDomains = JSON.parse(vm.trainingModule.researchDomains);
+            if (_.has(vm.trainingModule, 'researchDomains')) {
+                vm.trainingModule.researchDomains = JSON.parse(vm.trainingModule.researchDomains);
+            }
 
             setDeliveryCheckboxes();
             setResearchDomainCheckboxes();
