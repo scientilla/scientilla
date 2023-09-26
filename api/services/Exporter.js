@@ -211,7 +211,8 @@ function trainingModulesToCsv(researchItems) {
         }
         row.push(researchItem.hours);
         row.push(researchItem.lectures);
-        row.push(researchItem.researchDomains.join(','));
+        const researchDomains = JSON.parse(researchItem.researchDomains);
+        row.push(researchDomains.join(','));
         row.push(researchItem.location);
         row.push(researchItem.delivery);
 

@@ -324,7 +324,7 @@
             },
             researchDomains: {
                 inputType: 'multiple-checkbox',
-                label: 'Research domain',
+                label: 'Research domain(s)',
                 matchColumn: 'researchDomains',
                 values: [],
                 type: 'field'

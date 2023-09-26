@@ -20,8 +20,11 @@
 
             vm.collapsed = true;
             vm.getNextYear = trainingModuleService.getNextYear;
+            vm.researchDomains = [];
 
-            vm.$onInit = function () {};
+            vm.$onInit = function () {
+                vm.researchDomains = JSON.parse(vm.researchItem.researchDomains);
+            };
         }
     }
 )();

@@ -27,10 +27,7 @@
       "type": "integer"
     },
     "researchDomains": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "type": "string"
     },
     "location": {
       "type": "string"
