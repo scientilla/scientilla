@@ -33,7 +33,7 @@ module.exports = _.merge({}, BaseModel, {
         hours: 'INTEGER',
         lectures: 'INTEGER',
         researchDomains: {
-            type: 'JSON',
+            type: 'STRING',
             columnName: 'research_domains'
         },
         location: 'STRING',

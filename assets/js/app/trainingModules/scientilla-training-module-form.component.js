@@ -123,6 +123,8 @@
                 }
             });
 
+            vm.trainingModule.researchDomains = JSON.parse(vm.trainingModule.researchDomains);
+
             setDeliveryCheckboxes();
             setResearchDomainCheckboxes();
 
