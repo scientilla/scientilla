@@ -31,7 +31,7 @@
         <label class="inline-block">IIT contact person:</label> {{vm.researchItem.referent.getDisplayName()}}
     </div>
     <div>
-        <label class="inline-block">Whole module:</label> {{vm.researchItem.wholeModule ? 'Yes' : 'No'}}
+        <label class="inline-block">Single module:</label> {{vm.researchItem.wholeModule ? 'Yes' : 'No'}}
     </div>
     <div ng-if="!vm.researchItem.wholeModule">
         <label class="inline-block">General module title:</label> {{vm.researchItem.generalModuleTitle}}

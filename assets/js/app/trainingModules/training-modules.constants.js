@@ -37,8 +37,8 @@ const trainingModuleRequiredFields = [
 const trainingModuleType = 'training_module';
 
 const trainingModuleTypes = {
-    WHOLE_MODULE: 'Whole module',
-    GENERAL_MODULE: 'General module'
+    WHOLE_MODULE: 'Single module',
+    GENERAL_MODULE: 'Part of general module'
 };
 
 const trainingModuleDeliveryOptions = {

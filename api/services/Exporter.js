@@ -171,7 +171,7 @@ function trainingModulesToCsv(researchItems) {
         'Year',
         'Description/Abstract',
         'Lecture type',
-        'Whole module',
+        'Single module',
         'General module title',
         'IIT contact person',
         'Institution',
