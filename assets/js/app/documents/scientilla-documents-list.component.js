@@ -109,9 +109,11 @@
         }
 
         function onFilter(q) {
+            const favorites = q.where.favorites;
+            delete q.where.favorites;
             query = q;
 
-            return researchEntityService.getDocuments(vm.researchEntity, query)
+            return researchEntityService.getDocuments(vm.researchEntity, query, favorites)
                 .then(function (documents) {
                     vm.documents = documents;
                 });

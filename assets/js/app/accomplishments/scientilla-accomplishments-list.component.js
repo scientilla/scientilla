@@ -100,6 +100,8 @@
 
         /* jshint ignore:start */
         async function onFilter(q) {
+            const favorites = q.where.favorites;
+            delete q.where.favorites;
 
             query = q;
             if (query && query.where && query.where.type) {
@@ -108,7 +110,7 @@
                 query.where.type = type.id;
             }
 
-            return AccomplishmentService.get(vm.researchEntity, query)
+            return AccomplishmentService.get(vm.researchEntity, query, favorites)
                 .then(accomplishments => {
                     vm.accomplishments = accomplishments;
                 });
