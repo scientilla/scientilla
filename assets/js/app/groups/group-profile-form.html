@@ -41,6 +41,37 @@
         </li>
     </ul>
 
+    <label for="achievements">Achievements</label>
+    <ul class="enable-listing">
+        <li>
+            <scientilla-privacy-selector
+                context-string="achievements"
+                profile="vm.profile"
+                errors="vm.profile.achievements.errors.privacy"
+                model="vm.profile.achievements.privacy"></scientilla-privacy-selector>
+        </li>
+        <li>
+            <div
+                class="form-group"
+                ng-class="{'has-error': vm.profile.achievements.errors.value}">
+                <text-angular
+                    name="achievements"
+                    id="achievements"
+                    cols="30"
+                    rows="10"
+                    ng-model="vm.profile.achievements.value"
+                    ng-class="{
+                        'is-invalid': vm.profile.achievements.errors.value,
+                        'is-invisible' : vm.profile.achievements.privacy === 'invisible'
+                    }"
+                    ta-paste="vm.format($html)"
+                ></text-angular>
+                <scientilla-field-errors
+                    errors="vm.profile.achievements.errors.value"></scientilla-field-errors>
+            </div>
+        </li>
+    </ul>
+
     <label for="collaborations">Collaborations</label>
     <ul class="enable-listing">
         <li>

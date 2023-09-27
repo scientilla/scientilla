@@ -13,6 +13,17 @@
         }
       }
     },
+    "achievements": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
     "collaborations": {
       "type": "object",
       "properties": {

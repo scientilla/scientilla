@@ -115,6 +115,7 @@
                     skillCategoryRegex.test(vm.context) ||
                     skillRegex.test(vm.context) ||
                     externalExperiencesRegex.test(vm.context) ||
+                    vm.context === 'achievements' ||
                     vm.context === 'collaborations' ||
                     vm.context === 'laboratories' ||
                     topicsRegex.test(vm.context) ||

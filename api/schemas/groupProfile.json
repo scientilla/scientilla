@@ -9,6 +9,13 @@
         { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
       ]
     },
+    "achievements": {
+      "allOf": [
+        { "$ref": "userProfileDefs#/definitions/stringValue" },
+        { "$ref": "userProfileDefs#/definitions/privacy" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+      ]
+    },
     "collaborations": {
       "allOf": [
         { "$ref": "userProfileDefs#/definitions/stringValue" },
