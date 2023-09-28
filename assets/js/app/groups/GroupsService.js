@@ -363,7 +363,6 @@
         /* jshint ignore:start */
         async function saveProfile (researchEntityId, profile, coverImage = false) {
             const formData = new FormData();
-            console.log(profile);
             formData.append('profile', JSON.stringify(profile));
 
             if (coverImage) {

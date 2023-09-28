@@ -13,7 +13,7 @@
       "allOf": [
         { "$ref": "userProfileDefs#/definitions/stringValue" },
         { "$ref": "userProfileDefs#/definitions/privacy" },
-        { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultPublic" },
         {
           "type": "object",
           "properties": {
@@ -34,7 +34,7 @@
       "allOf": [
         { "$ref": "userProfileDefs#/definitions/stringValue" },
         { "$ref": "userProfileDefs#/definitions/privacy" },
-        { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+        { "$ref": "userProfileDefs#/definitions/privacyDefaultPublic" },
         {
           "type": "object",
           "properties": {

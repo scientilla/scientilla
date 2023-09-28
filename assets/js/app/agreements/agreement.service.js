@@ -24,7 +24,6 @@
         };
 
         service.exportDownload = (items, filename, url, format = 'csv') => {
-            console.log(items, format, filename, url);
             $http.post(url, {
                 format: format,
                 projectIds: items.map(d => d.id)

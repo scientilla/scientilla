@@ -8,7 +8,6 @@
     function newLine() {
 
         return function(text) {
-            console.log(text);
             return text.replace(/\n/g, '<br />');
         };
     }

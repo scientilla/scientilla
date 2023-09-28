@@ -41,7 +41,8 @@
         </li>
     </ul>
 
-    <label for="shortDescription">Short description (max. 1000 character)</label>
+    <label for="shortDescription">Short description<span class="max-length">{{ vm.remaining(vm.profile.shortDescription.value) }}/1000 characters left</span></label>
+    
     <ul class="enable-listing">
         <li>
             <scientilla-privacy-selector
@@ -71,7 +72,8 @@
         </li>
     </ul>
 
-    <label for="achievements">Achievements (max. 1000 character)</label>
+    <label for="achievements">Achievements<span class="max-length">{{ vm.remaining(vm.profile.achievements.value) }}/1000 characters left</span></label>
+    
     <ul class="enable-listing">
         <li>
             <scientilla-privacy-selector
