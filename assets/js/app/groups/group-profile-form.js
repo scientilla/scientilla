@@ -42,6 +42,7 @@
         vm.cancel = cancel;
         vm.profile = {
             description: {},
+            shortDescription: {},
             achievements: {},
             collaborations: {},
             facilities: {},

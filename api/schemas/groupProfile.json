@@ -9,11 +9,46 @@
         { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
       ]
     },
+    "shortDescription": {
+      "allOf": [
+        { "$ref": "userProfileDefs#/definitions/stringValue" },
+        { "$ref": "userProfileDefs#/definitions/privacy" },
+        { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "maxLength": 1000
+            }
+          },
+          "errorMessage": {
+            "properties": {
+              "value": "This field should not contain more than 1000 characters!"
+            }
+          }
+        }
+      ]
+    },
     "achievements": {
       "allOf": [
         { "$ref": "userProfileDefs#/definitions/stringValue" },
         { "$ref": "userProfileDefs#/definitions/privacy" },
-        { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+        { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "maxLength": 1000
+            }
+          },
+          "errorMessage": {
+            "properties": {
+              "value": "This field should not contain more than 1000 characters!"
+            }
+          }
+        }
       ]
     },
     "collaborations": {

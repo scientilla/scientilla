@@ -117,9 +117,14 @@
                     <div class="group-text-container" ng-bind-html="vm.profile.description"></div>
                 </div>
 
+                <div ng-if="vm.profile.shortDescription">
+                    <h3>Short description</h2>
+                    <div class="group-text-container" ng-bind-html="vm.profile.shortDescription | newLine"></div>
+                </div>
+
                 <div ng-if="vm.profile.achievements">
                     <h3>Achievements</h2>
-                    <div class="group-text-container" ng-bind-html="vm.profile.achievements"></div>
+                    <div class="group-text-container" ng-bind-html="vm.profile.achievements | newLine"></div>
                 </div>
 
                 <div ng-if="vm.profile.collaborations">

@@ -115,7 +115,6 @@
                     skillCategoryRegex.test(vm.context) ||
                     skillRegex.test(vm.context) ||
                     externalExperiencesRegex.test(vm.context) ||
-                    vm.context === 'achievements' ||
                     vm.context === 'collaborations' ||
                     vm.context === 'laboratories' ||
                     topicsRegex.test(vm.context) ||
@@ -127,6 +126,11 @@
                     }
                     showHiddenOption = true;
                     showInvisibleOption = true;
+                    break;
+                case vm.context === 'shortDescription' ||
+                    vm.context === 'achievements'
+                :
+                    showPublicOption = true;
                     break;
                 case
                     vm.context === 'nationality' ||

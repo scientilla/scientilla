@@ -41,7 +41,37 @@
         </li>
     </ul>
 
-    <label for="achievements">Achievements</label>
+    <label for="shortDescription">Short description (max. 1000 character)</label>
+    <ul class="enable-listing">
+        <li>
+            <scientilla-privacy-selector
+                context-string="shortDescription"
+                profile="vm.profile"
+                errors="vm.profile.shortDescription.errors.privacy"
+                model="vm.profile.shortDescription.privacy"></scientilla-privacy-selector>
+        </li>
+        <li>
+            <div
+                class="form-group"
+                ng-class="{'has-error': vm.profile.shortDescription.errors.value}">
+                <textarea
+                    name="shortDescription"
+                    id="shortDescription"
+                    class="form-control"
+                    cols="30"
+                    rows="10"
+                    ng-model="vm.profile.shortDescription.value"
+                    ng-class="{
+                        'is-invalid': vm.profile.shortDescription.errors.value
+                    }"
+                ></textarea>
+                <scientilla-field-errors
+                    errors="vm.profile.shortDescription.errors.value"></scientilla-field-errors>
+            </div>
+        </li>
+    </ul>
+
+    <label for="achievements">Achievements (max. 1000 character)</label>
     <ul class="enable-listing">
         <li>
             <scientilla-privacy-selector
@@ -54,18 +84,17 @@
             <div
                 class="form-group"
                 ng-class="{'has-error': vm.profile.achievements.errors.value}">
-                <text-angular
+                <textarea
                     name="achievements"
                     id="achievements"
+                    class="form-control"
                     cols="30"
                     rows="10"
                     ng-model="vm.profile.achievements.value"
                     ng-class="{
-                        'is-invalid': vm.profile.achievements.errors.value,
-                        'is-invisible' : vm.profile.achievements.privacy === 'invisible'
+                        'is-invalid': vm.profile.achievements.errors.value
                     }"
-                    ta-paste="vm.format($html)"
-                ></text-angular>
+                ></textarea>
                 <scientilla-field-errors
                     errors="vm.profile.achievements.errors.value"></scientilla-field-errors>
             </div>
