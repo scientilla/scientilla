@@ -33,6 +33,28 @@
             ng-class="{'has-error' : vm.basicInformationHasErrors, 'changed' : vm.changed['basic-info']}"
         >
             <group-form-fields profile="vm.profile" type="basic"></group-form-fields>
+
+            <div ng-if="vm.favoriteDocuments.length > 0">
+                <strong>My favorite document{{ vm.favoriteDocuments.length > 1 ? 's' : '' }}:</strong>
+                <ul class="favorite-listing">
+                    <li ng-repeat="document in vm.favoriteDocuments track by $index">
+                        <a
+                            href="{{ vm.urlAllDocuments }}?title={{ document.title }}"
+                            ng-if="vm.urlAllDocuments"
+                            ng-click="vm.cancel()"
+                        >
+                            {{ document.title }}
+                        </a>
+                        <span ng-if="!vm.urlAllDocuments">{{ document.title }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            <a
+                href="{{ vm.urlFavoriteDocuments }}"
+                class="show-more has-action"
+                ng-click="vm.cancel()"
+            >Go to my favorite documents</a>
         </uib-tab>
 
         <uib-tab

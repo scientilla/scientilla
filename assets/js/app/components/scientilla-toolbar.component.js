@@ -150,7 +150,7 @@
         }
 
         function editGroupProfile() {
-            ModalService.openGroupProfileForm();
+            ModalService.openGroupProfileForm(vm.subResearchEntity);
         }
 
         function researchEntityIsUser() {

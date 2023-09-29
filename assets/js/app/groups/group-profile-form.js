@@ -8,6 +8,7 @@
             controller: profileForm,
             controllerAs: 'vm',
             bindings: {
+                group: '<',
                 onFailure: '&',
                 onSubmit: '&',
                 checkAndClose: '&'
@@ -20,7 +21,8 @@
         'Notification',
         'context',
         'GroupsService',
-        '$scope'
+        '$scope',
+        'researchEntityService'
     ];
 
     function profileForm(
@@ -29,7 +31,8 @@
         Notification,
         context,
         GroupsService,
-        $scope
+        $scope,
+        researchEntityService
     ) {
         const vm = this;
 
@@ -55,6 +58,10 @@
         vm.areSaveButtonsEnabled = false;
         vm.pathProfileImages = false;
 
+        vm.urlAllDocuments = '';
+        vm.urlFavoriteDocuments = '';
+        vm.favoriteDocuments = [];
+
         vm.selectedItem = '0';
         vm.selectChanged = () => {
             vm.active = parseInt(vm.selectedItem);
@@ -78,8 +85,12 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             vm.researchEntity = await context.getResearchEntity();
+            vm.urlAllDocuments = `/#/${vm.group.slug}/documents/verified`;
+            vm.urlFavoriteDocuments = `/#/${vm.group.slug}/documents/verified?favorites`;
 
             getEditProfile();
+
+            vm.favoriteDocuments = await researchEntityService.getDocuments(vm.group, {}, true, []);
         };
         /* jshint ignore:end */
 

@@ -323,12 +323,15 @@
                 });
         };
 
-        service.openGroupProfileForm = function () {
+        service.openGroupProfileForm = function (group) {
 
-            const scopeVars = {};
+            const scopeVars = {
+                group: group
+            };
 
             return openModal(
                 `<group-profile-form
+                    group="vm.group"
                     on-failure="vm.onFailure"
                     on-submit="vm.onSubmit"
                     check-and-close="vm.checkAndClose"></group-profile-form>`,
