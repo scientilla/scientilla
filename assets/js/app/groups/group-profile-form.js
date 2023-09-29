@@ -18,24 +18,18 @@
         'ResearchEntitiesService',
         'ProfileService',
         'Notification',
-        'taOptions',
-        'taTools',
         'context',
         'GroupsService',
-        '$scope',
-        'pathProfileImages'
+        '$scope'
     ];
 
     function profileForm(
         ResearchEntitiesService,
         ProfileService,
         Notification,
-        taOptions,
-        taTools,
         context,
         GroupsService,
-        $scope,
-        pathProfileImages
+        $scope
     ) {
         const vm = this;
 
@@ -58,9 +52,13 @@
         vm.changed = {};
         vm.unsavedData = false;
         vm.profileIsLoaded = false;
-        vm.coverImage = false;
         vm.areSaveButtonsEnabled = false;
         vm.pathProfileImages = false;
+
+        vm.selectedItem = '0';
+        vm.selectChanged = () => {
+            vm.active = parseInt(vm.selectedItem);
+        };
 
         vm.remaining = text => {
             if (!text) {
@@ -75,98 +73,19 @@
         $scope.image = {};
 
         let originalProfileJson = '';
+        let profileWatcher;
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
-            taOptions.toolbar = [
-                ['h2', 'h3', 'h4', 'h5', 'h6', 'p', 'quote', 'bold', 'italics', 'underline', 'strikeThrough'],
-                ['ul', 'ol', 'redo', 'undo', 'clear'],
-                ['indent', 'outdent', 'insertLink']
-            ];
-
-            taOptions.defaultTagAttributes.a.target = '_blank';
-
-            taTools.p.iconclass = 'fas fa-paragraph';
-            taTools.p.buttontext = '';
-            taTools.quote.iconclass = 'fas fa-quote-right';
-            taTools.bold.iconclass = 'fas fa-bold';
-            taTools.italics.iconclass = 'fas fa-italic';
-            taTools.underline.iconclass = 'fas fa-underline';
-            taTools.strikeThrough.iconclass = 'fas fa-strikethrough';
-            taTools.ul.iconclass = 'fas fa-list-ul';
-            taTools.ol.iconclass = 'fas fa-list-ol';
-            taTools.redo.iconclass = 'fas fa-redo';
-            taTools.undo.iconclass = 'fas fa-undo';
-            taTools.clear.iconclass = 'fas fa-ban';
-            taTools.indent.iconclass = 'fas fa-indent';
-            taTools.outdent.iconclass = 'fas fa-outdent';
-            taTools.insertLink.iconclass = 'fas fa-link';
-
             vm.researchEntity = await context.getResearchEntity();
 
-            vm.pathProfileImages = pathProfileImages + '/' + vm.researchEntity.id + '/';
-
             getEditProfile();
-
-            watchers.push(
-                $scope.$watch('image.maxSizeError', () => {
-                    checkImage();
-                })
-            );
-
-            watchers.push(
-                $scope.$watch('image.file', () => {
-                    checkImage();
-                })
-            );
-
-
-            watchers.push(
-                $scope.$watch('vm.profile.shortDescription.value', function(newVal, oldVal) {
-                    if (newVal.length > 1000) {       
-                        vm.profile.shortDescription.value = oldVal;
-                    }
-                })
-            );
-
-            watchers.push(
-                $scope.$watch('vm.profile.achievements.value', function(newVal, oldVal) {
-                    if (newVal.length > 1000) {       
-                        vm.profile.achievements.value = oldVal;
-                    }
-                })
-            );
         };
         /* jshint ignore:end */
 
         vm.$onDestroy = function () {
-            _.forEach(watchers, watcher => {
-                if (_.isFunction(watcher)) {
-                    watcher();
-                }
-            });
-            watchers = [];
-        };
-
-        vm.removeItem = (options) => {
-            ProfileService.removeItem(options);
-        };
-
-        vm.addItem = (options) => {
-            ProfileService.addItem(options);
-        };
-
-        vm.moveUpTopic = function(key, topic) {
-            if (key > 0) {
-                vm.profile.topics.splice(key, 1);
-                vm.profile.topics.splice(key - 1, 0, topic);
-            }
-        };
-
-        vm.moveDownTopic = function(key, topic) {
-            if (key < vm.profile.topics.length) {
-                vm.profile.topics.splice(key, 1);
-                vm.profile.topics.splice(key + 1, 0, topic);
+            if (profileWatcher) {
+                profileWatcher();
             }
         };
 
@@ -174,12 +93,34 @@
         vm.save = async (close = false) => {
             const response = await GroupsService.saveProfile(vm.researchEntity.id, vm.profile, vm.coverImage);
 
+            vm.basicInformationHasErrors = false;
+            vm.completeProfileHasErrors = false;
+
             if (response.profile) {
                 vm.profile = response.profile;
             }
 
             if (response.errors && !_.isEmpty(response.errors)) {
                 vm.errors = response.errors;
+
+                if (
+                    _.has(vm.errors, 'shortDescription') ||
+                    _.has(vm.errors, 'achievements')
+                ) {
+                    vm.basicInformationHasErrors = true;
+                    vm.completeProfileHasErrors = true;
+                }
+
+                if (
+                    _.has(vm.errors, 'description') ||
+                    _.has(vm.errors, 'collaborations') ||
+                    _.has(vm.errors, 'laboratories') ||
+                    _.has(vm.errors, 'url') ||
+                    _.has(vm.errors, 'topics') ||
+                    _.has(vm.errors, 'coverImage')
+                ) {
+                    vm.completeProfileHasErrors = true;
+                }
             } else {
                 vm.errors = {};
                 vm.changed = {};
@@ -216,9 +157,45 @@
                 if (!_.isEmpty(vm.profile)) {
                     vm.areSaveButtonsEnabled = true;
                 }
+
+                profileWatcher = $scope.$watch('vm.profile', function(evt){
+                    vm.changed['basic-info'] = isChanged('basic-info');
+                    vm.changed['complete-profile'] = isChanged('complete-profile');
+                }, true);
             }).catch(() => {
                 Notification.error('Something went wrong when receiving the group profile, please try again!');
             });
+        }
+
+        function isChanged(category) {
+            const originalProfile = JSON.parse(originalProfileJson);
+
+            switch (category) {
+                case 'basic-info':
+                    if (
+                        angular.toJson(originalProfile.shortDescription) !== angular.toJson(vm.profile.shortDescription) ||
+                        angular.toJson(originalProfile.achievements) !== angular.toJson(vm.profile.achievements) 
+                    ) {
+                        return true;
+                    }
+                    return false;
+                case 'complete-profile':
+                    if (
+                        angular.toJson(originalProfile.shortDescription) !== angular.toJson(vm.profile.shortDescription) ||
+                        angular.toJson(originalProfile.achievements) !== angular.toJson(vm.profile.achievements) ||
+                        angular.toJson(originalProfile.description) !== angular.toJson(vm.profile.description) ||
+                        angular.toJson(originalProfile.collaborations) !== angular.toJson(vm.profile.collaborations) ||
+                        angular.toJson(originalProfile.laboratories) !== angular.toJson(vm.profile.laboratories) ||
+                        angular.toJson(originalProfile.url) !== angular.toJson(vm.profile.url) ||
+                        angular.toJson(originalProfile.topics) !== angular.toJson(vm.profile.topics) ||
+                        angular.toJson(originalProfile.coverImage) !== angular.toJson(vm.profile.coverImage)
+                    ) {
+                        return true;
+                    }
+                    return false;
+                default:
+                    return false;
+            }
         }
 
         function cancel() {
@@ -234,21 +211,6 @@
         function executeOnFailure() {
             if (_.isFunction(vm.onFailure())) {
                 vm.onFailure()();
-            }
-        }
-
-        function checkImage() {
-            if (typeof $scope.image.maxSizeError !== "undefined") {
-                if ($scope.image.maxSizeError) {
-                    vm.profile.coverImage.file = null;
-                    vm.profile.coverImage.errors = {};
-                    vm.profile.coverImage.errors.value = [];
-                    vm.profile.coverImage.errors.value.push({ message: $scope.image.maxSizeError});
-                } else {
-                    vm.profile.coverImage.file = $scope.image.file.name;
-                    vm.coverImage = $scope.image.file;
-                    vm.profile.coverImage.errors = null;
-                }
             }
         }
     }
