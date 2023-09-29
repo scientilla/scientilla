@@ -10,37 +10,6 @@
 </div>
 
 <div class="modal-body edit-profile edit-group-profile">
-    <label for="description">Description *</label>
-    <ul class="enable-listing">
-        <li>
-            <scientilla-privacy-selector
-                context-string="description"
-                profile="vm.profile"
-                errors="vm.profile.description.errors.privacy"
-                model="vm.profile.description.privacy"></scientilla-privacy-selector>
-        </li>
-        <li>
-            <div
-                class="form-group"
-                ng-class="{'has-error': vm.profile.description.errors.value}">
-                <text-angular
-                    name="description"
-                    id="description"
-                    cols="30"
-                    rows="10"
-                    ng-model="vm.profile.description.value"
-                    ng-class="{
-                        'is-invalid': vm.profile.description.errors.value,
-                        'is-invisible' : vm.profile.description.privacy === 'invisible'
-                    }"
-                    ta-paste="vm.format($html)"
-                ></text-angular>
-                <scientilla-field-errors
-                    errors="vm.profile.description.errors.value"></scientilla-field-errors>
-            </div>
-        </li>
-    </ul>
-
     <label for="shortDescription">Short description<span class="max-length">{{ vm.remaining(vm.profile.shortDescription.value) }}/1000 characters left</span></label>
     
     <ul class="enable-listing">
@@ -99,6 +68,37 @@
                 ></textarea>
                 <scientilla-field-errors
                     errors="vm.profile.achievements.errors.value"></scientilla-field-errors>
+            </div>
+        </li>
+    </ul>
+
+    <label for="description">Description</label>
+    <ul class="enable-listing">
+        <li>
+            <scientilla-privacy-selector
+                context-string="description"
+                profile="vm.profile"
+                errors="vm.profile.description.errors.privacy"
+                model="vm.profile.description.privacy"></scientilla-privacy-selector>
+        </li>
+        <li>
+            <div
+                class="form-group"
+                ng-class="{'has-error': vm.profile.description.errors.value}">
+                <text-angular
+                    name="description"
+                    id="description"
+                    cols="30"
+                    rows="10"
+                    ng-model="vm.profile.description.value"
+                    ng-class="{
+                        'is-invalid': vm.profile.description.errors.value,
+                        'is-invisible' : vm.profile.description.privacy === 'invisible'
+                    }"
+                    ta-paste="vm.format($html)"
+                ></text-angular>
+                <scientilla-field-errors
+                    errors="vm.profile.description.errors.value"></scientilla-field-errors>
             </div>
         </li>
     </ul>

@@ -4,7 +4,7 @@
   "properties": {
     "description": {
       "allOf": [
-        { "$ref": "userProfileDefs#/definitions/notEmptyStringValue" },
+        { "$ref": "userProfileDefs#/definitions/stringValue" },
         { "$ref": "userProfileDefs#/definitions/privacy" },
         { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
       ]
