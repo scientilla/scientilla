@@ -67,14 +67,6 @@
             vm.active = parseInt(vm.selectedItem);
         };
 
-        vm.remaining = text => {
-            if (!text) {
-                return 1000;
-            }
-            
-            return 1000 - text.length;
-        };
-
         let watchers = [];
 
         $scope.image = {};

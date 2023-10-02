@@ -40,12 +40,12 @@
           "properties": {
             "value": {
               "type": "string",
-              "maxLength": 1000
+              "maxLength": 600
             }
           },
           "errorMessage": {
             "properties": {
-              "value": "This field should not contain more than 1000 characters!"
+              "value": "This field should not contain more than 600 characters!"
             }
           }
         }

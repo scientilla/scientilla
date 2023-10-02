@@ -34,12 +34,12 @@
 
         vm.coverImage = false;
 
-        vm.remaining = text => {
+        vm.remaining = (text, max = 1000) => {
             if (!text) {
-                return 1000;
+                return max;
             }
             
-            return 1000 - text.length;
+            return max - text.length;
         };
 
         let watchers = [];
@@ -99,7 +99,7 @@
 
             watchers.push(
                 $scope.$watch('vm.profile.achievements.value', function(newVal, oldVal) {
-                    if (newVal.length > 1000) {       
+                    if (newVal.length > 600) {       
                         vm.profile.achievements.value = oldVal;
                     }
                 })
