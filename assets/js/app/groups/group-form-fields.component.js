@@ -91,7 +91,7 @@
 
             watchers.push(
                 $scope.$watch('vm.profile.shortDescription.value', function(newVal, oldVal) {
-                    if (newVal.length > 1000) {       
+                    if (newVal && newVal.length > 1000) {       
                         vm.profile.shortDescription.value = oldVal;
                     }
                 })
@@ -99,7 +99,7 @@
 
             watchers.push(
                 $scope.$watch('vm.profile.achievements.value', function(newVal, oldVal) {
-                    if (newVal.length > 600) {       
+                    if (newVal && newVal.length > 600) {       
                         vm.profile.achievements.value = oldVal;
                     }
                 })
