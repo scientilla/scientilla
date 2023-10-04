@@ -145,6 +145,15 @@
                         </ul>
                     </div>
                 </div>
+
+                <div ng-if="vm.profile.services">
+                    <h3>Services</h3>
+                    <div class="group-text-container">
+                        <ul>
+                            <li ng-repeat="service in vm.profile.services track by $index">{{ service }}</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row">

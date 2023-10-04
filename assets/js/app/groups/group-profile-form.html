@@ -26,16 +26,17 @@
         </div>
     </div>
 
-    <uib-tabset active="vm.active" class="profile-tabs js-profile-tabs">
+    <uib-tabset active="vm.active" class="profile-tabs js-profile-tabs" ng-if="vm.group.type !== vm.groupTypes.DIRECTORATE">
         <uib-tab
             index="0"
             heading="Basic information"
             ng-class="{'has-error' : vm.basicInformationHasErrors, 'changed' : vm.changed['basic-info']}"
         >
-            <group-form-fields profile="vm.profile" type="basic"></group-form-fields>
+            <group-form-fields group="vm.group" profile="vm.profile" type="basic"></group-form-fields>
 
+
+            <strong>My favorite documents</strong>
             <div ng-if="vm.favoriteDocuments.length > 0">
-                <strong>My favorite document{{ vm.favoriteDocuments.length > 1 ? 's' : '' }}:</strong>
                 <ul class="favorite-listing">
                     <li ng-repeat="document in vm.favoriteDocuments track by $index">
                         <a
@@ -48,13 +49,22 @@
                         <span ng-if="!vm.urlAllDocuments">{{ document.title }}</span>
                     </li>
                 </ul>
+                <p>Click <a
+                    href="{{ vm.urlFavoriteDocuments }}"
+                    class="show-more has-action"
+                    ng-click="vm.cancel()"
+                >here</a> to see all my favorite documents.
+            </div>
+            <div ng-if="vm.favoriteDocuments.length === 0">
+                <p>You currently do not have any favorite documents, click <a
+                    href="{{ vm.urlAllDocuments }}"
+                    class="show-more has-action"
+                    ng-click="vm.cancel()"
+                >here</a> to see my documents.</p>
+
             </div>
 
-            <a
-                href="{{ vm.urlFavoriteDocuments }}"
-                class="show-more has-action"
-                ng-click="vm.cancel()"
-            >Go to my favorite documents</a>
+
         </uib-tab>
 
         <uib-tab
@@ -62,9 +72,12 @@
             heading="Complete profile"
             ng-class="{'has-error' : vm.completeProfileHasErrors, 'changed' : vm.changed['complete-profile']}"
         >
-            <group-form-fields profile="vm.profile" type="complete-profile"></group-form-fields>
+            <group-form-fields group="vm.group" profile="vm.profile" type="complete-profile"></group-form-fields>
         </uib-tab>
     </uib-tabset>
+
+    <group-form-fields group="vm.group" profile="vm.profile" type="complete-profile" ng-if="vm.group.type === vm.groupTypes.DIRECTORATE"></group-form-fields>
+
 
     <profile-legend profile="vm.profile"></profile-legend>
 

@@ -8,6 +8,7 @@
             controller: groupFormFields,
             controllerAs: 'vm',
             bindings: {
+                group: '<',
                 profile: '=',
                 type: '@'
             }
@@ -19,7 +20,8 @@
         '$scope',
         'context',
         'taOptions',
-        'taTools'
+        'taTools',
+        'groupTypes'
     ];
 
     function groupFormFields(
@@ -28,7 +30,8 @@
         $scope,
         context,
         taOptions,
-        taTools
+        taTools,
+        groupTypes
     ) {
         const vm = this;
 
@@ -124,17 +127,17 @@
             ProfileService.addItem(options);
         };
 
-        vm.moveUpTopic = function(key, topic) {
+        vm.moveUp = function(field, key, item) {
             if (key > 0) {
-                vm.profile.topics.splice(key, 1);
-                vm.profile.topics.splice(key - 1, 0, topic);
+                vm.profile[field].splice(key, 1);
+                vm.profile[field].splice(key - 1, 0, item);
             }
         };
 
-        vm.moveDownTopic = function(key, topic) {
-            if (key < vm.profile.topics.length) {
-                vm.profile.topics.splice(key, 1);
-                vm.profile.topics.splice(key + 1, 0, topic);
+        vm.moveDown = function(field, key, item) {
+            if (key < vm.profile[field].length) {
+                vm.profile[field].splice(key, 1);
+                vm.profile[field].splice(key + 1, 0, item);
             }
         };
 
@@ -152,5 +155,20 @@
                 }
             }
         }
+
+        vm.isFieldVisible = fieldName => {
+            if (vm.group.type === groupTypes.DIRECTORATE) {
+                return fieldName === 'shortDescription' || fieldName === 'services';
+            } else {
+                switch (vm.type) {
+                    case 'basic':
+                        return fieldName === 'shortDescription' || fieldName === 'achievements';
+                    case 'complete-profile':
+                        return fieldName === 'shortDescription' || fieldName === 'achievements' || fieldName === 'topics' || fieldName === 'description' || fieldName === 'collaborations' || fieldName === 'laboratories' || fieldName === 'url' || fieldName === 'topics' || fieldName === 'coverImage';
+                    default:
+                        return false;
+                }
+            }
+        };
     }
 })();

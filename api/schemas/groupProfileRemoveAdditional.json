@@ -82,6 +82,20 @@
         }
       }
     },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "privacy": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "coverImage": {
       "type": "object",
       "properties": {

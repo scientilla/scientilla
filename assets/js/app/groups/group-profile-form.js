@@ -22,7 +22,8 @@
         'context',
         'GroupsService',
         '$scope',
-        'researchEntityService'
+        'researchEntityService',
+        'groupTypes'
     ];
 
     function profileForm(
@@ -32,7 +33,8 @@
         context,
         GroupsService,
         $scope,
-        researchEntityService
+        researchEntityService,
+        groupTypes
     ) {
         const vm = this;
 
@@ -57,6 +59,7 @@
         vm.profileIsLoaded = false;
         vm.areSaveButtonsEnabled = false;
         vm.pathProfileImages = false;
+        vm.groupTypes = groupTypes;
 
         vm.urlAllDocuments = '';
         vm.urlFavoriteDocuments = '';
