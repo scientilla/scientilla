@@ -1,5 +1,5 @@
 
-/* global ResearchEntityData, Group, GroupData */
+/* global ResearchEntityData, GroupTypes */
 
 "use strict";
 
@@ -23,6 +23,9 @@ module.exports = {
             type: 'BOOLEAN',
             defaultsTo: true
         },
+        type: {
+            type: 'STRING'
+        },
         researchEntity: {
             columnName: 'research_entity',
             model: 'researchEntity',
@@ -33,6 +36,20 @@ module.exports = {
 
             let profile = ResearchEntityData.setupGroupProfile(data);
             profile = ResearchEntityData.filterProfile(profile, true);
+            if (data.type === GroupTypes.DIRECTORATE) {
+                for (const property in profile) {
+                    if (
+                        property !== 'shortDescription' &&
+                        property !== 'services'
+                    ) {
+                        delete profile[property]
+                    }
+                }
+            } else {
+                if (_.has(profile, 'services')) {
+                    delete profile.services;
+                }
+            }
             profile.id = data.researchEntity;
             profile.active = data.active;
 
