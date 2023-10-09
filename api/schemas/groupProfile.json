@@ -14,6 +14,7 @@
         { "$ref": "userProfileDefs#/definitions/stringValue" },
         { "$ref": "userProfileDefs#/definitions/privacy" },
         { "$ref": "userProfileDefs#/definitions/privacyDefaultPublic" },
+        { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
         {
           "type": "object",
           "properties": {
@@ -90,7 +91,8 @@
         "allOf": [
           { "$ref": "userProfileDefs#/definitions/notEmptyStringValue" },
           { "$ref": "userProfileDefs#/definitions/privacy" },
-          { "$ref": "userProfileDefs#/definitions/privacyDefaultHidden" }
+          { "$ref": "userProfileDefs#/definitions/privacyDefaultPublic" },
+          { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" }
         ]
       }
     },

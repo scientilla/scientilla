@@ -119,7 +119,6 @@
                     vm.context === 'collaborations' ||
                     vm.context === 'laboratories' ||
                     topicsRegex.test(vm.context) ||
-                    servicesRegex.test(vm.context) ||
                     vm.context === 'coverImage' ||
                     vm.context === 'url'
                 :
@@ -130,6 +129,7 @@
                     showInvisibleOption = true;
                     break;
                 case vm.context === 'shortDescription' ||
+                    servicesRegex.test(vm.context) ||
                     vm.context === 'achievements'
                 :
                     showPublicOption = true;
