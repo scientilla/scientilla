@@ -305,6 +305,7 @@ async function run() {
                 // Calculate the active flag for the structure group
                 const active = (structure.endDate === null || moment(structure.endDate, dateFormat).isAfter(moment())) && structure.public;
 
+                // Skip the not active support groups from matrix
                 if (matrixType === 'Support' && !active) {
                     skippedStructures.push(structure);
                     continue;
