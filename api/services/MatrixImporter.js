@@ -271,6 +271,7 @@ async function run() {
         const upToDateStructures = [];
         const updatedStructures = [];
         const createdStructures = [];
+        const skippedStructures = [];
         const createdStructureGroupMemberships = [];
         const upToDateStructureGroupMemberships = [];
         const removedStructureMemberships = [];
@@ -303,6 +304,11 @@ async function run() {
 
                 // Calculate the active flag for the structure group
                 const active = (structure.endDate === null || moment(structure.endDate, dateFormat).isAfter(moment())) && structure.public;
+
+                if (matrixType === 'Support' && !active) {
+                    skippedStructures.push(structure);
+                    continue;
+                }
 
                 // Find the group in the database by the cdr
                 let group = await Group.findOne({code: structure.cdr});
@@ -699,6 +705,15 @@ async function run() {
             sails.log.debug(`${name} not found in matrix!`);
         }
 
+        if (skippedStructures.length > 0) {
+            const codes = skippedStructures.map(s => s.cdr);
+            for (const code of codes) {
+                await Group.destroy({
+                    code: code
+                });
+            }
+        }
+
         // Merge the handled structures into one array
         const handledStructures = upToDateStructures.concat(updatedStructures, createdStructures);
         // Update the groups that are not in matrix anymore to not active
@@ -711,6 +726,7 @@ async function run() {
         }) || [];
 
         // Log the information
+        sails.log.debug(`${type} structures skipped: ${skippedStructures.length}`);
         sails.log.debug(`${type} structures up-to-date: ${upToDateStructures.length}`);
         sails.log.debug(`${type} structures updated: ${updatedStructures.length}`);
         sails.log.debug(`${type} structures created: ${createdStructures.length}`);
