@@ -10,6 +10,7 @@
             bindings: {
                 group: '<',
                 profile: '=',
+                coverImage: '=',
                 type: '@'
             }
         });
@@ -35,8 +36,6 @@
     ) {
         const vm = this;
 
-        vm.coverImage = false;
-
         vm.remaining = (text, max = 1000) => {
             if (!text) {
                 return max;
@@ -45,9 +44,10 @@
             return max - text.length;
         };
 
-        let watchers = [];
+        vm.image = false;
+        vm.imageErrorMessage = false;
 
-        $scope.image = {};
+        let watchers = [];
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
@@ -80,17 +80,16 @@
             vm.pathProfileImages = pathProfileImages + '/' + vm.researchEntity.id + '/';
 
             watchers.push(
-                $scope.$watch('image.maxSizeError', () => {
+                $scope.$watch('vm.imageErrorMessage', () => {
                     checkImage();
                 })
             );
 
             watchers.push(
-                $scope.$watch('image.file', () => {
+                $scope.$watch('vm.image', () => {
                     checkImage();
                 })
             );
-
 
             watchers.push(
                 $scope.$watch('vm.profile.shortDescription.value', function(newVal, oldVal) {
@@ -142,17 +141,17 @@
         };
 
         function checkImage() {
-            if (typeof $scope.image.maxSizeError !== "undefined") {
-                if ($scope.image.maxSizeError) {
-                    vm.profile.coverImage.file = null;
-                    vm.profile.coverImage.errors = {};
-                    vm.profile.coverImage.errors.value = [];
-                    vm.profile.coverImage.errors.value.push({ message: $scope.image.maxSizeError});
-                } else {
-                    vm.profile.coverImage.file = $scope.image.file.name;
-                    vm.coverImage = $scope.image.file;
-                    vm.profile.coverImage.errors = null;
-                }
+            if (vm.image) {
+                vm.profile.coverImage.file = vm.image.name;
+                vm.coverImage = vm.image;
+                vm.profile.coverImage.errors = null;
+            }
+
+            if (vm.imageErrorMessage) {
+                vm.profile.coverImage.file = null;
+                vm.profile.coverImage.errors = {};
+                vm.profile.coverImage.errors.value = [];
+                vm.profile.coverImage.errors.value.push({ message: vm.imageErrorMessage });
             }
         }
 

@@ -51,7 +51,7 @@
             facilities: {},
             url: {},
             topics: [],
-            cover: {},
+            coverImage: {},
         };
         vm.errors = {};
         vm.changed = {};
@@ -72,7 +72,7 @@
 
         let watchers = [];
 
-        $scope.image = {};
+        vm.coverImage = false;
 
         let originalProfileJson = '';
         let profileWatcher;
@@ -194,7 +194,7 @@
                         angular.toJson(originalProfile.laboratories) !== angular.toJson(vm.profile.laboratories) ||
                         angular.toJson(originalProfile.url) !== angular.toJson(vm.profile.url) ||
                         angular.toJson(originalProfile.topics) !== angular.toJson(vm.profile.topics) ||
-                        angular.toJson(originalProfile.coverImage) !== angular.toJson(vm.profile.coverImage)
+                        vm.profile.coverImage.file
                     ) {
                         return true;
                     }

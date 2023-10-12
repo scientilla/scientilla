@@ -16,13 +16,19 @@
                 class="form-control"
                 id="image"
                 placeholder="Image"
-                accept="image/*"
+                accept="image/png, image/jpeg"
                 ng-if="!vm.profile.image.value"
                 ng-class="{
                     'is-invalid': vm.profile.image.errors,
                     'is-invisible' : vm.profile.image.privacy === 'invisible'
                 }"
-                valid-file>
+                valid-image
+                image="vm.image"
+                max-size="500"
+                min-width="600"
+                min-height="600"
+                image-error-message="vm.imageErrorMessage"
+            />
             <div
                 ng-if="vm.profile.image.value"
                 class="image-container">
@@ -31,7 +37,7 @@
             </div>
             <em
                 class="image-info"
-                ng-if="!vm.profile.image.value">We suggest to upload an image with the minimum resolution of 600px by 600px and a maximum file size of 500KB.</em>
+                ng-if="!vm.profile.image.value">We suggest to upload an image (JPG, JPEG or PNG) with the minimum resolution of 600px (width) by 600px (height) and a maximum file size of 500KB.</em>
             <scientilla-field-errors
                 errors="vm.profile.image.errors.value"></scientilla-field-errors>
         </div>
