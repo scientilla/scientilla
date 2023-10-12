@@ -26,13 +26,22 @@
         </div>
     </div>
 
-    <uib-tabset active="vm.active" class="profile-tabs js-profile-tabs" ng-if="vm.group.type !== vm.groupTypes.DIRECTORATE">
+    <uib-tabset
+        active="vm.active"
+        class="profile-tabs js-profile-tabs"
+        ng-if="vm.group.type !== vm.groupTypes.DIRECTORATE"
+    >
         <uib-tab
             index="0"
             heading="Basic information"
             ng-class="{'has-error' : vm.basicInformationHasErrors, 'changed' : vm.changed['basic-info']}"
         >
-            <group-form-fields group="vm.group" profile="vm.profile" type="basic"></group-form-fields>
+            <group-form-fields
+                group="vm.group"
+                profile="vm.profile"
+                cover-image="vm.coverImage"
+                type="basic"
+            ></group-form-fields>
 
 
             <strong>My favorite documents</strong>
@@ -72,11 +81,22 @@
             heading="Complete profile"
             ng-class="{'has-error' : vm.completeProfileHasErrors, 'changed' : vm.changed['complete-profile']}"
         >
-            <group-form-fields group="vm.group" profile="vm.profile" type="complete-profile"></group-form-fields>
+            <group-form-fields
+                group="vm.group"
+                profile="vm.profile"
+                cover-image="vm.coverImage"
+                type="complete-profile"
+            ></group-form-fields>
         </uib-tab>
     </uib-tabset>
 
-    <group-form-fields group="vm.group" profile="vm.profile" type="complete-profile" ng-if="vm.group.type === vm.groupTypes.DIRECTORATE"></group-form-fields>
+    <group-form-fields
+        group="vm.group"
+        profile="vm.profile"
+        cover-image="vm.coverImage"
+        type="complete-profile"
+        ng-if="vm.group.type === vm.groupTypes.DIRECTORATE"
+    ></group-form-fields>
 
 
     <profile-legend profile="vm.profile"></profile-legend>
