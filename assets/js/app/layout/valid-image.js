@@ -28,6 +28,14 @@
                                 }
                             });
 
+                            const typePromise = new Promise((resolve, reject) => {
+                                if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                                    reject(`We only support JPEG or PNG images`);
+                                } else {
+                                    resolve();
+                                }
+                            });
+
                             const resolutionPromise = new Promise((resolve, reject) => {
                                 if (parsedMinWidth > 0 || parsedMinHeight > 0) {
                                     const img = new Image();
@@ -69,7 +77,7 @@
                                 }
                             });
 
-                            Promise.all([sizePromise, resolutionPromise]).then((values) => {
+                            Promise.all([sizePromise, typePromise, resolutionPromise]).then((values) => {
                                 scope.image = el[0].files[0];
                                 scope.imageErrorMessage = false;
                                 scope.$apply();
