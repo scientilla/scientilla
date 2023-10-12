@@ -30,7 +30,7 @@
 
                             const typePromise = new Promise((resolve, reject) => {
                                 if (!['image/jpeg', 'image/png'].includes(file.type)) {
-                                    reject(`We only support JPEG or PNG images`);
+                                    reject(`We only support JPG, JPEG and PNG images`);
                                 } else {
                                     resolve();
                                 }
