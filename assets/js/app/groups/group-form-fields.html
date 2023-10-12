@@ -424,13 +424,19 @@
                     class="form-control"
                     id="image"
                     placeholder="Cover image"
-                    accept="image/*"
+                    accept="image/png, image/jpeg"
                     ng-if="!vm.profile.coverImage.value"
                     ng-class="{
                         'is-invalid': vm.profile.coverImage.errors,
                         'is-invisible' : vm.profile.coverImage.privacy === 'invisible'
                     }"
-                    valid-file>
+                    valid-image
+                    image="vm.image"
+                    max-size="500"
+                    min-width="750"
+                    min-height="500"
+                    image-error-message="vm.imageErrorMessage"
+                />
                 <div
                     ng-if="vm.profile.coverImage.value"
                     class="image-container">
