@@ -178,7 +178,7 @@ function trainingModulesToCsv(researchItems) {
         'PhD course',
         'Hours',
         'Lectures',
-        'Research domains',
+        'Area(s)',
         'Location',
         'Delivery'
     ]].concat(researchItems.map(ri => {
