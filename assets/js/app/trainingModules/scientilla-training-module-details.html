@@ -27,14 +27,17 @@
 </div>
 
 <div>
+    <div ng-if="vm.researchItem.type">
+        <label class="inline-block">Taught in a:</label> {{vm.researchItem.type.label}}
+    </div>
     <div ng-if="vm.researchItem.referent">
         <label class="inline-block">IIT contact person:</label> {{vm.researchItem.referent.getDisplayName()}}
     </div>
     <div>
-        <label class="inline-block">Single module:</label> <i class="fas fa-check" ng-if="vm.researchItem.wholeModule"></i><i class="fas fa-times" ng-if="!vm.researchItem.wholeModule"></i>
+        <label class="inline-block">The lecture is a:</label> {{vm.researchItem.wholeModule ? vm.moduleTypes.WHOLE_MODULE : vm.moduleTypes.GENERAL_MODULE}}
     </div>
     <div ng-if="!vm.researchItem.wholeModule">
-        <label class="inline-block">General module title:</label> {{vm.researchItem.generalModuleTitle}}
+        <label class="inline-block">Title of the larger module:</label> {{vm.researchItem.generalModuleTitle}}
     </div>
     <div ng-if="vm.researchItem.institute">
         <label class="inline-block">Institution:</label> {{vm.researchItem.institute.name}}
@@ -49,13 +52,13 @@
         <label class="inline-block">Hours:</label> {{vm.researchItem.hours}}
     </div>
     <div ng-if="vm.researchItem.lectures">
-        <label class="inline-block">Lectures:</label> {{vm.researchItem.lectures}}
+        <label class="inline-block">Number of sessions:</label> {{vm.researchItem.lectures}}
     </div>
     <div ng-if="vm.researchItem.year">
         <label class="inline-block">Academic year:</label> {{vm.researchItem.year}}/{{vm.getNextYear(vm.researchItem.year)}}
     </div>
     <div ng-if="vm.researchDomains.length > 0">
-        <label class="inline-block">Research domain{{vm.researchDomains.length > 1 ? 's' : ''}}:</label>
+        <label class="inline-block">Area{{vm.researchDomains.length > 1 ? 's' : ''}}:</label>
         <ul class="research-domain-listing">
             <li ng-repeat="researchDomain in vm.researchDomains">
                 {{researchDomain}}

@@ -168,10 +168,15 @@
         vm.getDropdownLabel = () => {
             const numberOfSelectedOptions = vm.getNumberOfSelectedOptions();
 
-            if (numberOfSelectedOptions === 0) {
-                return 'Select';
-            } else {
-                return `${numberOfSelectedOptions} selected ${vm.structure.label.toLowerCase()}s`;
+            switch (true) {
+                case numberOfSelectedOptions === 0:
+                    return 'Select';
+                case numberOfSelectedOptions === 1:
+                    return `${numberOfSelectedOptions} selected ${vm.structure.singular.toLowerCase()}`;
+                case numberOfSelectedOptions > 1:
+                    return `${numberOfSelectedOptions} selected ${vm.structure.plural.toLowerCase()}`;
+                default:
+                    return 'missing case';
             }
         };
 

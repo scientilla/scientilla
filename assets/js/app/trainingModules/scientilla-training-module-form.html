@@ -137,14 +137,14 @@
                         'has-warning' : vm.errors.wholeModule && vm.mode == 'draft'
                     }"
                 >
-                    <label for="phd-institution">Module type *</label>
+                    <label for="module-type">The lecture is a *</label>
                     <div class="select-wrapper">
                         <select
                             class="form-control"
                             id="module-type"
                             name="module-type"
                             required
-                            placeholder="Module type"
+                            placeholder="The lecture is a"
                             ng-model="vm.moduleType"
                             ng-options="moduleType for moduleType in vm.moduleTypes"
                             ng-class="{'is-invalid' : vm.errors.wholeModule}"
@@ -168,12 +168,12 @@
                         'has-warning' : vm.errors.generalModuleTitle && vm.mode == 'draft'
                     }"
                 >
-                    <label for="general-module-title">General module title {{ vm.isGeneralModule() ? '*' : '' }}</label>
+                    <label for="general-module-title">Title of the larger module {{ vm.isGeneralModule() ? '*' : '' }}</label>
                     <input
                         type="text"
                         id="general-module-title"
                         name="general-module-title"
-                        placeholder="General module title"
+                        placeholder="Title of the larger module"
                         class="form-control"
                         ng-disabled="!vm.isGeneralModule()"
                         ng-model="vm.trainingModule.generalModuleTitle"
@@ -303,13 +303,13 @@
                         'has-warning' : vm.errors.lectures && vm.mode == 'draft'
                     }"
                 >
-                    <label for="lectures">Number of lectures *</label>
+                    <label for="lectures">Number of sessions *</label>
                     <input
                         type="number"
                         id="lectures"
                         name="lectures"
                         min="0"
-                        placeholder="Number of lectures"
+                        placeholder="Number of sessions"
                         class="form-control"
                         ng-model="vm.trainingModule.lectures"
                         ng-class="{'is-invalid' : vm.errors.lectures}"
@@ -367,7 +367,7 @@
                 'has-warning' : vm.errors.researchDomains && vm.mode == 'draft'
             }"
         >
-            <label>Research domains *</label>
+            <label>Area(s) *</label>
             <ul class="research-domain-listing">
                 <li ng-repeat="researchDomain in vm.researchDomains track by $index">
                     <label class="form-checkbox inline-block">
