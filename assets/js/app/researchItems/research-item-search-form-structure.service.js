@@ -143,7 +143,9 @@
             },
             action: {
                 inputType: 'multiple-checkbox',
-                label: 'Action type',
+                label: 'Action type(s)',
+                singular: 'action type',
+                plural: 'action types',
                 matchColumn: 'project_type_2',
                 values: [],
                 type: 'field'
@@ -317,14 +319,16 @@
             },
             trainingModuleType: {
                 inputType: 'select',
-                label: 'Lecture type',
+                label: 'Taught in a',
                 values: [],
                 matchColumn: 'type',
                 type: 'field'
             },
             researchDomains: {
                 inputType: 'multiple-checkbox',
-                label: 'Area',
+                label: 'Area(s)',
+                singular: 'area',
+                plural: 'areas',
                 matchColumn: 'researchDomains',
                 values: [],
                 type: 'field'

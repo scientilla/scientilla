@@ -47,9 +47,9 @@
       "label": "PhD lecture",
       "type": "training_module"
     }, {
-      "key": "training_module_summer_winter_school_lecture",
-      "shortLabel": "SWSL",
-      "label": "Summer/Winter school lecture",
+      "key": "training_module_summer_winter_school",
+      "shortLabel": "SWS",
+      "label": "Summer/Winter school",
       "type": "training_module"
     }
   ]

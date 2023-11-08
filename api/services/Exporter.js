@@ -170,14 +170,14 @@ function trainingModulesToCsv(researchItems) {
         'Lecturer(s)',
         'Year',
         'Description/Abstract',
-        'Lecture type',
-        'Single module',
-        'General module title',
+        'Taught in a',
+        'The lecture is a',
+        'Title of the larger module',
         'IIT contact person',
         'Institution',
         'PhD course',
         'Hours',
-        'Lectures',
+        'Number of sessions',
         'Area(s)',
         'Location',
         'Delivery'
@@ -189,7 +189,7 @@ function trainingModulesToCsv(researchItems) {
         row.push(researchItem.year);
         row.push(researchItem.description);
         row.push(researchItem.type.label);
-        row.push(researchItem.wholeModule ? 'Yes' : 'No');
+        row.push(researchItem.wholeModule ? 'free-standing module' : 'part of a larger module');
         if (!researchItem.wholeModule) {
             row.push(researchItem.generalModuleTitle);
         } else {
@@ -197,7 +197,7 @@ function trainingModulesToCsv(researchItems) {
         }
 
         row.push(getDisplayName(researchItem.referent));
-        if (researchItem.type.key === 'training_module_summer_winter_school_lecture') {
+        if (researchItem.type.key === 'training_module_summer_winter_school') {
             row.push('/');
             row.push('/');
         } else {

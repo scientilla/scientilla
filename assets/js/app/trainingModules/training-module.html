@@ -42,6 +42,10 @@
             ></h2>
         </div>
 
+        <div ng-if="vm.trainingModule.type">
+            <label class="inline-block">Taught in a:</label> {{vm.trainingModule.type.label}}
+        </div>
+
         <ul class="training-module-actions">
             <li
                 ng-if="vm.trainingModule.verified.length"
