@@ -173,7 +173,6 @@ module.exports = _.merge({}, BaseModel, {
         return draft;
     },
     updateDraft: async function (ResearchEntityModel, draftId, draftData) {
-
         const d = await Document.findOneById(draftId);
         if (!d.kind || d.kind !== DocumentKinds.DRAFT)
             throw "Draft not found";
@@ -184,6 +183,7 @@ module.exports = _.merge({}, BaseModel, {
         selectedDraftData.synchronized_at = null;
         Document.fixPhdPopulates(selectedDraftData);
         await Document.fixDocumentType(selectedDraftData);
+        selectedDraftData.source = _.isObject(selectedDraftData.source) ? selectedDraftData.source.id : selectedDraftData.source;
         const updatedDrafts = await Document.update({id: draftId}, selectedDraftData);
         const updatedDraft = updatedDrafts[0];
         const authorshipsData = await Authorship.getMatchingAuthorshipsData(updatedDraft, draftData.authorships);
