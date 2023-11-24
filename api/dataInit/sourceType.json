@@ -25,6 +25,12 @@
       "type": "publication"
     },
     {
+      "key": "preprint_repository",
+      "label": "Preprint Repository",
+      "section": "",
+      "type": "publication"
+    },
+    {
       "key": "institute",
       "label": "Institute",
       "section": "Scientific Event",

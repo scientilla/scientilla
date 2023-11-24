@@ -29,7 +29,7 @@
         EXTERNAL: 'external'
     };
 
-    const defaultSources = ['journal', 'conference', 'book', 'bookseries'];
+    const defaultSources = ['journal', 'conference', 'book', 'bookseries', 'preprint_repository'];
     const invitedTalkSources = [
         'institute',
         'scientific_conference',
@@ -173,6 +173,7 @@
         {id: 'journal', label: 'Journal', type: 'scientific'},
         {id: 'conference', label: 'Conference', type: 'scientific'},
         {id: 'bookseries', label: 'Book Series', type: 'scientific'},
+        {id: 'preprint_repository', label: 'Preprint Repository', type: 'scientific'},
         {id: 'scientific_conference', label: 'Conference', section: 'Scientific Event', type: 'invited-talk'},
         {id: 'institute', label: 'Institute', section: 'Scientific Event', type: 'invited-talk'},
         {id: 'workshop', label: 'Workshop/Symposium', section: 'Scientific Event', type: 'invited-talk'},
