@@ -8,7 +8,8 @@
         type="button"
         class="btn btn-outline-secondary"
         uib-dropdown-toggle
-        ng-disabled="disabled">
+        ng-disabled="vm.disabled"
+    >
         <i ng-class="vm.getSelectedOptionIcon(option)"></i>
     </button>
     <ul

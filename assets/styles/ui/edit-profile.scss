@@ -269,6 +269,10 @@
             border: none;
             cursor: pointer;
             color: $white;
+
+            &[disabled="disabled"]{
+                cursor: not-allowed;
+            }
         }
     }
 

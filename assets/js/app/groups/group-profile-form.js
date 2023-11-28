@@ -23,7 +23,8 @@
         'GroupsService',
         '$scope',
         'researchEntityService',
-        'groupTypes'
+        'groupTypes',
+        'AuthService'
     ];
 
     function profileForm(
@@ -34,7 +35,8 @@
         GroupsService,
         $scope,
         researchEntityService,
-        groupTypes
+        groupTypes,
+        AuthService
     ) {
         const vm = this;
 
@@ -70,12 +72,14 @@
             vm.active = parseInt(vm.selectedItem);
         };
 
-        let watchers = [];
-
         vm.coverImage = false;
 
         let originalProfileJson = '';
         let profileWatcher;
+
+        // Disable group form for not system admin users
+        vm.loggedUser = AuthService.user;
+        vm.disabled = !vm.loggedUser.isAdmin();
 
         /* jshint ignore:start */
         vm.$onInit = async function () {

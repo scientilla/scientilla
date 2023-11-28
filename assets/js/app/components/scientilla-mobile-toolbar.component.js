@@ -45,6 +45,7 @@
         vm.isUser = isUser;
         vm.isGroup = isGroup;
         vm.getGroupTypeLabel = GroupsService.getGroupTypeLabel;
+        vm.editGroupProfile = editGroupProfile;
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
@@ -142,6 +143,10 @@
 
         function editUserProfile() {
             ModalService.openProfileForm();
+        }
+
+        function editGroupProfile() {
+            ModalService.openGroupProfileForm(vm.subResearchEntity);
         }
 
         function researchEntityIsUser() {

@@ -11,7 +11,8 @@
                 contextString: '@?',
                 profile: '<',
                 model: '=?',
-                errors: '<?'
+                errors: '<?',
+                disabled: '<?'
             }
         });
 
