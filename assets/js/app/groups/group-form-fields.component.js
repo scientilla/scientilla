@@ -11,7 +11,8 @@
                 group: '<',
                 profile: '=',
                 coverImage: '=',
-                type: '@'
+                type: '@',
+                disabled: '<?'
             }
         });
 

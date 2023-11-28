@@ -41,8 +41,8 @@
                 profile="vm.profile"
                 cover-image="vm.coverImage"
                 type="basic"
+                disabled="vm.disabled"
             ></group-form-fields>
-
 
             <strong>My favorite documents</strong>
             <div ng-if="vm.favoriteDocuments.length > 0">
@@ -86,6 +86,7 @@
                 profile="vm.profile"
                 cover-image="vm.coverImage"
                 type="complete-profile"
+                disabled="vm.disabled"
             ></group-form-fields>
         </uib-tab>
     </uib-tabset>
@@ -96,17 +97,19 @@
         cover-image="vm.coverImage"
         type="complete-profile"
         ng-if="vm.group.type === vm.groupTypes.DIRECTORATE"
+        disabled="vm.disabled"
     ></group-form-fields>
 
-
     <profile-legend profile="vm.profile"></profile-legend>
+
+    <p ng-if="vm.disabled"><br />* Please note that the functionality for editing the group profile is currently disabled, please contact the <a href="mailto:data.analysis@iit.it" target="_blank">Data Analysis Office</a> if you need to change the group profile.</p>
 
     <ul class="form-actions">
         <li>
             <button
                 class="btn btn-primary"
                 ng-click="vm.save(true)"
-                ng-disabled="!vm.areSaveButtonsEnabled"
+                ng-disabled="!vm.areSaveButtonsEnabled || vm.disabled"
             >
                 <i class="fas fa-save fa-left"></i>Save & close
             </button>
@@ -115,7 +118,7 @@
             <button
                 class="btn btn-outline-secondary"
                 ng-click="vm.save()"
-                ng-disabled="!vm.areSaveButtonsEnabled"
+                ng-disabled="!vm.areSaveButtonsEnabled || vm.disabled"
             >
                 <i class="fas fa-save fa-left"></i>Save
             </button>

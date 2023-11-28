@@ -7,7 +7,9 @@
                 context-string="shortDescription"
                 profile="vm.profile"
                 errors="vm.profile.shortDescription.errors.privacy"
-                model="vm.profile.shortDescription.privacy"></scientilla-privacy-selector>
+                model="vm.profile.shortDescription.privacy"
+                disabled="vm.disabled"
+            ></scientilla-privacy-selector>
         </li>
         <li>
             <div
@@ -23,6 +25,7 @@
                     ng-class="{
                         'is-invalid': vm.profile.shortDescription.errors.value
                     }"
+                    ng-disabled="vm.disabled"
                 ></textarea>
                 <scientilla-field-errors
                     errors="vm.profile.shortDescription.errors.value"></scientilla-field-errors>
@@ -39,7 +42,9 @@
                 context-string="achievements"
                 profile="vm.profile"
                 errors="vm.profile.achievements.errors.privacy"
-                model="vm.profile.achievements.privacy"></scientilla-privacy-selector>
+                model="vm.profile.achievements.privacy"
+                disabled="vm.disabled"
+            ></scientilla-privacy-selector>
         </li>
         <li>
             <div
@@ -55,6 +60,7 @@
                     ng-class="{
                         'is-invalid': vm.profile.achievements.errors.value
                     }"
+                    ng-disabled="vm.disabled"
                 ></textarea>
                 <scientilla-field-errors
                     errors="vm.profile.achievements.errors.value"></scientilla-field-errors>
@@ -71,7 +77,9 @@
                 context-string="description"
                 profile="vm.profile"
                 errors="vm.profile.description.errors.privacy"
-                model="vm.profile.description.privacy"></scientilla-privacy-selector>
+                model="vm.profile.description.privacy"
+                disabled="vm.disabled"
+            ></scientilla-privacy-selector>
         </li>
         <li>
             <div
@@ -88,13 +96,14 @@
                         'is-invisible' : vm.profile.description.privacy === 'invisible'
                     }"
                     ta-paste="vm.format($html)"
+                    ta-disabled="vm.disabled"
                 ></text-angular>
                 <scientilla-field-errors
                     errors="vm.profile.description.errors.value"></scientilla-field-errors>
             </div>
         </li>
     </ul>
-</ng-container> 
+</ng-container>
 
 <ng-container ng-if="vm.isFieldVisible('collaborations')">
     <label for="collaborations">Collaborations</label>
@@ -104,7 +113,9 @@
                 context-string="collaborations"
                 profile="vm.profile"
                 errors="vm.profile.collaborations.errors.privacy"
-                model="vm.profile.collaborations.privacy"></scientilla-privacy-selector>
+                model="vm.profile.collaborations.privacy"
+                disabled="vm.disabled"
+            ></scientilla-privacy-selector>
         </li>
         <li>
             <div
@@ -121,13 +132,14 @@
                         'is-invisible' : vm.profile.collaborations.privacy === 'invisible'
                     }"
                     ta-paste="vm.format($html)"
+                    ta-disabled="vm.disabled"
                 ></text-angular>
                 <scientilla-field-errors
                     errors="vm.profile.collaborations.errors.value"></scientilla-field-errors>
             </div>
         </li>
     </ul>
-</ng-container> 
+</ng-container>
 
 <ng-container ng-if="vm.isFieldVisible('laboratories')">
     <label for="laboratories">Laboratories</label>
@@ -137,7 +149,9 @@
                 context-string="laboratories"
                 profile="vm.profile"
                 errors="vm.profile.laboratories.errors.privacy"
-                model="vm.profile.laboratories.privacy"></scientilla-privacy-selector>
+                model="vm.profile.laboratories.privacy"
+                disabled="vm.disabled"
+            ></scientilla-privacy-selector>
         </li>
         <li>
             <div
@@ -154,13 +168,14 @@
                         'is-invisible' : vm.profile.laboratories.privacy === 'invisible'
                     }"
                     ta-paste="vm.format($html)"
+                    ta-disabled="vm.disabled"
                 ></text-angular>
                 <scientilla-field-errors
                     errors="vm.profile.laboratories.errors.value"></scientilla-field-errors>
             </div>
         </li>
     </ul>
-</ng-container> 
+</ng-container>
 
 <ng-container ng-if="vm.isFieldVisible('url')">
     <label for="url">URL</label>
@@ -170,7 +185,9 @@
                 context-string="url"
                 profile="vm.profile"
                 errors="vm.profile.url.errors.privacy"
-                model="vm.profile.url.privacy"></scientilla-privacy-selector>
+                model="vm.profile.url.privacy"
+                disabled="vm.disabled"
+            ></scientilla-privacy-selector>
         </li>
         <li>
             <div
@@ -186,13 +203,15 @@
                     ng-class="{
                         'is-invalid': vm.profile.url.errors.value,
                         'is-invisible' : vm.profile.url.privacy === 'invisible'
-                    }">
+                    }"
+                    ng-disabled="vm.disabled"
+                />
                 <scientilla-field-errors
                     errors="vm.profile.url.errors.value"></scientilla-field-errors>
             </div>
         </li>
     </ul>
-</ng-container> 
+</ng-container>
 
 <ng-container ng-if="vm.isFieldVisible('topics')">
     <label class="label-topic">Topics</label>
@@ -204,7 +223,9 @@
                         context-string="topics[{{ key }}]"
                         model="vm.profile.topics[key].privacy"
                         errors="vm.profile.topics[key].errors.privacy"
-                        profile="vm.profile"></scientilla-privacy-selector>
+                        profile="vm.profile"
+                        disabled="vm.disabled"
+                    ></scientilla-privacy-selector>
                 </li>
                 <li>
                     <ul class="field-listing">
@@ -220,16 +241,18 @@
                                     ng-class="{
                                         'is-invalid': vm.profile.topics[key].errors.value,
                                         'is-invisible' : vm.profile.topics[key].privacy === 'invisible'
-                                    }">
+                                    }"
+                                    ng-disabled="vm.disabled"
+                                />
                                 <scientilla-field-errors
                                     errors="vm.profile.topics[key].errors.value"></scientilla-field-errors>
                             </div>
                         </li>
                         <li class="desktop-actions">
                             <div class="form-group">
-                                <div class="btn btn-outline-secondary">
+                                <button class="btn btn-outline-secondary" ng-disabled="vm.disabled">
                                     <i class="fas fa-arrows-alt"></i>
-                                </div>
+                                </button>
                             </div>
                         </li>
                         <li class="desktop-actions">
@@ -239,7 +262,9 @@
                                     ng-click="vm.removeItem({
                                         property: vm.profile.topics,
                                         index: key
-                                    })">
+                                    })"
+                                    ng-disabled="vm.disabled"
+                                >
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -248,24 +273,26 @@
                             <ul>
                                 <li>
                                     <div class="form-group">
-                                        <div
+                                        <button
                                             class="btn btn-outline-secondary"
                                             ng-class="{'disabled': $index === 0}"
-                                            ng-disabled="$index === 0"
-                                            ng-click="vm.moveUp('topics', key, topic)" >
+                                            ng-disabled="$index === 0 || vm.disabled"
+                                            ng-click="vm.moveUp('topics', key, topic)"
+                                        >
                                             <i class="fas fa-arrow-up fa-left"></i>Move up
-                                        </div>
+                                        </button>
                                     </div>
                                 </li>
                                 <li>
                                     <div class="form-group">
-                                        <div
+                                        <button
                                             class="btn btn-outline-secondary"
                                             ng-class="{'disabled': $index === vm.profile.topics.length -1}"
-                                            ng-disabled="$index === vm.profile.topics.length -1"
-                                            ng-click="vm.moveDown('topics', key, topic)">
+                                            ng-disabled="$index === vm.profile.topics.length -1 || vm.disabled"
+                                            ng-click="vm.moveDown('topics', key, topic)"
+                                        >
                                             <i class="fas fa-arrow-down fa-left"></i>Move down
-                                        </div>
+                                        </button>
                                     </div>
                                 </li>
                                 <li>
@@ -275,7 +302,9 @@
                                             ng-click="vm.removeItem({
                                                 property: vm.profile.topics,
                                                 index: key
-                                            })">
+                                            })"
+                                            ng-disabled="vm.disabled"
+                                        >
                                             <i class="fas fa-trash fa-left"></i>Delete
                                         </button>
                                     </div>
@@ -292,12 +321,14 @@
                 class="btn btn-link btn-inline"
                 ng-click="vm.addItem({
                     property: vm.profile.topics
-                })">
+                })"
+                ng-disabled="vm.disabled"
+            >
                 <i class="fas fa-plus fa-left"></i>Add topic
             </button>
         </li>
     </ul>
-</ng-container> 
+</ng-container>
 
 <ng-container ng-if="vm.isFieldVisible('services')">
     <label class="label-service">Services</label>
@@ -309,7 +340,9 @@
                         context-string="services[{{ key }}]"
                         model="vm.profile.services[key].privacy"
                         errors="vm.profile.services[key].errors.privacy"
-                        profile="vm.profile"></scientilla-privacy-selector>
+                        profile="vm.profile"
+                        disabled="vm.disabled"
+                    ></scientilla-privacy-selector>
                 </li>
                 <li>
                     <ul class="field-listing">
@@ -325,16 +358,18 @@
                                     ng-class="{
                                         'is-invalid': vm.profile.services[key].errors.value,
                                         'is-invisible' : vm.profile.services[key].privacy === 'invisible'
-                                    }">
+                                    }"
+                                    ng-disabled="vm.disabled"
+                                />
                                 <scientilla-field-errors
                                     errors="vm.profile.services[key].errors.value"></scientilla-field-errors>
                             </div>
                         </li>
                         <li class="desktop-actions">
                             <div class="form-group">
-                                <div class="btn btn-outline-secondary">
+                                <button class="btn btn-outline-secondary" ng-disabled="vm.disabled">
                                     <i class="fas fa-arrows-alt"></i>
-                                </div>
+                                </button>
                             </div>
                         </li>
                         <li class="desktop-actions">
@@ -344,7 +379,9 @@
                                     ng-click="vm.removeItem({
                                         property: vm.profile.services,
                                         index: key
-                                    })">
+                                    })"
+                                    ng-disabled="vm.disabled"
+                                >
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -353,24 +390,26 @@
                             <ul>
                                 <li>
                                     <div class="form-group">
-                                        <div
+                                        <button
                                             class="btn btn-outline-secondary"
                                             ng-class="{'disabled': $index === 0}"
-                                            ng-disabled="$index === 0"
-                                            ng-click="vm.moveUp('services', key, service)" >
+                                            ng-disabled="$index === 0 || vm.disabled"
+                                            ng-click="vm.moveUp('services', key, service)"
+                                        >
                                             <i class="fas fa-arrow-up fa-left"></i>Move up
-                                        </div>
+                                        </button>
                                     </div>
                                 </li>
                                 <li>
                                     <div class="form-group">
-                                        <div
+                                        <button
                                             class="btn btn-outline-secondary"
                                             ng-class="{'disabled': $index === vm.profile.services.length -1}"
-                                            ng-disabled="$index === vm.profile.services.length -1"
-                                            ng-click="vm.moveDown('services', key, service)">
+                                            ng-disabled="$index === vm.profile.services.length -1 || vm.disabled"
+                                            ng-click="vm.moveDown('services', key, service)"
+                                        >
                                             <i class="fas fa-arrow-down fa-left"></i>Move down
-                                        </div>
+                                        </button>
                                     </div>
                                 </li>
                                 <li>
@@ -380,7 +419,9 @@
                                             ng-click="vm.removeItem({
                                                 property: vm.profile.services,
                                                 index: key
-                                            })">
+                                            })"
+                                            ng-disabled="vm.disabled"
+                                        >
                                             <i class="fas fa-trash fa-left"></i>Delete
                                         </button>
                                     </div>
@@ -398,12 +439,14 @@
                 ng-click="vm.addItem({
                     item: { privacy: 'public'},
                     property: vm.profile.services
-                })">
+                })"
+                ng-disabled="vm.disabled"
+            >
                 <i class="fas fa-plus fa-left"></i>Add service
             </button>
         </li>
     </ul>
-</ng-container> 
+</ng-container>
 
 <ng-container ng-if="vm.isFieldVisible('coverImage')">
     <label for="image">Cover image</label>
@@ -413,7 +456,9 @@
                 context-string="coverImage"
                 model="vm.profile.coverImage.privacy"
                 errors="vm.profile.coverImage.errors.privacy"
-                profile="vm.profile"></scientilla-privacy-selector>
+                profile="vm.profile"
+                disabled="vm.disabled"
+            ></scientilla-privacy-selector>
         </li>
         <li>
             <div
@@ -436,18 +481,23 @@
                     min-width="750"
                     min-height="500"
                     image-error-message="vm.imageErrorMessage"
+                    ng-disabled="vm.disabled"
                 />
                 <div
                     ng-if="vm.profile.coverImage.value"
                     class="image-container">
                     <img ng-src="{{ vm.pathProfileImages + vm.profile.coverImage.value }}" alt="" class="img-fluid cover-image">
-                    <button class="btn-remove-image" ng-click="vm.profile.coverImage.value = vm.coverImage = ''"><i class="fas fa-trash"></i></button>
+                    <button
+                        class="btn-remove-image"
+                        ng-click="vm.profile.coverImage.value = vm.coverImage = ''"
+                        ng-disabled="vm.disabled"
+                    ><i class="fas fa-trash"></i></button>
                 </div>
                 <em
                     class="image-info"
-                    ng-if="!vm.profile.coverImage.value">We suggest to upload an image (JPG, JPEG or PNG) with the minimum resolution of 750px (width) by 500px (height) and a maximum file size of 500KB.</em>
-                <scientilla-field-errors
-                    errors="vm.profile.coverImage.errors.value"></scientilla-field-errors>
+                    ng-if="!vm.profile.coverImage.value"
+                >We suggest to upload an image (JPG, JPEG or PNG) with the minimum resolution of 750px (width) by 500px (height) and a maximum file size of 500KB.</em>
+                <scientilla-field-errors errors="vm.profile.coverImage.errors.value"></scientilla-field-errors>
             </div>
         </li>
     </ul>
