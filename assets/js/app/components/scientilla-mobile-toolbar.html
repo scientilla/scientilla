@@ -114,6 +114,14 @@
                         My profile
                     </button>
                 </li>
+                <li ng-if="vm.isGroup()">
+                    <button
+                            class="dropdown-item"
+                            ng-click="vm.editGroupProfile()"
+                    >
+                        My group profile
+                    </button>
+                </li>
                 <li>
                     <button
                         class="dropdown-item"

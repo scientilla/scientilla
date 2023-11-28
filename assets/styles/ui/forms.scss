@@ -37,6 +37,12 @@ label{
     }
 }
 
+.ta-readonly {
+    cursor: not-allowed;
+    color: $base-gray;
+    background: $gray-100;
+}
+
 .form-control,
 .select-wrapper,
 .input-group{
