@@ -76,14 +76,14 @@
                     Restangular.setDefaultHeaders({access_token: service.jwtToken});
                     $http.defaults.headers.common.access_token = service.jwtToken;
 
-                    setLocaleStorage();
-
                     return UsersService.getSettings(userId);
                 })
                 .then(function (user) {
                     service.user = user;
                     service.userId = user.id;
                     service.username = user.username;
+
+                    setLocaleStorage();
 
                     if (
                         _.has(service, 'user.name') &&
