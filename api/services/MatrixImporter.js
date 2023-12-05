@@ -428,6 +428,22 @@ async function run() {
                         _.isEmpty(missingPis) &&
                         group.active === active
                     ) {
+                        if (center && centerMembership) {
+                            await MembershipGroup.update({id: centerMembership.id}, {
+                                lastsynch: moment().format(ISO8601Format),
+                                synchronized: true,
+                                active: true
+                            });
+                        }
+
+                        if (mainResearchDomain && mainResearchDomainMembership) {
+                            await MembershipGroup.update({id: mainResearchDomainMembership.id}, {
+                                lastsynch: moment().format(ISO8601Format),
+                                synchronized: true,
+                                active: true
+                            });
+                        }
+
                         // If equal: push to an array to log later
                         upToDateStructures.push(group);
                     } else {
