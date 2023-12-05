@@ -90,7 +90,9 @@
                 'members',
                 'memberships',
                 'pis',
-                'groupData'
+                'groupData',
+                'childGroups',
+                'parentGroups'
             ];
             const associations = {};
             associationsKeys.forEach(key => associations[key] = group[key]);
