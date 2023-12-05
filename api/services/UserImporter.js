@@ -800,16 +800,21 @@ async function updateUserProfileGroups() {
 
             const originalProfile = _.cloneDeep(researchEntityDataRecord.profile);
 
+            if (!researchEntityDataRecord.importedData) {
+                continue;
+            }
             researchEntityDataRecord.profile.groups = getProfileGroups(allMembershipGroups, activeGroups, researchEntityDataRecord.importedData, defaultPrivacy);
 
-            for (const experience of researchEntityDataRecord.profile.experiencesInternal) {
-                if (_.has(experience, 'lines')) {
-                    for (const line of experience.lines) {
-                        const group = groups.find(group => group.code === line.code);
+            if (_.has(researchEntityDataRecord, 'profile.researchEntityDataRecord.profile.')) {
+                for (const experience of researchEntityDataRecord.profile.experiencesInternal) {
+                    if (_.has(experience, 'lines')) {
+                        for (const line of experience.lines) {
+                            const group = groups.find(group => group.code === line.code);
 
-                        if (group) {
-                            if (!_.isEqual(line.name, group.name)) {
-                                line.name = group.name;
+                            if (group) {
+                                if (!_.isEqual(line.name, group.name)) {
+                                    line.name = group.name;
+                                }
                             }
                         }
                     }
