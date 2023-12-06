@@ -1,6 +1,6 @@
 
 <ng-container ng-if="vm.isFieldVisible('shortDescription')">
-    <label for="shortDescription">Short description<span class="max-length">{{ vm.remaining(vm.profile.shortDescription.value, 1000) }}/1000 characters left</span></label>
+    <label for="shortDescription">Short description</label>
     <ul class="enable-listing">
         <li>
             <scientilla-privacy-selector
@@ -35,7 +35,7 @@
 </ng-container>
 
 <ng-container ng-if="vm.isFieldVisible('achievements')">
-    <label for="achievements">Achievements<span class="max-length">{{ vm.remaining(vm.profile.achievements.value, 600) }}/600 characters left</span></label>
+    <label for="achievements">Achievements</label>
     <ul class="enable-listing">
         <li>
             <scientilla-privacy-selector
