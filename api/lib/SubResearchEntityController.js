@@ -162,9 +162,18 @@ module.exports = {
 function makePublicAPIrequest(req, res, attribute, skipPopulate = false) {
     const researchEntityModel = getModel(req);
     const searchKey = Object.keys(req.params)[0];
-    const searchCriteria = {
-        [searchKey]: req.params[searchKey]
+    const defaultSearchCriteria = {
+        [searchKey]: _.toLower(req.params[searchKey])
     };
+    // if the  username is used also search for the legacy email
+    const userSearchCriteria = {
+        or: [{
+            legacyEmail: _.toLower(req.params[searchKey])
+        }, {
+            username: _.toLower(req.params[searchKey])
+        }]
+    };
+    const searchCriteria = (searchKey === 'username') ? userSearchCriteria : defaultSearchCriteria;
     const baseUrl = `http://localhost:${sails.config.port}`;
     const q = req.query;
     res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, baseUrl, q, attribute, skipPopulate));
