@@ -163,7 +163,7 @@ function makePublicAPIrequest(req, res, attribute, skipPopulate = false) {
     const researchEntityModel = getModel(req);
     const searchKey = Object.keys(req.params)[0];
     const defaultSearchCriteria = {
-        [searchKey]: _.toLower(req.params[searchKey])
+        [searchKey]: req.params[searchKey]
     };
     // if the  username is used also search for the legacy email
     const userSearchCriteria = {
