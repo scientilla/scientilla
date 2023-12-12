@@ -23,6 +23,7 @@
             'conference': 'far fa-comment',
             'book': 'fas fa-book',
             'bookseries': 'fas fa-book',
+            'eprint_archive': 'fas fa-archive',
             'report': 'far fa-address-card',
             'invited_talk': 'fas fa-microphone',
         };

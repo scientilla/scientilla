@@ -25,6 +25,12 @@
       "type": "publication"
     },
     {
+      "key": "eprint_archive",
+      "label": "E-print Archive",
+      "section": "",
+      "type": "publication"
+    },
+    {
       "key": "institute",
       "label": "Institute",
       "section": "Scientific Event",
