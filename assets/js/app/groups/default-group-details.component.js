@@ -117,6 +117,7 @@
             switch (vm.group.type) {
                 case groupTypes.INSTITUTE:
                 case groupTypes.CENTER:
+                case groupTypes.RESEARCH_DOMAIN:
                     return vm.isGroupAdmin() || vm.isSuperUser() || vm.loggedUser.isAdmin();
                 case groupTypes.RESEARCH_LINE:
                 case groupTypes.FACILITY:
