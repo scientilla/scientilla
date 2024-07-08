@@ -92,6 +92,9 @@ module.exports = {
             const updatedDocuments = await Document.update({source: sourceToRemove.id}, {source: source.id});
             sails.log.info(`${updatedDocuments.length} documents updated from source ${sourceToRemove.id} to ${source.id}`);
 
+            const updatedEditorship = await ResearchItemEditorship.update({source: sourceToRemove.id}, {source: source.id});
+            sails.log.info(`${updatedEditorship.length} editorship updated from source ${sourceToRemove.id} to ${source.id}`);
+
             const sourcemetrisources = await SourceMetricSource.find({source: sourceToRemove.id});
             if (sourcemetrisources.length) {
                 const sourcemetrisourcesIds = sourcemetrisources.map(d => d.id);
