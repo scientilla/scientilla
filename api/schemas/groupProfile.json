@@ -14,7 +14,21 @@
         { "$ref": "userProfileDefs#/definitions/stringValue" },
         { "$ref": "userProfileDefs#/definitions/privacy" },
         { "$ref": "userProfileDefs#/definitions/privacyDefaultPublic" },
-        { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" }
+        { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "maxLength": 1100
+            }
+          },
+          "errorMessage": {
+            "properties": {
+              "value": "This field should not contain more than 1100 characters!"
+            }
+          }
+        }
       ]
     },
     "achievements": {
@@ -22,7 +36,21 @@
         { "$ref": "userProfileDefs#/definitions/stringValue" },
         { "$ref": "userProfileDefs#/definitions/privacy" },
         { "$ref": "userProfileDefs#/definitions/privacyDefaultPublic" },
-        { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" }
+        { "$ref": "userProfileDefs#/definitions/privacyEnumPublic" },
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "maxLength": 700
+            }
+          },
+          "errorMessage": {
+            "properties": {
+              "value": "This field should not contain more than 700 characters!"
+            }
+          }
+        }
       ]
     },
     "collaborations": {
