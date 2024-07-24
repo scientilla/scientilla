@@ -77,9 +77,7 @@
         let originalProfileJson = '';
         let profileWatcher;
 
-        // Disable group form for not system admin users
         vm.loggedUser = AuthService.user;
-        vm.disabled = !vm.loggedUser.isAdmin();
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
