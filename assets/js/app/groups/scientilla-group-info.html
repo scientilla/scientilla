@@ -113,27 +113,27 @@
             </div>
             <div class="col-12 col-lg-6 col-xl-7 col-xxl-8">
                 <div ng-if="vm.profile.description">
-                    <h3>Description</h2>
+                    <h3>Description</h3>
                     <div class="group-text-container" ng-bind-html="vm.profile.description"></div>
                 </div>
 
                 <div ng-if="vm.profile.shortDescription">
-                    <h3>Short description</h2>
-                    <div class="group-text-container" ng-bind-html="vm.profile.shortDescription | newLine"></div>
+                    <h3>Short description</h3>
+                    <div class="group-text-container" ng-bind-html="vm.removeAllHtmlTagsExceptBr(vm.profile.shortDescription | newLine)"></div>
                 </div>
 
                 <div ng-if="vm.profile.achievements">
-                    <h3>Achievements</h2>
-                    <div class="group-text-container" ng-bind-html="vm.profile.achievements | newLine"></div>
+                    <h3>Achievements</h3>
+                    <div class="group-text-container" ng-bind="vm.removeAllHtmlTagsExceptBr(vm.profile.achievements | newLine)"></div>
                 </div>
 
                 <div ng-if="vm.profile.collaborations">
-                    <h3>Collaborations</h2>
+                    <h3>Collaborations</h3>
                     <div class="group-text-container" ng-bind-html="vm.profile.collaborations"></div>
                 </div>
 
                 <div ng-if="vm.profile.laboratories">
-                    <h3>Laboratories</h2>
+                    <h3>Laboratories</h3>
                     <div class="group-text-container" ng-bind-html="vm.profile.laboratories"></div>
                 </div>
 

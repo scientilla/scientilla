@@ -207,6 +207,8 @@
             }
         };
 
+        vm.removeAllHtmlTagsExceptBr = html => html.replace(/<(?!br\s*\/?)[^>]+>/g, '');
+
         const groupChartAllRoles = [
             'groupMembersTotal',
             'groupMembersByRole',
