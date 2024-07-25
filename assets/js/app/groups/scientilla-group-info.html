@@ -124,7 +124,7 @@
 
                 <div ng-if="vm.profile.achievements">
                     <h3>Achievements</h3>
-                    <div class="group-text-container" ng-bind="vm.removeAllHtmlTagsExceptBr(vm.profile.achievements | newLine)"></div>
+                    <div class="group-text-container" ng-bind-html="vm.removeAllHtmlTagsExceptBr(vm.profile.achievements | newLine)"></div>
                 </div>
 
                 <div ng-if="vm.profile.collaborations">
