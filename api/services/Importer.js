@@ -17,6 +17,7 @@ module.exports = {
 const xlsx = require('xlsx');
 const _ = require('lodash');
 const fs = require('fs');
+const sharp = require('sharp');
 
 const moment = require('moment');
 moment.locale('en');
@@ -236,6 +237,10 @@ async function importSourceMetrics(filename) {
 // import Projects
 
 async function importProjects() {
+
+    const logoMaxWidth = 510;
+    const logoMaxHeight = 510;
+
     const annualContributionSchema = {
         year: 'year',
         contribution: 'annual_contribution'
@@ -341,6 +346,19 @@ async function importProjects() {
 
             try {
                 const projectData = mapObject(project, schemas[type]);
+
+                for (const logo of projectData.logos) {
+                    const base64Data = logo.image.replace(/^data:image\/\w+;base64,/, '');
+                    const imgBuffer = Buffer.from(base64Data, 'base64');
+
+                    // Utilizza sharp per ridimensionare l'immagine
+                    const resizedBuffer = await sharp(imgBuffer)
+                        .resize(logoMaxWidth, logoMaxHeight, {fit: 'inside'})
+                        .toBuffer();
+
+                    // Converti il buffer ridimensionato di nuovo in base64
+                    logo.image = `data:image/jpeg;base64,${resizedBuffer.toString('base64')}`;
+                }
 
                 const code = projectData.code;
                 if (!code) {
