@@ -346,6 +346,15 @@ async function importProjects() {
 
             try {
                 const projectData = mapObject(project, schemas[type]);
+                const code = projectData.code;
+                if (!code) {
+                    errors.push({
+                        project: projectData.acronym,
+                        message: 'Missing required field "code"'
+                    });
+                    continue;
+                }
+
 
                 for (const logo of projectData.logos) {
                     const base64Data = logo.image.replace(/^data:image\/\w+;base64,/, '');
@@ -358,15 +367,6 @@ async function importProjects() {
 
                     // Converti il buffer ridimensionato di nuovo in base64
                     logo.image = `data:image/jpeg;base64,${resizedBuffer.toString('base64')}`;
-                }
-
-                const code = projectData.code;
-                if (!code) {
-                    errors.push({
-                        project: data.projectData.acronym,
-                        message: 'Missing required field "code"'
-                    });
-                    continue;
                 }
 
                 projectCodes.push(code);
