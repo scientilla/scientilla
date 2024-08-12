@@ -467,6 +467,11 @@ async function importProjects() {
         const reqOptionsGroups = config.requestGroups;
         const reqOptionsUsers = config.requestUsers;
 
+        function toFilter(project) {
+            return (_.isString(project.codice_progetto) && project.codice_progetto.startsWith('ETDV'))
+                || _.isString(project.project_category) && project.project_category === 'Licenze/Opzioni'
+        }
+
         const typeTranslation = {
             'Commerciale': 'Commercial',
             'Istituzionale': 'Institutional'
@@ -502,7 +507,7 @@ async function importProjects() {
 
         //creating projects and adding groups
         for (const p of projectsByGroups) {
-            if (p.project_category === 'Licenze/Opzioni') {
+            if (toFilter(p)) {
                 skipped++;
                 continue;
             }
@@ -552,8 +557,7 @@ async function importProjects() {
 
         //adding members
         for (const p of projectsByUsers) {
-            if (p.project_category === 'Licenze/Opzioni') {
-                skipped++;
+            if (toFilter(p)) {
                 continue;
             }
 
@@ -647,6 +651,7 @@ async function importProjects() {
         sails.log.info(`external created: ${created}`);
         sails.log.info(`external updated: ${updated}`);
         sails.log.info(`external deleted: ${deleted}`);
+        sails.log.info(`external skipped: ${skipped}`);
         sails.log.info(`errors: ${errors.length}`);
         errors.forEach(error => {
             if (error.researchItem)
