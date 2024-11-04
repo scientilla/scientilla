@@ -678,7 +678,7 @@
                     break;
                 case constant === 'verified-agreement':
                     await setupAgreementStructure(constant, researchEntity, 'verified_agreements');
-                    structure =  formStructures[constant];
+                    structure = formStructures[constant];
                     break;
                 case constant === 'agreement':
                     await setupAgreementStructure(constant, researchEntity, 'draft_agreements');
@@ -750,6 +750,8 @@
 
                     if (!AuthService.user.isSuperViewer()) {
                         delete structure.gender;
+                        delete structure.ageRange;
+                        delete structure.nationality;
                     } else {
                         structure.gender.values = [{
                             value: '?',
@@ -761,30 +763,41 @@
                             value: 'M',
                             label: 'Male'
                         }];
-                    }
+                        structure.ageRange.values = [{
+                            value: '?',
+                            label: 'All'
+                        }, {
+                            value: '<25',
+                            label: '<25'
+                        }, {
+                            value: '25-29',
+                            label: '25-29'
+                        }, {
+                            value: '30-34',
+                            label: '30-34'
+                        }, {
+                            value: '35-44',
+                            label: '35-44'
+                        }, {
+                            value: '45-54',
+                            label: '45-54'
+                        }, {
+                            value: '>=55',
+                            label: '>=55'
+                        }];
+                        let nationalities = await PeopleService.getUniqueNationalities();
+                        nationalities = nationalities.plain();
+                        nationalities = Object.keys(nationalities)
+                            .map(k => ({label: ISO3166.getCountryName(nationalities[k]), value: nationalities[k]}));
 
-                    structure.ageRange.values = [{
-                        value: '?',
-                        label: 'All'
-                    }, {
-                        value: '<25',
-                        label: '<25'
-                    }, {
-                        value: '25-29',
-                        label: '25-29'
-                    }, {
-                        value: '30-34',
-                        label: '30-34'
-                    }, {
-                        value: '35-44',
-                        label: '35-44'
-                    }, {
-                        value: '45-54',
-                        label: '45-54'
-                    }, {
-                        value: '>=55',
-                        label: '>=55'
-                    }];
+                        nationalities = _.sortBy(nationalities, 'label');
+                        nationalities.unshift({
+                            value: '?',
+                            label: 'All'
+                        });
+
+                        structure.nationality.values = nationalities;
+                    }
 
                     let roleCategories = await PeopleService.getUniqueRoleCategories();
                     roleCategories = roleCategories.plain();
@@ -796,18 +809,6 @@
                             .map(k => ({label: roleCategories[k], value: roleCategories[k]}))
                     );
 
-                    let nationalities = await PeopleService.getUniqueNationalities();
-                    nationalities = nationalities.plain();
-                    nationalities = Object.keys(nationalities)
-                        .map(k => ({ label: ISO3166.getCountryName(nationalities[k]), value: nationalities[k]}));
-
-                    nationalities = _.sortBy(nationalities, 'label');
-                    nationalities.unshift({
-                        value: '?',
-                        label: 'All'
-                    });
-
-                    structure.nationality.values = nationalities;
                     break;
                 case constant === 'training-module':
                     formStructures[constant].trainingModuleType.values = await getResearchItemTypes('training_module');
@@ -901,6 +902,7 @@
                 statuses.map(s => ({value: s.status, label: projectStatuses[s.status]}))
             );
         }
+
         /* jshint ignore:end */
 
         function getProjectPayments() {
@@ -940,6 +942,7 @@
         async function getProjectActions() {
             return await ProjectService.getActions();
         }
+
         /* jshint ignore:end */
 
         function getAgreementTypes() {
@@ -956,7 +959,10 @@
         /* jshint ignore:start */
         async function getTrainingModuleResearchDomains() {
             const researchDomains = [];
-            const researchDomainGroups = await GroupsService.getGroups({type: groupTypes.RESEARCH_DOMAIN, active: true});
+            const researchDomainGroups = await GroupsService.getGroups({
+                type: groupTypes.RESEARCH_DOMAIN,
+                active: true
+            });
 
             for (const group of researchDomainGroups) {
                 researchDomains.push(group.name);
@@ -966,6 +972,7 @@
 
             return researchDomains;
         }
+
         /* jshint ignore:end */
     }
 })();

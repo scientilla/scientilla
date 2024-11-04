@@ -291,6 +291,7 @@
                                         href="/#/groups/{{ vm.group.id }}/members?ageRange={{ range.label }}"
                                         ng-click="vm.scrollToTop()"
                                         class="colorize-text"
+                                        ng-if="vm.loggedUser.isSuperViewer()"
                                     >
                                         {{ range.count }} {{ range.count === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
                                     </a>
@@ -333,7 +334,7 @@
                                                 href="/#/groups/{{ vm.group.id }}/members?nationality={{ country.key }}"
                                                 ng-click="vm.scrollToTop()"
                                                 class="colorize-text"
-                                                ng-if="country.key"
+                                                ng-if="country.key && vm.loggedUser.isSuperViewer()"
                                             >
                                                 {{ country.count }} {{ country.count === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
                                             </a>
@@ -376,6 +377,7 @@
                                             href="/#/groups/{{ vm.group.id }}/members?nationality={{ country.key }}"
                                             ng-click="vm.scrollToTop()"
                                             class="colorize-text"
+                                            ng-if="vm.loggedUser.isSuperViewer()"
                                         >
                                             {{ country.value }} {{ country.value === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
                                         </a>
