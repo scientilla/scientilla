@@ -267,6 +267,10 @@
 
       &.fields-3 {
         grid-template-columns: 1fr 200px 1fr;
+
+        &.group-member {
+          grid-template-columns: 1fr 1fr 1fr;
+        }
       }
 
       &.fields-4 {
