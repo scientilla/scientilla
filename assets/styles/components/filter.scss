@@ -1,384 +1,392 @@
-.filter-form-container{
-    .filter-option-listing,
-    .filter-connector-listing,
-    .filter-field-listing,
-    .filter-action-listing{
-        @include normalize-listing;
-        margin: 0px -1rem;
+.filter-form-container {
+  .filter-option-listing,
+  .filter-connector-listing,
+  .filter-field-listing,
+  .filter-action-listing {
+    @include normalize-listing;
+    margin: 0px -1rem;
 
-        & > li{
-            display: block;
-            padding: 0px 1rem;
-        }
-
-        &.patent,
-        &.document,
-        &.accomplishment,
-        &.agreement{
-            border-left: 0px !important;
-        }
+    & > li {
+      display: block;
+      padding: 0px 1rem;
     }
 
-    .filter-field-listing{
-        &.project{
-            border-left: 0px;
-        }
+    &.patent,
+    &.document,
+    &.accomplishment,
+    &.agreement {
+      border-left: 0px !important;
     }
+  }
 
-    .filter-option-listing{
-        strong{
-            display: inline-block;
-            margin-bottom: .5rem;
-            vertical-align: top;
-        }
+  .filter-field-listing {
+    &.project {
+      border-left: 0px;
     }
+  }
 
-    .items-per-page{
-        label{
-            font-weight: normal;
-            margin-right: 1rem;
-        }
+  .filter-option-listing {
+    strong {
+      display: inline-block;
+      margin-bottom: .5rem;
+      vertical-align: top;
     }
+  }
 
-    label{
-        display: inline-block;
-        vertical-align: top;
-
-        &.form-radio{
-            display: block;
-        }
+  .items-per-page {
+    label {
+      font-weight: normal;
+      margin-right: 1rem;
     }
+  }
 
-    .sub-label{
-        display: inline-block;
-        vertical-align: top;
-        font-size: 1rem;
-        line-height: 1.8rem;
-        font-weight: normal;
-    }
+  label {
+    display: inline-block;
+    vertical-align: top;
 
-    .filter-action-listing{
-        .form-group{
-            margin-bottom: 1rem;
-        }
+    &.form-radio {
+      display: block;
     }
+  }
+
+  .sub-label {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 1rem;
+    line-height: 1.8rem;
+    font-weight: normal;
+  }
+
+  .filter-action-listing {
+    .form-group {
+      margin-bottom: 1rem;
+    }
+  }
 }
 
-.filter-result-actions{
-    @include normalize-listing;
-    margin: 1rem -1rem;
+.filter-result-actions {
+  @include normalize-listing;
+  margin: 1rem -1rem;
 
-    & > li{
-        display: block;
-        padding: 0px 1rem;
-        text-align: center;
-    }
+  & > li {
+    display: block;
+    padding: 0px 1rem;
+    text-align: center;
+  }
 }
 
 @include media-breakpoint-up(sm) {
-    .filter-form-container{
-        .filter-field-listing{
-            display: grid;
-            grid-template-rows: auto;
-        }
-
-        .filter-action-listing{
-            display: grid;
-            margin-bottom: -2rem;
-            grid-template-rows: auto;
-            grid-template-columns: auto 1fr auto auto;
-            justify-items: end;
-
-            &.actions-3{
-                grid-template-columns: 1fr auto auto;
-            }
-
-            &.actions-4{
-                grid-template-columns: auto 1fr auto auto;
-            }
-
-            &.actions-5{
-                grid-template-columns: auto auto 1fr auto auto;
-
-                & > li{
-                    &:nth-child(1){
-                        @include set-grid(1, 1, 1, 1);
-                    }
-                    &:nth-child(2){
-                        @include set-grid(1, 2, 1, 1);
-                    }
-                    &:nth-child(3){
-                        @include set-grid(1, 3, 1, 1);
-                    }
-                    &:nth-child(4){
-                        @include set-grid(1, 4, 1, 1);
-                    }
-                    &:nth-child(5){
-                        @include set-grid(1, 5, 1, 1);
-                    }
-                }
-            }
-
-            &.actions-6{
-                grid-template-columns: auto auto auto 1fr auto auto;
-            }
-        }
-
-        .filter-connector-listing{
-            display: grid;
-            grid-template-rows: auto;
-        }
+  .filter-form-container {
+    .filter-field-listing {
+      display: grid;
+      grid-template-rows: auto;
     }
 
-    .filter-result-actions{
-        display: grid;
-        margin: 2rem -1rem;
-        grid-template-rows: auto;
-        grid-template-columns: auto 1fr;
+    .filter-action-listing {
+      display: grid;
+      margin-bottom: -2rem;
+      grid-template-rows: auto;
+      grid-template-columns: auto 1fr auto auto;
+      justify-items: end;
+
+      &.actions-3 {
+        grid-template-columns: 1fr auto auto;
+      }
+
+      &.actions-4 {
+        grid-template-columns: auto 1fr auto auto;
+      }
+
+      &.actions-5 {
+        grid-template-columns: auto auto 1fr auto auto;
+
+        & > li {
+          &:nth-child(1) {
+            @include set-grid(1, 1, 1, 1);
+          }
+
+          &:nth-child(2) {
+            @include set-grid(1, 2, 1, 1);
+          }
+
+          &:nth-child(3) {
+            @include set-grid(1, 3, 1, 1);
+          }
+
+          &:nth-child(4) {
+            @include set-grid(1, 4, 1, 1);
+          }
+
+          &:nth-child(5) {
+            @include set-grid(1, 5, 1, 1);
+          }
+        }
+      }
+
+      &.actions-6 {
+        grid-template-columns: auto auto auto 1fr auto auto;
+      }
     }
+
+    .filter-connector-listing {
+      display: grid;
+      grid-template-rows: auto;
+    }
+  }
+
+  .filter-result-actions {
+    display: grid;
+    margin: 2rem -1rem;
+    grid-template-rows: auto;
+    grid-template-columns: auto 1fr;
+  }
 }
 
 @include media-breakpoint-between(sm, md) {
-    .filter-form-container{
-        .filter-action-listing {
-            &.actions-4 {
-                & > li {
-                    &:nth-child(1) {
-                        @include set-grid(1, 1, 1, 4);
-                        justify-self: start;
-                    }
+  .filter-form-container {
+    .filter-action-listing {
+      &.actions-4 {
+        & > li {
+          &:nth-child(1) {
+            @include set-grid(1, 1, 1, 4);
+            justify-self: start;
+          }
 
-                    &:nth-child(2) {
-                        @include set-grid(2, 1, 1, 2);
-                    }
+          &:nth-child(2) {
+            @include set-grid(2, 1, 1, 2);
+          }
 
-                    &:nth-child(3) {
-                        @include set-grid(2, 3, 1, 1);
-                    }
+          &:nth-child(3) {
+            @include set-grid(2, 3, 1, 1);
+          }
 
-                    &:nth-child(4) {
-                        @include set-grid(2, 4, 1, 1);
-                    }
-                }
-            }
+          &:nth-child(4) {
+            @include set-grid(2, 4, 1, 1);
+          }
         }
+      }
     }
+  }
 }
 
 @include media-breakpoint-between(sm, lg) {
-    .filter-form-container{
-        .filter-action-listing {
-            &.actions-5 {
-                grid-template-columns: auto 1fr auto auto;
+  .filter-form-container {
+    .filter-action-listing {
+      &.actions-5 {
+        grid-template-columns: auto 1fr auto auto;
 
-                & > li {
-                    &:nth-child(1) {
-                        @include set-grid(1, 1, 1, 4);
-                        justify-self: start;
-                    }
+        & > li {
+          &:nth-child(1) {
+            @include set-grid(1, 1, 1, 4);
+            justify-self: start;
+          }
 
-                    &:nth-child(2) {
-                        @include set-grid(2, 1, 1, 4);
-                        justify-self: start;
-                    }
+          &:nth-child(2) {
+            @include set-grid(2, 1, 1, 4);
+            justify-self: start;
+          }
 
-                    &:nth-child(3) {
-                        @include set-grid(3, 1, 1, 2);
-                    }
+          &:nth-child(3) {
+            @include set-grid(3, 1, 1, 2);
+          }
 
-                    &:nth-child(4) {
-                        @include set-grid(3, 3, 1, 1);
-                    }
+          &:nth-child(4) {
+            @include set-grid(3, 3, 1, 1);
+          }
 
-                    &:nth-child(5) {
-                        @include set-grid(3, 4, 1, 1);
-                    }
-                }
-            }
-
-            &.actions-6 {
-                grid-template-columns: auto 1fr auto auto;
-
-                & > li {
-                    &:nth-child(1) {
-                        @include set-grid(1, 1, 1, 4);
-                        justify-self: start;
-                    }
-
-                    &:nth-child(2) {
-                        @include set-grid(2, 1, 1, 4);
-                        justify-self: start;
-                    }
-
-                    &:nth-child(3) {
-                        @include set-grid(3, 1, 1, 4);
-                        justify-self: start;
-                    }
-
-                    &:nth-child(4) {
-                        @include set-grid(4, 1, 1, 2);
-                    }
-
-                    &:nth-child(5) {
-                        @include set-grid(4, 3, 1, 1);
-                    }
-
-                    &:nth-child(6) {
-                        @include set-grid(4, 4, 1, 1);
-                    }
-                }
-            }
+          &:nth-child(5) {
+            @include set-grid(3, 4, 1, 1);
+          }
         }
+      }
+
+      &.actions-6 {
+        grid-template-columns: auto 1fr auto auto;
+
+        & > li {
+          &:nth-child(1) {
+            @include set-grid(1, 1, 1, 4);
+            justify-self: start;
+          }
+
+          &:nth-child(2) {
+            @include set-grid(2, 1, 1, 4);
+            justify-self: start;
+          }
+
+          &:nth-child(3) {
+            @include set-grid(3, 1, 1, 4);
+            justify-self: start;
+          }
+
+          &:nth-child(4) {
+            @include set-grid(4, 1, 1, 2);
+          }
+
+          &:nth-child(5) {
+            @include set-grid(4, 3, 1, 1);
+          }
+
+          &:nth-child(6) {
+            @include set-grid(4, 4, 1, 1);
+          }
+        }
+      }
     }
+  }
 }
 
 @include media-breakpoint-between(sm, xl) {
-    .filter-form-container{
-        .filter-field-listing{
-            &.fields-2,
-            &.fields-3,
-            &.fields-4,
-            &.fields-5,
-            &.fields-6,
-            &.fields-7,
-            &.fields-8,
-            &.fields-9,
-            &.fields-10{
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .filter-connector-listing{
-            grid-template-columns: 1fr 1fr;
-        }
+  .filter-form-container {
+    .filter-field-listing {
+      &.fields-2,
+      &.fields-3,
+      &.fields-4,
+      &.fields-5,
+      &.fields-6,
+      &.fields-7,
+      &.fields-8,
+      &.fields-9,
+      &.fields-10 {
+        grid-template-columns: 1fr 1fr;
+      }
     }
+
+    .filter-connector-listing {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
 }
 
 @include media-breakpoint-up(xl) {
-    .filter-form-container{
-        .filter-field-listing{
-            &.fields-2{
-                grid-template-columns: 1fr 1fr;
-            }
+  .filter-form-container {
+    .filter-field-listing {
+      &.fields-2 {
+        grid-template-columns: 1fr 1fr;
+      }
 
-            &.fields-3{
-                grid-template-columns: 1fr 200px 1fr;
-            }
+      &.fields-3 {
+        grid-template-columns: 1fr 200px 1fr;
+      }
 
-            &.fields-4{
-                grid-template-columns: 1fr 1fr 100px 100px;
-            }
+      &.fields-4 {
+        grid-template-columns: 1fr 1fr 100px 100px;
 
-            &.fields-5{
-                grid-template-columns: 3fr 3fr 100px 100px 140px;
-            }
+        &.user {
+          grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+      }
 
-            &.accomplishment,
-            &.accomplishment-suggested,
-            &.verified-accomplishment{
-                &.fields-5{
-                    grid-template-columns: 1fr 1fr 100px 100px 180px;
-                }
-            }
+      &.fields-5 {
+        grid-template-columns: 3fr 3fr 100px 100px 140px;
+      }
 
-            &.project,
-            &.project-suggested,
-            &.verified-project{
-                &.fields-3{
-                    grid-template-columns: 180px 1fr 160px;
-                }
+      &.accomplishment,
+      &.accomplishment-suggested,
+      &.verified-accomplishment {
+        &.fields-5 {
+          grid-template-columns: 1fr 1fr 100px 100px 180px;
+        }
+      }
 
-                &.fields-4{
-                    grid-template-columns: 180px 1fr 160px 200px;
-                }
-
-                &.fields-5{
-                    grid-template-columns: 180px 5fr 100px 100px 140px;
-                }
-            }
-
-            &.agreement,
-            &.verified-agreement{
-                &.fields-5{
-                    grid-template-columns: 4fr 4fr 2fr 4fr 160px;
-                }
-            }
-
-            &.group-member{
-                &.fields-5{
-                    grid-template-columns: 4fr 4fr 3fr 3fr 2fr;
-                }
-            }
-
-            &.training-module-draft,
-            &.training-module-verified,
-            &.training-module-suggested,
-            &.training-module{
-                &.fields-5{
-                    grid-template-columns: 1fr 1fr 20rem 15rem 20rem;
-                }
-            }
+      &.project,
+      &.project-suggested,
+      &.verified-project {
+        &.fields-3 {
+          grid-template-columns: 180px 1fr 160px;
         }
 
-        .filter-connector-listing{
-            grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
+        &.fields-4 {
+          grid-template-columns: 180px 1fr 160px 200px;
         }
+
+        &.fields-5 {
+          grid-template-columns: 180px 5fr 100px 100px 140px;
+        }
+      }
+
+      &.agreement,
+      &.verified-agreement {
+        &.fields-5 {
+          grid-template-columns: 4fr 4fr 2fr 4fr 160px;
+        }
+      }
+
+      &.group-member {
+        &.fields-5 {
+          grid-template-columns: 4fr 4fr 3fr 3fr 2fr;
+        }
+      }
+
+      &.training-module-draft,
+      &.training-module-verified,
+      &.training-module-suggested,
+      &.training-module {
+        &.fields-5 {
+          grid-template-columns: 1fr 1fr 20rem 15rem 20rem;
+        }
+      }
     }
+
+    .filter-connector-listing {
+      grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
+    }
+  }
 }
 
 @include media-breakpoint-up(xxl) {
-    .filter-form-container{
-        .filter-field-listing{
-            &.fields-6{
-                grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
-            }
+  .filter-form-container {
+    .filter-field-listing {
+      &.fields-6 {
+        grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
+      }
 
-            &.fields-7{
-                grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr 2fr;
-            }
+      &.fields-7 {
+        grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr 2fr;
+      }
 
-            &.project,
-            &.project-suggested,
-            &.verified-project{
-                &.fields-8{
-                    grid-template-columns: 180px 5fr 3fr 100px  100px 100px 200px 200px;
-                }
-
-                &.fields-9{
-                    grid-template-columns: 180px 5fr 3fr 2fr 100px 100px 100px 140px 220px;
-                }
-            }
-
-            &.agreement,
-            &.verified-agreement{
-                &.fields-6{
-                    grid-template-columns: 4fr 4fr 2fr 4fr 100px 100px;
-                }
-            }
-
-            &.patent,
-            &.patent-suggested,
-            &.verified-patent{
-                &.fields-7{
-                    grid-template-columns: 3fr 1fr 1fr 1fr 160px 100px 100px;
-                }
-            }
-
-            &.user{
-                &.fields-6{
-                    grid-template-columns: 4fr 4fr 3fr 3fr 3fr 2fr;
-                }
-
-                &.fields-7{
-                    grid-template-columns: 4fr 4fr 3fr 3fr 3fr 2fr 2fr;
-                }
-            }
-
-            &.group-member{
-                &.fields-6{
-                    grid-template-columns: 4fr 4fr 3fr 3fr 2fr 2fr;
-                }
-            }
+      &.project,
+      &.project-suggested,
+      &.verified-project {
+        &.fields-8 {
+          grid-template-columns: 180px 5fr 3fr 100px  100px 100px 200px 200px;
         }
+
+        &.fields-9 {
+          grid-template-columns: 180px 5fr 3fr 2fr 100px 100px 100px 140px 220px;
+        }
+      }
+
+      &.agreement,
+      &.verified-agreement {
+        &.fields-6 {
+          grid-template-columns: 4fr 4fr 2fr 4fr 100px 100px;
+        }
+      }
+
+      &.patent,
+      &.patent-suggested,
+      &.verified-patent {
+        &.fields-7 {
+          grid-template-columns: 3fr 1fr 1fr 1fr 160px 100px 100px;
+        }
+      }
+
+      &.user {
+        &.fields-6 {
+          grid-template-columns: 4fr 4fr 3fr 3fr 3fr 2fr;
+        }
+
+        &.fields-7 {
+          grid-template-columns: 4fr 4fr 3fr 3fr 3fr 2fr 2fr;
+        }
+      }
+
+      &.group-member {
+        &.fields-6 {
+          grid-template-columns: 4fr 4fr 3fr 3fr 2fr 2fr;
+        }
+      }
     }
+  }
 }
