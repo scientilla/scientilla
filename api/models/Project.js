@@ -328,8 +328,6 @@ function mapProjectsCompetitive(researchItems) {
         'End date',
         'Funding type',
         'Action type',
-        'Category',
-        'Payment',
         'IIT role',
         'Status',
         'Institute budget [EUR]',
@@ -345,8 +343,6 @@ function mapProjectsCompetitive(researchItems) {
         row.push(researchItem.endDate);
         row.push(researchItem.projectType);
         row.push(researchItem.projectType2);
-        row.push(researchItem.category);
-        row.push(researchItem.payment);
         row.push(researchItem.role);
         row.push(researchItem.status);
         row.push(formatValue(researchItem.projectData.instituteBudget));
@@ -367,7 +363,6 @@ function mapProjectsIndustrial(researchItems) {
         'End date',
         'Category',
         'Payment',
-        'Status',
         'Total contribution [EUR]',
         'In cash contribution [EUR]',
         'In kind contribution [EUR]'
@@ -381,7 +376,6 @@ function mapProjectsIndustrial(researchItems) {
         row.push(researchItem.endDate);
         row.push(researchItem.category);
         row.push(researchItem.payment);
-        row.push(researchItem.status);
         row.push(formatValue(researchItem.totalContribution));
         row.push(formatValue(researchItem.inCashContribution));
         row.push(formatValue(researchItem.inKindContribution));
