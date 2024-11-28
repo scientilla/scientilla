@@ -2,16 +2,6 @@
 (function () {
     angular.module("app").factory("ProjectService", controller);
 
-    const fields = {
-        project_agreement: [
-            'authorsStr',
-            'startYear',
-            'endYear',
-            'type',
-            'projectData'
-        ]
-    };
-
     controller.$inject = [
         'Restangular',
         'EventsService',
@@ -105,7 +95,7 @@
                 projectIds: items.map(d => d.id)
             }, {responseType: 'arraybuffer'})
                 .then((res) => {
-                    DownloadService.download(res.data, 'competitive_projects', format);
+                    DownloadService.download(res.data, 'projects', format);
                 });
         }
 
