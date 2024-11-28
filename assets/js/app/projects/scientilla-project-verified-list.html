@@ -2,49 +2,58 @@
     <h1>Verified projects</h1>
     <div class="page-info">
         <em>The projects data cannot be edited.
-            For any question about Competitive Projects, please contact <a href="mailto:projects@iit.it">Projects Office</a>.
-            For any question about Industrial Projects, please contact <a href="mailto:tt_admin@iit.it">Technology Transfer Office</a>.</em>
+            For any question about Competitive Projects, please contact <a href="mailto:projects@iit.it">Projects
+                Office</a>.
+            For any question about Industrial Projects, please contact <a href="mailto:tt_admin@iit.it">Technology
+                Transfer Office</a>.</em>
     </div>
     <scientilla-filter
-        category="verified-project"
-        on-filter="vm.onFilter"
-        elements="vm.projects"
-        empty-list-message="No projects found"
-        on-change="vm.onChange"
+            category="verified-project"
+            on-filter="vm.onFilter"
+            elements="vm.projects"
+            empty-list-message="No projects found"
+            on-change="vm.onChange"
     >
         <scientilla-multicheck>
             <buttons>
                 <scientilla-multicheck-button
-                    ng-disabled="true"
-                    subject="Export as CSV"
-                    on-click="vm.exportDownload"
+                        ng-disabled="true"
+                        subject="Export as Excel"
+                        on-click="vm.exportExcelDownload"
+                >
+                    <i class="fas fa-download fa-left"></i>Export as Excel
+                </scientilla-multicheck-button>
+                <scientilla-multicheck-button
+                        ng-disabled="true"
+                        subject="Export as CSV"
+                        on-click="vm.exportDownload"
                 >
                     <i class="fas fa-download fa-left"></i>Export as CSV
                 </scientilla-multicheck-button>
             </buttons>
             <item-list>
                 <scientilla-checkable
-                    ng-repeat="project in vm.projects"
-                    item="project"
-                    class="scientilla-checkable"
+                        ng-repeat="project in vm.projects"
+                        item="project"
+                        class="scientilla-checkable"
                 >
                     <scientilla-project
-                        project="project"
-                        section="vm.projectListSections.VERIFIED"
-                        class="project-container"
+                            project="project"
+                            section="vm.projectListSections.VERIFIED"
+                            class="project-container"
                     ></scientilla-project>
                     <div
-                        class="project-row-actions"
-                        ng-if="vm.showActions()"
+                            class="project-row-actions"
+                            ng-if="vm.showActions()"
                     >
                         <button
-                            class="btn btn-primary"
-                            ng-click="vm.unverify(vm.researchEntity, project)"
-                            ng-disabled="vm.isUnverifying(project)"
-                            type="button"
-                            uib-tooltip="Unlink the project from your profile"
-                            tooltip-placement="top"
-                            tooltip-class="text-left"
+                                class="btn btn-primary"
+                                ng-click="vm.unverify(vm.researchEntity, project)"
+                                ng-disabled="vm.isUnverifying(project)"
+                                type="button"
+                                uib-tooltip="Unlink the project from your profile"
+                                tooltip-placement="top"
+                                tooltip-class="text-left"
                         >
                             <i class="fas fa-times fa-left"></i>
                             Unverify

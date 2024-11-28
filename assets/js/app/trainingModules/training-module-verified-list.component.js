@@ -37,6 +37,7 @@
         vm.unverify = trainingModuleService.unverify;
         vm.isUnverifying = ResearchItemService.isUnverifying;
         vm.onFilter = onFilter;
+        vm.exportExcelDownload = trainingModules => trainingModuleService.exportDownload(trainingModules, 'excel');
         vm.exportDownload = trainingModules => trainingModuleService.exportDownload(trainingModules, 'csv');
 
         let query = {};

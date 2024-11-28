@@ -1,10 +1,10 @@
 /* global DocumentTypes, SourceTypes, ResearchItemTypes */
 // Exporter.js - in api/services
 
+"use strict";
 const lescape = require('escape-latex');
 const _ = require('lodash');
-
-"use strict";
+const ExcelJS = require('exceljs');
 
 const bibtexDocumentTypes = [];
 const bibtexDocumentTypesMap = {}
@@ -12,49 +12,44 @@ const bibtexDourceTypesMap = {};
 const bibtexEntryFields = {};
 
 module.exports = {
-    documentsToCsv,
+    exportDownload,
+    generateCSV,
+    generateExcel,
     documentsToBibtex,
-    getBibtex,
-    trainingModulesToCsv,
-    accomplishmentsToCsv,
-    projectsToCsv,
-    patentsToCsv,
-    agreementsToCsv
+    getBibtex
 };
 
-function formatValue(value) {
-    return new Intl.NumberFormat('en-US', {minimumFractionDigits: 2}).format(value);
+function exportDownload(Model, res, ids, format) {
+    const data = Model.export(ids, format);
+    const options = {};
+    if (['csv', 'bibitex'].includes(format))
+        options.dataType = 'file';
+    else if (format === 'excel')
+        options.dataType = 'excel';
+
+    res.halt(data, options);
 }
 
-function getDisplayName(user) {
-    let name = '',
-        surname = '';
+function generateCSV(rows) {
+    let csv = '';
+    rows.forEach(function (rowArray) {
+        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
+            .join(',') + '\r\n';
+    });
+    return csv;
+}
 
-    switch (true) {
-        case _.has(user, 'displayName') && !_.isEmpty(user.displayName):
-            name = user.displayName;
-            break;
-        case _.has(user, 'name') && !_.isEmpty(user.name):
-            name = user.name;
-            break;
-        default:
-            name = '';
-            break;
-    }
 
-    switch (true) {
-        case _.has(user, 'displaySurname') && !_.isEmpty(user.displaySurname):
-            surname = user.displaySurname;
-            break;
-        case _.has(user, 'surname') && !_.isEmpty(user.surname):
-            surname = user.surname;
-            break;
-        default:
-            surname = '';
-            break;
-    }
+async function generateExcel(rawRows, sheetLabels = ['Sheet1']) {
+    const sheetsRows = _.cloneDeep(rawRows);
+    const workbook = new ExcelJS.Workbook();
+    sheetLabels.forEach((sheetLabel, i) => {
+        const rows = sheetsRows[i].map(a => a.map(v => v ? v : ''));
+        const sheet = workbook.addWorksheet(sheetLabel);
+        rows.forEach(row => sheet.addRow(row));
+    });
 
-    return _.trim(name + ' ' + surname);
+    return await workbook.xlsx.writeBuffer();
 }
 
 function bibtexInit() {
@@ -164,319 +159,6 @@ function bibtexInit() {
     };
 }
 
-function trainingModulesToCsv(researchItems) {
-    const rows = [[
-        'Title',
-        'Lecturer(s)',
-        'Year',
-        'Description/Abstract',
-        'Taught in a',
-        'The lecture is a',
-        'Title of the larger module',
-        'IIT contact person',
-        'Institution',
-        'PhD course',
-        'Hours',
-        'Number of sessions',
-        'Area(s)',
-        'Location',
-        'Delivery'
-    ]].concat(researchItems.map(ri => {
-        const researchItem = ri.toJSON();
-        const row = [];
-        row.push(researchItem.title);
-        row.push(researchItem.authorsStr);
-        row.push(researchItem.year);
-        row.push(researchItem.description);
-        row.push(researchItem.type.label);
-        row.push(researchItem.wholeModule ? 'free-standing module' : 'part of a larger module');
-        if (!researchItem.wholeModule) {
-            row.push(researchItem.generalModuleTitle);
-        } else {
-            row.push('/');
-        }
-
-        row.push(getDisplayName(researchItem.referent));
-        if (researchItem.type.key === 'training_module_summer_winter_school') {
-            row.push('/');
-            row.push('/');
-        } else {
-            if (researchItem.otherCourse) {
-                row.push('/');
-                row.push('Other');
-            } else {
-                row.push(researchItem.institute.name);
-                row.push(researchItem.phdCourse.name);
-            }
-        }
-        row.push(researchItem.hours);
-        row.push(researchItem.lectures);
-        const researchDomains = JSON.parse(researchItem.researchDomains);
-        row.push(researchDomains.join(','));
-        row.push(researchItem.location);
-        row.push(researchItem.delivery);
-
-        return row;
-    }));
-
-    return generateCSV(rows);
-}
-
-function accomplishmentsToCsv(researchItems) {
-    const rows = [[
-        'Title',
-        'Authors',
-        'Year',
-        'Year to',
-        'Issuer',
-        'Editorship role',
-        'Event type',
-        'Place',
-        'Description',
-        'Type',
-    ]].concat(researchItems.map(ri => {
-        const researchItem = ri.toJSON();
-        const row = [];
-        row.push(researchItem.title);
-        row.push(researchItem.authorsStr);
-        row.push(researchItem.year);
-        row.push(researchItem.yearTo);
-        row.push(researchItem.issuer);
-        row.push(researchItem.editorshipRole);
-        row.push(researchItem.eventType);
-        row.push(researchItem.place);
-        row.push(researchItem.description);
-        row.push(researchItem.type.label);
-
-        return row;
-    }));
-
-    return generateCSV(rows);
-}
-
-function agreementsToCsv(researchItems) {
-    const rows = [[
-        'Acronym',
-        'Title',
-        'Subject',
-        'Agreement type',
-        'Counterparts',
-        'Scientific coordinators',
-        'Author string',
-        'Start date',
-        'End date',
-        'Link'
-    ]].concat(researchItems.map(ri => {
-        const researchItem = ri.toJSON();
-        const row = [];
-        row.push(researchItem.acronym);
-        row.push(researchItem.title);
-        row.push(researchItem.projectData.subject);
-        row.push(researchItem.projectType);
-        row.push(researchItem.projectData.partners.map(p => p.institute + ' ' + p.department).join(', '));
-        row.push(researchItem.projectData.pis.map(pi => pi.surname + ' ' + pi.name).join(', '));
-        row.push(researchItem.authorsStr);
-        row.push(researchItem.startDate);
-        row.push(researchItem.endDate);
-        row.push(researchItem.projectData.link);
-
-        return row;
-    }));
-
-    return generateCSV(rows);
-}
-
-function projectsToCsv(researchItems) {
-    // Industrial projects
-    const industrialProjects = researchItems.filter(researchItem => researchItem.type.key === ResearchItemTypes.PROJECT_INDUSTRIAL);
-    const rowsIndustrial = [[
-        'Title',
-        'Type',
-        'Code',
-        'Start date',
-        'End date',
-        'Category',
-        'Payment',
-        'Status',
-        'Total contribution [EUR]',
-        'In cash contribution [EUR]',
-        'In kind contribution [EUR]'
-    ]].concat(industrialProjects.map(ri => {
-        const researchItem = ri.toJSON();
-        const row = [];
-        row.push(researchItem.title);
-        row.push(researchItem.type.label);
-        row.push(researchItem.code);
-        row.push(researchItem.startDate);
-        row.push(researchItem.endDate);
-        row.push(researchItem.category);
-        row.push(researchItem.payment);
-        row.push(researchItem.status);
-        row.push(formatValue(researchItem.totalContribution));
-        row.push(formatValue(researchItem.inCashContribution));
-        row.push(formatValue(researchItem.inKindContribution));
-
-        return row;
-    }));
-
-    let csvIndustrial = '';
-
-    rowsIndustrial.forEach(function (rowArray) {
-        csvIndustrial += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
-            .join(',') + '\r\n';
-    });
-
-    // Competitive projects
-    const competitiveProjects = researchItems.filter(researchItem => researchItem.type.key === ResearchItemTypes.PROJECT_COMPETITIVE);
-    const rowsCompetitive = [[
-        'Title',
-        'Type',
-        'Code',
-        'Acronym',
-        'Start date',
-        'End date',
-        'Funding type',
-        'Action type',
-        'Category',
-        'Payment',
-        'IIT role',
-        'Status',
-        'Institute budget [EUR]',
-        'Institute funding [EUR]'
-    ]].concat(competitiveProjects.map(ri => {
-        const researchItem = ri.toJSON();
-        const row = [];
-        row.push(researchItem.title);
-        row.push(researchItem.type.label);
-        row.push(researchItem.code);
-        row.push(researchItem.acronym);
-        row.push(researchItem.startDate);
-        row.push(researchItem.endDate);
-        row.push(researchItem.projectType);
-        row.push(researchItem.projectType2);
-        row.push(researchItem.category);
-        row.push(researchItem.payment);
-        row.push(researchItem.role);
-        row.push(researchItem.status);
-        row.push(formatValue(researchItem.projectData.instituteBudget));
-        row.push(formatValue(researchItem.projectData.instituteContribution));
-
-        return row;
-    }));
-
-    let csvCompetitive = '';
-
-    rowsCompetitive.forEach(function (rowArray) {
-        csvCompetitive += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
-            .join(',') + '\r\n';
-    });
-
-    const csv = {};
-    if (industrialProjects.length > 0) {
-        csv[ResearchItemTypes.PROJECT_INDUSTRIAL] = csvIndustrial;
-    }
-
-    if (competitiveProjects.length > 0) {
-        csv[ResearchItemTypes.PROJECT_COMPETITIVE] = csvCompetitive;
-    }
-
-    return csv;
-}
-
-function patentsToCsv(researchItems) {
-    const rows = [[
-        'Title',
-        'Docket',
-        'Application',
-        'Filing date',
-        'Priority',
-        'Inventors',
-        'Assignees',
-        'Research lines',
-        'Patent',
-        'Issue date',
-        'Publication number',
-        'Publication date',
-        'Abandoned expired assigned date',
-        'Priority pct expiration date',
-        'Espacenet URL',
-    ]].concat(researchItems.map(ri => {
-        const researchItem = ri.toJSON();
-        const row = [];
-
-        row.push(researchItem.patentData.title);
-        row.push(researchItem.familyDocket);
-        row.push(researchItem.patentData.application);
-        row.push(researchItem.patentData.filingDate);
-        row.push(researchItem.patentData.priority);
-        row.push(researchItem.patentData.inventors.map(i => i.surname + ' ' + i.name).join(', '));
-        row.push(researchItem.patentData.assignees.map(a => a.name).join(', '));
-        row.push(researchItem.patentData.researchLines.map(rl => rl.name).join(', '));
-        row.push(researchItem.patentData.patent);
-        row.push(researchItem.patentData.issueDate);
-        row.push(researchItem.patentData.publication);
-        row.push(researchItem.patentData.publicationDate);
-        row.push(researchItem.patentData.abandonedExpiredAssignedDate);
-        row.push(researchItem.patentData.priorityPctExpirationDate);
-        row.push(researchItem.patentData.espacenetUrl);
-
-        return row;
-    }));
-
-    return generateCSV(rows);
-}
-
-function documentsToCsv(documents) {
-    const rows = [[
-        'Authors',
-        'Title',
-        'Source',
-        'Year',
-        'DOI',
-        'Type',
-        'Source type',
-        'Citations',
-        'IF',
-        'SNIP',
-        'SJR',
-        'Reference'
-    ]].concat(documents.map(d => {
-        const document = d.toJSON();
-        const doc = [];
-        doc.push(document.authorsStr);
-        doc.push(document.title);
-
-        let source;
-        if (document.type === DocumentTypes.INVITED_TALK)
-            source = document.itSource;
-        else
-            source = document.source ? document.source.title : '';
-
-        doc.push(source);
-        doc.push(document.year);
-        doc.push(document.doi);
-        doc.push(document.documenttype ? document.documenttype.label : '');
-        doc.push(document.sourceTypeObj ? document.sourceTypeObj.label : '');
-        doc.push(Array.isArray(document.scopusCitations) ? document.scopusCitations.reduce((total, s) => total + s.value, 0) : '');
-        doc.push(document.IF);
-        doc.push(document.SNIP);
-        doc.push(document.SJR);
-
-        const reference = [
-            document.authorsStr,
-            document.title,
-            document.sourceDetails,
-            document.year,
-            document.doi
-        ];
-        doc.push(reference.filter(r => !_.isNil(r)).join(', '));
-
-        return doc;
-    }));
-
-    return generateCSV(rows);
-}
-
 
 function documentsToBibtex(documents) {
 
@@ -555,14 +237,4 @@ function getBibtexAuthors(doc) {
 function formatBibtex(key, fields, entryType) {
     const fieldsArr = Object.keys(fields).map(f => '  ' + f + '={' + lescape(fields[f]) + '}');
     return '@' + entryType + '{' + key + ',\n' + fieldsArr.join(',\n') + '\n}';
-}
-
-
-function generateCSV(rows) {
-    let csv = '';
-    rows.forEach(function (rowArray) {
-        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
-            .join(',') + '\r\n';
-    });
-    return csv;
 }

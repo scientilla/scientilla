@@ -1,4 +1,4 @@
-/* global angular */
+/* global angular, _ */
 (function () {
     angular.module("app").factory("ProjectService", controller);
 
@@ -16,6 +16,7 @@
         'Restangular',
         'EventsService',
         'ResearchEntitiesService',
+        'DownloadService',
         '$http',
         'ValidateService',
         'ModalService',
@@ -30,6 +31,7 @@
         Restangular,
         EventsService,
         ResearchEntitiesService,
+        DownloadService,
         $http,
         ValidateService,
         ModalService,
@@ -94,39 +96,17 @@
         async function getActions() {
             return await Restangular.all('projects').customGET('get-actions');
         }
+
         /* jshint ignore:end */
 
         function exportDownload(items, format = 'csv', url = projectExportUrl) {
             $http.post(url, {
                 format: format,
                 projectIds: items.map(d => d.id)
-            }).then((res) => {
-                if (_.has(res.data, projectTypeCompetitive)) {
-                    const element = document.createElement('a');
-                    element.setAttribute('href', 'data:text/csv;charset=UTF-8,' + encodeURIComponent(res.data[projectTypeCompetitive]));
-                    element.setAttribute('download', competitiveProjectDownloadFileName);
-
-                    element.style.display = 'none';
-                    document.body.appendChild(element);
-
-                    element.click();
-
-                    document.body.removeChild(element);
-                }
-
-                if (_.has(res.data, projectTypeIndustrial)) {
-                    const element = document.createElement('a');
-                    element.setAttribute('href', 'data:text/csv;charset=UTF-8,' + encodeURIComponent(res.data[projectTypeIndustrial]));
-                    element.setAttribute('download', industrialProjectDownloadFileName);
-
-                    element.style.display = 'none';
-                    document.body.appendChild(element);
-
-                    element.click();
-
-                    document.body.removeChild(element);
-                }
-            });
+            }, {responseType: 'arraybuffer'})
+                .then((res) => {
+                    DownloadService.download(res.data, 'competitive_projects', format);
+                });
         }
 
         function filterFields(project, fields) {
@@ -148,10 +128,16 @@
 
         /* jshint ignore:start */
         async function getAgreementOfGroup(group) {
-            const response = await Restangular.one('projects').get({where: {key: projectTypeAgreement, group: group.id}});
+            const response = await Restangular.one('projects').get({
+                where: {
+                    key: projectTypeAgreement,
+                    group: group.id
+                }
+            });
             const agreements = response.items;
             return Prototyper.toAgreementModel(agreements[0]);
         }
+
         /* jshint ignore:end */
 
         function onChange(structure, values, key) {
@@ -220,7 +206,7 @@
         }
 
         /* jshint ignore:start */
-        async function updateFilterQuery (query) {
+        async function updateFilterQuery(query) {
             if (_.has(query, 'where.type')) {
                 switch (query.where.type) {
                     case projectTypeIndustrial:
@@ -301,6 +287,7 @@
 
             return query;
         }
+
         /* jshint ignore:end */
     }
 })();

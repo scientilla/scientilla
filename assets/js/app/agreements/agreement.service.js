@@ -3,10 +3,11 @@
     angular.module("agreements").factory("AgreementService", controller);
 
     controller.$inject = [
-        '$http'
+        '$http',
+        'DownloadService'
     ];
 
-    function controller($http) {
+    function controller($http, DownloadService) {
         const service = {};
 
         service.getStatus = agreement => {
@@ -23,22 +24,14 @@
             return status;
         };
 
-        service.exportDownload = (items, filename, url, format = 'csv') => {
+        service.exportDownload = (items, url, format) => {
             $http.post(url, {
                 format: format,
                 projectIds: items.map(d => d.id)
-            }).then((res) => {
-                const element = document.createElement('a');
-                element.setAttribute('href', 'data:text/csv;charset=UTF-8,' + encodeURIComponent(res.data));
-                element.setAttribute('download', filename);
-
-                element.style.display = 'none';
-                document.body.appendChild(element);
-
-                element.click();
-
-                document.body.removeChild(element);
-            });
+            }, {responseType: 'arraybuffer'})
+                .then((res) => {
+                    DownloadService.download(res.data, 'agreements', format);
+                });
         };
 
         return service;

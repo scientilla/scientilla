@@ -1,4 +1,4 @@
-/* global require, Project,ResearchItemTypes, ResearchItemProjectCompetitive, ResearchItemProjectIndustrial, ResearchItemProjectAgreement, ResearchItemKinds, Group, GroupTypes, Utils  */
+/* global require, Project, Exporter, ResearchItemTypes, ResearchItemProjectCompetitive, ResearchItemProjectIndustrial, ResearchItemProjectAgreement, ResearchItemKinds, Group, GroupTypes, Utils  */
 'use strict';
 
 const _ = require('lodash');
@@ -251,17 +251,37 @@ module.exports = _.merge({}, BaseModel, {
                 surname: m.surname
             }));
     },
-    async export(projectIds, format, type = ResearchItemTypes.PROJECT) {
+    async export(projectIds, format) {
         const projects = await Project.find({id: projectIds})
             .populate([
                 'type',
             ]);
 
-        if (format === 'csv') {
-            if (type === ResearchItemTypes.PROJECT_AGREEMENT) {
-                return Exporter.agreementsToCsv(projects);
+        if (projects[0].typeKey === ResearchItemTypes.PROJECT_AGREEMENT) {
+            const rows = mapAgreements(projects);
+            if (format === 'csv') {
+                return Exporter.generateCSV(rows);
+            } else if (format === 'excel') {
+                return await Exporter.generateExcel([rows],['Agreements']);
             }
-            return Exporter.projectsToCsv(projects);
+        } else {
+            const rowsCompetitive = mapProjectsCompetitive(projects);
+            const rowsIndustrial = mapProjectsIndustrial(projects);
+            if (format === 'csv') {
+                return Exporter.generateCSV([...rowsCompetitive, ...rowsIndustrial]);
+            } else if (format === 'excel') {
+                const sheets = [];
+                const data = [];
+                if (rowsIndustrial.length > 0) {
+                    sheets.push('Industrial Prjects');
+                    data.push(rowsIndustrial);
+                }
+                if (rowsCompetitive.length > 0) {
+                    sheets.push('Competitive Prjects');
+                    data.push(rowsCompetitive);
+                }
+                return Exporter.generateExcel(data, sheets);
+            }
         }
 
         throw {
@@ -296,3 +316,110 @@ module.exports = _.merge({}, BaseModel, {
     }
 });
 
+function mapProjectsCompetitive(researchItems) {
+    const competitiveProjects = researchItems.filter(researchItem => researchItem.type.key === ResearchItemTypes.PROJECT_COMPETITIVE);
+    if (!competitiveProjects.length) return [];
+    return [[
+        'Title',
+        'Type',
+        'Code',
+        'Acronym',
+        'Start date',
+        'End date',
+        'Funding type',
+        'Action type',
+        'Category',
+        'Payment',
+        'IIT role',
+        'Status',
+        'Institute budget [EUR]',
+        'Institute funding [EUR]'
+    ]].concat(competitiveProjects.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+        row.push(researchItem.title);
+        row.push(researchItem.type.label);
+        row.push(researchItem.code);
+        row.push(researchItem.acronym);
+        row.push(researchItem.startDate);
+        row.push(researchItem.endDate);
+        row.push(researchItem.projectType);
+        row.push(researchItem.projectType2);
+        row.push(researchItem.category);
+        row.push(researchItem.payment);
+        row.push(researchItem.role);
+        row.push(researchItem.status);
+        row.push(formatValue(researchItem.projectData.instituteBudget));
+        row.push(formatValue(researchItem.projectData.instituteContribution));
+
+        return row;
+    }));
+}
+
+function mapProjectsIndustrial(researchItems) {
+    const industrialProjects = researchItems.filter(researchItem => researchItem.type.key === ResearchItemTypes.PROJECT_INDUSTRIAL);
+    if (!industrialProjects.length) return [];
+    return [[
+        'Title',
+        'Type',
+        'Code',
+        'Start date',
+        'End date',
+        'Category',
+        'Payment',
+        'Status',
+        'Total contribution [EUR]',
+        'In cash contribution [EUR]',
+        'In kind contribution [EUR]'
+    ]].concat(industrialProjects.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+        row.push(researchItem.title);
+        row.push(researchItem.type.label);
+        row.push(researchItem.code);
+        row.push(researchItem.startDate);
+        row.push(researchItem.endDate);
+        row.push(researchItem.category);
+        row.push(researchItem.payment);
+        row.push(researchItem.status);
+        row.push(formatValue(researchItem.totalContribution));
+        row.push(formatValue(researchItem.inCashContribution));
+        row.push(formatValue(researchItem.inKindContribution));
+
+        return row;
+    }));
+}
+
+function mapAgreements(researchItems) {
+    return [[
+        'Acronym',
+        'Title',
+        'Subject',
+        'Agreement type',
+        'Counterparts',
+        'Scientific coordinators',
+        'Author string',
+        'Start date',
+        'End date',
+        'Link'
+    ]].concat(researchItems.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+        row.push(researchItem.acronym);
+        row.push(researchItem.title);
+        row.push(researchItem.projectData.subject);
+        row.push(researchItem.projectType);
+        row.push(researchItem.projectData.partners.map(p => p.institute + ' ' + p.department).join(', '));
+        row.push(researchItem.projectData.pis.map(pi => pi.surname + ' ' + pi.name).join(', '));
+        row.push(researchItem.authorsStr);
+        row.push(researchItem.startDate);
+        row.push(researchItem.endDate);
+        row.push(researchItem.projectData.link);
+
+        return row;
+    }));
+}
+
+function formatValue(value) {
+    return new Intl.NumberFormat('en-US', {minimumFractionDigits: 2}).format(value);
+}

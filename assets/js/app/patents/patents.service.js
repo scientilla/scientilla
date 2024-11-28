@@ -5,13 +5,15 @@
     controller.$inject = [
         'ResearchEntitiesService',
         '$http',
-        'context'
+        'context',
+        'DownloadService'
     ];
 
     function controller(
         ResearchEntitiesService,
         $http,
-        context
+        context,
+        DownloadService
     ) {
 
         return {
@@ -37,25 +39,17 @@
                 await context.refreshSubResearchEntity();
             }
         }
+
         /* jshint ignore:end */
 
         function exportDownload(patents, format = 'csv') {
-            const filename = 'Patents_Export.csv';
             $http.post('/api/v1/patents/export', {
                 format: format,
                 patentIds: patents.map(d => d.id)
-            }).then((res) => {
-                const element = document.createElement('a');
-                element.setAttribute('href', 'data:text/csv;charset=UTF-8,' + encodeURIComponent(res.data));
-                element.setAttribute('download', filename);
-
-                element.style.display = 'none';
-                document.body.appendChild(element);
-
-                element.click();
-
-                document.body.removeChild(element);
-            });
+            }, {responseType: 'arraybuffer'})
+                .then((res) => {
+                    DownloadService.download(res.data, 'patents', format);
+                });
         }
 
         function handleQuery(query) {

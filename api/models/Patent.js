@@ -1,4 +1,4 @@
-/* global require, Patent, ResearchItemTypes, ResearchItemPatent, ResearchItemKinds  */
+/* global require, Patent, Exporter, ResearchItemTypes, ResearchItemPatent, ResearchItemKinds  */
 'use strict';
 
 const _ = require('lodash');
@@ -165,7 +165,7 @@ module.exports = _.merge({}, BaseModel, {
 
         const copies = await Patent.find({
             code: patent.code,
-            kind:ResearchItemKinds.VERIFIED
+            kind: ResearchItemKinds.VERIFIED
         });
 
         if (copies.length > 1)
@@ -180,12 +180,14 @@ module.exports = _.merge({}, BaseModel, {
         });
     },
     async export(patentIds, format) {
-        const patents = await Patent.find({id: patentIds})
-            .populate([
-            ]);
+        const patents = await Patent.find({id: patentIds});
 
-        if (format === 'csv')
-            return Exporter.patentsToCsv(patents);
+        const rows = mapPatents(patents);
+        if (format === 'csv') {
+            return Exporter.generateCSV(rows);
+        } else if (format === 'excel') {
+            return await Exporter.generateExcel([rows], ['Patents']);
+        }
 
         throw {
             success: false,
@@ -195,3 +197,43 @@ module.exports = _.merge({}, BaseModel, {
 });
 
 
+function mapPatents(researchItems) {
+    return [[
+        'Title',
+        'Docket',
+        'Application',
+        'Filing date',
+        'Priority',
+        'Inventors',
+        'Assignees',
+        'Research lines',
+        'Patent',
+        'Issue date',
+        'Publication number',
+        'Publication date',
+        'Abandoned expired assigned date',
+        'Priority pct expiration date',
+        'Espacenet URL',
+    ]].concat(researchItems.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+
+        row.push(researchItem.patentData.title);
+        row.push(researchItem.familyDocket);
+        row.push(researchItem.patentData.application);
+        row.push(researchItem.patentData.filingDate);
+        row.push(researchItem.patentData.priority);
+        row.push(researchItem.patentData.inventors.map(i => i.surname + ' ' + i.name).join(', '));
+        row.push(researchItem.patentData.assignees.map(a => a.name).join(', '));
+        row.push(researchItem.patentData.researchLines.map(rl => rl.name).join(', '));
+        row.push(researchItem.patentData.patent);
+        row.push(researchItem.patentData.issueDate);
+        row.push(researchItem.patentData.publication);
+        row.push(researchItem.patentData.publicationDate);
+        row.push(researchItem.patentData.abandonedExpiredAssignedDate);
+        row.push(researchItem.patentData.priorityPctExpirationDate);
+        row.push(researchItem.patentData.espacenetUrl);
+
+        return row;
+    }));
+}

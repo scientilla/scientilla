@@ -8,7 +8,8 @@
         'context',
         'trainingModuleRequiredFields',
         'trainingModuleFieldsRules',
-        'ValidateService'
+        'ValidateService',
+        'DownloadService'
     ];
 
     function controller(
@@ -17,7 +18,8 @@
         context,
         trainingModuleRequiredFields,
         trainingModuleFieldsRules,
-        ValidateService
+        ValidateService,
+        DownloadService
     ) {
         const fields = [
             'id',
@@ -63,22 +65,13 @@
         };
 
         function exportDownload(trainingModules, format = 'csv') {
-            const filename = 'Training_Modules_Export.csv';
             $http.post('/api/v1/training-modules/export', {
                 format: format,
                 trainingModuleIds: trainingModules.map(d => d.id)
-            }).then((res) => {
-                const element = document.createElement('a');
-                element.setAttribute('href', 'data:text/csv;charset=UTF-8,' + encodeURIComponent(res.data));
-                element.setAttribute('download', filename);
-
-                element.style.display = 'none';
-                document.body.appendChild(element);
-
-                element.click();
-
-                document.body.removeChild(element);
-            });
+            }, {responseType: 'arraybuffer'})
+                .then((res) => {
+                    DownloadService.download(res.data, 'training-modules', format);
+                });
         }
 
         function filterFields(trainingModule) {

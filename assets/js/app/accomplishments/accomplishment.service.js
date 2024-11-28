@@ -8,6 +8,7 @@
         'ResearchEntitiesService',
         'ValidateService',
         'ResearchItemTypesService',
+        'DownloadService',
         'researchItemKinds',
         'accomplishmentFieldsRules',
         'accomplishmentOrigins',
@@ -19,6 +20,7 @@
                         ResearchEntitiesService,
                         ValidateService,
                         ResearchItemTypesService,
+                        DownloadService,
                         researchItemKinds,
                         accomplishmentFieldsRules,
                         accomplishmentOrigins,
@@ -75,26 +77,16 @@
                 await context.refreshSubResearchEntity();
             }
         }
-
         /* jshint ignore:end */
 
         function exportDownload(accomplishments, format) {
-            const filename = format === 'csv' ? 'Accomplishments_Export.csv' : 'Accomplishments_Export.bib';
             $http.post('/api/v1/accomplishments/export', {
                 format: format,
                 accomplishmentIds: accomplishments.map(d => d.id)
-            }).then((res) => {
-                const element = document.createElement('a');
-                element.setAttribute('href', 'data:text/csv;charset=UTF-8,' + encodeURIComponent(res.data));
-                element.setAttribute('download', filename);
-
-                element.style.display = 'none';
-                document.body.appendChild(element);
-
-                element.click();
-
-                document.body.removeChild(element);
-            });
+            }, {responseType: 'arraybuffer'})
+                .then((res) => {
+                    DownloadService.download(res.data, 'accomplishments', format);
+                });
         }
 
         function isValid(accomplishment) {

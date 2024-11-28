@@ -47,9 +47,6 @@ const competitiveProjectFundings = {
     'Unknown project type': 'Unknown'
 };
 
-const competitiveProjectDownloadFileName = 'Competitive_Projects_Export.csv';
-const industrialProjectDownloadFileName = 'Industrial_Projects_Export.csv';
-
 const projectExportUrl = '/api/v1/projects/export';
 
 angular.module('app')

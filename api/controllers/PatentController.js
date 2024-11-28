@@ -1,12 +1,11 @@
+/* global Patent, Exporter */
+
 module.exports = {
     async export(req, res) {
-        let patentIds = req.body.patentIds;
+        const patentIds = Array.isArray(req.body.patentIds) ? req.body.patentIds : [req.body.patentIds];
         const format = req.body.format;
 
-        if (!Array.isArray(patentIds))
-            patentIds = [patentIds];
 
-        res.halt(Patent.export(patentIds, format), {dataType: 'file'});
+        Exporter.exportDownload(Patent, res, patentIds, format);
     }
-
 };

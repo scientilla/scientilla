@@ -34,6 +34,7 @@
         vm.unverify = ProjectService.unverify;
         vm.isUnverifying = ResearchItemService.isUnverifying;
         vm.onFilter = onFilter;
+        vm.exportExcelDownload = projects => ProjectService.exportDownload(projects, 'excel');
         vm.exportDownload = projects => ProjectService.exportDownload(projects, 'csv');
         vm.onChange = onChange;
         vm.showActions = showActions;

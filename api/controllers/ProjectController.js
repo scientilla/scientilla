@@ -1,4 +1,4 @@
-/* global Project*/
+/* global Project, Exporter*/
 
 module.exports = {
     async generateGroup(req, res) {
@@ -10,7 +10,7 @@ module.exports = {
         const projectIds = Array.isArray(req.body.projectIds) ? req.body.projectIds : [req.body.projectIds];
         const format = req.body.format;
 
-        res.halt(Project.export(projectIds, format), {dataType: 'file'});
+        Exporter.exportDownload(Project, res, projectIds, format);
     },
     async getActions(req, res) {
         const results = await SqlService.query('SELECT DISTINCT project_type_2 FROM project WHERE project_type_2 IS NOT NULL ORDER BY project_type_2 ASC');

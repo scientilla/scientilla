@@ -197,7 +197,7 @@ module.exports = _.merge({}, BaseModel, {
         draftGroupCreator: {
             model: 'Group'
         },
-        //phd thesis only fields
+        //PhD thesis only fields
         isPhdThesisInstitutional: {
             columnName: 'is_phd_thesis_institutional',
             type: 'BOOLEAN'
@@ -664,9 +664,13 @@ module.exports = _.merge({}, BaseModel, {
 
         documents = _.orderBy(documents, ['year', 'title'], ['desc', 'asc']);
 
-        if (format === 'csv')
-            return Exporter.documentsToCsv(documents);
-        else if (format === 'bibtex')
+        if (format === 'csv') {
+            const rows = mapDocuments(documents);
+            return Exporter.generateCSV(rows);
+        } else if (format === 'excel') {
+            const rows = mapDocuments(documents);
+            return await Exporter.generateExcel([rows], ['Documents']);
+        } else if (format === 'bibtex')
             return Exporter.documentsToBibtex(documents);
     },
     beforeCreate: async (document, cb) => {
@@ -709,3 +713,53 @@ module.exports = _.merge({}, BaseModel, {
         return document;
     }
 });
+
+
+function mapDocuments(documents) {
+    return [[
+        'Authors',
+        'Title',
+        'Source',
+        'Year',
+        'DOI',
+        'Type',
+        'Source type',
+        'Citations',
+        'IF',
+        'SNIP',
+        'SJR',
+        'Reference'
+    ]].concat(documents.map(d => {
+        const document = d.toJSON();
+        const doc = [];
+        doc.push(document.authorsStr);
+        doc.push(document.title);
+
+        let source;
+        if (document.type === DocumentTypes.INVITED_TALK)
+            source = document.itSource;
+        else
+            source = document.source ? document.source.title : '';
+
+        doc.push(source);
+        doc.push(document.year);
+        doc.push(document.doi);
+        doc.push(document.documenttype ? document.documenttype.label : '');
+        doc.push(document.sourceTypeObj ? document.sourceTypeObj.label : '');
+        doc.push(Array.isArray(document.scopusCitations) ? document.scopusCitations.reduce((total, s) => total + s.value, 0) : '');
+        doc.push(document.IF);
+        doc.push(document.SNIP);
+        doc.push(document.SJR);
+
+        const reference = [
+            document.authorsStr,
+            document.title,
+            document.sourceDetails,
+            document.year,
+            document.doi
+        ];
+        doc.push(reference.filter(r => !_.isNil(r)).join(', '));
+
+        return doc;
+    }));
+}

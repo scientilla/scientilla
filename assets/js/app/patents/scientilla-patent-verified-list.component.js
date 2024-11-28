@@ -34,6 +34,7 @@
         vm.unverify = PatentService.unverify;
         vm.isUnverifying = ResearchItemService.isUnverifying;
         vm.onFilter = onFilter;
+        vm.exportExcelDownload = patents => PatentService.exportDownload(patents, 'excel');
         vm.exportDownload = patents => PatentService.exportDownload(patents, 'csv');
         vm.showActions = showActions;
 

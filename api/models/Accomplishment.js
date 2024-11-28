@@ -1,5 +1,6 @@
-/* global require, Accomplishment, ResearchItemAward, ResearchItemEditorship, ResearchItemEventOrganization, ResearchItemTypes, ResearchItemKinds, Institute */
+/* global require, Accomplishment, Exporter, ResearchItemAward, ResearchItemEditorship, ResearchItemEventOrganization, ResearchItemTypes, ResearchItemKinds, Institute */
 'use strict';
+const _ = require('lodash');
 
 const BaseModel = require("../lib/BaseModel.js");
 
@@ -150,8 +151,13 @@ module.exports = _.merge({}, BaseModel, {
 
         accomplishments = _.orderBy(accomplishments, ['year', 'title'], ['desc', 'asc']);
 
-        if (format === 'csv')
-            return Exporter.accomplishmentsToCsv(accomplishments);
+        if (format === 'csv') {
+            const rows = mapAccomplishments(accomplishments);
+            return Exporter.generateCSV(rows);
+        } else if (format === 'excel') {
+            const rows = mapAccomplishments(accomplishments);
+            return await Exporter.generateExcel([rows], ['Accomplishments']);
+        }
 
         throw {
             success: false,
@@ -159,5 +165,37 @@ module.exports = _.merge({}, BaseModel, {
         };
     },
 });
+
+
+function mapAccomplishments(researchItems) {
+    return [[
+        'Title',
+        'Authors',
+        'Year',
+        'Year to',
+        'Issuer',
+        'Editorship role',
+        'Event type',
+        'Place',
+        'Description',
+        'Type',
+    ]].concat(researchItems.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+        row.push(researchItem.title);
+        row.push(researchItem.authorsStr);
+        row.push(researchItem.year);
+        row.push(researchItem.yearTo);
+        row.push(researchItem.issuer);
+        row.push(researchItem.editorshipRole);
+        row.push(researchItem.eventType);
+        row.push(researchItem.place);
+        row.push(researchItem.description);
+        row.push(researchItem.type.label);
+
+        return row;
+    }));
+}
+
 
 

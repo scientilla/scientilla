@@ -1,3 +1,4 @@
+/* globals _, angular */
 (function () {
     "use strict";
 
@@ -8,6 +9,7 @@
         'researchEntityService',
         'ModalService',
         'EventsService',
+        'DownloadService',
         'DocumentLabels',
         'DocumentKinds',
         '$q',
@@ -16,10 +18,10 @@
         'documentCategories'
     ];
 
-    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, DocumentLabels, DocumentKinds, $q, $http, documentActions, documentCategories) {
+    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, DownloadService, DocumentLabels, DocumentKinds, $q, $http, documentActions, documentCategories) {
         return {
             create: function (researchEntity, reService) {
-                var service = {};
+                const service = {};
 
                 service.unverifyDocument = unverifyDocument;
                 service.deleteDraft = deleteDraft;
@@ -46,7 +48,7 @@
                 return service;
 
                 function deleteDrafts(drafts) {
-                    var draftIds = _.map(drafts, 'id');
+                    const draftIds = _.map(drafts, 'id');
                     researchEntityService
                         .deleteDrafts(researchEntity, draftIds)
                         .then(function (results) {
@@ -212,22 +214,13 @@
                 }
 
                 function exportDocuments(documents, format) {
-                    const filename = format === 'csv' ? 'Export.csv' : 'Export.bib';
                     $http.post('/api/v1/documents/export', {
                         format: format,
                         documentIds: documents.map(d => d.id)
-                    }).then((res) => {
-                        const element = document.createElement('a');
-                        element.setAttribute('href', 'data:text/csv;charset=UTF-8,' + encodeURIComponent(res.data));
-                        element.setAttribute('download', filename);
-
-                        element.style.display = 'none';
-                        document.body.appendChild(element);
-
-                        element.click();
-
-                        document.body.removeChild(element);
-                    });
+                    }, {responseType: 'arraybuffer'})
+                        .then((res) => {
+                            DownloadService.download(res.data, 'documents', format);
+                        });
                 }
 
                 function verifyDocuments(documents) {
@@ -561,7 +554,7 @@
                                     // Unverify the similar document & verify the source document
                                     response = await service.removeVerify(sourceDocument, similarDocument);
 
-                                    // Check if verification is been canceled
+                                    // Check if verification has been canceled
                                     if (response.buttonIndex === 0) {
                                         action = documentActions.CANCEL;
                                     }
@@ -624,7 +617,7 @@
                                     // Unverify the similar document & verify the source document
                                     response = await service.removeVerify(sourceDocument, similarDocument);
 
-                                    // Check if verification is been canceled
+                                    // Check if verification has been canceled
                                     if (response.buttonIndex === 0) {
                                         action = documentActions.CANCEL;
                                     }
@@ -697,7 +690,7 @@
 
                             break;
 
-                        // If the source document is a external document
+                        // If the source document is an external document
                         case documentCategories.EXTERNAL:
                             buttonLabels = {};
                             buttonLabels[documentActions.EXTERNAL.VERIFY] = documentActions.EXTERNAL.VERIFY;

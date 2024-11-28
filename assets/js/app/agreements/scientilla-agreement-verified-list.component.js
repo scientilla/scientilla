@@ -39,7 +39,8 @@
         vm.agreements = [];
         vm.onFilter = onFilter;
         vm.unverify = (agreement) => ProjectService.unverify(vm.researchEntity, agreement);
-        vm.exportDownload = agreements => AgreementService.exportDownload(agreements, agreementDownloadFileName, agreementExportUrl, 'csv');
+        vm.exportDownload = agreements => AgreementService.exportDownload(agreements, agreementExportUrl, 'csv');
+        vm.exportDownloadExcel = agreements => AgreementService.exportDownload(agreements, agreementExportUrl, 'excel');
         vm.subResearchEntity = context.getSubResearchEntity();
 
         let query = {

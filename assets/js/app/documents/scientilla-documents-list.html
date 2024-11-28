@@ -9,8 +9,13 @@
     <scientilla-multicheck>
         <buttons>
             <scientilla-multicheck-button
-                subject="Export as CSV"
-                on-click="vm.exportCsvDocuments">
+                    subject="Export as Excel"
+                    on-click="vm.exportExcelDocuments">
+                <i class="fas fa-download fa-left"></i>Export as Excel
+            </scientilla-multicheck-button>
+            <scientilla-multicheck-button
+                    subject="Export as CSV"
+                    on-click="vm.exportCsvDocuments">
                 <i class="fas fa-download fa-left"></i>Export as CSV
             </scientilla-multicheck-button>
             <scientilla-multicheck-button

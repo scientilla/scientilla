@@ -168,22 +168,115 @@ module.exports = _.merge({}, BaseModel, {
         return false;
     },
     async export(trainingModulesIds, format) {
-        let trainingModules = await TrainingModule.find({id: trainingModulesIds}).populate([
-            'type',
-            'referent',
-            'institute',
-            'phdCourse'
-        ]);
+        let trainingModules = await TrainingModule
+            .find({id: trainingModulesIds}).populate([
+                'type',
+                'referent',
+                'institute',
+                'phdCourse'
+            ]);
 
         trainingModules = _.orderBy(trainingModules, ['year', 'title'], ['desc', 'asc']);
 
-        if (format === 'csv')
-            return Exporter.trainingModulesToCsv(trainingModules);
+
+        const rows = mapTrainingModules(trainingModules);
+        if (format === 'csv') {
+            return Exporter.generateCSV(rows);
+        } else if (format === 'excel') {
+            return await Exporter.generateExcel([rows], ['Training modules']);
+        }
 
         throw {
             success: false,
             message: 'Format not supported'
         };
-    }
+    },
 });
 
+
+function mapTrainingModules(researchItems) {
+    return [[
+        'Title',
+        'Lecturer(s)',
+        'Year',
+        'Description/Abstract',
+        'Taught in a',
+        'The lecture is a',
+        'Title of the larger module',
+        'IIT contact person',
+        'Institution',
+        'PhD course',
+        'Hours',
+        'Number of sessions',
+        'Area(s)',
+        'Location',
+        'Delivery'
+    ]].concat(researchItems.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+        row.push(researchItem.title);
+        row.push(researchItem.authorsStr);
+        row.push(researchItem.year);
+        row.push(researchItem.description);
+        row.push(researchItem.type.label);
+        row.push(researchItem.wholeModule ? 'free-standing module' : 'part of a larger module');
+        if (!researchItem.wholeModule) {
+            row.push(researchItem.generalModuleTitle);
+        } else {
+            row.push('/');
+        }
+
+        row.push(getDisplayName(researchItem.referent));
+        if (researchItem.type.key === 'training_module_summer_winter_school') {
+            row.push('/');
+            row.push('/');
+        } else {
+            if (researchItem.otherCourse) {
+                row.push('/');
+                row.push('Other');
+            } else {
+                row.push(researchItem.institute.name);
+                row.push(researchItem.phdCourse.name);
+            }
+        }
+        row.push(researchItem.hours);
+        row.push(researchItem.lectures);
+        const researchDomains = JSON.parse(researchItem.researchDomains);
+        row.push(researchDomains.join(','));
+        row.push(researchItem.location);
+        row.push(researchItem.delivery);
+
+        return row;
+    }));
+}
+
+function getDisplayName(user) {
+    let name,
+        surname;
+
+    switch (true) {
+        case _.has(user, 'displayName') && !_.isEmpty(user.displayName):
+            name = user.displayName;
+            break;
+        case _.has(user, 'name') && !_.isEmpty(user.name):
+            name = user.name;
+            break;
+        default:
+            name = '';
+            break;
+    }
+
+    switch (true) {
+        case _.has(user, 'displaySurname') && !_.isEmpty(user.displaySurname):
+            surname = user.displaySurname;
+            break;
+        case _.has(user, 'surname') && !_.isEmpty(user.surname):
+            surname = user.surname;
+            break;
+        default:
+            surname = '';
+            break;
+    }
+
+    return _.trim(name + ' ' + surname);
+}

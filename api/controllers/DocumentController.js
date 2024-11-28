@@ -1,4 +1,4 @@
-/* global Document */
+/* global Document, Exporter */
 "use strict";
 
 /**
@@ -26,13 +26,10 @@ module.exports = {
         res.halt(Document.externalSearch(origin, searchKey, searchValue));
     },
     async export(req, res) {
-        let documentIds = req.body.documentIds;
+        const documentIds = Array.isArray(req.body.documentIds) ? req.body.documentIds : [req.body.documentIds];
         const format = req.body.format;
 
-        if (!Array.isArray(documentIds))
-            documentIds = [documentIds];
-
-        res.halt(Document.export(documentIds, format), {dataType: 'file'});
+        Exporter.exportDownload(Document, res, documentIds, format);
     }
 };
 
