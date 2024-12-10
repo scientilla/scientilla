@@ -188,7 +188,7 @@ async function run() {
                 upToDateCenters.push(group);
             } else {
                 // If they are not equal, update the group
-                group = await Group.update({ id: group.id }, {
+                group = await Group.update({id: group.id}, {
                     code: center.code,
                     name: center.name,
                     type: GroupTypes.CENTER,
@@ -370,10 +370,12 @@ async function run() {
                     // Loop over the structure pis
                     for (const structurePi of pis) {
                         // Find the pi user in the database
-                        const user = await User.findOne({or:[
-                            {username: structurePi.email},
-                            {legacyEmail: structurePi.email}
-                        ]});
+                        const user = await User.findOne({
+                            or: [
+                                {username: structurePi.email},
+                                {legacyEmail: structurePi.email}
+                            ]
+                        });
 
                         // Skip if the user is not found
                         if (!user) {
@@ -621,10 +623,12 @@ async function run() {
                     // Loop over the structure pis
                     for (const structurePi of pis) {
                         // Find the pi user
-                        const user = await User.findOne({or:[
-                            {username: structurePi.email},
-                            {legacyEmail: structurePi.email}
-                        ]});
+                        const user = await User.findOne({
+                            or: [
+                                {username: structurePi.email},
+                                {legacyEmail: structurePi.email}
+                            ]
+                        });
 
                         // Skip if not found
                         if (!user) {
@@ -697,7 +701,10 @@ async function run() {
                 // If the research entity is not found
                 if (!researchEntityData) {
                     // Create a new record
-                    researchEntityData = await ResearchEntityData.create({researchEntity: group.researchEntity, importedData: {matrix: fullMatrixStructure}});
+                    researchEntityData = await ResearchEntityData.create({
+                        researchEntity: group.researchEntity,
+                        importedData: {matrix: fullMatrixStructure}
+                    });
 
                     // Push to an array to log later
                     createdStructureResearchEntityData.push(researchEntityData);
@@ -725,8 +732,11 @@ async function run() {
         if (skippedStructures.length > 0) {
             const codes = skippedStructures.map(s => s.cdr);
             for (const code of codes) {
-                await Group.destroy({
-                    code: code
+                await Group.update({
+                    code: code,
+                    active: true
+                }, {
+                    active: false
                 });
             }
         }
