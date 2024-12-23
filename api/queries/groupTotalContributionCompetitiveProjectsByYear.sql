@@ -1,181 +1,106 @@
-WITH RECURSIVE subg(parent_group, child_group, level) AS (
-    SELECT
-        mg.parent_group,
-        mg.child_group,
-        1 AS level
-    FROM membershipgroup mg
-    UNION
-    SELECT
-        mg.parent_group,
-        sg.child_group,
-        level + 1 AS level
-    FROM membershipgroup mg
-        JOIN subg sg ON mg.child_group = sg.parent_group
-), unique_years AS (
-    SELECT DISTINCT years.year
-    FROM (
-        SELECT
-            substring(research_lines ->> 'startDate' from 1 for 4) :: NUMERIC as YEAR
-        FROM "research_item_project_competitive" ripc
-            JOIN verify v ON ripc.research_item = v.research_item
-            JOIN "group" g ON v.research_entity = g.research_entity
-            JOIN (
-                select
-                    ripc.id as project_id,
-                    jsonb_array_elements(ripc.project_data -> 'researchLines') as research_lines
-                FROM "research_item_project_competitive" ripc
-                GROUP BY ripc.id
-            ) sub on project_id = ripc.id
-        WHERE (
-            g.id = $1 OR
-            g.research_entity = ANY(
-                SELECT tmp_g.research_entity as research_entity
-                FROM subg sg
-                JOIN "group" tmp_g on tmp_g.id = sg.child_group
-                WHERE sg.parent_group = g.id
-            )
-        ) AND (
-            research_lines @> ANY(
-                ARRAY(
-                    SELECT json_build_object('code', tmp_g.code)::jsonb as code
-                    FROM subg sg
-                    JOIN "group" tmp_g on tmp_g.id = sg.child_group
-                    WHERE sg.parent_group = g.id
-                )::jsonb[]
-            ) OR
-            research_lines @> json_build_object('code', g.code)::jsonb
-        ) AND ripc.project_data ->> 'type' != 'In Kind'
+WITH selected_group AS (SELECT *
+                        FROM "group"
+                        WHERE id = $1),
+     institute_data AS (SELECT EXTRACT(YEAR FROM COALESCE(
+             NULLIF(ripc.project_data ->> 'instituteStartDate', '')::date,
+             '1970-01-01'::date)) AS year,
 
-        UNION
+                               SUM(CASE
+                                       WHEN COALESCE(ripc.project_data ->> 'type', '') <> 'In Kind'
+                                           THEN COALESCE((ripc.project_data ->> 'instituteContribution')::numeric,
+                                                         0)
+                                       ELSE 0
+                                   END
+                               )  AS in_cash_contribution,
 
-        SELECT
-            substring(research_lines ->> 'startDate' from 1 for 4) :: NUMERIC as YEAR
-        FROM "research_item_project_competitive" ripc
-            JOIN verify v ON ripc.research_item = v.research_item
-            JOIN "group" g ON v.research_entity = g.research_entity
-            JOIN (
-                select
-                    ripc.id as project_id,
-                    jsonb_array_elements(ripc.project_data -> 'researchLines') as research_lines
-                FROM "research_item_project_competitive" ripc
-                GROUP BY ripc.id
-            ) sub on project_id = ripc.id
-        WHERE (
-            g.id = $1 OR
-            g.research_entity = ANY(
-                SELECT tmp_g.research_entity as research_entity
-                FROM subg sg
-                JOIN "group" tmp_g on tmp_g.id = sg.child_group
-                WHERE sg.parent_group = g.id
-            )
-        ) AND (
-            research_lines @> ANY(
-                ARRAY(
-                    SELECT json_build_object('code', tmp_g.code)::jsonb as code
-                    FROM subg sg
-                    JOIN "group" tmp_g on tmp_g.id = sg.child_group
-                    WHERE sg.parent_group = g.id
-                )::jsonb[]
-            ) OR
-            research_lines @> json_build_object('code', g.code)::jsonb
-        ) AND ripc.project_data ->> 'type' = 'In Kind'
-    ) years
-)
+                               SUM(CASE
+                                       WHEN COALESCE(ripc.project_data ->> 'type', '') = 'In Kind'
+                                           THEN COALESCE((ripc.project_data ->> 'instituteContribution')::numeric,
+                                                         0)
+                                       ELSE 0
+                                   END
+                               )  AS in_kind_contribution
 
-SELECT
-    unique_years.year as year,
-    COALESCE(SUM(icc.in_cash_contribution), 0) as in_cash_contribution,
-    COALESCE(SUM(ikc.in_kind_contribution), 0) AS in_kind_contribution,
-    COALESCE(SUM(icc.in_cash_contribution), 0) + COALESCE(SUM(ikc.in_kind_contribution), 0) as contribution
-FROM unique_years
-FULL JOIN (
-    select
-        unique_years.year as year,
-        COALESCE(SUM(icc.in_cash_contribution), 0) as in_cash_contribution
-    from unique_years
-    JOIN (
-        SELECT
-            substring(research_lines ->> 'startDate' from 1 for 4) :: NUMERIC as YEAR,
-            SUM((research_lines ->> 'contribution') :: NUMERIC) as in_cash_contribution
-        FROM "research_item_project_competitive" ripc
-            JOIN verify v ON ripc.research_item = v.research_item
-            JOIN "group" g ON v.research_entity = g.research_entity
-            JOIN (
-                select
-                    ripc.id as project_id,
-                    jsonb_array_elements(ripc.project_data -> 'researchLines') as research_lines
-                FROM "research_item_project_competitive" ripc
-                GROUP BY ripc.id
-            ) sub on project_id = ripc.id
-        WHERE (
-            g.id = $1 OR
-            g.research_entity = ANY(
-                SELECT tmp_g.research_entity as research_entity
-                FROM subg sg
-                JOIN "group" tmp_g on tmp_g.id = sg.child_group
-                WHERE sg.parent_group = g.id
-            )
-        ) AND (
-            research_lines @> ANY(
-                ARRAY(
-                    SELECT json_build_object('code', tmp_g.code)::jsonb as code
-                    FROM subg sg
-                    JOIN "group" tmp_g on tmp_g.id = sg.child_group
-                    WHERE sg.parent_group = g.id
-                )::jsonb[]
-            ) OR
-            research_lines @> json_build_object('code', g.code)::jsonb
-        ) AND ripc.project_data ->> 'type' != 'In Kind'
-        GROUP BY YEAR, research_lines
-        ORDER BY YEAR
-    ) icc ON icc.year = unique_years.year
-    GROUP BY unique_years.year
-) icc ON icc.year = unique_years.year
-FULL JOIN (
-    SELECT
-        unique_years.year as year,
-        COALESCE(SUM(ikc.in_kind_contribution), 0) AS in_kind_contribution
-    FROM unique_years
-    JOIN (
-        SELECT
-            substring(research_lines ->> 'startDate' from 1 for 4) :: NUMERIC as YEAR,
-            SUM((research_lines ->> 'contribution') :: NUMERIC) as in_kind_contribution
-        FROM "research_item_project_competitive" ripc
-            JOIN verify v ON ripc.research_item = v.research_item
-            JOIN "group" g ON v.research_entity = g.research_entity
-            JOIN (
-                select
-                    ripc.id as project_id,
-                    jsonb_array_elements(ripc.project_data -> 'researchLines') as research_lines
-                FROM "research_item_project_competitive" ripc
-                GROUP BY ripc.id
-            ) sub on project_id = ripc.id
-        WHERE (
-            g.id = $1 OR
-            g.research_entity = ANY(
-                SELECT tmp_g.research_entity as research_entity
-                FROM subg sg
-                JOIN "group" tmp_g on tmp_g.id = sg.child_group
-                WHERE sg.parent_group = g.id
-            )
-        ) AND (
-            research_lines @> ANY(
-                ARRAY(
-                    SELECT json_build_object('code', tmp_g.code)::jsonb as code
-                    FROM subg sg
-                    JOIN "group" tmp_g on tmp_g.id = sg.child_group
-                    WHERE sg.parent_group = g.id
-                )::jsonb[]
-            ) OR
-            research_lines @> json_build_object('code', g.code)::jsonb
-        ) AND ripc.project_data ->> 'type' = 'In Kind'
-        GROUP BY YEAR, research_lines
-        ORDER BY YEAR
-    ) ikc ON ikc.year = unique_years.year
-    GROUP BY unique_years.year
-    ORDER BY unique_years.year
-) ikc ON ikc.year = unique_years.year
-WHERE
-    unique_years.year IS NOT NULL
-GROUP BY unique_years.year
-ORDER BY unique_years.year
+                        FROM selected_group sg
+                                 JOIN verify v
+                                      ON v.research_entity = sg.research_entity
+                                 JOIN research_item_project_competitive ripc
+                                      ON ripc.research_item = v.research_item
+
+                        WHERE sg.type = 'Institute'
+                        GROUP BY 1),
+
+     group_hierarchy AS
+         (WITH RECURSIVE cte
+                             AS (SELECT g.id,
+                                        g.code,
+                                        g.research_entity
+                                 FROM "group" g
+                                 WHERE g.id = (SELECT id FROM selected_group)
+
+                                 UNION ALL
+
+                                 SELECT child.id,
+                                        child.code,
+                                        child.research_entity
+                                 FROM membershipgroup mg
+                                          JOIN "group" child
+                                               ON child.id = mg.child_group
+                                          JOIN cte
+                                               ON mg.parent_group = cte.id)
+          SELECT *
+          FROM cte),
+
+     non_institute_data AS
+         (SELECT EXTRACT(YEAR FROM COALESCE(
+                 NULLIF(line ->> 'startDate', '')::date,
+                 '1970-01-01'::date)) AS year,
+
+                 SUM(
+                         CASE
+                             WHEN COALESCE(ripc.project_data ->> 'type', '') <> 'In Kind'
+                                 AND line ->> 'code' = gh.code
+                                 THEN COALESCE((line ->> 'contribution')::numeric, 0)
+                             ELSE 0
+                             END
+                 )                    AS in_cash_contribution,
+
+                 SUM(
+                         CASE
+                             WHEN COALESCE(ripc.project_data ->> 'type', '') = 'In Kind'
+                                 AND line ->> 'code' = gh.code
+                                 THEN COALESCE((line ->> 'contribution')::numeric, 0)
+                             ELSE 0
+                             END
+                 )                    AS in_kind_contribution
+
+          FROM selected_group sg
+                   JOIN group_hierarchy gh ON TRUE
+                   JOIN verify v
+                        ON v.research_entity = gh.research_entity
+                   JOIN research_item_project_competitive ripc
+                        ON ripc.research_item = v.research_item
+                   CROSS JOIN LATERAL jsonb_array_elements(ripc.project_data -> 'researchLines') AS line
+
+          WHERE sg.type != 'Institute'
+          GROUP BY 1),
+
+     union_data AS (SELECT *
+                    FROM institute_data
+                    UNION ALL
+                    SELECT *
+                    FROM non_institute_data),
+
+     all_years AS (SELECT generate_series(
+                                      (SELECT MIN(year) FROM union_data)::int,
+                                      (SELECT MAX(year) FROM union_data)::int
+                          ) AS year)
+SELECT ay.year,
+       COALESCE(ud.in_cash_contribution, 0)       AS in_cash_contribution,
+       COALESCE(ud.in_kind_contribution, 0)       AS in_kind_contribution,
+       COALESCE(ud.in_cash_contribution, 0)
+           + COALESCE(ud.in_kind_contribution, 0) AS total_contribution
+FROM all_years ay
+         LEFT JOIN union_data ud
+                   ON ay.year = ud.year
+ORDER BY ay.year;
