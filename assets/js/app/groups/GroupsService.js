@@ -126,7 +126,7 @@
 
         function getGroups(query) {
             const populate = {populate: ['administrators', 'childGroups', 'parentGroups', 'pis', 'groupData']};
-            const q = _.merge({}, query, populate);
+            const q = _.merge({}, query, populate, {limit: 10000});
 
             return service.getList(q);
         }
@@ -236,6 +236,7 @@
                 return service.createInstituteStructure(institute, membershipGroups);
             });
         }
+
         /* jshint ignore:end */
 
         /* jshint ignore:start */
@@ -255,6 +256,7 @@
                 Notification.warning(error);
             }
         }
+
         /* jshint ignore:end */
 
         /* jshint ignore:start */
@@ -273,6 +275,7 @@
                 Notification.warning(error);
             }
         }
+
         /* jshint ignore:end */
 
         function getSettings(groupId) {
@@ -314,6 +317,7 @@
                 Notification.warning(error);
             }
         }
+
         /* jshint ignore:end */
 
         /* jshint ignore:start */
@@ -335,6 +339,7 @@
                 Notification.warning(error);
             }
         }
+
         /* jshint ignore:end */
 
         /* jshint ignore:start */
@@ -353,9 +358,10 @@
                 Notification.warning(error);
             }
         }
+
         /* jshint ignore:end */
 
-        function isGroupAdmin (group, user) {
+        function isGroupAdmin(group, user) {
             if (!group || !_.has(group, 'administrators') || !user) {
                 return false;
             }
@@ -363,7 +369,7 @@
         }
 
         /* jshint ignore:start */
-        async function saveProfile (researchEntityId, profile, coverImage = false) {
+        async function saveProfile(researchEntityId, profile, coverImage = false) {
             const formData = new FormData();
             formData.append('profile', JSON.stringify(profile));
 
