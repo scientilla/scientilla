@@ -34,7 +34,8 @@ module.exports = _.merge({}, SubResearchEntityController, {
         const userId = req.body.user;
         let membership = await Membership.findOne({
             group: groupId,
-            user: userId
+            user: userId,
+            synchronized: false
         });
 
         if (membership) {
