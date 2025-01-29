@@ -8,6 +8,13 @@
     <scientilla-multicheck>
         <buttons>
             <scientilla-multicheck-button
+                    ng-disabled="true"
+                    subject="Export as Excel"
+                    on-click="vm.exportExcelDownload"
+            >
+                <i class="fas fa-download fa-left"></i>Export as Excel
+            </scientilla-multicheck-button>
+            <scientilla-multicheck-button
                 ng-disabled="true"
                 subject="Export as CSV"
                 on-click="vm.exportDownload"

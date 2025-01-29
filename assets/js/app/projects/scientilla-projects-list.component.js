@@ -32,6 +32,7 @@
 
         vm.projects = [];
         vm.onFilter = onFilter;
+        vm.exportExcelDownload = projects => ProjectService.exportDownload(projects, 'excel');
         vm.exportDownload = projects => ProjectService.exportDownload(projects, 'csv');
         vm.onChange = onChange;
 

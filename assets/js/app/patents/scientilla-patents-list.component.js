@@ -32,6 +32,7 @@
 
         vm.patents = [];
         vm.onFilter = onFilter;
+        vm.exportExcelDownload = patents => PatentService.exportDownload(patents, 'excel');
         vm.exportDownload = patents => PatentService.exportDownload(patents, 'csv');
 
         let query = {};
