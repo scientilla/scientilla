@@ -528,7 +528,7 @@ async function importProjects() {
             if (!projectsObj[p.codice_progetto]) {
                 projectsObj[p.codice_progetto] = {
                     code: p.codice_progetto,
-                    title: p.prj_title ? p.prj_title : 'NO_TITLE',
+                    title: p.acronym ? p.acronym : 'NO_TITLE',
                     type: typeTranslation[p.project_type] ? typeTranslation[p.project_type] : p.project_type,
                     category: categoryTranslation[p.project_category] ? categoryTranslation[p.project_category] : p.project_category,
                     payment: p.project_payment,
