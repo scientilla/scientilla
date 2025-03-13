@@ -21,8 +21,13 @@
 
             const filename = filenames[format];
 
-            const contentType =
-                format === 'excel' ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'text/csv';
+            const contentTypes = {
+                csv: 'text/csv',
+                bibtex: 'text/plain',
+                excel: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            };
+
+            const contentType = contentTypes[format];
             const blob = new Blob([data], {type: contentType});
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');

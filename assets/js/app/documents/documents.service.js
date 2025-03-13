@@ -219,6 +219,16 @@
                         documentIds: documents.map(d => d.id)
                     }, {responseType: 'arraybuffer'})
                         .then((res) => {
+                            if(format ==='bibtex'){
+                                const decoder = new TextDecoder('utf-8');
+                                let text = decoder.decode(res.data);
+                                text = text.replace(/\\n/g, '\n');
+                                if (text.startsWith('"') && text.endsWith('"')) {
+                                    text = text.slice(1, -1);
+                                }
+                                DownloadService.download(text, 'documents', format);
+                                return;
+                            }
                             DownloadService.download(res.data, 'documents', format);
                         });
                 }

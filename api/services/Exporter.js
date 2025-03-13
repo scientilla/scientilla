@@ -162,7 +162,7 @@ function bibtexInit() {
 
 function documentsToBibtex(documents) {
 
-    let bibtex = 'data:text/plain;charset=utf-8,';
+    let bibtex = '';
 
     documents.forEach(document => {
         bibtex += getBibtex(document.toJSON()) + '\n\n';
