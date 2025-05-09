@@ -59,6 +59,4 @@ angular.module('app')
     .constant('industrialProjectPayments', industrialProjectPayments)
     .constant('projectStatuses', projectStatuses)
     .constant('competitiveProjectFundings', competitiveProjectFundings)
-    .constant('competitiveProjectDownloadFileName', competitiveProjectDownloadFileName)
-    .constant('industrialProjectDownloadFileName', industrialProjectDownloadFileName)
     .constant('projectExportUrl', projectExportUrl);
