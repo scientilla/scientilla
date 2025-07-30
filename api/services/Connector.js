@@ -32,8 +32,8 @@ function makeRequest(reqConfig) {
     return request.get(
         Object.assign({
                 maxAttempts: 5,
-                retryDelay: 500,
-                rejectUnauthorized: false
+                retryDelay: 500
+                // Removed insecure option rejectUnauthorized: false
             },
             reqConfig.reqParams)
     );

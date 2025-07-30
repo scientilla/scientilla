@@ -45,7 +45,13 @@ module.exports = {
 
         if (image) {
             const imagePath = path.join(sails.config.appPath, image);
-            const stream = fs.createReadStream(imagePath);
+            const safeImagePath = path.resolve(sails.config.appPath, image);
+            if (!safeImagePath.startsWith(sails.config.appPath)) {
+                return res.forbidden({
+                    message: 'Access to the image is forbidden!'
+                });
+            }
+            const stream = fs.createReadStream(safeImagePath);
             stream.pipe(res)
         } else {
             return res.notFound({
