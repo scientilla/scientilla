@@ -55,7 +55,7 @@ async function waitForSuccessfulRequest(options, logMethod = false, print = true
 
     if (sails.config.environment === 'development') {
         options.httpsAgent = new https.Agent({
-            rejectUnauthorized: false
+            // rejectUnauthorized: false // Removed to ensure TLS verification
         });
 
         options.timeout = 0;
