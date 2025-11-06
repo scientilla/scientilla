@@ -1,3 +1,4 @@
+/* globals User, Utils, ResearchEntityData, sails */
 "use strict";
 
 const _ = require('lodash');
@@ -624,19 +625,31 @@ async function importUsers(email = getDefaultEmail()) {
 
 async function removeExpiredUsers() {
     const fiveYearsAgo = moment().subtract('5', 'years').startOf('day');
-    let deletedUsers = await User.destroy({
+    const deletedUsers = [];
+    const usersToDelete = await User.find({
         contractEndDate: {'<=': fiveYearsAgo.format()}
     });
-    deletedUsers = deletedUsers.map(function (user) {
+
+    for (const userToDelete of usersToDelete) {
+        try {
+            deletedUsers.push(await User.destroy({id: userToDelete.id}));
+        } catch (e) {
+            deletedUsers.push({
+                userToDelete,
+                error: e.message
+            });
+        }
+    }
+    const deletedUsersString = deletedUsers.map(function (user) {
         return JSON.stringify(user);
     });
-    if (deletedUsers.length > 0) {
-        if (deletedUsers.length === 1) {
+    if (deletedUsersString.length > 0) {
+        if (deletedUsersString.length === 1) {
             sails.log.info(`Deleted 1 user with a contract that ended 5 years ago: ${fiveYearsAgo.format()}`);
-            sails.log.info(`Deleted the user with data: ${deletedUsers.join(', ')}`);
+            sails.log.info(`Deleted the user with data: ${deletedUsersString.join(', ')}`);
         } else {
-            sails.log.info(`Deleted ${deletedUsers.length} users with a contract that ended 5 years ago: ${fiveYearsAgo.format()}`);
-            sails.log.info(`Deleted the users with data: ${deletedUsers.join(', ')}`);
+            sails.log.info(`Deleted ${deletedUsersString.length} users with a contract that ended 5 years ago: ${fiveYearsAgo.format()}`);
+            sails.log.info(`Deleted the users with data: ${deletedUsersString.join(', ')}`);
         }
     } else {
         sails.log.info(`Deleted 0 users with a contract that ended 5 years ago: ${fiveYearsAgo.format()}`);
@@ -844,16 +857,10 @@ async function updateUserProfileGroups() {
 }
 
 function isFormerGuestStudent(employee) {
-    if (
-        _.has(employee, 'stato_dip') &&
+    return _.has(employee, 'stato_dip') &&
         employee.stato_dip === 'cessato' &&
         _.has(employee, 'Ruolo_AD') &&
-        employee.Ruolo_AD === 'Guest Student'
-    ) {
-        return true;
-    }
-
-    return false;
+        employee.Ruolo_AD === 'Guest Student';
 }
 
 /**
@@ -890,9 +897,11 @@ function getUserImportRequestOptions(type, extraParams = {}) {
  * This function calls the API to get the employees depending on the options,
  * it will return an array of employee objects.
  *
- * @param {Object}    Options
  *
  * @returns {Object[]}
+ * @param options
+ * @param logMethod
+ * @param print
  */
 async function getEmployees(options, logMethod = false, print = false) {
     try {
@@ -1003,6 +1012,8 @@ function replaceEmptyObjectByEmptyString(object) {
  *
  * @param {String[]}    codes   Array of strings.
  *
+ * @param logMethod
+ * @param print
  * @returns {Object[]}
  */
 // This function will return an array of valid contracts
@@ -1106,6 +1117,7 @@ function getValidSteps(steps) {
  *
  * @param {Object[]}    contract   Array of Objects.
  *
+ * @param groups
  * @returns {Object[]}
  */
 function mergeStepsOfContract(contract, groups = []) {
@@ -1234,6 +1246,7 @@ function mergeStepsOfContract(contract, groups = []) {
  *
  * @param {Object}    step   Object.
  *
+ * @param groups
  * @returns {Object|false}
  */
 function handleStep(step, groups = []) {
@@ -1382,7 +1395,7 @@ function getIgnoredRoles() {
  * @param {Object[]}        ldapUsers          Array of Objects.
  * @param {Object}          user
  * @param {Object}          employee
- * @param {Object|null}     contractEndDate
+ * @param logMethod
  *
  * @returns {Object}
  */
@@ -1520,7 +1533,7 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
         return;
     }
 
-    profile.hidden = (contract.no_people === 'NO PEOPLE' ? true : false);
+    profile.hidden = (contract.no_people === 'NO PEOPLE');
 
     let defaultPrivacy = valuePublicPrivacy;
     if (profile.hidden) {
@@ -1676,8 +1689,7 @@ function getProfileGroups(allMembershipGroups, activeGroups, contract, defaultPr
  * @returns {false|true}
  */
 function isUserEqualWithUserObject(user = {}, userObject = {}) {
-    if (
-        user.cid === userObject.cid &&
+    return !!(user.cid === userObject.cid &&
         user.name === userObject.name &&
         user.surname === userObject.surname &&
         user.jobTitle === userObject.jobTitle &&
@@ -1697,12 +1709,9 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
         user.displayName === userObject.displayName &&
         user.displaySurname === userObject.displaySurname &&
         user.legacyEmail === userObject.legacyEmail &&
-        JSON.stringify(user.config) === JSON.stringify(userObject.config)
-    ) {
-        return true;
-    }
+        JSON.stringify(user.config) === JSON.stringify(userObject.config));
 
-    return false;
+
 }
 
 /**
@@ -1710,6 +1719,8 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
  *
  * @param {Object[]}        employees               Employee contract object.
  *
+ * @param email
+ * @param logMethod
  * @returns {Object[]}
  */
 async function overrideCIDAssociations(employees = [], email = getDefaultEmail(), logMethod = false) {
@@ -1750,6 +1761,7 @@ async function overrideCIDAssociations(employees = [], email = getDefaultEmail()
  * It looks for active employees with the same email address that are not empty.
  *
  * @param {Object[]}        employees               Employee contract object.
+ * @param logMethod
  */
 async function getMissingCIDAssociations(employees = [], logMethod = false) {
     const uniqueEmployeesWithEmail = [];
