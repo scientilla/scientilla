@@ -5,6 +5,6 @@ SELECT dc.scopus_id, year_range AS year, sum(dc.value) AS value
 FROM document_scopus_citation dc
          JOIN generate_series(
         (SELECT min(year) FROM document_scopus_citation),
-        date_part('year', now())::int)
+        date_part('year', now())::int+1)
     AS year_range ON dc.year <= year_range
 GROUP BY dc.scopus_id, year_range;

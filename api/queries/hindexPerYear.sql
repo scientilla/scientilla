@@ -11,7 +11,7 @@ FROM (
                   JOIN document_scopus_incremental_citation dic
                        ON d."scopusId" = dic.scopus_id AND NULLIF(d.year, '')::int <= dic.year
                   JOIN generate_series(1900,
-                                       date_part('year', now())::int) AS year_range
+                                       date_part('year', now())::int+1) AS year_range
                        ON dic.year = year_range
          WHERE a."researchEntity" IS NOT NULL
            AND d.documenttype <> ALL ($2 :: INT[])
