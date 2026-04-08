@@ -433,9 +433,14 @@ async function importProjects() {
                     }
                 }
             } catch (e) {
-                sails.log.debug(project.code);
+                sails.log.debug(project.sap_code);
                 sails.log.debug(e);
-                errors.push(e);
+                errors.push({
+                    project: {
+                        acronym: project.acronym,
+                    },
+                    message: e.message
+                });
             }
         }
 
