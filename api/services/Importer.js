@@ -1057,6 +1057,10 @@ async function autoVerify(external, verified, ResearchEntityToVerify, researchEn
 
     for (const researchEntityId of _.uniq(researchEntityToUnverify))
         try {
+            const group = await Group.findOne({ researchEntity: researchEntityId });
+            if (group && [GroupTypes.INITIATIVE, GroupTypes.PROJECT].includes(group.type)) {
+                continue;
+            }
             await Verify.unverify(researchEntityId, verified.id);
             unverifiedCount++;
         } catch (e) {

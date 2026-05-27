@@ -8,5 +8,6 @@ module.exports = {
     RESEARCH_DOMAIN: 'Research Domain',
     FACILITY: 'Facility',
     PROJECT: 'Project',
-    DIRECTORATE: 'Directorate'
+    DIRECTORATE: 'Directorate',
+    INITIATIVE: 'Initiative'
 };
