@@ -960,7 +960,7 @@ async function getEmployees(options, logMethod = false, print = false) {
  * This function returns an  array of filtered employees. It filters out:
  * - the secondary contracts
  * - the contracts with an ignored role
- * - the contracts with the property desc_sottoarea !== 'Gov. & Control' except if the property e.linea_1 === 'PRS001'
+ * - the contracts with the property desc_sottoarea !== 'Gov. & Control' except if the property e.linea_1 === 'PRS001' or 'PRS005'
  *
  * @param {Object[]}        employees               Array of Objects.
  *
@@ -973,7 +973,7 @@ function filterEmployees(employees) {
         _.has(e, 'linea_1') &&
         (
             e.desc_sottoarea !== 'Gov. & Control' ||
-            e.desc_sottoarea === 'Gov. & Control' && e.linea_1 === 'PRS001'
+            e.desc_sottoarea === 'Gov. & Control' && ['PRS001', 'PRS005'].includes(e.linea_1)
         ) &&
         e.contratto_secondario !== 'X' &&
         !ignoredRoles.includes(e.Ruolo_AD)
