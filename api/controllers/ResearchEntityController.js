@@ -174,8 +174,11 @@ async function getResearchItems(req, res, Model, viewName) {
 
         if (populate) {
             const populateArray = Array.isArray(populate) ? populate : [populate];
+            const validAssociations = Model.associations.map(a => a.alias);
             populateArray.forEach(p => {
-                query = query.populate(p);
+                if (validAssociations.includes(p)) {
+                    query = query.populate(p);
+                }
             });
         }
 
