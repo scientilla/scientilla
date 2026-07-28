@@ -16,7 +16,7 @@ module.exports = {
     },
 
     migrate: 'safe',
-    tableName: 'projectsuggestion',
+    tableName: 'suggestion_project',
     autoUpdatedAt: false,
     autoCreatedAt: false
 
