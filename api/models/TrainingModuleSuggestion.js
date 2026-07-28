@@ -16,7 +16,7 @@ module.exports = {
     },
 
     migrate: 'safe',
-    tableName: 'research_item_suggestion',
+    tableName: 'trainingmodulesuggestion',
     autoUpdatedAt: false,
     autoCreatedAt: false
 
