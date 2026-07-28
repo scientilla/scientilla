@@ -94,20 +94,44 @@ module.exports = {
         res.send(string);
     },
     getSuggestedProjects(req, res) {
-        return getSuggested(req, res, Project, 'suggestion_project');
+        return getResearchItems(req, res, Project, 'suggestion_project');
     },
     getSuggestedPatents(req, res) {
-        return getSuggested(req, res, Patent, 'suggestion_patent');
+        return getResearchItems(req, res, Patent, 'suggestion_patent');
     },
     getSuggestedAccomplishments(req, res) {
-        return getSuggested(req, res, Accomplishment, 'suggestion_accomplishment');
+        return getResearchItems(req, res, Accomplishment, 'suggestion_accomplishment');
     },
     getSuggestedTrainingModules(req, res) {
-        return getSuggested(req, res, TrainingModule, 'suggestion_training_module');
+        return getResearchItems(req, res, TrainingModule, 'suggestion_training_module');
+    },
+    getVerifiedProjects(req, res) {
+        return getResearchItems(req, res, Project, 'verify');
+    },
+    getVerifiedPatents(req, res) {
+        return getResearchItems(req, res, Patent, 'verify');
+    },
+    getVerifiedAccomplishments(req, res) {
+        return getResearchItems(req, res, Accomplishment, 'verify');
+    },
+    getVerifiedTrainingModules(req, res) {
+        return getResearchItems(req, res, TrainingModule, 'verify');
+    },
+    getDiscardedProjects(req, res) {
+        return getResearchItems(req, res, Project, 'discarded');
+    },
+    getDiscardedPatents(req, res) {
+        return getResearchItems(req, res, Patent, 'discarded');
+    },
+    getDiscardedAccomplishments(req, res) {
+        return getResearchItems(req, res, Accomplishment, 'discarded');
+    },
+    getDiscardedTrainingModules(req, res) {
+        return getResearchItems(req, res, TrainingModule, 'discarded');
     },
 };
 
-async function getSuggested(req, res, Model, viewName) {
+async function getResearchItems(req, res, Model, viewName) {
     const researchEntityId = +req.params.researchEntityId;
     const limit = req.param('limit');
     const skip = req.param('skip');
