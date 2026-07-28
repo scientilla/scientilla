@@ -224,7 +224,19 @@ module.exports.policies = {
         getProfile: true,
         getEditProfile: isResearchEntityOwner,
         saveProfile: isResearchEntityOwner,
-        exportProfile: isResearchEntityOwner
+        exportProfile: isResearchEntityOwner,
+        getSuggestedProjects: true,
+        getSuggestedPatents: true,
+        getSuggestedAccomplishments: true,
+        getSuggestedTrainingModules: true,
+        getVerifiedProjects: true,
+        getVerifiedPatents: true,
+        getVerifiedAccomplishments: true,
+        getVerifiedTrainingModules: true,
+        getDiscardedProjects: true,
+        getDiscardedPatents: true,
+        getDiscardedAccomplishments: true,
+        getDiscardedTrainingModules: true
     }, defaultPolicy),
 
     ResearchItemTypeController: defaultPolicy,
