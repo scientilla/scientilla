@@ -93,4 +93,76 @@ module.exports = {
         res.set('Content-Type', 'application/octet-stream');
         res.send(string);
     },
+    getSuggestedProjects(req, res) {
+        return getSuggested(req, res, Project, 'suggestion_project');
+    },
+    getSuggestedPatents(req, res) {
+        return getSuggested(req, res, Patent, 'suggestion_patent');
+    },
+    getSuggestedAccomplishments(req, res) {
+        return getSuggested(req, res, Accomplishment, 'suggestion_accomplishment');
+    },
+    getSuggestedTrainingModules(req, res) {
+        return getSuggested(req, res, TrainingModule, 'suggestion_training_module');
+    },
 };
+
+async function getSuggested(req, res, Model, viewName) {
+    const researchEntityId = +req.params.researchEntityId;
+    const limit = req.param('limit');
+    const skip = req.param('skip');
+    const sort = req.param('sort');
+    const populate = req.param('populate');
+    let where = req.param('where');
+
+    try {
+        const sql = `SELECT research_item FROM ${viewName} WHERE research_entity = $1`;
+        const results = await SqlService.query(sql, [researchEntityId]);
+        const ids = results.map(r => r.research_item);
+
+        if (ids.length === 0) {
+            return res.halt(Promise.resolve({
+                count: 0,
+                items: []
+            }));
+        }
+
+        let queryOptions = {
+            id: ids
+        };
+
+        if (where) {
+            try {
+                const parsedWhere = typeof where === 'string' ? JSON.parse(where) : where;
+                if (parsedWhere.id) {
+                    const requestIds = Array.isArray(parsedWhere.id) ? parsedWhere.id : [parsedWhere.id];
+                    queryOptions.id = ids.filter(x => requestIds.includes(x));
+                }
+                queryOptions = Object.assign({}, parsedWhere, queryOptions);
+            } catch (e) {}
+        }
+
+        let query = Model.find(queryOptions);
+
+        if (limit) query = query.limit(limit);
+        if (skip) query = query.skip(skip);
+        if (sort) query = query.sort(sort);
+
+        if (populate) {
+            const populateArray = Array.isArray(populate) ? populate : [populate];
+            populateArray.forEach(p => {
+                query = query.populate(p);
+            });
+        }
+
+        const count = await Model.count(queryOptions);
+        const items = await query;
+        res.halt(Promise.resolve({
+            count: count,
+            items: items
+        }));
+    } catch (err) {
+        res.halt(Promise.reject(err));
+    }
+}
+
