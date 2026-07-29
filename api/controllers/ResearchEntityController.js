@@ -168,7 +168,7 @@ async function getResearchItems(req, res, Model, viewName) {
 
         let query = Model.find(queryOptions);
 
-        if (limit) query = query.limit(limit);
+        if (limit && limit !== '0' && limit !== 0) query = query.limit(limit);
         if (skip) query = query.skip(skip);
         if (sort) query = query.sort(sort);
 
