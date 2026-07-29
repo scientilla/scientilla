@@ -155,6 +155,14 @@ async function getResearchItems(req, res, Model, viewName) {
             id: ids
         };
 
+        if (req.query) {
+            Object.keys(req.query).forEach(key => {
+                if (!['limit', 'skip', 'sort', 'populate', 'where'].includes(key)) {
+                    queryOptions[key] = req.query[key];
+                }
+            });
+        }
+
         if (where) {
             try {
                 const parsedWhere = typeof where === 'string' ? JSON.parse(where) : where;
