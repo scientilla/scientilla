@@ -133,11 +133,18 @@ module.exports = {
 
 async function getResearchItems(req, res, Model, viewName) {
     const researchEntityId = +req.params.researchEntityId;
-    const limit = req.param('limit');
+    let limit = req.param('limit');
+    if (limit === undefined || limit === null) {
+        limit = sails.config.blueprints.defaultLimit;
+    }
     const skip = req.param('skip');
-    const sort = req.param('sort');
+    let sort = req.param('sort');
     const populate = req.param('populate');
     let where = req.param('where');
+
+    if ((!sort || (typeof sort === 'object' && Object.keys(sort).length === 0)) && Model.DEFAULT_SORTING) {
+        sort = Model.DEFAULT_SORTING;
+    }
 
     try {
         const sql = `SELECT research_item FROM ${viewName} WHERE research_entity = $1`;
